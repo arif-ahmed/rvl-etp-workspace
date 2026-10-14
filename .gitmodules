@@ -1,0 +1,4 @@
+[submodule "rvl-gobcb-backend"]
+	path = rvl-gobcb-backend
+	url = https://github.com/Relief-Validation/rvl-gobcb-backend.git
+	branch = main
