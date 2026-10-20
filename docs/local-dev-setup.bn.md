@@ -2,7 +2,7 @@
 
 > **এই ডকুমেন্ট কার জন্য**: নতুন যোগ দেওয়া .NET ডেভেলপার, যিনি Windows মেশিনে একদম শূন্য থেকে RVL-ETP ব্যাকএন্ডটা সেটআপ করে চালাবেন, ডিবাগ করবেন, আর ফিচার টেস্ট করবেন।
 >
-> **তথ্যের উৎস**: এই গাইডের প্রতিটা দাবি `rvl-gobcb-backend` সাবমডিউলের সোর্স কোড, কনফিগ ও স্ক্রিপ্ট থেকে যাচাই করা। যেসব বিষয় রিপো থেকে নিশ্চিত করা যায়নি, সেগুলো শেষের [অযাচাইকৃত বিষয়](#১২-অযাচাইকৃত-বিষয়-এবং-টিমকে-করার-প্রশ্নের-লিস্ট) সেকশনে আলাদা করে চিহ্নিত।
+> **তথ্যের উৎস**: এই গাইডের প্রতিটা দাবি সাবমডিউলগুলোর সোর্স কোড, কনফিগ ও স্ক্রিপ্ট থেকে যাচাই করা (মূলত `rvl-gobcb-backend`; ক্লায়েন্ট-সাবমডিউলের কনফিগ যেখানে প্রাসঙ্গিক) — ওয়ার্কস্পেস রিপোর নিজের কোনো doc ব্যবহার করা হয়নি। যেসব বিষয় রিপো থেকে নিশ্চিত করা যায়নি, সেগুলো শেষের [অযাচাইকৃত বিষয়](#১৩-অযাচাইকৃত-বিষয়-এবং-টিমকে-করার-প্রশ্নের-লিস্ট) সেকশনে আলাদা করে চিহ্নিত।
 >
 > **শেষ যাচাই**: ২০২৬-১০-২১
 
@@ -39,7 +39,7 @@ Services/<X>/
 | টুল | কেন | নোট |
 |---|---|---|
 | **.NET 8 SDK** | সব ৪৯ প্রজেক্ট `net8.0` | রিপোতে `global.json` নেই, তাই ইনস্টল করা SDK-ই 8.0 হতে হবে |
-| **Visual Studio 2022** (v17.10+) | সলিউশন VS2022 ফরম্যাটের; "ASP.NET and web development" workload লাগবে | |
+| **Visual Studio 2022** | সলিউশন VS2022 ফরম্যাটের; "ASP.NET and web development" workload লাগবে | |
 | **Docker Desktop** | PostgreSQL + Redis লোকালে চালাতে | রিপোর compose ফাইল এ দেয় না, নিজে চালাতে হবে |
 | **git** | | |
 | `dotnet ef` tool | ম্যানুয়ালি মাইগ্রেশন চালাতে চাইলে | `dotnet tool install --global dotnet-ef` |
@@ -119,7 +119,9 @@ AWS **Cognito-র ৪টা ইউজার পুল** (Admin/User/TicketChecke
 
 ### ধাপ ১: PostgreSQL + Redis চালানো (Docker — যেকোনো ডিরেক্টরি)
 
-রিপোর `docker-compose.yaml`-এ শুধু ১১টা অ্যাপ-ইমেজ ডেফাইন করা (CI-তে ECR-এ push করার জন্য) — PostgreSQL/Redis **নেই**। নিজে দুটো কন্টেইনার চালান:
+রিপোর `docker-compose.yaml`-এ শুধু ৯টা অ্যাপ-ইমেজ ডেফাইন করা (CI-তে ECR-এ push করার জন্য; UserAuth ও Platform ওখানেও নেই) — PostgreSQL/Redis **নেই**, তাদের ভার্সনও রিপোতে উল্লেখ নেই। নিজে দুটো কন্টেইনার চালান:
+
+> শুরুর আগে দেখে নিন Docker Desktop চালু আছে (`docker ps` কাজ করছে কি না) — বন্ধ থাকলে আগে অ্যাপটা খুলে engine ready হতে দিন।
 
 ```bash
 docker run -d --name etp-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16
@@ -254,7 +256,7 @@ dotnet ef database update -p Services/UserIssue/ETP.UserIssue.Storage -s Service
 ```
 
 README-র সাথে দুটো পার্থক্য (রিপো ঘেঁটে প্রমাণিত):
-- README Event ও TicketChecker-এর জন্যও এই কমান্ড দেখায়, কিন্তু **এই দুই Storage প্রজেক্টে কোনো Migrations ফোল্ডার নেই** — কমান্ড no-op। তাদের স্কিমা কোথা থেকে আসে রিপো থেকে বলা সম্ভব নয় ([§১২](#১২-অযাচাইকৃত-বিষয়-এবং-টিমকে-করার-প্রশ্নের-লিস্ট) দেখুন)।
+- README Event ও TicketChecker-এর জন্যও এই কমান্ড দেখায়, কিন্তু **এই দুই Storage প্রজেক্টে কোনো Migrations ফোল্ডার নেই** — কমান্ড no-op। তাদের স্কিমা কোথা থেকে আসে রিপো থেকে বলা সম্ভব নয় ([§১৩](#১৩-অযাচাইকৃত-বিষয়-এবং-টিমকে-করার-প্রশ্নের-লিস্ট) দেখুন)।
 - README PushNotification/UserIssue-এর কমান্ড দেয়নি — উপরে যোগ করা আছে।
 
 নতুন মাইগ্রেশন বানাতে (উদাহরণ, Booking): `dotnet ef migrations add <Name> -p Services/Booking/ETP.Booking.Storage -s Services/Booking/ETP.Booking.Service` — একই প্যাটার্ন অন্যদের।
@@ -298,30 +300,82 @@ Frontend-ও চালাতে চাইলে: admin-portal `ng serve` (localh
 | Startup-এই crash, Redis socket error | `etp-redis` বন্ধ → `docker start etp-redis`; বা `Cache:Redis:ConnectionString` মিসিং (NullReferenceException আসে) |
 | `ConfigurationErrorsException` | `DistributedLock:Redis:{EndPoint,Port,Database}` দিন |
 | মাইগ্রেশন/DB error বুটে | DB বানানো কি না (`CREATE DATABASE`), পোর্ট 5432 ফ্রি কি না, connection string ঠিক কি না |
-| Event/TicketChecker-এ টেবিল নেই | এদের মাইগ্রেশন নেই — স্কিমার উৎস §১২-এর প্রশ্ন |
+| Event/TicketChecker-এ টেবিল নেই | এদের মাইগ্রেশন নেই — স্কিমার উৎস §১৩-এর প্রশ্ন |
 | 401 / IDX এরর | Cognito config (`Authority/Metadata/ClientId`) + ইন্টারনেট; টোকেন সেই pool থেকেই এসেছে কি না |
 | সার্ভিস-কলে connection refused | `Services:<Name>` প্রিফিক্সসহ ঠিক আছে কি না (যেমন `http://localhost:5086/booking`) |
 | পোর্ট ব্যস্ত | launchSettings ক্ল্যাশ (Utility↔Scheduler 5033; Ticketing↔PushNotification 7007 https) |
+| 6379-এ আগে থেকেই native Redis চলছে | Windows-এ ইনস্টল করা redis-server (শুধু 127.0.0.1 bind) আর কন্টেইনার সহাবস্থান করতে পারে — কনফিউশন এড়াতে হয় native-টাই ব্যবহার করুন (কন্টেইনার না চালিয়ে), নয়তো কন্টেইনার অন্য পোর্টে ম্যাপ করে `Cache:Redis:ConnectionString` বদলান |
 | ব্যাকগ্রাউন্ডে SQS error স্প্যাম | `AWS:Queue:*`/creds নেই — API ডিবাগ চলবে; দরকার না হলে ওই workerের `AddHostedService` সাময়িক কমেন্ট করুন |
 | `docker-compose up` fail | স্বাভাবিক — compose ফাইলটা CI-র (ECR ভ্যারিয়েবল লাগে), লোকালে `dotnet run`/F5 ব্যবহার করুন |
 
-## ১১. CI/CD সংক্ষেপ (লোকালের সাথে সম্পর্ক)
+## ১১. Teardown: কাজ শেষে সব বন্ধ ও রিসোর্স ক্লিনআপ
+
+কতটা পরিষ্কার করতে চান তার ওপর নির্ভর করে লেভেল — যতটা দরকার ততটা নিন।
+
+### লেভেল ১: শুধু বন্ধ (ডেটা থাকবে) — দিন শেষে সাধারণত এটাই যথেষ্ট
+
+- **সার্ভিস**: VS-এ **Shift+F5** (Stop Debugging); CLI-তে চালালে প্রতিটা টার্মিনালে `Ctrl+C`।
+- **ডিপেন্ডেন্সি** (যেকোনো ডিরেক্টরি):
+
+```bash
+docker stop etp-postgres etp-redis
+```
+
+ডেটা কন্টেইনারের volume-এ সেভ থাকে — পরে `docker start etp-postgres etp-redis` করলেই আগের অবস্থায় ফিরবে, DB আর মাইগ্রেশন নতুন করতে হবে না।
+
+### লেভেল ২: ডাটাবেস রিসেট (স্কিমা+ডেটা মুছে ফ্রেশ শুরু)
+
+> আগে সব সার্ভিস বন্ধ করুন — কেউ কানেক্টেড থাকলে `DROP` হবে না।
+
+```bash
+docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_admin WITH (FORCE);"
+docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_booking WITH (FORCE);"
+docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_event WITH (FORCE);"
+docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_ticketchecker WITH (FORCE);"
+docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_pushnotification WITH (FORCE);"
+docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_userissue WITH (FORCE);"
+```
+
+এরপর §৫-এর ধাপ ২-এর `CREATE DATABASE` আবার চালিয়ে সার্ভিস F5 করলেই অটো-মাইগ্রেশন নতুন স্কিমা বানাবে। Redis-ও ফ্লাশ করতে চাইলে (সিট-লক, ক্যাশ — সব ক্লিয়ার):
+
+```bash
+docker exec -it etp-redis redis-cli FLUSHALL
+```
+
+### লেভেল ৩: পুরো লোকাল স্ট্যাক মুছে ফেলা
+
+```bash
+docker rm -f etp-postgres etp-redis
+```
+
+⚠️ কন্টেইনার `rm` করলে postgres-এর ডেটা volume-ও চলে যায় — পরে নতুন `docker run` করলে সব খালি থেকে শুরু, মানে §৫-এর ধাপ ১–৪ পুরোটা আবার করতে হবে।
+
+### লেভেল ৪: মেশিন থেকে ETP-এর সব স্পেসিফিক জিনিস সরানো
+
+- **user-secrets** (backend root থেকে, যে প্রজেক্টে দিয়েছেন): `dotnet user-secrets clear --project Services/Booking/ETP.Booking.Service` — বা `%APPDATA%\Microsoft\UserSecrets\`-এর সংশ্লিষ্ট GUID ফোল্ডারগুলো একসাথে মুছুন। ⚠️ টিমমেটের দেওয়া আসল মান মুছে গেলে আবার SSM/টিমমেটের কাছ থেকে আনতে হবে — দরকার হলে আগে ব্যাকআপ নিন।
+- **বিল্ড আর্টিফ্যাক্ট** (backend root): `dotnet clean RVL-ETP.BackEnd.sln`; পুরোপুরি ফ্রেশ চাইলে প্রজেক্টগুলোর `bin`/`obj` মুছে আবার build।
+- **VS লোকাল স্টেট**: `.vs` ফোল্ডার মুছলে multiple-startup কনফিগসহ VS-এর সেটিং রিসেট হবে।
+- **dev certificate** (https trust করিয়ে থাকলে): `dotnet dev-certs https --clean`।
+
+> ⚠️ `docker system prune` মেশিনের *সব* আনইউজড ইমেজ/কন্টেইনার/নেটওয়ার্ক মুছে দেয় — অন্য প্রজেক্টের জিনিসও যেতে পারে। নিজেরটা নাম ধরে `docker stop/rm etp-postgres etp-redis` করাই নিরাপদ।
+
+## ১২. CI/CD সংক্ষেপ (লোকালের সাথে সম্পর্ক)
 
 - AWS CodeBuild (`buildspec-dev/test/stage/prod.yml`): SSM থেকে appsettings নেয় → Docker ইমেজ → ECR → `envsubst`+`kubectl apply` (k8s manifests `deployment/k8s/<env>/`)।
 - **dev/test-এ সিক্রেট ইমেজের ভেতরেই বেক হয়**; staging/prod-এ k8s Secret volume।
 - CI-তে কোনো `dotnet build`/টেস্ট ধাপ নেই — কম্পাইল হয় Dockerfile-এর ভেতরে। **সলিউশনে কোনো টেস্ট প্রজেক্টই নেই।**
 
-## ১২. অযাচাইকৃত বিষয় এবং টিমকে করার প্রশ্নের লিস্ট
+## ১৩. অযাচাইকৃত বিষয় এবং টিমকে করার প্রশ্নের লিস্ট
 
 রিপো ঘেঁটে নিশ্চিত করা যায়নি — হ্যান্ডওভার কলে এগুলো জিজ্ঞেস করুন:
 
 1. **আসল সিক্রেট/কনফিগ মান** — connection string-এর DB নাম, Cognito pool ID, SQS, পেমেন্ট/TSP/Firebase মান (SSM `/rvl/dev/*` বা টিমমেটের user-secrets)।
 2. **Event ও TicketChecker-এর DB স্কিমা কে বানায়?** — এদের মাইগ্রেশন নেই; Event-এর মডেল Admin-ওয়ালা + Booking-ওয়ালা দুই ধরনের টেবিলই পড়ে। dev-এর DB dump নেওয়া লাগতে পারে।
 3. **Event আর TicketChecker একই DB শেয়ার করে কি না** — মান দেখেই বলা যাবে (`Database=` অংশ মিলিয়ে)।
-4. **লোকাল রানের পোর্ট-কনভেনশন** — admin-portal-এর `environment.ts` ".NET Aspire local stack (`aspire/Etp.AppHost`)" দেখায় (পোর্ট 5101/5102/5108/5110)। ওয়ার্কস্পেসের `aspire/` ও `floci/` (local AWS emulation) ফোল্ডার দুটি এই গাইডের স্কোপের বাইরে ছিল; টিম আসলে কোন পথে লোকাল ডেভ করে জেনে নিন।
+4. **লোকাল রানের পোর্ট-কনভেনশন** — admin-portal-এর `environment.ts` ".NET Aspire local stack (`aspire/Etp.AppHost`)" দেখায় (পোর্ট 5101/5102/5108/5110)। মানে টিম সম্ভবত Aspire-ভিত্তিক একটা লোকাল স্ট্যাক ব্যবহার করে, যেটা সাবমডিউলের বাইরে — তাই এ গাইডে যাচাই করা হয়নি; টিম আসলে কোন পথে লোকাল ডেভ করে জেনে নিন।
 5. **`Authentication:Jwt:Key` / `ServiceApiKey` / `SystemAccounts:Admin:Password`** কোথা থেকে পাবেন।
 
-## ১৩. রেফারেন্স (মূল ফাইল)
+## ১৪. রেফারেন্স (মূল ফাইল)
 
 | কী | ফাইল |
 |---|---|
