@@ -1,0 +1,32 @@
+services:
+  floci:
+    image: floci/floci:2.3.0
+    container_name: etp-floci
+    ports:
+      - "4566:4566"
+    environment:
+      # Default is in-memory: every container restart wipes buckets, queues, Cognito pools and users.
+      FLOCI_STORAGE_MODE: persistent
+    volumes:
+      - floci-data:/app/data
+      # No Docker socket on purpose: ETP only uses S3/SQS/SES/Cognito. Mount it only if you need
+      # container-backed services (Lambda, RDS, ECS, EKS...).
+
+  floci-ui:
+    image: floci/floci-ui:0.7.0
+    container_name: etp-floci-ui
+    depends_on:
+      floci:
+        condition: service_healthy
+    ports:
+      - "4500:4500"   # console + API on the same origin; open http://localhost:4500
+    environment:
+      FLOCI_ENDPOINT: http://floci:4566   # compose network name, not localhost
+      AWS_REGION: ap-southeast-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      # Do NOT set PORT: it is the dev-server port and moves the server off 4500.
+
+volumes:
+  floci-data:
+    name: etp-floci-data
