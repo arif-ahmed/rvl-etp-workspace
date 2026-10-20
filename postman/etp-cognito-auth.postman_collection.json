@@ -1,0 +1,2994 @@
+{
+  "info": {
+    "_postman_id": "3bbb89a8-b050-4cd0-8129-95b29cdf8ec7",
+    "name": "ETP - Cognito & Auth (platform testing)",
+    "description": "Cognito and JWT/role authorization checks for the ETP backend, runnable against local Floci (floci/seed-users.ps1) or a real pool.\n\nRun folders in order (Collection Runner, environment 'ETP Local - Floci'). 00 resolves pool/client ids; 01 stores per-role tokens used by 03-08.\n\nPrereqs: docker compose up -d in floci/, ./seed-users.ps1, Admin service on :5101 configured with the printed Authority/Metadata/ClientId/PoolId.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 - Setup & discovery",
+      "item": [
+        {
+          "name": "List user pools (resolve admin_pool_id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.ListUserPools"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"MaxResults\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Resolves the pool id and Authority so you don't have to copy them from the seed output. Authority format matches floci/seed-users.ps1 (http://localhost:4566/<poolId>)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 from Floci Cognito', () => pm.response.to.have.status(200));",
+                  "const pool = (pm.response.json().UserPools||[]).find(p => p.Name === pm.environment.get('admin_pool_name'));",
+                  "pm.test('Admin pool exists (run floci/seed-users.ps1 if not)', () => pm.expect(pool, 'pool '+pm.environment.get('admin_pool_name')).to.exist);",
+                  "if (pool) { pm.environment.set('admin_pool_id', pool.Id); pm.environment.set('admin_authority', pm.environment.get('floci_url') + '/' + pool.Id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List user pool clients (resolve admin_client_id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.ListUserPoolClients"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{admin_pool_id}}\",\n  \"MaxResults\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const c = (pm.response.json().UserPoolClients||[]).find(c => c.ClientName === pm.environment.get('admin_client_name'));",
+                  "pm.test('App client exists', () => pm.expect(c).to.exist);",
+                  "if (c) pm.environment.set('admin_client_id', c.ClientId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Describe user pool - custom attributes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.DescribeUserPool"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{admin_pool_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const names = (pm.response.json().UserPool.SchemaAttributes||[]).map(a => a.Name);",
+                  "pm.test('custom:role attribute defined (read by CognitoUserAttributesMiddleware)', () => pm.expect(names).to.include('custom:role'));",
+                  "pm.test('custom:program_ids attribute defined', () => pm.expect(names).to.include('custom:program_ids'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Describe app client - auth flows",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.DescribeUserPoolClient"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{admin_pool_id}}\",\n  \"ClientId\": \"{{admin_client_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const flows = pm.response.json().UserPoolClient.ExplicitAuthFlows || [];",
+                  "pm.test('ALLOW_USER_PASSWORD_AUTH enabled', () => pm.expect(flows).to.include('ALLOW_USER_PASSWORD_AUTH'));",
+                  "pm.test('ALLOW_REFRESH_TOKEN_AUTH enabled', () => pm.expect(flows).to.include('ALLOW_REFRESH_TOKEN_AUTH'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "OIDC discovery document",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_authority}}/.well-known/openid-configuration",
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "The backend loads this at AWS:CognitoPool:Admin:Metadata. A mismatched issuer is the usual cause of blanket 401s."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const d = pm.response.json();",
+                  "pm.test('issuer equals AWS:CognitoPool:Admin:Authority', () => pm.expect(d.issuer).to.eql(pm.environment.get('admin_authority')));",
+                  "pm.test('jwks_uri present', () => pm.expect(d.jwks_uri).to.be.a('string').and.not.empty);",
+                  "pm.environment.set('admin_jwks_uri', d.jwks_uri);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "JWKS signing keys",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_jwks_uri}}",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const keys = pm.response.json().keys || [];",
+                  "pm.test('at least one signing key', () => pm.expect(keys.length).to.be.above(0));",
+                  "pm.test('keys are RSA with kid', () => keys.forEach(k => { pm.expect(k.kty).to.eql('RSA'); pm.expect(k.kid).to.be.a('string'); }));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Backend health (Admin service)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/health",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Admin service is up', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 - Login per role (USER_PASSWORD_AUTH)",
+      "item": [
+        {
+          "name": "Login as admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_admin}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('AuthenticationResult returned (no challenge)', () => pm.expect(r, 'ChallengeName='+pm.response.json().ChallengeName).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_admin', r.AccessToken);",
+                  "pm.environment.set('id_token_admin', r.IdToken);",
+                  "pm.environment.set('refresh_token_admin', r.RefreshToken);",
+                  "const a = jwt(r.AccessToken), i = jwt(r.IdToken);",
+                  "pm.test('access token: token_use=access', () => pm.expect(a.token_use).to.eql('access'));",
+                  "pm.test('access token: iss equals configured Authority', () => pm.expect(a.iss).to.eql(pm.environment.get('admin_authority')));",
+                  "pm.test('access token: client_id equals admin app client (backend AudienceValidator)', () => pm.expect(a.client_id).to.eql(pm.environment.get('admin_client_id')));",
+                  "pm.test('access token: not expired', () => pm.expect(a.exp).to.be.above(Math.floor(Date.now()/1000)));",
+                  "pm.test('access token: scope has aws.cognito.signin.user.admin (middleware picks the Admin pool from this)', () => pm.expect((a.scope||'').split(' ')).to.include('aws.cognito.signin.user.admin'));",
+                  "pm.test('id token: token_use=id', () => pm.expect(i.token_use).to.eql('id'));",
+                  "pm.test('id token: custom:role = admin', () => pm.expect(i['custom:role']).to.eql('admin'));",
+                  "pm.test('refresh token returned', () => pm.expect(r.RefreshToken).to.be.a('string').and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as event_manager",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_event_manager}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('AuthenticationResult returned (no challenge)', () => pm.expect(r, 'ChallengeName='+pm.response.json().ChallengeName).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_event_manager', r.AccessToken);",
+                  "pm.environment.set('id_token_event_manager', r.IdToken);",
+                  "pm.environment.set('refresh_token_event_manager', r.RefreshToken);",
+                  "const a = jwt(r.AccessToken), i = jwt(r.IdToken);",
+                  "pm.test('access token: token_use=access', () => pm.expect(a.token_use).to.eql('access'));",
+                  "pm.test('access token: iss equals configured Authority', () => pm.expect(a.iss).to.eql(pm.environment.get('admin_authority')));",
+                  "pm.test('access token: client_id equals admin app client (backend AudienceValidator)', () => pm.expect(a.client_id).to.eql(pm.environment.get('admin_client_id')));",
+                  "pm.test('access token: not expired', () => pm.expect(a.exp).to.be.above(Math.floor(Date.now()/1000)));",
+                  "pm.test('access token: scope has aws.cognito.signin.user.admin (middleware picks the Admin pool from this)', () => pm.expect((a.scope||'').split(' ')).to.include('aws.cognito.signin.user.admin'));",
+                  "pm.test('id token: token_use=id', () => pm.expect(i.token_use).to.eql('id'));",
+                  "pm.test('id token: custom:role = event_manager', () => pm.expect(i['custom:role']).to.eql('event_manager'));",
+                  "pm.test('refresh token returned', () => pm.expect(r.RefreshToken).to.be.a('string').and.not.empty);",
+                  "pm.test('id token: custom:program_ids present', () => pm.expect(i['custom:program_ids']).to.be.a('string').and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as ticket_manager",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_ticket_manager}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('AuthenticationResult returned (no challenge)', () => pm.expect(r, 'ChallengeName='+pm.response.json().ChallengeName).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_ticket_manager', r.AccessToken);",
+                  "pm.environment.set('id_token_ticket_manager', r.IdToken);",
+                  "pm.environment.set('refresh_token_ticket_manager', r.RefreshToken);",
+                  "const a = jwt(r.AccessToken), i = jwt(r.IdToken);",
+                  "pm.test('access token: token_use=access', () => pm.expect(a.token_use).to.eql('access'));",
+                  "pm.test('access token: iss equals configured Authority', () => pm.expect(a.iss).to.eql(pm.environment.get('admin_authority')));",
+                  "pm.test('access token: client_id equals admin app client (backend AudienceValidator)', () => pm.expect(a.client_id).to.eql(pm.environment.get('admin_client_id')));",
+                  "pm.test('access token: not expired', () => pm.expect(a.exp).to.be.above(Math.floor(Date.now()/1000)));",
+                  "pm.test('access token: scope has aws.cognito.signin.user.admin (middleware picks the Admin pool from this)', () => pm.expect((a.scope||'').split(' ')).to.include('aws.cognito.signin.user.admin'));",
+                  "pm.test('id token: token_use=id', () => pm.expect(i.token_use).to.eql('id'));",
+                  "pm.test('id token: custom:role = ticket_manager', () => pm.expect(i['custom:role']).to.eql('ticket_manager'));",
+                  "pm.test('refresh token returned', () => pm.expect(r.RefreshToken).to.be.a('string').and.not.empty);",
+                  "pm.test('id token: custom:program_ids present', () => pm.expect(i['custom:program_ids']).to.be.a('string').and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as ticket_operator",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_ticket_operator}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('AuthenticationResult returned (no challenge)', () => pm.expect(r, 'ChallengeName='+pm.response.json().ChallengeName).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_ticket_operator', r.AccessToken);",
+                  "pm.environment.set('id_token_ticket_operator', r.IdToken);",
+                  "pm.environment.set('refresh_token_ticket_operator', r.RefreshToken);",
+                  "const a = jwt(r.AccessToken), i = jwt(r.IdToken);",
+                  "pm.test('access token: token_use=access', () => pm.expect(a.token_use).to.eql('access'));",
+                  "pm.test('access token: iss equals configured Authority', () => pm.expect(a.iss).to.eql(pm.environment.get('admin_authority')));",
+                  "pm.test('access token: client_id equals admin app client (backend AudienceValidator)', () => pm.expect(a.client_id).to.eql(pm.environment.get('admin_client_id')));",
+                  "pm.test('access token: not expired', () => pm.expect(a.exp).to.be.above(Math.floor(Date.now()/1000)));",
+                  "pm.test('access token: scope has aws.cognito.signin.user.admin (middleware picks the Admin pool from this)', () => pm.expect((a.scope||'').split(' ')).to.include('aws.cognito.signin.user.admin'));",
+                  "pm.test('id token: token_use=id', () => pm.expect(i.token_use).to.eql('id'));",
+                  "pm.test('id token: custom:role = ticket_operator', () => pm.expect(i['custom:role']).to.eql('ticket_operator'));",
+                  "pm.test('refresh token returned', () => pm.expect(r.RefreshToken).to.be.a('string').and.not.empty);",
+                  "pm.test('id token: custom:program_ids present', () => pm.expect(i['custom:program_ids']).to.be.a('string').and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as customer_support",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_customer_support}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('AuthenticationResult returned (no challenge)', () => pm.expect(r, 'ChallengeName='+pm.response.json().ChallengeName).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_customer_support', r.AccessToken);",
+                  "pm.environment.set('id_token_customer_support', r.IdToken);",
+                  "pm.environment.set('refresh_token_customer_support', r.RefreshToken);",
+                  "const a = jwt(r.AccessToken), i = jwt(r.IdToken);",
+                  "pm.test('access token: token_use=access', () => pm.expect(a.token_use).to.eql('access'));",
+                  "pm.test('access token: iss equals configured Authority', () => pm.expect(a.iss).to.eql(pm.environment.get('admin_authority')));",
+                  "pm.test('access token: client_id equals admin app client (backend AudienceValidator)', () => pm.expect(a.client_id).to.eql(pm.environment.get('admin_client_id')));",
+                  "pm.test('access token: not expired', () => pm.expect(a.exp).to.be.above(Math.floor(Date.now()/1000)));",
+                  "pm.test('access token: scope has aws.cognito.signin.user.admin (middleware picks the Admin pool from this)', () => pm.expect((a.scope||'').split(' ')).to.include('aws.cognito.signin.user.admin'));",
+                  "pm.test('id token: token_use=id', () => pm.expect(i.token_use).to.eql('id'));",
+                  "pm.test('id token: custom:role = customer_support', () => pm.expect(i['custom:role']).to.eql('customer_support'));",
+                  "pm.test('refresh token returned', () => pm.expect(r.RefreshToken).to.be.a('string').and.not.empty);"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Logs in each seeded staff user and stores access_/id_/refresh_token_<role> in the environment for later folders."
+    },
+    {
+      "name": "02 - Cognito negative auth",
+      "item": [
+        {
+          "name": "Wrong password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_admin}}\",\n    \"PASSWORD\": \"WrongPassw0rd!\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of NotAuthorizedException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"NotAuthorizedException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unknown user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"+8801799999999\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of NotAuthorizedException, UserNotFoundException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"NotAuthorizedException\", \"UserNotFoundException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empty password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_admin}}\",\n    \"PASSWORD\": \"\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of InvalidParameterException, NotAuthorizedException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"InvalidParameterException\", \"NotAuthorizedException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unknown app client id",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"0000000000000000000000000\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_admin}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of ResourceNotFoundException, NotAuthorizedException, InvalidParameterException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"ResourceNotFoundException\", \"NotAuthorizedException\", \"InvalidParameterException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unsupported auth flow (CUSTOM_AUTH not enabled)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"CUSTOM_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_admin}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of InvalidParameterException, NotAuthorizedException, UnsupportedOperationException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"InvalidParameterException\", \"NotAuthorizedException\", \"UnsupportedOperationException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GetUser with garbage access token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.GetUser"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AccessToken\": \"not.a.jwt\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of NotAuthorizedException, InvalidParameterException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"NotAuthorizedException\", \"InvalidParameterException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Token lifecycle",
+      "item": [
+        {
+          "name": "GetUser with access token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.GetUser"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AccessToken\": \"{{access_token_admin}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json(); const at = {}; (j.UserAttributes||[]).forEach(a => at[a.Name] = a.Value);",
+                  "pm.test('Username is the phone number', () => pm.expect(j.Username).to.eql(pm.environment.get('phone_admin')));",
+                  "pm.test('custom:role = admin', () => pm.expect(at['custom:role']).to.eql('admin'));",
+                  "pm.test('phone_number matches', () => pm.expect(at['phone_number']).to.eql(pm.environment.get('phone_admin')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "AdminGetUser (what CognitoUserAttributesMiddleware calls)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.AdminGetUser"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{admin_pool_id}}\",\n  \"Username\": \"{{phone_event_manager}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const at = {}; (pm.response.json().UserAttributes||[]).forEach(a => at[a.Name] = a.Value);",
+                  "pm.test('custom:role = event_manager', () => pm.expect(at['custom:role']).to.eql('event_manager'));",
+                  "pm.test('custom:program_ids = 1,2 (comma list becomes multiple program_id claims)', () => pm.expect(at['custom:program_ids']).to.eql('1,2'));",
+                  "pm.test('user is CONFIRMED and enabled', () => { const j = pm.response.json(); pm.expect(j.UserStatus).to.eql('CONFIRMED'); pm.expect(j.Enabled).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "AdminGetUser by access-token sub (middleware looks up by sub)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.AdminGetUser"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{admin_pool_id}}\",\n  \"Username\": \"{{sub_admin}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.environment.set('sub_admin', jwt(pm.environment.get('access_token_admin')).sub);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('lookup by sub resolves the user', () => pm.response.to.have.status(200));",
+                  "pm.test('same user as phone login', () => pm.expect(pm.response.json().Username).to.eql(pm.environment.get('phone_admin')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh token -> new access token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"REFRESH_TOKEN_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"REFRESH_TOKEN\": \"{{refresh_token_admin}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult || {};",
+                  "pm.test('new AccessToken issued', () => pm.expect(r.AccessToken).to.be.a('string').and.not.empty);",
+                  "if (r.AccessToken) { const a = jwt(r.AccessToken);",
+                  "  pm.test('refreshed token still carries client_id', () => pm.expect(a.client_id).to.eql(pm.environment.get('admin_client_id')));",
+                  "  pm.test('refreshed token same subject', () => pm.expect(a.sub).to.eql(jwt(pm.environment.get('access_token_admin')).sub)); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh with invalid refresh token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"REFRESH_TOKEN_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"REFRESH_TOKEN\": \"invalid\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of NotAuthorizedException, InvalidParameterException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"NotAuthorizedException\", \"InvalidParameterException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Backend JWT validation (Admin scheme)",
+      "item": [
+        {
+          "name": "No token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Malformed bearer token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bad_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.variables.set('bad_token','abc');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Forged token (wrong signing key)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{forged_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// HS256 token with Cognito-looking claims but signed with a key Cognito never issued",
+                  "const b64u = s => CryptoJS.enc.Base64.stringify(s).replace(/=+$/,'').replace(/\\+/g,'-').replace(/\\//g,'_');",
+                  "const enc = o => b64u(CryptoJS.enc.Utf8.parse(JSON.stringify(o)));",
+                  "const h = enc({alg:'HS256',typ:'JWT'});",
+                  "const p = enc({sub:'forged',iss:pm.environment.get('admin_authority'),client_id:pm.environment.get('admin_client_id'),token_use:'access',scope:'aws.cognito.signin.user.admin','custom:role':'admin',exp:Math.floor(Date.now()/1000)+3600});",
+                  "const sig = b64u(CryptoJS.HmacSHA256(h+'.'+p,'not-the-cognito-key'));",
+                  "pm.variables.set('forged_token', h+'.'+p+'.'+sig);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tampered signature on real token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tampered_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// valid header+payload from a real admin login, signature reversed",
+                  "const parts = pm.environment.get('access_token_admin').split('.');",
+                  "parts[2] = parts[2].split('').reverse().join('');",
+                  "pm.variables.set('tampered_token', parts.join('.'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "ID token instead of access token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{id_token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "AudienceValidator reads the client_id claim, which ID tokens do not carry (they use aud), so this must be rejected."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "access_token query string (only honoured on chathub paths)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users?access_token={{access_token_admin}}",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Valid admin access token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Anonymous endpoint: forget-password for unknown phone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users/forget-password?phoneNo=%2B8801799999999",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 without a token', () => pm.response.to.have.status(200));",
+                  "pm.test('does not reveal whether the phone exists (body is false)', () => pm.expect(pm.response.text().trim()).to.eql('false'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 - Role-based access (custom:role -> Role claim)",
+      "item": [
+        {
+          "name": "GET /api/v1/admin-users  [Admin]",
+          "item": [
+            {
+              "name": "admin -> allow",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/admin-users",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_admin}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('admin is allowed (200)', () => pm.response.to.have.status(200));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "event_manager -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/admin-users",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_event_manager}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('event_manager is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ticket_manager -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/admin-users",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_ticket_manager}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('ticket_manager is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ticket_operator -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/admin-users",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_ticket_operator}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('ticket_operator is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "customer_support -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/admin-users",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_customer_support}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('customer_support is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "GET /api/v1/ticket-checker/search  [Admin, EventManager]",
+          "item": [
+            {
+              "name": "admin -> allow",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker/search",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_admin}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('admin is allowed (not 401/403)', () => pm.expect(pm.response.code).to.not.be.oneOf([401,403]));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "event_manager -> allow",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker/search",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_event_manager}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('event_manager is allowed (not 401/403)', () => pm.expect(pm.response.code).to.not.be.oneOf([401,403]));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ticket_manager -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker/search",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_ticket_manager}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('ticket_manager is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ticket_operator -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker/search",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_ticket_operator}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('ticket_operator is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "customer_support -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker/search",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_customer_support}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('customer_support is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "GET /api/v1/ticket-checker  [Admin, EventManager, TicketManager, BCBPersonnel]",
+          "item": [
+            {
+              "name": "admin -> allow",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_admin}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('admin is allowed (not 401/403)', () => pm.expect(pm.response.code).to.not.be.oneOf([401,403]));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "event_manager -> allow",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_event_manager}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('event_manager is allowed (not 401/403)', () => pm.expect(pm.response.code).to.not.be.oneOf([401,403]));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ticket_manager -> allow",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_ticket_manager}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('ticket_manager is allowed (not 401/403)', () => pm.expect(pm.response.code).to.not.be.oneOf([401,403]));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ticket_operator -> allow",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_ticket_operator}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('ticket_operator is allowed (not 401/403)', () => pm.expect(pm.response.code).to.not.be.oneOf([401,403]));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "customer_support -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/ticket-checker",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_customer_support}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('customer_support is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "GET /api/v1/user-issue  [Admin, CustomerSupportAdmin]",
+          "item": [
+            {
+              "name": "admin -> allow",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/user-issue",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_admin}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('admin is allowed (not 401/403)', () => pm.expect(pm.response.code).to.not.be.oneOf([401,403]));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "event_manager -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/user-issue",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_event_manager}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('event_manager is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ticket_manager -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/user-issue",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_ticket_manager}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('ticket_manager is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "ticket_operator -> deny",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/user-issue",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_ticket_operator}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('ticket_operator is forbidden (403)', () => pm.response.to.have.status(403));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "customer_support -> allow",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{admin_base_url}}/api/v1/user-issue",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token_customer_support}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('customer_support is allowed (not 401/403)', () => pm.expect(pm.response.code).to.not.be.oneOf([401,403]));"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "description": "A 403 means the token validated but the role claim (added by CognitoUserAttributesMiddleware from custom:role) was missing or wrong. A 401 means JWT validation failed. 'Allowed' rows other than admin-users only assert not 401/403 because those endpoints may need query params."
+    },
+    {
+      "name": "06 - Admin user lifecycle (creates and deletes tmp_phone)",
+      "item": [
+        {
+          "name": "Cleanup from previous run (result ignored)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users/{{tmp_phone}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('request completed', () => pm.expect(pm.response.code).to.be.below(600));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create user (Admin API -> Cognito AdminCreateUser)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{admin_base_url}}/api/v1/admin-users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Name\": \"Postman Temp\",\n  \"Phone\": \"{{tmp_phone}}\",\n  \"Email\": \"postman-temp@etp.local\",\n  \"Role\": \"event_manager\",\n  \"ProgramIds\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cognito: user exists with role and programs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.AdminGetUser"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{admin_pool_id}}\",\n  \"Username\": \"{{tmp_phone}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const at = {}; (pm.response.json().UserAttributes||[]).forEach(a => at[a.Name] = a.Value);",
+                  "pm.test('custom:role = event_manager', () => pm.expect(at['custom:role']).to.eql('event_manager'));",
+                  "pm.test('custom:program_ids = 1', () => pm.expect(at['custom:program_ids']).to.eql('1'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Set known password (set-forget-password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{admin_base_url}}/api/v1/admin-users/set-forget-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserId\": \"{{tmp_phone}}\",\n  \"Password\": \"{{tmp_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "SECURITY: this endpoint is [AllowAnonymous] and AdminUserManager.ForgetSetPasswordAsync does no OTP/ownership check before setting the password. Anyone who can reach it can set any staff member's password. Used here without a token only to give the throwaway user a known password."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as new user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{tmp_phone}}\",\n    \"PASSWORD\": \"{{tmp_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult; pm.test('tokens issued', () => pm.expect(r).to.exist);",
+                  "if (r) pm.environment.set('access_token_tmp', r.AccessToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "New user (event_manager) can reach ticket-checker/search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/ticket-checker/search",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_tmp}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('allowed (not 401/403)', () => pm.expect(pm.response.code).to.not.be.oneOf([401,403]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "New user cannot reach admin-users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_tmp}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update role to customer_support",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{admin_base_url}}/api/v1/admin-users/{{tmp_phone}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserId\": \"{{tmp_phone}}\",\n  \"Name\": \"Postman Temp\",\n  \"Role\": \"customer_support\",\n  \"ProgramIds\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cognito: role updated",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.AdminGetUser"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{admin_pool_id}}\",\n  \"Username\": \"{{tmp_phone}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const at = {}; (pm.response.json().UserAttributes||[]).forEach(a => at[a.Name] = a.Value);",
+                  "pm.test('custom:role = customer_support', () => pm.expect(at['custom:role']).to.eql('customer_support'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Disable user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users/disable/{{tmp_phone}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Disabled user cannot log in",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{tmp_phone}}\",\n    \"PASSWORD\": \"{{tmp_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of NotAuthorizedException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"NotAuthorizedException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enable user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users/enable/{{tmp_phone}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Re-enabled user can log in",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{tmp_phone}}\",\n    \"PASSWORD\": \"{{tmp_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 with tokens', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().AuthenticationResult).to.exist; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin set-password (admin-initiated reset)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{admin_base_url}}/api/v1/admin-users/set-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserId\": \"{{tmp_phone}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Generates a new password server-side (delivered by SMS/email), so the old password should stop working."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Old password rejected after admin reset",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{tmp_phone}}\",\n    \"PASSWORD\": \"{{tmp_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of NotAuthorizedException, PasswordResetRequiredException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"NotAuthorizedException\", \"PasswordResetRequiredException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Non-admin cannot create users",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{admin_base_url}}/api/v1/admin-users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Name\": \"Postman Temp\",\n  \"Phone\": \"{{tmp_phone}}\",\n  \"Email\": \"postman-temp@etp.local\",\n  \"Role\": \"event_manager\",\n  \"ProgramIds\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_event_manager}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete user",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/admin-users/{{tmp_phone}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token_admin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Deleted user cannot log in",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{tmp_phone}}\",\n    \"PASSWORD\": \"{{tmp_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of NotAuthorizedException, UserNotFoundException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"NotAuthorizedException\", \"UserNotFoundException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 - Service token (HMAC scheme, non-Cognito)",
+      "item": [
+        {
+          "name": "Issue token with valid ServiceApiKey",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ServiceApiKey",
+                "value": "{{service_api_key}}"
+              }
+            ],
+            "url": "{{admin_base_url}}/api/v1/token",
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Set service_api_key to Authentication:ServiceApiKey from the Admin service config."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "pm.test('access_token returned', () => pm.expect(pm.response.json().access_token).to.be.a('string').and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Issue token with wrong ServiceApiKey",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "ServiceApiKey",
+                "value": "wrong"
+              }
+            ],
+            "url": "{{admin_base_url}}/api/v1/token",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Issue token without ServiceApiKey",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{admin_base_url}}/api/v1/token",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08 - Session revocation (run last)",
+      "item": [
+        {
+          "name": "GlobalSignOut (customer_support)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.GlobalSignOut"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AccessToken\": \"{{access_token_customer_support}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh token revoked after sign-out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"REFRESH_TOKEN_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"REFRESH_TOKEN\": \"{{refresh_token_customer_support}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of NotAuthorizedException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"NotAuthorizedException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Revoked access token rejected by Cognito GetUser",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.GetUser"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AccessToken\": \"{{access_token_customer_support}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Cognito error is one of NotAuthorizedException', () => {",
+                  "  pm.expect(pm.response.code).to.eql(400);",
+                  "  const t = (pm.response.json().__type || '').split('#').pop();",
+                  "  pm.expect(t).to.be.oneOf([\"NotAuthorizedException\"]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Revokes only customer_support's tokens. The next run's folder 01 logs in again, so reruns are safe. The backend validates JWTs offline, so it would still accept a revoked access token until exp; that is not asserted here."
+    }
+  ]
+}

@@ -2,6 +2,7 @@ services:
   floci:
     image: floci/floci:2.3.0
     container_name: etp-floci
+    restart: unless-stopped
     ports:
       - "4566:4566"
     environment:
@@ -15,6 +16,7 @@ services:
   floci-ui:
     image: floci/floci-ui:0.7.0
     container_name: etp-floci-ui
+    restart: unless-stopped
     depends_on:
       floci:
         condition: service_healthy
