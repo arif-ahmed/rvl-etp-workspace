@@ -49,9 +49,12 @@ Quick check: `aws --endpoint-url http://localhost:4566 s3 ls` should return with
 
 ### 3. Seed the resources
 ```powershell
-./seed.ps1
+./seed.ps1          # S3 bucket, SQS queues, SES identity
+./seed-users.ps1    # Cognito: all four pools + app clients + test users
 ```
-Copy the printed output. It contains the generated Cognito `PoolId` / `ClientId` values.
+Copy the printed output. It contains the generated Cognito `PoolId` / `ClientId` values and the
+test users (password `Passw0rd!23`, username = phone number). See also
+[QUICKSTART.md](QUICKSTART.md) for the short version.
 
 ### 4. Point the services at Floci
 Run in each service project folder (`rvl-gobcb-backend/Services/<Name>/ETP.<Name>.Service`), for the
@@ -92,7 +95,7 @@ With Aspire, add `.WithEnvironment("AWS_ENDPOINT_URL", "http://localhost:4566")`
 3. Exercise one upload (S3), one queue message (SQS), and one login (Cognito).
 
 ### 6. Known gaps to close
-- Cognito custom attributes / groups the backend expects (see `CognitoUserAttributesMiddleware`) are not created by `seed.ps1` yet.
+- ~~Cognito custom attributes are not seeded~~ — `seed-users.ps1` now creates all four pools **with** the `custom:role` / `custom:program_ids` schema and users in every pool (`user`, `ticket-checker`, `agent` included).
 - `Authority` / `Metadata` URLs for Floci Cognito need confirming from the Floci docs.
 - Firebase push notifications and the DgePay payment gateway are not AWS, so Floci does not cover them.
 
@@ -132,6 +135,7 @@ docker compose stop           # keeps data
 docker compose down -v        # deletes the etp-floci-data volume
 docker compose up -d
 ./seed.ps1
+./seed-users.ps1
 ```
 Cognito pool and client IDs are regenerated on re-seed, so update the user-secrets again (step 4).
 
@@ -188,4 +192,4 @@ docker rm -f floci-aws-ui
 
 ### After a full teardown
 Next time start from [First-time setup](#first-time-setup-once-per-machine): `docker compose up -d`,
-`./seed.ps1`, and update the user-secrets, since Cognito pool/client IDs are regenerated.
+`./seed.ps1`, `./seed-users.ps1`, and update the user-secrets, since Cognito pool/client IDs are regenerated.

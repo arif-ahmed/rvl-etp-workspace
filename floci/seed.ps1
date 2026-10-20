@@ -1,8 +1,10 @@
-# Seeds Floci with the AWS resources the ETP backend expects, then prints the values to put into
-# each service's `dotnet user-secrets`. Idempotent for S3/SQS; Cognito pools are created each run
-# (reset with: docker compose down -v).
+# Seeds Floci (local AWS emulator) with the non-Cognito resources the ETP backend expects:
+# S3 bucket, SQS queues, SES sender identity. Idempotent; prints the values to put into
+# each service's `dotnet user-secrets`.
+# Cognito pools/clients/users come from ./seed-users.ps1 (the custom attribute schema must be
+# defined at pool creation, so that script owns Cognito end to end).
 #
-# Usage:  docker compose up -d ; ./seed.ps1
+# Usage:  docker compose up -d ; ./seed.ps1 ; ./seed-users.ps1
 
 $ErrorActionPreference = 'Stop'
 
@@ -13,7 +15,6 @@ $env:AWS_SECRET_ACCESS_KEY = 'test'
 
 $bucket = 'etp-local'
 $queues = @('OrderSuccess', 'EventCapacity', 'FirebaseNotification', 'TicketProcessing')   # AWS:Queue:* (names, not URLs: the code calls GetQueueUrl)
-$pools  = @('Admin', 'User', 'TicketChecker', 'Agent')                                       # AWS:CognitoPool:*
 
 # S3
 aws s3api create-bucket --bucket $bucket --create-bucket-configuration LocationConstraint=$env:AWS_REGION 2>$null | Out-Null
@@ -29,15 +30,7 @@ foreach ($q in $queues) {
 aws ses verify-email-identity --email-address noreply@etp.local | Out-Null
 Write-Host 'SES identity: noreply@etp.local'
 
-# Cognito: one pool + app client per role
-$secrets = [ordered]@{}
-foreach ($p in $pools) {
-    $poolId = aws cognito-idp create-user-pool --pool-name "etp-$($p.ToLower())" --query 'UserPool.Id' --output text
-    $clientId = aws cognito-idp create-user-pool-client --user-pool-id $poolId --client-name "etp-$($p.ToLower())-client" `
-        --explicit-auth-flows ALLOW_USER_PASSWORD_AUTH ALLOW_REFRESH_TOKEN_AUTH ALLOW_ADMIN_USER_PASSWORD_AUTH `
-        --query 'UserPoolClient.ClientId' --output text
-    $secrets[$p] = @{ PoolId = $poolId; ClientId = $clientId }
-}
+# Cognito is seeded by ./seed-users.ps1 (pools, app clients, users with the custom attribute schema).
 
 Write-Host "`n--- user-secrets values (set per service) ---"
 Write-Host "AWS:Region                = $env:AWS_REGION"
@@ -46,9 +39,4 @@ Write-Host "AWS:SecretAccessKey       = test"
 Write-Host "AWS:Bucket:Name           = $bucket"
 Write-Host "AWS:Bucket:BaseUrl        = http://localhost:4566   (code sets S3 ServiceURL from this)"
 foreach ($q in $queues) { Write-Host ("AWS:Queue:{0,-20} = {0}" -f $q) }
-foreach ($p in $pools) {
-    $s = $secrets[$p]
-    Write-Host "AWS:CognitoPool:$p:PoolId   = $($s.PoolId)"
-    Write-Host "AWS:CognitoPool:$p:ClientId = $($s.ClientId)"
-    Write-Host "AWS:CognitoPool:$p:Authority/Metadata = check Floci docs for the issuer/JWKS URL of this pool"
-}
+Write-Host 'Cognito (Admin/User/TicketChecker/Agent pools + users): run ./seed-users.ps1'

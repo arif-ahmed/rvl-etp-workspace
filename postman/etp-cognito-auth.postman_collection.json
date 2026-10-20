@@ -76,6 +76,75 @@
           ]
         },
         {
+          "name": "List users in pool (ListUsers, signed - pick pool via {{admin_pool_id}}/{{user_pool_id}}/{{ticketchecker_pool_id}}/{{agent_pool_id}})",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.ListUsers"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{admin_pool_id}}\",\n  \"Limit\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "All users of a pool with their custom:role / custom:program_ids (the same call the backend AdminUserProvider uses via ListUsersAsync). Swap the UserPoolId body variable to inspect user/ticket-checker/agent pools. IMPORTANT: signed request - unsigned calls return 'pool does not exist' in Floci (and fail on real AWS too)]."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 ListUsers', () => pm.response.to.have.status(200));",
+                  "const res = pm.response.json();",
+                  "pm.test('Pool has users (run floci/seed-users.ps1 if not)', () => pm.expect((res.Users||[]).length).to.be.above(0));",
+                  "(res.Users || []).forEach(u => {",
+                  "  const a = u.Attributes || [];",
+                  "  console.log(u.Username, '->', (a.find(x => x.Name === 'custom:role') || {}).Value, '| programs:', (a.find(x => x.Name === 'custom:program_ids') || {}).Value);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "List user pool clients (resolve admin_client_id)",
           "request": {
             "method": "POST",
