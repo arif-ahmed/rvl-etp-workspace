@@ -10,3 +10,11 @@
 	path = rvl-gobcb-user-app
 	url = https://github.com/Relief-Validation/rvl-gobcb-user-app.git
 	branch = main
+[submodule "rvl-gobcb-admin-portal"]
+	path = rvl-gobcb-admin-portal
+	url = https://github.com/Relief-Validation/rvl-gobcb-admin-portal.git
+	branch = main
+[submodule "rvl-gobcb-user-portal"]
+	path = rvl-gobcb-user-portal
+	url = https://github.com/Relief-Validation/rvl-gobcb-user-portal.git
+	branch = main
