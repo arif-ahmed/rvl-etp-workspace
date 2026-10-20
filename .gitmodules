@@ -2,3 +2,11 @@
 	path = rvl-gobcb-backend
 	url = https://github.com/Relief-Validation/rvl-gobcb-backend.git
 	branch = main
+[submodule "rvl-gobcb-checker-app"]
+	path = rvl-gobcb-checker-app
+	url = https://github.com/Relief-Validation/rvl-gobcb-checker-app.git
+	branch = main
+[submodule "rvl-gobcb-user-app"]
+	path = rvl-gobcb-user-app
+	url = https://github.com/Relief-Validation/rvl-gobcb-user-app.git
+	branch = main
