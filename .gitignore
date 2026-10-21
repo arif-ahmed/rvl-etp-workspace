@@ -432,3 +432,7 @@ scripts/user-secrets.json
 
 # Floci HTTPS proxy certificate (exported dev cert)
 floci/certs/
+.gstack/
+
+# Generated local admin portal copy (scripts/Setup-AdminPortal.ps1)
+portal-local/
