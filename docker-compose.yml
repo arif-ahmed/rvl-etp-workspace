@@ -1,0 +1,51 @@
+# Local dev dependencies for the ETP backend: PostgreSQL + Redis.
+# Workspace-level on purpose — the backend repo's own docker-compose.yaml only
+# builds the 9 app images for CI (ECR push); it has no databases.
+#
+# Usage (from this folder):
+#   docker compose up -d      # first run also creates the 6 ETP databases (initdb/)
+#   docker compose stop       # end of day (data kept)
+#   docker compose down       # remove containers (data volumes kept)
+#   docker compose down -v    # remove everything incl. data
+#
+# Overrides if a port is already taken on your machine (e.g. a native Redis on 6379):
+#   ETP_REDIS_PORT=6381 docker compose up -d     (also ETP_PG_PORT, ETP_PG_PASSWORD)
+# ...then adjust Cache:Redis:ConnectionString / ConnectionStrings:* in user-secrets.
+
+name: etp-local
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: etp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${ETP_PG_PASSWORD:-postgres}
+    ports:
+      - "${ETP_PG_PORT:-5432}:5432"
+    volumes:
+      - etp-pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7
+    container_name: etp-redis
+    restart: unless-stopped
+    ports:
+      - "${ETP_REDIS_PORT:-6379}:6379"
+    volumes:
+      - etp-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  etp-pgdata:
+  etp-redis-data:

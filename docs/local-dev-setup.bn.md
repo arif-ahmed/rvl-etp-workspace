@@ -119,37 +119,56 @@ AWS **Cognito-র ৪টা ইউজার পুল** (Admin/User/TicketChecke
 >
 > টিম আসলে **Aspire + floci স্ট্যাকেও** চালায় (নিচের "বিকল্প পথ" অংশ) — ওটা নিলে ধাপ ১–৩-এর বেশিরভাগ কাজ কমে যায়।
 
-### ধাপ ১: PostgreSQL + Redis চালানো (Docker — যেকোনো ডিরেক্টরি)
+### ধাপ ১: PostgreSQL + Redis চালানো (docker compose — workspace root থেকে)
 
-রিপোর `docker-compose.yaml`-এ শুধু ৯টা অ্যাপ-ইমেজ ডেফাইন করা (CI-তে ECR-এ push করার জন্য; UserAuth ও Platform ওখানেও নেই) — PostgreSQL/Redis **নেই**, তাদের ভার্সনও রিপোতে উল্লেখ নেই। নিজে দুটো কন্টেইনার চালান:
+ওয়ার্কস্পেস রুটের `docker-compose.yml`-এ dev-ডিপেন্ডেন্সি দুটো (PostgreSQL 16 + Redis 7, `initdb/` স্ক্রিপ্টসহ) তৈরি করাই আছে — ব্যাকএন্ড রিপোর নিজের `docker-compose.yaml` শুধু CI-র ৯টা অ্যাপ-ইমেজের (UserAuth/Platform ওখানে নেই), ওখানে PostgreSQL/Redis নেই।
 
 > শুরুর আগে দেখে নিন Docker Desktop চালু আছে (`docker ps` কাজ করছে কি না) — বন্ধ থাকলে আগে অ্যাপটা খুলে engine ready হতে দিন।
 
 ```bash
-docker run -d --name etp-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16
-docker run -d --name etp-redis -p 6379:6379 redis:7
+cd D:\Workspace\Sources\RVL\rvl-etp\rvl-etp-workspace
+docker compose up -d
 ```
 
-মেশিন রিস্টার্টের পর শুধু: `docker start etp-postgres etp-redis`
+- কন্টেইনার নাম ফিক্সড — `etp-postgres`, `etp-redis` — তাই এই গাইডের বাকি সব কমান্ড (`docker exec`, `docker stop/start`) আগের মতোই চলবে।
+- **প্রথমবার চালালেই ধাপ ২-এর ৬টা ডাটাবেস অটো তৈরি হয়ে যায়** (`initdb/01-create-databases.sql` — খালি volume-এ একবারই চলে)।
+- ডেটা named volume-এ (`etp-pgdata`, `etp-redis-data`) — কন্টেইনার মুছলেও ডেটা বাঁচে।
+- পোর্ট/পাসওয়ার্ড বদলাতে env দিন: `ETP_PG_PORT`, `ETP_REDIS_PORT` (যেমন 6379-এ native Redis আগে থেকে চললে `ETP_REDIS_PORT=6381 docker compose up -d`), `ETP_PG_PASSWORD`।
+- মেশিন রিস্টার্টের পর Docker উঠলে দুটো নিজেই ফিরে আসে (`restart: unless-stopped`)।
 
-চালু আছে কি না চেক: `docker ps` (দুটোই `Up` দেখাতে হবে)।
+চালু আছে কি না চেক: `docker ps` (দুটোই `Up (healthy)` দেখাতে হবে)।
 
-### ধাপ ২: ৬টা খালি ডাটাবেস তৈরি (যেকোনো ডিরেক্টরি)
-
-⚠️ **গুরুত্বপূর্ণ**: পুরো রিপোতে কোথাও `EnsureCreated`/`CREATE DATABASE` নেই — মাইগ্রেশন শুধু **স্কিমা** বানায়, ডাটাবেস **নিজে বানায় না** (যাচাইকৃত: `MigratePendingDatabase` শুধু `Database.Migrate()` কল করে)। তাই আগে খালি DB বানাতে হবে:
+**ম্যানুয়াল বিকল্প (reference — compose ছাড়া সরাসরি চালাতে চাইলে):**
 
 ```bash
-docker exec -it etp-postgres psql -U postgres -c "CREATE DATABASE etp_admin;"
-docker exec -it etp-postgres psql -U postgres -c "CREATE DATABASE etp_booking;"
-docker exec -it etp-postgres psql -U postgres -c "CREATE DATABASE etp_event;"
-docker exec -it etp-postgres psql -U postgres -c "CREATE DATABASE etp_ticketchecker;"
-docker exec -it etp-postgres psql -U postgres -c "CREATE DATABASE etp_pushnotification;"
-docker exec -it etp-postgres psql -U postgres -c "CREATE DATABASE etp_userissue;"
+docker run -d --name etp-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16
+docker run -d --name etp-redis -p 6379:6379 redis:7
+# পরে বন্ধ/চালু: docker stop etp-postgres etp-redis  /  docker start etp-postgres etp-redis
 ```
 
+এ পথের পার্থক্য মনে রাখুন: ডাটাবেসগুলো **অটো তৈরি হয় না** (initdb স্ক্রিপ্ট ছাড়া) — ধাপ ২-এর `CREATE DATABASE` কমান্ডগুলো নিজে চালাতে হবে; আর ডেটা anonymous volume-এ থাকে (`docker rm -v`-এ চলে যায়, নতুন কন্টেইনারে ফেরে না)।
+
+### ধাপ ২: ৬টা ডাটাবেস — যাচাই (ধাপ ১-এই অটো তৈরি হয়ে যায়)
+
+⚠️ **কেন এই বিষয়টা জানা দরকার**: পুরো রিপোতে কোথাও `EnsureCreated`/`CREATE DATABASE` নেই — মাইগ্রেশন শুধু **স্কিমা** বানায়, ডাটাবেস **নিজে বানায় না** (যাচাইকৃত: `MigratePendingDatabase` শুধু `Database.Migrate()` কল করে)। compose-এর `initdb/01-create-databases.sql` প্রথম রানেই এই কাজটা করে দেয়। যাচাই করুন:
+
+```bash
+docker exec etp-postgres psql -U postgres -c "\l"
+```
+
+৬টা নাম দেখতে পাবেন: `etp_admin`, `etp_booking`, `etp_event`, `etp_ticketchecker`, `etp_pushnotification`, `etp_userissue`।
+
 দুটো কথা:
-- **নামগুলো রিপোতে নেই** — আসল নাম থাকবে আপনার পাওয়া connection string-এ (`Database=...` অংশ)। উপরের নাম আপনার connection string-এর সাথে মিলিয়ে নিন।
+- **নামগুলো রিপোতে নেই** — আসল নাম থাকবে আপনার পাওয়া connection string-এ (`Database=...` অংশে)। উপরের নাম initdb স্ক্রিপ্টের কনভেনশন; নিজের connection string-এর সাথে মিলিয়ে নিন।
 - **Ticketing-এর আলাদা DB লাগবে না** — সে Booking-এর DB-ই ব্যবহার করে।
+
+DB না দেখলে (পুরনো volume-এ init স্কিপ হয়েছে, বা নাম বদলাতে চান) — হাতে বানান:
+
+```bash
+docker exec etp-postgres psql -U postgres -c "CREATE DATABASE etp_admin;"
+docker exec etp-postgres psql -U postgres -c "CREATE DATABASE etp_booking;"
+# ... বাকিগুলো একই প্যাটার্নে
+```
 
 ### ধাপ ৩: User Secrets ভরা (backend root থেকে)
 
@@ -202,20 +221,54 @@ dotnet build RVL-ETP.BackEnd.sln
 
 ### বিকল্প পথ: floci + Aspire — টিমের ফুল লোকাল স্ট্যাক (লাইভ-যাচাইকৃত ২০২৬-১০-২১)
 
-ওয়ার্কস্পেসে টিমের বানানো দুটো জিনিস এটা: `floci/` (Floci — এক কন্টেইনারে local AWS emulator: S3, SQS, SES, Cognito; পোর্ট 4566, ওয়েব UI 4500) আর `aspire/Etp.AppHost` (postgres + redis + DynamoDB Local কন্টেইনার + ১১টা সার্ভিস একসাথে, ফিক্সড পোর্ট **5101–5111**, Aspire dashboard)।
+ওয়ার্কস্পেসে টিমের বানানো দুটো জিনিস এটা: `floci/` (Floci — এক কন্টেইনারে local AWS emulator: S3, SQS, SES, Cognito; পোর্ট 4566, ওয়েব UI 4500) আর `aspire/Etp.AppHost` (postgres + redis + DynamoDB Local কন্টেইনার + ১১টা সার্ভিস একসাথে, ফিক্সড পোর্ট **5101–5111**, Aspire dashboard)। নিচে প্রতিটা কমান্ড কোন ফোল্ডার থেকে দেবেন সেটাসহ পুরো ফ্লো:
 
-**চালানোর ক্রম** (workspace root থেকে):
+#### ক০. একবারের প্রস্তুতি (নতুন মেশিনে)
+
+টুল চেক: Docker Desktop চালু, **.NET 10 SDK** (AppHost নিজে net10.0-এর), `pwsh` + AWS CLI v2 (seed-এর জন্য)। তারপর floci চালু করে seed:
 
 ```bash
-cd floci
-docker compose up -d     # floci চালু (ডেটা etp-floci-data volume-এ থাকে, রোজ লাগবে না)
-pwsh ./seed.ps1          # S3 bucket etp-local + ৬টা SQS queue + SES identity
-pwsh ./seed-users.ps1    # ৪টা Cognito pool + client + টেস্ট ইউজার → PoolId/ClientId আউটপুট কপি করুন
-cd ../aspire
-dotnet run --project Etp.AppHost   # পুরো স্ট্যাক; dashboard URL কনসোলে ছাপা হয় (localhost:15888)
+cd D:\Workspace\Sources\RVL\rvl-etp\rvl-etp-workspace\floci
+docker compose up -d        # floci + UI কন্টেইনার (ডেটা etp-floci-data volume-এ থাকে)
+pwsh ./seed.ps1             # S3 bucket etp-local + ৬টা SQS queue + SES identity
+pwsh ./seed-users.ps1       # ৪টা Cognito pool + client + টেস্ট ইউজার — আউটপুটের PoolId/ClientId কপি করুন
 ```
 
 টেস্ট ইউজার (password `Passw0rd!23`, username = ফোন): Admin `+8801700000001`, User `+8801700000011`, TicketChecker `+8801700000021`, Agent `+8801700000031`।
+
+এরপর নিচের **Secrets-টেবিলের** মানগুলো প্রতিটা AWS-ব্যবহারকারী সার্ভিসের user-secrets-এ বসান (এই মেশিনে ১০ সার্ভিসে বসানোই আছে)।
+
+#### ক১. প্রতিদিন স্ট্যাক চালু (aspire ফোল্ডার থেকে)
+
+```bash
+cd D:\Workspace\Sources\RVL\rvl-etp\rvl-etp-workspace\aspire
+dotnet run --project Etp.AppHost
+```
+
+- প্রথমবার ~৪–৬ মিনিট (docker ইমেজ-ডাউনলোড + বিল্ড); পরের বার অনেক দ্রুত।
+- কনসোলে **dashboard login URL** ছাপা হবে (`http://localhost:15888/login?t=...`) — ব্রাউজারে খুলুন; সব রিসোর্সের স্ট্যাটাস, log, trace, console এক জায়গায়।
+- সার্ভিসগুলো 5101–5111-এ (Admin 5101, Booking 5102, Event 5103 … UserIssue 5110, Utility 5111); ইনফ্রা: postgres (একক `etp` DB, volume `etp-postgres-data`, password `etp-local-pg`), Redis, DynamoDB Local :8000, pgAdmin, RedisInsight।
+- এ পথে সার্ভিসের নিজের connection-string secret **লাগে না** — AppHost env var দিয়ে সব বসিয়ে দেয় (নিচের "AppHost নিজে যা দেয়")।
+- দ্রুত যাচাই: dashboard-এ সবাই `Running`, বা `curl http://localhost:5101/health`।
+
+> ⚠️ **আজকের বাস্তব সীমা**: secrets-এ floci-মান বসানো থাকলে **প্রতিটা HTTP রিকোয়েস্ট 500** হবে — কারণ নিচের "ফাঁক ১" (RequireHttpsMetadata)। স্ট্যাক উঠবে, মাইগ্রেশন আর worker চলবে, কিন্তু API কল করার আগে ওই ফিক্সটা সাবমডিউল-PR-এ আসতে হবে। floci-মান না বসালে endpoint স্বাভাবিক চলে, কিন্তু তখন AWS-জাতীয় ফিচার কাজ করবে না।
+
+#### ক২. Visual Studio দিয়ে ডিবাগ (backend sln + Attach to Process)
+
+1. VS-এ খুলুন `rvl-gobcb-backend\RVL-ETP.BackEnd.sln` — যেখানে দরকার breakpoint বসান।
+2. টার্মিনালে ক১-এর কমান্ড দিয়ে স্ট্যাক চালু করুন।
+3. VS-এ **Debug → Attach to Process…** → লিস্টে `ETP.Booking.Service`-জাতীয় প্রসেস খুঁজে (Ctrl+click-এ একসাথে একাধিক) **Attach** করুন।
+4. Breakpoint বাঁধবে — source আর PDB ওই খোলা sln-এই আছে, প্রসেস শুধু টার্মিনালের।
+
+- VS Code-এ: Run and Debug → "Attach to .NET Process" — একই কাজ।
+- ⚠️ সার্ভিস চালু অবস্থায় VS থেকে Build/F5 করবেন না — bin ফাইল-লক হয়ে build error (একবার ঘটেছে)।
+- রোজ পুরো-স্ট্যাক ডিবাগ করতে হলে `aspire/`-এ একটা wrapper sln বানানো যায় (AppHost + ৪৯ প্রজেক্ট; সাবমডিউল অপরিবর্তিত) — তখন AppHost-এ F5 দিলেই সব সার্ভিস ডিবাগারে ওঠে।
+
+#### ক৩. বন্ধ করা
+
+- AppHost-এর টার্মিনালে **Ctrl+C** — সার্ভিস-প্রসেসগুলো বন্ধ হবে।
+- `docker ps` দেখুন: এলোমেলো সাফিক্স-নামের ইনফ্রা-কন্টেইনার (যেমন `postgres-xxxxx`) থেকে গেলে `docker rm -f <নাম>` — কিন্তু `etp-postgres-data` / `etp-redis-data` **volume রাখুন**, পরের রানে ডেটা ফিরে আসবে।
+- floci-জোড়া আলাদা — বন্ধ না করলেও চলবে (`restart: unless-stopped`)।
 
 **Secrets-এ যা বসবে** (প্রতিটা AWS-ব্যবহারকারী সার্ভিসের user-secrets-এ; এই মেশিনে ১০ সার্ভিসে বসানোই আছে):
 
@@ -251,6 +304,7 @@ dotnet run --project Services/Admin/ETP.Admin.Service/ETP.Admin.Service.csproj
 1. `rvl-gobcb-backend\RVL-ETP.BackEnd.sln` খুলুন।
 2. **একটা সার্ভিস**: Solution Explorer-এ `ETP.<X>.Service` → রাইট-ক্লিক → *Set as Startup Project* → **F5**। `launchSettings.json`-এর `launchUrl` ঠিক থাকায় ব্রাউজারে সরাসরি Swagger খুলবে।
 3. **একাধিক সার্ভিস**: solution-এর নামায় রাইট-ক্লিক → *Properties* → *Startup Project* → **Multiple startup projects** → যেগুলো লাগবে সেগুলোতে **Start** → OK → F5। (এই সেটিং `.vs` ফোল্ডারে রাখা হয়, একবার সেট করলেই থাকে।)
+4. **Aspire-স্ট্যাক ডিবাগ করতে চাইলে**: এই F5-পথ নয় — §৫-এর "বিকল্প পথ" → ক২ অনুসরণ করুন (backend sln খোলা রাখুন, স্ট্যাক টার্মিনালে চালু, তারপর **Attach to Process**)।
 
 ### ৬.৩ প্রথম রানের আগে একটা ফিক্স + পোর্ট-সতর্কতা
 
@@ -343,7 +397,7 @@ Frontend-ও চালাতে চাইলে: admin-portal `ng serve` (localh
 | 401 / IDX এরর | Cognito config (`Authority/Metadata/ClientId`) + ইন্টারনেট; টোকেন সেই pool থেকেই এসেছে কি না |
 | সার্ভিস-কলে connection refused | `Services:<Name>` প্রিফিক্সসহ ঠিক আছে কি না (যেমন `http://localhost:5086/booking`) |
 | পোর্ট ব্যস্ত | launchSettings ক্ল্যাশ (Utility↔Scheduler 5033; Ticketing↔PushNotification 7007 https) |
-| 6379-এ আগে থেকেই native Redis চলছে | Windows-এ ইনস্টল করা redis-server (শুধু 127.0.0.1 bind) আর কন্টেইনার সহাবস্থান করতে পারে — কনফিউশন এড়াতে হয় native-টাই ব্যবহার করুন (কন্টেইনার না চালিয়ে), নয়তো কন্টেইনার অন্য পোর্টে ম্যাপ করে `Cache:Redis:ConnectionString` বদলান |
+| 6379-এ আগে থেকেই native Redis চলছে | Windows-এ ইনস্টল করা redis-server (শুধু 127.0.0.1 bind) আর কন্টেইনার সহাবস্থান করতে পারে — কনফিউশন এড়াতে হয় native-টাই ব্যবহার করুন (কন্টেইনার না চালিয়ে), নয়তো কন্টেইনার অন্য পোর্টে ম্যাপ করে `Cache:Redis:ConnectionString` বদলান; compose-এ সহজে — `ETP_REDIS_PORT=6381 docker compose up -d` |
 | ব্যাকগ্রাউন্ডে SQS error স্প্যাম | `AWS:Queue:*`/creds নেই — API ডিবাগ চলবে; দরকার না হলে ওই workerের `AddHostedService` সাময়িক কমেন্ট করুন |
 | `docker-compose up` fail | স্বাভাবিক — compose ফাইলটা CI-র (ECR ভ্যারিয়েবল লাগে), লোকালে `dotnet run`/F5 ব্যবহার করুন |
 
@@ -354,13 +408,13 @@ Frontend-ও চালাতে চাইলে: admin-portal `ng serve` (localh
 ### লেভেল ১: শুধু বন্ধ (ডেটা থাকবে) — দিন শেষে সাধারণত এটাই যথেষ্ট
 
 - **সার্ভিস**: VS-এ **Shift+F5** (Stop Debugging); CLI-তে চালালে প্রতিটা টার্মিনালে `Ctrl+C`।
-- **ডিপেন্ডেন্সি** (যেকোনো ডিরেক্টরি):
+- **ডিপেন্ডেন্সি** (workspace root থেকে):
 
 ```bash
-docker stop etp-postgres etp-redis
+docker compose stop        # বা আগের মতোই: docker stop etp-postgres etp-redis
 ```
 
-ডেটা কন্টেইনারের volume-এ সেভ থাকে — পরে `docker start etp-postgres etp-redis` করলেই আগের অবস্থায় ফিরবে, DB আর মাইগ্রেশন নতুন করতে হবে না।
+ডেটা volume-এ সেভ থাকে — পরে `docker compose start` (বা `docker start etp-postgres etp-redis`) করলেই আগের অবস্থায় ফিরবে, DB আর মাইগ্রেশন নতুন করতে হবে না।
 
 ### লেভেল ২: ডাটাবেস রিসেট (স্কিমা+ডেটা মুছে ফ্রেশ শুরু)
 
@@ -384,10 +438,11 @@ docker exec -it etp-redis redis-cli FLUSHALL
 ### লেভেল ৩: পুরো লোকাল স্ট্যাক মুছে ফেলা
 
 ```bash
-docker rm -f etp-postgres etp-redis
+docker compose down        # workspace root থেকে — কন্টেইনার+নেটওয়ার্ক যাবে, ডেটা volume থাকবে
+docker compose down -v     # সাথে etp-pgdata / etp-redis-data-ও — সব ডেটা মুছে যাবে
 ```
 
-⚠️ কন্টেইনার `rm` করলে postgres-এর ডেটা volume-ও চলে যায় — পরে নতুন `docker run` করলে সব খালি থেকে শুরু, মানে §৫-এর ধাপ ১–৪ পুরোটা আবার করতে হবে।
+⚠️ `down -v`-এর পর নতুন `docker compose up -d` করলে সব খালি থেকে শুরু — DB-গুলো অটো-তৈরি হবে ঠিকই, কিন্তু স্কিমা/ডেটা আবার গড়তে হবে (§৫-এর ধাপ ১ আর ৩–৪ আবার)। ম্যানুয়াল `docker run` পথে চালালে সমতুল্য: `docker rm -f etp-postgres etp-redis` (ও পথে ডেটাও কার্যত হারায়)।
 
 ### লেভেল ৪: মেশিন থেকে ETP-এর সব স্পেসিফিক জিনিস সরানো
 
