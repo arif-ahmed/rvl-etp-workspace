@@ -90,7 +90,7 @@ AWS **Cognito-র ৪টা ইউজার পুল** (Admin/User/TicketChecke
 
 ⚠️ বিভ্রান্তির ফাঁদ: `Core\ETP.Core.Web\Security\DefaultAuthenticationConfig.cs`-এ **একই নামের আরেকটা** লিগ্যাসি single-scheme এক্সটেনশন আছে — ব্যবহৃত হয় না।
 
-## ৪. ডাটাবেস টোপোলজি: ৬টা আলাদা DB
+## ৪. ডাটাবেস টোপোলজি: AWS-এ ৬টা আলাদা DB, লোকালে একটাই (`etp_local`)
 
 **৭টা DB-ব্যবহারকারী সার্ভিস → ৬টা আলাদা DB** — প্রতিটা সার্ভিস নিজের connection key টানে:
 
@@ -105,6 +105,8 @@ AWS **Cognito-র ৪টা ইউজার পুল** (Admin/User/TicketChecke
 | UserIssue | `ConnectionStrings:UserIssue` | `ETP.UserIssue.Service\Configurations\DependencyConfig.cs:35` |
 
 **AWS-টোপোলজিতে ৬টা আলাদা DB** — উপরের connection-key বিভাজনের স্বাভাবিক ফল (৭টা DbContext-ই একই স্কিমা `etp` আর একই `__EFMigrationsHistory` টেবিল ব্যবহার করে; Admin আর Booking-এর মডেলে একই নামের টেবিলও আছে — `Events` AdminDbContext.cs:51, BookingDbContext.cs:32)। তবে **এক DB-তে সব কনটেক্সট একসাথেও চলে** — Aspire লোকাল স্ট্যাকে লাইভ যাচাই হয়েছে: এক শেয়ার্ড DB-তে ১২৯টা মাইগ্রেশন একই স্কিমায় মিলেমিশে apply হয়, শেয়ার্ড টেবিলগুলো দুই মডেলই ম্যাপ করে, সার্ভিসগুলো বুট করে। মানে টেবিল-ওভারল্যাপ ভাঙার কারণ নয়; ৬-DB ভাগ আসলে ডিপ্লয়মেন্ট-টোপোলজির সিদ্ধান্ত (নিচের floci/Aspire অংশ দেখুন)।
+
+**লোকালে ডিফল্ট এখন একটাই শেয়ার্ড DB — `etp_local`** (workspace-এর compose স্ট্যাক এটাই বানায়; secrets টেমপ্লেটেও সব সার্ভিসের `ConnectionStrings:*` এক মানে এখানেই পয়েন্ট করে — লাইভ-যাচাইকৃত ২০২৬-১০-২১: কোনো সেটিং ছোঁয়া ছাড়াই ৭টা কনটেক্সটের ১২৯টা মাইগ্রেশন এক DB-তে apply হয়, ৫৩টা টেবিল তৈরি হয়)। কেউ AWS-এর মতো পার-সার্ভিস DB লেআউট লোকালে চাইলে ধাপ ২-এর ঐচ্ছিক কমান্ডগুলো দেখুন।
 
 **সব DB-তে স্কিমা `etp`-তেই তৈরি হবে** — মাইগ্রেশন নিজে বানাবে, আপনাকে স্কিমা বানাতে হবে না।
 
@@ -121,7 +123,7 @@ AWS **Cognito-র ৪টা ইউজার পুল** (Admin/User/TicketChecke
 
 ### ধাপ ১: PostgreSQL + Redis চালানো (docker compose — workspace root থেকে)
 
-ওয়ার্কস্পেস রুটের `docker-compose.yml`-এ dev-ডিপেন্ডেন্সি দুটো (PostgreSQL 16 + Redis 7, `initdb/` স্ক্রিপ্টসহ) তৈরি করাই আছে — ব্যাকএন্ড রিপোর নিজের `docker-compose.yaml` শুধু CI-র ৯টা অ্যাপ-ইমেজের (UserAuth/Platform ওখানে নেই), ওখানে PostgreSQL/Redis নেই।
+ওয়ার্কস্পেস রুটের `docker-compose.yml`-এ dev-ডিপেন্ডেন্সি দুটো (PostgreSQL 16 + Redis 7) তৈরি করাই আছে — ব্যাকএন্ড রিপোর নিজের `docker-compose.yaml` শুধু CI-র ৯টা অ্যাপ-ইমেজের (UserAuth/Platform ওখানে নেই), ওখানে PostgreSQL/Redis নেই। **পোর্ট-ইউজার-ডাটাবেস সবই secrets টেমপ্লেটের সাথে হুবহু মেলানো**: postgres হোস্ট-পোর্ট **5433**-এ (ইউজার `etp`, পাসওয়ার্ড `etp_local_pw`, `etp_local` ডাটাবেস অটো-তৈরি), Redis হোস্ট-পোর্ট **6380**-এ — মানে টেমপ্লেটের connection string/Redis মান কোনোটাই বদলাতে হয় না, আর native PostgreSQL (5432) / Redis (6379) ব্যস্ত থাকলেও সংঘর্ষ হয় না।
 
 > শুরুর আগে দেখে নিন Docker Desktop চালু আছে (`docker ps` কাজ করছে কি না) — বন্ধ থাকলে আগে অ্যাপটা খুলে engine ready হতে দিন।
 
@@ -131,9 +133,9 @@ docker compose up -d
 ```
 
 - কন্টেইনার নাম ফিক্সড — `etp-postgres`, `etp-redis` — তাই এই গাইডের বাকি সব কমান্ড (`docker exec`, `docker stop/start`) আগের মতোই চলবে।
-- **প্রথমবার চালালেই ধাপ ২-এর ৬টা ডাটাবেস অটো তৈরি হয়ে যায়** (`initdb/01-create-databases.sql` — খালি volume-এ একবারই চলে)।
+- **প্রথমবার চালালেই `etp_local` ডাটাবেস অটো তৈরি হয়ে যায়** (`POSTGRES_DB` দিয়ে — আলাদা initdb স্ক্রিপ্টের দরকার নেই)।
 - ডেটা named volume-এ (`etp-pgdata`, `etp-redis-data`) — কন্টেইনার মুছলেও ডেটা বাঁচে।
-- পোর্ট/পাসওয়ার্ড বদলাতে env দিন: `ETP_PG_PORT`, `ETP_REDIS_PORT` (যেমন 6379-এ native Redis আগে থেকে চললে `ETP_REDIS_PORT=6381 docker compose up -d`), `ETP_PG_PASSWORD`।
+- পোর্ট/পাসওয়ার্ড বদলাতে env দিন: `ETP_PG_PORT`, `ETP_REDIS_PORT`, `ETP_PG_PASSWORD` — তবে তখন secrets-এর connection string/Redis মানও সেই সাথে বদলাতে হবে।
 - মেশিন রিস্টার্টের পর Docker উঠলে দুটো নিজেই ফিরে আসে (`restart: unless-stopped`)।
 
 চালু আছে কি না চেক: `docker ps` (দুটোই `Up (healthy)` দেখাতে হবে)।
@@ -141,33 +143,35 @@ docker compose up -d
 **ম্যানুয়াল বিকল্প (reference — compose ছাড়া সরাসরি চালাতে চাইলে):**
 
 ```bash
-docker run -d --name etp-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16
-docker run -d --name etp-redis -p 6379:6379 redis:7
+docker run -d --name etp-postgres -e POSTGRES_USER=etp -e POSTGRES_PASSWORD=etp_local_pw -e POSTGRES_DB=etp_local -p 5433:5432 postgres:16
+docker run -d --name etp-redis -p 6380:6379 redis:7
 # পরে বন্ধ/চালু: docker stop etp-postgres etp-redis  /  docker start etp-postgres etp-redis
 ```
 
-এ পথের পার্থক্য মনে রাখুন: ডাটাবেসগুলো **অটো তৈরি হয় না** (initdb স্ক্রিপ্ট ছাড়া) — ধাপ ২-এর `CREATE DATABASE` কমান্ডগুলো নিজে চালাতে হবে; আর ডেটা anonymous volume-এ থাকে (`docker rm -v`-এ চলে যায়, নতুন কন্টেইনারে ফেরে না)।
+এ পথেও `etp_local` অটো তৈরি হয় (`POSTGRES_DB`); পার্থক্য শুধু — ডেটা anonymous volume-এ থাকে (`docker rm -v`-এ চলে যায়, নতুন কন্টেইনারে ফেরে না)।
 
-### ধাপ ২: ৬টা ডাটাবেস — যাচাই (ধাপ ১-এই অটো তৈরি হয়ে যায়)
+### ধাপ ২: ডাটাবেস যাচাই — একটাই শেয়ার্ড `etp_local` (ধাপ ১-এই অটো তৈরি হয়ে যায়)
 
-⚠️ **কেন এই বিষয়টা জানা দরকার**: পুরো রিপোতে কোথাও `EnsureCreated`/`CREATE DATABASE` নেই — মাইগ্রেশন শুধু **স্কিমা** বানায়, ডাটাবেস **নিজে বানায় না** (যাচাইকৃত: `MigratePendingDatabase` শুধু `Database.Migrate()` কল করে)। compose-এর `initdb/01-create-databases.sql` প্রথম রানেই এই কাজটা করে দেয়। যাচাই করুন:
+⚠️ **কেন এই বিষয়টা জানা দরকার**: পুরো রিপোতে কোথাও `EnsureCreated`/`CREATE DATABASE` নেই — মাইগ্রেশন শুধু **স্কিমা** বানায়, ডাটাবেস **নিজে বানায় না** (যাচাইকৃত: `MigratePendingDatabase` শুধু `Database.Migrate()` কল করে)। compose-এর `POSTGRES_DB` প্রথম রানেই ডাটাবেসটা বানিয়ে দেয়। যাচাই করুন:
 
 ```bash
-docker exec etp-postgres psql -U postgres -c "\l"
+docker exec etp-postgres psql -U etp -d etp_local -c "\l"
 ```
 
-৬টা নাম দেখতে পাবেন: `etp_admin`, `etp_booking`, `etp_event`, `etp_ticketchecker`, `etp_pushnotification`, `etp_userissue`।
+লিস্টে `etp_local` দেখলেই তৈরি (স্কিমা তৈরি হবে পরের ধাপে — সার্ভিস চালু করলে বা ম্যানুয়াল মাইগ্রেশনে)।
 
-দুটো কথা:
-- **নামগুলো রিপোতে নেই** — আসল নাম থাকবে আপনার পাওয়া connection string-এ (`Database=...` অংশে)। উপরের নাম initdb স্ক্রিপ্টের কনভেনশন; নিজের connection string-এর সাথে মিলিয়ে নিন।
-- **Ticketing-এর আলাদা DB লাগবে না** — সে Booking-এর DB-ই ব্যবহার করে।
+**Ticketing-এর আলাদা DB লাগে না** — কোডেই সে Booking-এর key টানে (§৪ দেখুন); এক-DB লেআউটে এটা স্বাভাবিকভাবেই মিটে যায়।
 
-DB না দেখলে (পুরনো volume-এ init স্কিপ হয়েছে, বা নাম বদলাতে চান) — হাতে বানান:
+DB না দেখলে (পুরনো volume-এ init স্কিপ হয়েছে) — হাতে বানান:
 
 ```bash
-docker exec etp-postgres psql -U postgres -c "CREATE DATABASE etp_admin;"
-docker exec etp-postgres psql -U postgres -c "CREATE DATABASE etp_booking;"
-# ... বাকিগুলো একই প্যাটার্নে
+docker exec etp-postgres psql -U etp -c "CREATE DATABASE etp_local;"
+```
+
+**ঐচ্ছিক**: কেউ AWS-টোপোলজির মতো পার-সার্ভিস DB লোকালে চাইলে নিজে বানিয়ে নিতে পারেন, তারপর প্রতিটা সার্ভিসের `ConnectionStrings:<নিজেরটা>`-য় `Database=...` অংশটা বদলে দিতে হবে:
+
+```bash
+docker exec etp-postgres psql -U etp -c "CREATE DATABASE etp_admin;" -c "CREATE DATABASE etp_booking;" -c "CREATE DATABASE etp_event;" -c "CREATE DATABASE etp_ticketchecker;" -c "CREATE DATABASE etp_pushnotification;" -c "CREATE DATABASE etp_userissue;"
 ```
 
 ### ধাপ ৩: User Secrets ভরা (backend root থেকে)
@@ -181,15 +185,15 @@ aws ssm get-parameter --name /rvl/dev/booking-service-appsettings --with-decrypt
 #     userauth-, utility-, pushnotification-, userissue-service-appsettings  (buildspec-dev.yml:10-20)
 ```
 
-SSM থেকে পাওয়া JSON-টা প্রতিটা সার্ভিসের user-secrets হিসেবে বসান (পোর্ট/হোস্ট লোকালের জন্য বদলে)। ভরার উপায় — VS-এ প্রজেক্টে রাইট-ক্লিক → **Manage User Secrets**, বা CLI:
+SSM থেকে পাওয়া JSON-টা প্রতিটা সার্ভিসের user-secrets হিসেবে বসান। **ভালো খবর**: টিমের লোকাল-টেমপ্লেট (টিমমেটের মেশিনের user-secrets) নিলে DB/Redis-এর মানগুলো এমনিই ধাপ ১-এর স্ট্যাকের দিকে পয়েন্ট করা থাকে — `Port=5433;Database=etp_local` আর Redis `localhost:6380` — কিছুই বদলাতে হয় না। ভরার উপায় — VS-এ প্রজেক্টে রাইট-ক্লিক → **Manage User Secrets**, বা CLI (মানগুলো টেমপ্লেটেরটাই):
 
 ```bash
 # backend root থেকে
-dotnet user-secrets set "ConnectionStrings:Booking" "Host=localhost;Port=5432;Database=etp_booking;Username=postgres;Password=postgres" --project Services/Booking/ETP.Booking.Service
-dotnet user-secrets set "Cache:Redis:ConnectionString" "localhost:6379" --project Services/Booking/ETP.Booking.Service
-dotnet user-secrets set "Cache:Redis:InstanceName" "ETP:" --project Services/Booking/ETP.Booking.Service
+dotnet user-secrets set "ConnectionStrings:Booking" "Host=localhost;Port=5433;Database=etp_local;Username=etp;Password=etp_local_pw;Include Error Detail=true" --project Services/Booking/ETP.Booking.Service
+dotnet user-secrets set "Cache:Redis:ConnectionString" "localhost:6380" --project Services/Booking/ETP.Booking.Service
+dotnet user-secrets set "Cache:Redis:InstanceName" "etp-local:" --project Services/Booking/ETP.Booking.Service
 dotnet user-secrets set "DistributedLock:Redis:EndPoint" "localhost" --project Services/Booking/ETP.Booking.Service
-dotnet user-secrets set "DistributedLock:Redis:Port" "6379" --project Services/Booking/ETP.Booking.Service
+dotnet user-secrets set "DistributedLock:Redis:Port" "6380" --project Services/Booking/ETP.Booking.Service
 dotnet user-secrets set "DistributedLock:Redis:Database" "0" --project Services/Booking/ETP.Booking.Service
 ```
 
@@ -207,7 +211,7 @@ dotnet user-secrets set "DistributedLock:Redis:Database" "0" --project Services/
 | `Authentication:Jwt:{Issuer,Audience,Key}`, `Authentication:ServiceApiKey` | Service-to-service auth | 🟡 টিমমেটের কাছ থেকে |
 | `PaymentSettings`, `TSP`, `OneIdSettings`, `FirebasePushNotificationConfig` | শুধু সংশ্লিষ্ট ফিচার ডিবাগে | ⚪ প্রথমে বাদ দিতে পারেন |
 
-লোকালে যা বদলাবেন: connection string → `Host=localhost;Port=5432;...`, Redis → `localhost:6379`, `Services:*` → নিজের F5 পোর্ট (প্রিফিক্সসহ)। CORS-এ `http://localhost:4200/4201` আগেই যোগ করা আছে।
+লোকালে যা বদলাবেন: **DB আর Redis কিছুই না** (টেমপ্লেটের মানই ধাপ ১-এর স্ট্যাকে খাটে); `Services:*` চাইলে নিজের F5 পোর্ট (প্রিফিক্সসহ)। CORS-এ `http://localhost:4200/4201` আগেই যোগ করা আছে।
 
 ⚠️ **UserAuth-এ `UserSecretsId` নেই** — আগে চালান: `dotnet user-secrets init --project Services/UserAuth/ETP.UserAuth.Service`
 
@@ -337,21 +341,24 @@ Booking-এর `Program.cs`: JWT auth → Serilog (console) → Redis cache + Da
 
 ## ৭. মাইগ্রেশন ও স্কিমা
 
-**সাধারণত কিছু করতে হয় না** — উপরের ৬টা সার্ভিস F5 করলেই স্কিমা নিজে থেকে তৈরি হয়। সার্ভিস না চালিয়ে আগেই স্কিমা নামাতে চাইলে (backend root থেকে):
+**সাধারণত কিছু করতে হয় না** — উপরের ৬টা সার্ভিস F5 করলেই স্কিমা নিজে থেকে তৈরি হয়। সার্ভিস না চালিয়ে আগেই স্কিমা নামাতে চাইলে (backend root থেকে) — **`--context` লাগবেই**: প্রতিটা সার্ভিসের DI-তে নিজের context-এর পাশে Core-এর `LoggingDbContext`-ও রেজিস্টারড (`dotnet ef dbcontext list -p ... -s ...`-এ দুটোই দেখা যায় — যাচাইকৃত ২০২৬-১০-২১), `--context` ছাড়া EF "More than one DbContext was found" বলে আটকাবে:
 
 ```bash
-dotnet ef database update -p Services/Admin/ETP.Admin.Storage -s Services/Admin/ETP.Admin.Service
-dotnet ef database update -p Services/Booking/ETP.Booking.Storage -s Services/Booking/ETP.Booking.Service
-dotnet ef database update -p Services/Ticketing/ETP.Ticketing.Storage -s Services/Ticketing/ETP.Ticketing.Service
-dotnet ef database update -p Services/PushNotification/ETP.PushNotification.Storage -s Services/PushNotification/ETP.PushNotification.Service
-dotnet ef database update -p Services/UserIssue/ETP.UserIssue.Storage -s Services/UserIssue/ETP.UserIssue.Service
+dotnet ef database update -p Services/Admin/ETP.Admin.Storage -s Services/Admin/ETP.Admin.Service --context AdminDbContext
+dotnet ef database update -p Services/Admin/ETP.Admin.Storage -s Services/Admin/ETP.Admin.Service --context LoggingDbContext   # Core-এর ActivityLogs (৩টা মাইগ্রেশন) — Admin-এর connection-এই বসে (কোডও তাই করে)
+dotnet ef database update -p Services/Booking/ETP.Booking.Storage -s Services/Booking/ETP.Booking.Service --context BookingDbContext
+dotnet ef database update -p Services/Ticketing/ETP.Ticketing.Storage -s Services/Ticketing/ETP.Ticketing.Service --context TicketingDbContext
+dotnet ef database update -p Services/PushNotification/ETP.PushNotification.Storage -s Services/PushNotification/ETP.PushNotification.Service --context PushNotificationDbContext
+dotnet ef database update -p Services/UserIssue/ETP.UserIssue.Storage -s Services/UserIssue/ETP.UserIssue.Service --context UserIssueDbContext
 ```
+
+লাইভ-যাচাইকৃত ২০২৬-১০-২১: ধাপ ১-এর স্ট্যাক + secrets টেমপ্লেট অপরিবর্তিত রেখে এই ছয় কমান্ডেই এক `etp_local`-এ ৭ কনটেক্সটের ১২৯টা মাইগ্রেশন apply হয় (৫৩টা টেবিল)।
 
 README-র সাথে দুটো পার্থক্য (রিপো ঘেঁটে প্রমাণিত):
 - README Event ও TicketChecker-এর জন্যও এই কমান্ড দেখায়, কিন্তু **এই দুই Storage প্রজেক্টে কোনো Migrations ফোল্ডার নেই** — কমান্ড no-op। তাদের স্কিমা কোথা থেকে আসে রিপো থেকে বলা সম্ভব নয় ([§১৩](#১৩-অযাচাইকৃত-বিষয়-এবং-টিমকে-করার-প্রশ্নের-লিস্ট) দেখুন)।
 - README PushNotification/UserIssue-এর কমান্ড দেয়নি — উপরে যোগ করা আছে।
 
-নতুন মাইগ্রেশন বানাতে (উদাহরণ, Booking): `dotnet ef migrations add <Name> -p Services/Booking/ETP.Booking.Storage -s Services/Booking/ETP.Booking.Service` — একই প্যাটার্ন অন্যদের।
+নতুন মাইগ্রেশন বানাতে (উদাহরণ, Booking — এখানেও `--context` লাগবে): `dotnet ef migrations add <Name> -p Services/Booking/ETP.Booking.Storage -s Services/Booking/ETP.Booking.Service --context BookingDbContext` — একই প্যাটার্ন অন্যদের।
 
 ## ৮. কোন ফিচার টেস্টে কোন সার্ভিস চালাবেন
 
@@ -397,7 +404,7 @@ Frontend-ও চালাতে চাইলে: admin-portal `ng serve` (localh
 | 401 / IDX এরর | Cognito config (`Authority/Metadata/ClientId`) + ইন্টারনেট; টোকেন সেই pool থেকেই এসেছে কি না |
 | সার্ভিস-কলে connection refused | `Services:<Name>` প্রিফিক্সসহ ঠিক আছে কি না (যেমন `http://localhost:5086/booking`) |
 | পোর্ট ব্যস্ত | launchSettings ক্ল্যাশ (Utility↔Scheduler 5033; Ticketing↔PushNotification 7007 https) |
-| 6379-এ আগে থেকেই native Redis চলছে | Windows-এ ইনস্টল করা redis-server (শুধু 127.0.0.1 bind) আর কন্টেইনার সহাবস্থান করতে পারে — কনফিউশন এড়াতে হয় native-টাই ব্যবহার করুন (কন্টেইনার না চালিয়ে), নয়তো কন্টেইনার অন্য পোর্টে ম্যাপ করে `Cache:Redis:ConnectionString` বদলান; compose-এ সহজে — `ETP_REDIS_PORT=6381 docker compose up -d` |
+| 6379-এ আগে থেকেই native Redis চলছে | সংঘর্ষ নেই — compose-এর Redis হোস্ট-পোর্ট 6380-এ। নিজে পোর্ট বদলালে (`ETP_REDIS_PORT=...`) সেটা `Cache:Redis:ConnectionString` ও `DistributedLock:Redis:Port`-এও দিন |
 | ব্যাকগ্রাউন্ডে SQS error স্প্যাম | `AWS:Queue:*`/creds নেই — API ডিবাগ চলবে; দরকার না হলে ওই workerের `AddHostedService` সাময়িক কমেন্ট করুন |
 | `docker-compose up` fail | স্বাভাবিক — compose ফাইলটা CI-র (ECR ভ্যারিয়েবল লাগে), লোকালে `dotnet run`/F5 ব্যবহার করুন |
 
@@ -421,15 +428,11 @@ docker compose stop        # বা আগের মতোই: docker stop etp-p
 > আগে সব সার্ভিস বন্ধ করুন — কেউ কানেক্টেড থাকলে `DROP` হবে না।
 
 ```bash
-docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_admin WITH (FORCE);"
-docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_booking WITH (FORCE);"
-docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_event WITH (FORCE);"
-docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_ticketchecker WITH (FORCE);"
-docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_pushnotification WITH (FORCE);"
-docker exec -it etp-postgres psql -U postgres -c "DROP DATABASE etp_userissue WITH (FORCE);"
+docker exec -it etp-postgres psql -U etp -c "DROP DATABASE etp_local WITH (FORCE);"
+docker exec -it etp-postgres psql -U etp -c "CREATE DATABASE etp_local;"
 ```
 
-এরপর §৫-এর ধাপ ২-এর `CREATE DATABASE` আবার চালিয়ে সার্ভিস F5 করলেই অটো-মাইগ্রেশন নতুন স্কিমা বানাবে। Redis-ও ফ্লাশ করতে চাইলে (সিট-লক, ক্যাশ — সব ক্লিয়ার):
+এরপর সার্ভিস F5 করলেই (বা §৭-এর ম্যানুয়াল মাইগ্রেশন চালালেই) অটো-মাইগ্রেশন নতুন স্কিমা বানাবে। Redis-ও ফ্লাশ করতে চাইলে (সিট-লক, ক্যাশ — সব ক্লিয়ার):
 
 ```bash
 docker exec -it etp-redis redis-cli FLUSHALL
@@ -442,7 +445,7 @@ docker compose down        # workspace root থেকে — কন্টেই�
 docker compose down -v     # সাথে etp-pgdata / etp-redis-data-ও — সব ডেটা মুছে যাবে
 ```
 
-⚠️ `down -v`-এর পর নতুন `docker compose up -d` করলে সব খালি থেকে শুরু — DB-গুলো অটো-তৈরি হবে ঠিকই, কিন্তু স্কিমা/ডেটা আবার গড়তে হবে (§৫-এর ধাপ ১ আর ৩–৪ আবার)। ম্যানুয়াল `docker run` পথে চালালে সমতুল্য: `docker rm -f etp-postgres etp-redis` (ও পথে ডেটাও কার্যত হারায়)।
+⚠️ `down -v`-এর পর নতুন `docker compose up -d` করলে সব খালি থেকে শুরু — `etp_local` অটো-তৈরি হবে ঠিকই, কিন্তু স্কিমা/ডেটা আবার গড়তে হবে (§৫-এর ধাপ ১ আর ৩–৪ আবার)। ম্যানুয়াল `docker run` পথে চালালে সমতুল্য: `docker rm -f etp-postgres etp-redis` (ও পথে ডেটাও কার্যত হারায়)।
 
 ### লেভেল ৪: মেশিন থেকে ETP-এর সব স্পেসিফিক জিনিস সরানো
 

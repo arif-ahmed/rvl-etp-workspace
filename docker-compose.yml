@@ -2,15 +2,23 @@
 # Workspace-level on purpose — the backend repo's own docker-compose.yaml only
 # builds the 9 app images for CI (ECR push); it has no databases.
 #
+# Ports, database and credentials match the team's user-secrets template EXACTLY:
+#   ConnectionStrings:* = Host=localhost;Port=5433;Database=etp_local;
+#                         Username=etp;Password=etp_local_pw
+#   Cache:Redis:ConnectionString / DistributedLock:Redis:Port = localhost:6380
+# so the template works against this stack WITHOUT any edits. One shared
+# database `etp_local` serves ALL services (verified live: every context's 129
+# migrations coexist fine in the one `etp` schema). Host ports 5433/6380 leave
+# the native defaults 5432/6379 free.
+#
 # Usage (from this folder):
-#   docker compose up -d      # first run also creates the 6 ETP databases (initdb/)
+#   docker compose up -d      # first run auto-creates the etp_local database
 #   docker compose stop       # end of day (data kept)
 #   docker compose down       # remove containers (data volumes kept)
 #   docker compose down -v    # remove everything incl. data
 #
-# Overrides if a port is already taken on your machine (e.g. a native Redis on 6379):
+# Port already taken on your machine? Override and adjust user-secrets to match:
 #   ETP_REDIS_PORT=6381 docker compose up -d     (also ETP_PG_PORT, ETP_PG_PASSWORD)
-# ...then adjust Cache:Redis:ConnectionString / ConnectionStrings:* in user-secrets.
 
 name: etp-local
 
@@ -20,14 +28,15 @@ services:
     container_name: etp-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: ${ETP_PG_PASSWORD:-postgres}
+      POSTGRES_USER: etp
+      POSTGRES_PASSWORD: ${ETP_PG_PASSWORD:-etp_local_pw}
+      POSTGRES_DB: etp_local
     ports:
-      - "${ETP_PG_PORT:-5432}:5432"
+      - "${ETP_PG_PORT:-5433}:5432"
     volumes:
       - etp-pgdata:/var/lib/postgresql/data
-      - ./initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U etp -d etp_local"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -37,7 +46,7 @@ services:
     container_name: etp-redis
     restart: unless-stopped
     ports:
-      - "${ETP_REDIS_PORT:-6379}:6379"
+      - "${ETP_REDIS_PORT:-6380}:6379"
     volumes:
       - etp-redis-data:/data
     healthcheck:
