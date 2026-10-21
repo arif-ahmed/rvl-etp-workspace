@@ -246,6 +246,14 @@ Expected: four `cognito <Pool> pool ... client ...` lines, then one `ok  ETP.<Na
 
 ### Step 5. Start the backend
 
+The AppHost first builds `rvl-gobcb-backend/RVL-ETP.BackEnd.sln` **once, serially** (the first time takes a few minutes; you will see
+`[Etp.AppHost] Building ... once before starting the services`), then starts each service with `dotnet run --no-build`.
+
+Why: a plain `dotnet run` per service builds first, and 11 parallel builds all rewrite the shared `ETP.Core*/obj/**/*.sourcelink.json`
+even when nothing changed. A few collide (`Error writing to source link file ... being used by another process`, `CS2012`), so a
+*different* set of services died on every start. Do not run `dotnet build` on the solution (or build in your IDE) while the AppHost is
+starting. If you already built and want to skip the AppHost's build, pass `-- --ETP_NO_BUILD=true`.
+
 ```bash
 # build and start the 11 services + dashboard; Ctrl+C stops them
 dotnet run --project aspire/Etp.AppHost
@@ -541,6 +549,8 @@ To start again, go back to [Part 3](#3-first-time-setup).
 | Service **Finished** right after start | It crashed; read its console log. *Redis/Postgres connection* error: infra is down, run `docker compose up -d` (`docker compose ps` to check) and restart the AppHost. *`[see User Secrets]`/FormatException*: secrets not applied, re-run `pwsh ./scripts/Set-EtpSecrets.ps1`. `UserIssue` NullReference on `Application:ServiceName`: re-run the script |
 | `password authentication failed for user "etp"` | The Postgres volume was created with another password. `docker compose down -v` and start again |
 | `relation "etp.xxx" does not exist` | Admin has not finished its migrations yet; wait, or check Admin's log |
+| Admin crashes at startup with `42P07: relation "__EFMigrationsHistory" already exists` | Concurrent migration race on a fresh database. Restart the AppHost; if it repeats after a reset, run `docker compose down -v && docker compose up -d`, then start the AppHost again |
+| Several services **Failed to start** with build errors `CS2012` / `error MSB3026` / `Error writing to source link file` ("file ... is being used by another process") — different services fail on each restart | Parallel-build race: the AppHost now builds once and runs services with `--no-build`, so this means something else is building at the same time (IDE background build, an older AppHost, or `--ETP_NO_BUILD=true` with a stale tree). Stop the AppHost, wait for IDE builds to finish, start it again. Stale processes from earlier failed runs can also hold locks: `Get-Process ETP.* | Stop-Process -Force`. Recurring on every cold rebuild? Exclude the workspace from Defender real-time scanning (admin PowerShell): `Add-MpPreference -ExclusionPath '<workspace root>'` |
 | 401 on every call | Token expired, or the Cognito IDs in your secrets no longer match Floci (they change when Floci's data is recreated). Re-run `pwsh ./scripts/Set-EtpSecrets.ps1` (it reads the current IDs from Floci), restart |
 | AWS errors such as `UnrecognizedClientException` or calls reaching real AWS | Floci is not running; Aspire sets `AWS_ENDPOINT_URL` for the services it starts, but a service you launch yourself needs it too (6.2) |
 | S3 `NoSuchBucket` | Bucket missing: `aws --endpoint-url http://localhost:4566 s3 ls` (AWS CLI setup: Step 3); re-seed if empty |

@@ -44,15 +44,36 @@ var skip = (builder.Configuration["ETP_SKIP"] ?? "")
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
     .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+// ---- Build once, then run with --no-build ---------------------------------------------------
+// AddProject() starts each service with a plain `dotnet run`, which builds first. Eleven parallel builds
+// all rewrite the shared ETP.Core*/obj/**/*.sourcelink.json (even when nothing changed), so a few of them
+// fail with "Error writing to source link file ... being used by another process" and a different set of
+// services dies on every start. So: one serial build of the solution here, then each service is started
+// with `dotnet run --no-build`. Set ETP_NO_BUILD=true to skip the build (e.g. you just built in the IDE).
+if (!string.Equals(builder.Configuration["ETP_NO_BUILD"], "true", StringComparison.OrdinalIgnoreCase))
+{
+    var sln = Path.GetFullPath(Path.Combine(servicesRoot, "..", "RVL-ETP.BackEnd.sln"));
+    Console.WriteLine($"[Etp.AppHost] Building {sln} once before starting the services ...");
+    using var build = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("dotnet", $"build \"{sln}\" --nologo -v q")
+    {
+        UseShellExecute = false,
+    })!;
+    build.WaitForExit();
+    if (build.ExitCode != 0)
+        throw new InvalidOperationException($"dotnet build {sln} failed (exit {build.ExitCode}); fix the build errors and start the AppHost again.");
+}
+
 foreach (var (name, folder, port) in defs)
 {
     if (skip.Contains(name)) continue;
 
     var csproj = Path.Combine(servicesRoot, folder, $"ETP.{folder}.Service", $"ETP.{folder}.Service.csproj");
 
-    var svc = builder.AddProject(name.ToLowerInvariant(), csproj, launchProfileName: null)
+    var svc = builder.AddExecutable(name.ToLowerInvariant(), "dotnet", Path.GetDirectoryName(csproj)!,
+            "run", "--project", csproj, "--configuration", "Debug", "--no-build", "--no-launch-profile")
         .WithHttpEndpoint(port: port, isProxied: false)
         .WithHttpHealthCheck("/health")
+        .WithEnvironment("ASPNETCORE_URLS", "http://localhost:" + port)
         .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development");
 
     // ConnectionStrings:<Key> -> Npgsql connection string of the shared DB
