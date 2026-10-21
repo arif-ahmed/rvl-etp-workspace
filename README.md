@@ -7,6 +7,8 @@ This README is the single guide for setting up and running the local environment
 > The submodules are **stable code**. All wiring, ports, emulation and docs live here, so none of
 > the 5 repos need to be modified for local development.
 
+> **Quick start:** see [docs/local-dev.md](docs/local-dev.md) (setup, run, debug, teardown on one page). This README is the detailed reference.
+
 ## Contents
 
 1. [What you get](#1-what-you-get)

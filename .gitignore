@@ -426,3 +426,6 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+# Local user-secrets source (copied from scripts/user-secrets.example.json)
+scripts/user-secrets.json

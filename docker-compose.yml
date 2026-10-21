@@ -2,14 +2,16 @@
 # Workspace-level on purpose — the backend repo's own docker-compose.yaml only
 # builds the 9 app images for CI (ECR push); it has no databases.
 #
-# Ports, database and credentials match the team's user-secrets template EXACTLY:
+# Standard ports 5432 (Postgres) and 6379 (Redis), bound to loopback ONLY:
+# the local native Redis Windows service on 6379 was stopped & disabled (2026-10-21).
+#
+# NOTE: this deviates from the team's user-secrets template, which still expects:
 #   ConnectionStrings:* = Host=localhost;Port=5433;Database=etp_local;
 #                         Username=etp;Password=etp_local_pw
 #   Cache:Redis:ConnectionString / DistributedLock:Redis:Port = localhost:6380
-# so the template works against this stack WITHOUT any edits. One shared
-# database `etp_local` serves ALL services (verified live: every context's 129
-# migrations coexist fine in the one `etp` schema). Host ports 5433/6380 leave
-# the native defaults 5432/6379 free.
+# So when using user secrets locally, use Port=5432 / localhost:6379 instead.
+# One shared database `etp_local` serves ALL services (verified live: every
+# context's 129 migrations coexist fine in the one `etp` schema).
 #
 # Usage (from this folder):
 #   docker compose up -d      # first run auto-creates the etp_local database
@@ -17,7 +19,8 @@
 #   docker compose down       # remove containers (data volumes kept)
 #   docker compose down -v    # remove everything incl. data
 #
-# Port already taken on your machine? Override and adjust user-secrets to match:
+# Port already taken on your machine (e.g. a native install on 5432/6379)?
+# Override and adjust user-secrets to match:
 #   ETP_REDIS_PORT=6381 docker compose up -d     (also ETP_PG_PORT, ETP_PG_PASSWORD)
 
 name: etp-local
@@ -32,7 +35,7 @@ services:
       POSTGRES_PASSWORD: ${ETP_PG_PASSWORD:-etp_local_pw}
       POSTGRES_DB: etp_local
     ports:
-      - "${ETP_PG_PORT:-5433}:5432"
+      - "127.0.0.1:${ETP_PG_PORT:-5432}:5432"
     volumes:
       - etp-pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -46,7 +49,7 @@ services:
     container_name: etp-redis
     restart: unless-stopped
     ports:
-      - "${ETP_REDIS_PORT:-6380}:6379"
+      - "127.0.0.1:${ETP_REDIS_PORT:-6379}:6379"
     volumes:
       - etp-redis-data:/data
     healthcheck:

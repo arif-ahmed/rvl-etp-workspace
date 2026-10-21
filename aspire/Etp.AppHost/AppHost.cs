@@ -8,20 +8,11 @@ var builder = DistributedApplication.CreateBuilder(args);
 var servicesRoot = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", "..", "rvl-gobcb-backend", "Services"));
 
 // ---- Infrastructure -------------------------------------------------------------------------
-// Fixed local-only password: a data volume keeps the password it was first created with, so a
-// random per-run password makes the DB (and every service waiting on it) fail auth after a reset.
-var pgPassword = builder.AddParameter("postgres-password", "etp-local-pg", secret: true);
-var postgres = builder.AddPostgres("postgres", password: pgPassword)
-    .WithDataVolume("etp-postgres-data")
-    .WithPgAdmin();
-var etpDb = postgres.AddDatabase("etp");          // one DB, each bounded context uses its own schema
-
-// No password: ETP.Core CacheConfig only forwards "host:port" (drops ",password=...") to the DataProtection multiplexer.
-var redis = builder.AddRedis("redis")
-    .WithPassword(null)
-    .WithoutHttpsCertificate()
-    .WithDataVolume("etp-redis-data")
-    .WithRedisInsight();
+// PostgreSQL and Redis come from the workspace docker-compose.yml (start it first: `docker compose up -d`).
+// Aspire only points the services at them. Credentials/ports match that compose file.
+const string dbConnection = "Host=localhost;Port=5432;Database=etp_local;Username=etp;Password=etp_local_pw;Include Error Detail=true";
+const string redisHost = "localhost";
+const string redisPort = "6379";
 
 // Ticketing hard-codes DynamoDB Local at http://localhost:8000
 builder.AddContainer("dynamodb-local", "amazon/dynamodb-local")
@@ -50,31 +41,44 @@ var defs = new (string Name, string Folder, int Port)[]
 string[] dbKeys = ["Admin", "Booking", "Event", "Platform", "Scheduler", "TicketChecker",
                    "Ticketing", "UserAuth", "UserIssue", "PushNotification"];
 
+// ETP_SKIP=Event,Booking -> Aspire does not launch those services, so you can run them yourself from
+// your IDE (same fixed port) and hit breakpoints from the very first line. The others still find them
+// through the Services__* URLs below. See docs/local-dev.md.
+var skip = (builder.Configuration["ETP_SKIP"] ?? "")
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
 foreach (var (name, folder, port) in defs)
 {
+    if (skip.Contains(name)) continue;
+
     var csproj = Path.Combine(servicesRoot, folder, $"ETP.{folder}.Service", $"ETP.{folder}.Service.csproj");
 
     var svc = builder.AddProject(name.ToLowerInvariant(), csproj, launchProfileName: null)
         .WithHttpEndpoint(port: port, isProxied: false)
         .WithHttpHealthCheck("/health")
-        .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
-        .WaitFor(etpDb)
-        .WaitFor(redis);
+        .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development");
 
     // ConnectionStrings:<Key> -> Npgsql connection string of the shared DB
     foreach (var key in dbKeys)
-        svc.WithEnvironment($"ConnectionStrings__{key}", etpDb.Resource.ConnectionStringExpression);
+        svc.WithEnvironment($"ConnectionStrings__{key}", dbConnection);
+
+    // UserIssue has no appsettings.json in the repo, so its Application section is supplied here
+    if (name == "UserIssue")
+        svc.WithEnvironment("Application__ServiceName", "userissue")
+           .WithEnvironment("Application__Title", "RVL ETP ETicketing - User Issue API")
+           .WithEnvironment("Application__Description", "API for user issue related utilities");
 
     // Services:<Key> -> sibling base URLs (plain strings: avoids Aspire circular-reference checks)
     foreach (var (other, _, otherPort) in defs)
         svc.WithEnvironment("Services__" + other, "http://localhost:" + otherPort);
 
     // Redis (cache + distributed lock)
-    svc.WithEnvironment("Cache__Redis__ConnectionString", redis.Resource.ConnectionStringExpression)
+    svc.WithEnvironment("Cache__Redis__ConnectionString", $"{redisHost}:{redisPort}")
        .WithEnvironment("Cache__Redis__InstanceName", "etp-local:")
        .WithEnvironment("Cache__Redis__DefaultDatabase", "0")
-       .WithEnvironment("DistributedLock__Redis__EndPoint", redis.Resource.PrimaryEndpoint.Property(EndpointProperty.Host))
-       .WithEnvironment("DistributedLock__Redis__Port", redis.Resource.PrimaryEndpoint.Property(EndpointProperty.Port))
+       .WithEnvironment("DistributedLock__Redis__EndPoint", redisHost)
+       .WithEnvironment("DistributedLock__Redis__Port", redisPort)
        .WithEnvironment("DistributedLock__Redis__AccessKey", "")
        .WithEnvironment("AWS_ENDPOINT_URL", "http://localhost:4566");   // Floci: SQS/SES/Cognito via the local emulator
 }
