@@ -71,7 +71,7 @@ Services/<X>/
 
 **সিঙ্ক্রোনাস REST**: `Core\ETP.Core\ServiceClient\*`-এ টাইপড HttpClient (Polly retry সহ), base URL আসে `Services:{Name}` কনফিগ থেকে, আর `DelegatedBearerAuthenticationHandler` ইউজারের JWT পরের সার্ভিসে ফরওয়ার্ড করে। কল-গ্রাফ: Admin→(Event, Booking, Ticketing, UserIssue, PushNotification, Serverless, Notification); Booking→(Event, Ticketing); Event→Booking; Ticketing→(Event, Booking); TicketChecker→Ticketing; Scheduler→(Booking, Admin, Ticketing); UserIssue→(Booking, Ticketing); Utility→(Admin, Booking, Ticketing)।
 
-**অ্যাসিঙ্ক্রোনাস = raw AWS SQS** (`ISqsPublisher` + polling `BackgroundService`):
+**অ্যাসিঙ্ক্রোনাস**: MassTransit-এর SQS bus সত্যিই চালু আছে (`Core\ETP.Core.EventBus` — স্টার্টআপ লগের "Bus started: amazonsqs://..." ওটাই), কিন্তু কোনো সার্ভিসে `IConsumer` নেই — তাই গ্রহণ করে নিচের কিউগুলোতে **raw `ReceiveMessage` polling** (`Services/*/ETP.*.Service/Workers/TaskManagers/`):
 
 | কিউ | Publisher → Consumer | কাজ |
 |---|---|---|
@@ -104,7 +104,7 @@ AWS **Cognito-র ৪টা ইউজার পুল** (Admin/User/TicketChecke
 | PushNotification | `ConnectionStrings:PushNotification` | `ETP.PushNotification.Service\Configurations\DependencyConfig.cs:27` |
 | UserIssue | `ConnectionStrings:UserIssue` | `ETP.UserIssue.Service\Configurations\DependencyConfig.cs:35` |
 
-**কেন এক DB-তে সব মিলিয়ে দেওয়া যায় না** (রিপো থেকে প্রমাণিত): ৭টা DbContext-ই একই স্কিমা `etp` (`DefaultSchema = "etp"` সবার কনস্ট্যান্টে) আর একই migrations history টেবিল `__EFMigrationsHistory` ব্যবহার করে। Admin আর Booking দুই মডেলেই একই নামের টেবিল আছে (`Events` — AdminDbContext.cs:51, BookingDbContext.cs:32; সাথে `Currencies`, `Discounts`, `PromoCodes` ইত্যাদি ~১০টা)। একই physical DB হলে দুই সার্ভিসের মাইগ্রেশন একই টেবিল আর history নিয়ে সংঘর্ষ করত — সিস্টেম চলতই না। Booking আর Ticketing শেয়ার করা **পারে** কারণ Ticketing-এর টেবিল (`Tickets`, `OfflineSoldTickets`, `TicketLayoutConfigs`) Booking-এর কোনো টেবিলের সাথে নামে সংঘর্ষ করে না।
+**AWS-টোপোলজিতে ৬টা আলাদা DB** — উপরের connection-key বিভাজনের স্বাভাবিক ফল (৭টা DbContext-ই একই স্কিমা `etp` আর একই `__EFMigrationsHistory` টেবিল ব্যবহার করে; Admin আর Booking-এর মডেলে একই নামের টেবিলও আছে — `Events` AdminDbContext.cs:51, BookingDbContext.cs:32)। তবে **এক DB-তে সব কনটেক্সট একসাথেও চলে** — Aspire লোকাল স্ট্যাকে লাইভ যাচাই হয়েছে: এক শেয়ার্ড DB-তে ১২৯টা মাইগ্রেশন একই স্কিমায় মিলেমিশে apply হয়, শেয়ার্ড টেবিলগুলো দুই মডেলই ম্যাপ করে, সার্ভিসগুলো বুট করে। মানে টেবিল-ওভারল্যাপ ভাঙার কারণ নয়; ৬-DB ভাগ আসলে ডিপ্লয়মেন্ট-টোপোলজির সিদ্ধান্ত (নিচের floci/Aspire অংশ দেখুন)।
 
 **সব DB-তে স্কিমা `etp`-তেই তৈরি হবে** — মাইগ্রেশন নিজে বানাবে, আপনাকে স্কিমা বানাতে হবে না।
 
@@ -116,6 +116,8 @@ AWS **Cognito-র ৪টা ইউজার পুল** (Admin/User/TicketChecke
 > ```
 > (Git Bash ব্যবহার করলে: `cd /d/Workspace/Sources/RVL/rvl-etp/rvl-etp-workspace/rvl-gobcb-backend`)
 > Docker কমান্ডগুলো যেকোনো ডিরেক্টরি থেকে চলবে।
+>
+> টিম আসলে **Aspire + floci স্ট্যাকেও** চালায় (নিচের "বিকল্প পথ" অংশ) — ওটা নিলে ধাপ ১–৩-এর বেশিরভাগ কাজ কমে যায়।
 
 ### ধাপ ১: PostgreSQL + Redis চালানো (Docker — যেকোনো ডিরেক্টরি)
 
@@ -198,6 +200,42 @@ dotnet build RVL-ETP.BackEnd.sln
 
 কোনো `global.json`/`Directory.Build.props` নেই; NuGet restore ডিফল্ট nuget.org থেকে হবে।
 
+### বিকল্প পথ: floci + Aspire — টিমের ফুল লোকাল স্ট্যাক (লাইভ-যাচাইকৃত ২০২৬-১০-২১)
+
+ওয়ার্কস্পেসে টিমের বানানো দুটো জিনিস এটা: `floci/` (Floci — এক কন্টেইনারে local AWS emulator: S3, SQS, SES, Cognito; পোর্ট 4566, ওয়েব UI 4500) আর `aspire/Etp.AppHost` (postgres + redis + DynamoDB Local কন্টেইনার + ১১টা সার্ভিস একসাথে, ফিক্সড পোর্ট **5101–5111**, Aspire dashboard)।
+
+**চালানোর ক্রম** (workspace root থেকে):
+
+```bash
+cd floci
+docker compose up -d     # floci চালু (ডেটা etp-floci-data volume-এ থাকে, রোজ লাগবে না)
+pwsh ./seed.ps1          # S3 bucket etp-local + ৬টা SQS queue + SES identity
+pwsh ./seed-users.ps1    # ৪টা Cognito pool + client + টেস্ট ইউজার → PoolId/ClientId আউটপুট কপি করুন
+cd ../aspire
+dotnet run --project Etp.AppHost   # পুরো স্ট্যাক; dashboard URL কনসোলে ছাপা হয় (localhost:15888)
+```
+
+টেস্ট ইউজার (password `Passw0rd!23`, username = ফোন): Admin `+8801700000001`, User `+8801700000011`, TicketChecker `+8801700000021`, Agent `+8801700000031`।
+
+**Secrets-এ যা বসবে** (প্রতিটা AWS-ব্যবহারকারী সার্ভিসের user-secrets-এ; এই মেশিনে ১০ সার্ভিসে বসানোই আছে):
+
+| Key | মান |
+|---|---|
+| `AWS:Region` / `AWS:AccessKey` / `AWS:SecretAccessKey` | `ap-southeast-1` / `test` / `test` |
+| `AWS:Bucket:Name` / `AWS:Bucket:BaseUrl` | `etp-local` / `http://localhost:4566` (কোড এটাকেই S3 ServiceURL ধরে) |
+| `AWS:Queue:OrderSuccess` … (৬টা) | queue-এর **নাম** — URL নয় (কোড `GetQueueUrl` করে) |
+| `AWS:CognitoPool:{Admin,User,TicketChecker,Agent}:PoolId` / `:ClientId` | `seed-users.ps1`-এর আউটপুট থেকে |
+| `AWS:CognitoPool:X:Authority` / `:Metadata` | `http://localhost:4566/<PoolId>` / `http://localhost:4566/<PoolId>/.well-known/openid-configuration` |
+
+এই মেশিনের বর্তমান মান (উদাহরণ): Admin pool `ap-southeast-1_2a67fbbf0` / client `f965366831814296abb70a9b65`; User pool `ap-southeast-1_656aa721c` / client `27c371e0e0544671a0e1736e88`। ⚠️ `docker compose down -v` করলে আইডি বদলে যায় — আবার seed করে নতুন মান বসাতে হবে।
+
+**AppHost নিজে যা দেয়** (env var — user-secrets-কে override করে): `ConnectionStrings:*` → নিজের postgres-এর **একক `etp` DB** (password `etp-local-pg`, volume `etp-postgres-data` — তাই সার্ভিসগুলোর নিজের connection-secret এ পথে অগ্রাহ্য), password-হীন Redis, `Services:*` → `http://localhost:5101–5111`, DynamoDB Local :8000 (Ticketing-এর জন্য), `ASPNETCORE_ENVIRONMENT=Development`, আর `AWS_ENDPOINT_URL=http://localhost:4566` — শেষোক্তটা এ টেস্টে AppHost-এ যোগ করা হয়েছে, যাতে SQS/SES/Cognito কল ফ্লোসিতে যায়। AppHost ছাড়া একক সার্ভিস চালালে শেলে নিজে দিন: `$env:AWS_ENDPOINT_URL="http://localhost:4566"`।
+
+**লাইভ-যাচাইয়ের ফল (২০২৬-১০-২১)**: ১১ সার্ভিসের পোর্টই উঠেছিল, শেয়ার্ড `etp` DB-তে ১২৯টা মাইগ্রেশন apply হয়েছিল, dashboard কাজ করেছিল। সাথে দুটো ব্লকার ধরা পড়েছে — নিচের ১ নম্বরটা না মেটালে floci-পথে authenticated কল হয় না:
+
+1. **http metadata ব্লকড (কোড-চেঞ্জ লাগবে)**: floci-র Cognito URL http বলে JwtBearer-এর `RequireHttpsMetadata` (ডিফল্ট true) প্রতিটা রিকোয়েস্ট 500 করে দেয়। ফিক্স: `Core\ETP.Core\Configuration\DefaultAuthenticationConfig.cs`-এর ৪টা Cognito স্কিমে `options.RequireHttpsMetadata = false;` (dev-only)। টেম্পরারি প্যাচে পরীক্ষিত — health/swagger 500 → 200। ⚠️ এই ফিক্স **সাবমডিউলের নিজের repo-তে PR করে আসতে হবে** — ওয়ার্কস্পেস থেকে সাবমডিউল এডিট করা কড়া নিয়মে নিষিদ্ধ (AGENTS.md দেখুন)।
+2. **floci-টোকেনে `client_id` claim নেই**: ইউজার লগইনে সঠিক টোকেন ইস্যু হয় (issuer/JWKS/RS256 ঠিক), কিন্তু floci সব টোকেন ID-token আকারে দেয় — `AudienceValidator`-এর চাওয়া `client_id` claim নেই → 401। Emulator-এর fidelity gap; ফিক্স করতে হলে emulator/ভ্যালিডেটর দুই-এর একটা বদলাতে হবে।
+
 ## ৬. রান ও ডিবাগ
 
 ### ৬.১ CLI দিয়ে একটা সার্ভিস (backend root থেকে)
@@ -277,10 +315,11 @@ Frontend-ও চালাতে চাইলে: admin-portal `ng serve` (localh
 
 ## ৯. ডিবাগিং গাইড
 
-### ৯.১ `[Authorize]` endpoint টেস্ট
+### ৯.১ `[Authorize]` endpoint টেস্ট (রেসিপি লাইভ-যাচাইকৃত ২০২৬-১০-২১)
 
-1. **Cognito টোকেন (ইউজার-কনটেক্সট)**: dev-এর portal-এ লগইন করে ব্রাউজার storage থেকে access token নিয়ে Swagger-এ Authorize করুন।
-2. **Service টোকেন**: `GET http://localhost:5099/admin/api/v1/token`, হেডার `ServiceApiKey: <মান>` → ১ দিনের JWT → `[Authorize(Policy=AuthScheme.Service)]` endpoint-এ।
+1. **Service টোকেন — পুরোপুরি কাজ করে**: `GET http://localhost:5099/admin/api/v1/token` + হেডার `ServiceApiKey: <Authentication:ServiceApiKey-এর মান>` → `{ "access_token": "..." }` — ১ দিনের HS256 JWT (যাচাইকৃত: সঠিক key-এ 200, ভুল/শূন্য key-এ 401 "Invalid Service API Key", signature/issuer/audience কনফিগের সাথে মিলেছে)। তবে জেনে রাখুন: **এখনো কোনো endpoint-এ Service-policy নেই** আর `ServiceApiKeyTokenProvider`-ও কোথাও ব্যবহৃত নয় — পুরো ফ্লোটা ভবিষ্যতের জন্য বানানো।
+2. **Cognito টোকেন (ইউজার-কনটেক্সট)**: dev portal-এ লগইন করে ব্রাউজার storage থেকে access token নিন, অথবা floci থেকে CLI দিয়ে — `aws cognito-idp admin-initiate-auth --user-pool-id <UserPoolId> --client-id <ClientId> --auth-flow ADMIN_USER_PASSWORD_AUTH --auth-parameters USERNAME='+8801700000011',PASSWORD='Passw0rd!23'` (endpoint 4566) → `Authorization: Bearer <token>`। ⚠️ §৫-এর দুটো ব্লকার (RequireHttpsMetadata + floci-র `client_id` gap) মেটানো না হলে floci-টোকেনে 401 আসবে।
+3. **নেগেটিভ টেস্ট প্যাটার্ন**: টোকেন-ছাড়া → 401; ভুল টোকেন → 401। `WWW-Authenticate: Bearer error="invalid_token"`-এর `error_description` দেখুন — যেমন "The audience 'x' is invalid" মানে ভ্যালিডেশন audience-চেক পর্যন্ত পৌঁছেছে (signature/issuer পার হয়েছে)। ডিবাগের সময় মনে রাখুন: `DefaultAuthenticateScheme=Admin` প্রতি রিকোয়েস্টে চলে বলে এরর-বার্তা অন্য স্কিমেরটাও দেখাতে পারে।
 
 ### ৯.২ Worker-only সার্ভিস (Scheduler/Utility) ডিবাগ
 
@@ -372,8 +411,10 @@ docker rm -f etp-postgres etp-redis
 1. **আসল সিক্রেট/কনফিগ মান** — connection string-এর DB নাম, Cognito pool ID, SQS, পেমেন্ট/TSP/Firebase মান (SSM `/rvl/dev/*` বা টিমমেটের user-secrets)।
 2. **Event ও TicketChecker-এর DB স্কিমা কে বানায়?** — এদের মাইগ্রেশন নেই; Event-এর মডেল Admin-ওয়ালা + Booking-ওয়ালা দুই ধরনের টেবিলই পড়ে। dev-এর DB dump নেওয়া লাগতে পারে।
 3. **Event আর TicketChecker একই DB শেয়ার করে কি না** — মান দেখেই বলা যাবে (`Database=` অংশ মিলিয়ে)।
-4. **লোকাল রানের পোর্ট-কনভেনশন** — admin-portal-এর `environment.ts` ".NET Aspire local stack (`aspire/Etp.AppHost`)" দেখায় (পোর্ট 5101/5102/5108/5110)। মানে টিম সম্ভবত Aspire-ভিত্তিক একটা লোকাল স্ট্যাক ব্যবহার করে, যেটা সাবমডিউলের বাইরে — তাই এ গাইডে যাচাই করা হয়নি; টিম আসলে কোন পথে লোকাল ডেভ করে জেনে নিন।
+4. ~~লোকাল রানের পোর্ট-কনভেনশন~~ **নিষ্পন্ন (২০২৬-১০-২১)** — টিম Aspire স্ট্যাক ব্যবহার করে (`aspire/Etp.AppHost`: সার্ভিসগুলো 5101–5111-এ, floci AWS emulator 4566-এ); §৫-এর "বিকল্প পথ" অংশে বর্ণিত ও লাইভ-যাচাইকৃত।
 5. **`Authentication:Jwt:Key` / `ServiceApiKey` / `SystemAccounts:Admin:Password`** কোথা থেকে পাবেন।
+6. **floci-র দুটো ব্লকার** (§৫ দেখুন): `RequireHttpsMetadata=false` কোডে যোগ করা লাগবে (dev-only PR), আর floci-টোকেনে `client_id` claim নেই — টিম কোনটা বদলাবে (emulator vs validator) ঠিক করবে।
+7. **User-পুল টোকেনে 200** এ টেস্টে পাওয়া যায়নি — স্কিম-চ্যালেঞ্জের জটিলতায় (নেগেটিভ/audience পরীক্ষা সত্য প্রমাণিত)। টিমের কারো সাথে ৫ মিনিট জয়েন্ট-ডিবাগে স্পট হয়ে যেতে পারে।
 
 ## ১৪. রেফারেন্স (মূল ফাইল)
 

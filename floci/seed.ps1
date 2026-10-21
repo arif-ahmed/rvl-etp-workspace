@@ -14,7 +14,7 @@ $env:AWS_ACCESS_KEY_ID     = 'test'
 $env:AWS_SECRET_ACCESS_KEY = 'test'
 
 $bucket = 'etp-local'
-$queues = @('OrderSuccess', 'EventCapacity', 'FirebaseNotification', 'TicketProcessing')   # AWS:Queue:* (names, not URLs: the code calls GetQueueUrl)
+$queues = @('OrderSuccess', 'EventCapacity', 'FirebaseNotification', 'TicketProcessing', 'VatChallanProcessing', 'TicketSigning')   # AWS:Queue:* (names, not URLs: the code calls GetQueueUrl)
 
 # S3
 aws s3api create-bucket --bucket $bucket --create-bucket-configuration LocationConstraint=$env:AWS_REGION 2>$null | Out-Null

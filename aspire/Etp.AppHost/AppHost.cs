@@ -75,7 +75,8 @@ foreach (var (name, folder, port) in defs)
        .WithEnvironment("Cache__Redis__DefaultDatabase", "0")
        .WithEnvironment("DistributedLock__Redis__EndPoint", redis.Resource.PrimaryEndpoint.Property(EndpointProperty.Host))
        .WithEnvironment("DistributedLock__Redis__Port", redis.Resource.PrimaryEndpoint.Property(EndpointProperty.Port))
-       .WithEnvironment("DistributedLock__Redis__AccessKey", "");
+       .WithEnvironment("DistributedLock__Redis__AccessKey", "")
+       .WithEnvironment("AWS_ENDPOINT_URL", "http://localhost:4566");   // Floci: SQS/SES/Cognito via the local emulator
 }
 
 builder.Build().Run();
