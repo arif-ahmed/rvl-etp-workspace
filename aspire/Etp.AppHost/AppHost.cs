@@ -8,16 +8,12 @@ var builder = DistributedApplication.CreateBuilder(args);
 var servicesRoot = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", "..", "rvl-gobcb-backend", "Services"));
 
 // ---- Infrastructure -------------------------------------------------------------------------
-// PostgreSQL and Redis come from the workspace docker-compose.yml (start it first: `docker compose up -d`).
-// Aspire only points the services at them. Credentials/ports match that compose file.
+// PostgreSQL, Redis and DynamoDB Local come from the workspace docker-compose.yml (`docker compose up -d`,
+// start it BEFORE the AppHost). Aspire only points the services at them; the values match that compose file
+// and scripts/user-secrets.example.json.
 const string dbConnection = "Host=localhost;Port=5432;Database=etp_local;Username=etp;Password=etp_local_pw;Include Error Detail=true";
 const string redisHost = "localhost";
 const string redisPort = "6379";
-
-// Ticketing hard-codes DynamoDB Local at http://localhost:8000
-builder.AddContainer("dynamodb-local", "amazon/dynamodb-local")
-    .WithHttpEndpoint(port: 8000, targetPort: 8000, isProxied: false)
-    .WithArgs("-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb");
 
 // ---- Services -------------------------------------------------------------------------------
 // name -> (folder, fixed port). Fixed ports because services call each other through Services:* URLs.

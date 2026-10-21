@@ -1,27 +1,16 @@
-# Local dev dependencies for the ETP backend: PostgreSQL + Redis.
-# Workspace-level on purpose — the backend repo's own docker-compose.yaml only
-# builds the 9 app images for CI (ECR push); it has no databases.
+# Local dev infrastructure for the ETP backend: PostgreSQL + Redis + DynamoDB Local.
+# Workspace-level on purpose: the backend repo's own docker-compose.yaml only builds app images for CI.
+# All ports are bound to loopback (127.0.0.1) only. The Aspire AppHost and the user secrets expect exactly these values:
+#   PostgreSQL  localhost:5432  db etp_local  user etp  password etp_local_pw
+#   Redis       localhost:6379  (no password)
+#   DynamoDB    localhost:8000  (Ticketing hard-codes it; in-memory)
 #
-# Standard ports 5432 (Postgres) and 6379 (Redis), bound to loopback ONLY:
-# the local native Redis Windows service on 6379 was stopped & disabled (2026-10-21).
+#   docker compose up -d      # start (first run creates the etp_local database)
+#   docker compose stop       # end of day, data kept
+#   docker compose down -v    # remove containers AND data
 #
-# NOTE: this deviates from the team's user-secrets template, which still expects:
-#   ConnectionStrings:* = Host=localhost;Port=5433;Database=etp_local;
-#                         Username=etp;Password=etp_local_pw
-#   Cache:Redis:ConnectionString / DistributedLock:Redis:Port = localhost:6380
-# So when using user secrets locally, use Port=5432 / localhost:6379 instead.
-# One shared database `etp_local` serves ALL services (verified live: every
-# context's 129 migrations coexist fine in the one `etp` schema).
-#
-# Usage (from this folder):
-#   docker compose up -d      # first run auto-creates the etp_local database
-#   docker compose stop       # end of day (data kept)
-#   docker compose down       # remove containers (data volumes kept)
-#   docker compose down -v    # remove everything incl. data
-#
-# Port already taken on your machine (e.g. a native install on 5432/6379)?
-# Override and adjust user-secrets to match:
-#   ETP_REDIS_PORT=6381 docker compose up -d     (also ETP_PG_PORT, ETP_PG_PASSWORD)
+# Port taken by a native install? Stop that program (or override with ETP_PG_PORT / ETP_REDIS_PORT and
+# change the AppHost and user secrets to match).
 
 name: etp-local
 
@@ -57,6 +46,14 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: etp-dynamodb
+    restart: unless-stopped
+    command: ["-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb"]
+    ports:
+      - "127.0.0.1:8000:8000"
 
 volumes:
   etp-pgdata:

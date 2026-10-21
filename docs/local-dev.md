@@ -44,7 +44,7 @@ If you come from a single ASP.NET solution, three ideas are new:
  +----+-----------------+--------------------+----------------+
       |                 |                    |
  PostgreSQL :5432   Redis :6379     Floci :4566 (fake AWS: S3, SQS, SES, Cognito)
- (docker compose)   (docker compose)  + DynamoDB Local :8000 (Ticketing only)
+ (docker compose)    (docker compose)    + DynamoDB Local :8000 (Ticketing only)
 ```
 
 Facts that explain most "why is this happening" moments:
@@ -88,7 +88,17 @@ Give Docker Desktop at least 8 GB of RAM (Settings > Resources, or `%UserProfile
 
 ## 3. First-time setup
 
-Run everything from the workspace root (`rvl-etp-workspace`) in PowerShell 7 unless stated.
+Run everything from the workspace root (`rvl-etp-workspace`) in PowerShell 7 unless stated. The order matters.
+**The whole sequence at a glance** (each step below explains and checks one part):
+
+```powershell
+git clone --recurse-submodules https://github.com/Relief-Validation/rvl-etp-workspace.git ; cd rvl-etp-workspace   # Step 1
+docker compose up -d                                                                                               # Step 2
+cd floci ; ./setup-https.ps1 ; docker compose up -d ; ./seed.ps1 ; ./seed-users.ps1 ; cd ..                       # Step 3
+./scripts/Set-EtpSecrets.ps1                                                                                       # Step 4
+dotnet run --project aspire/Etp.AppHost                                                                            # Step 5 (keep this terminal open)
+./scripts/Test-EtpLocal.ps1                                                                                        # Step 6 (in a second terminal)
+```
 
 ### Step 1. Get the code
 
@@ -101,48 +111,59 @@ git config submodule.recurse true
 The workspace pins five product repos at known-good commits. If you cloned without `--recurse-submodules`, run `git submodule update --init`.
 Check: `rvl-gobcb-backend/Services` should contain 11 folders.
 
-### Step 2. Start PostgreSQL and Redis
+### Step 2. Start PostgreSQL, Redis and DynamoDB
+
+From the workspace root:
 
 ```powershell
 docker compose up -d
-docker compose ps
+docker compose ps          # etp-postgres and etp-redis should say "healthy" after ~10 seconds
 ```
 
-Expected: two containers, `etp-postgres` and `etp-redis`, status `healthy` after about 10 seconds.
+This starts three containers from `docker-compose.yml`, all reachable only from your own PC:
 
-| | Address | Credentials |
-|---|---|---|
-| PostgreSQL 16 | `localhost:5432`, database `etp_local` | user `etp`, password `etp_local_pw` |
-| Redis 7 | `localhost:6379` | none |
+| Container | Address | Credentials | Data |
+|---|---|---|---|
+| `etp-postgres` | `localhost:5432`, database `etp_local` | user `etp`, password `etp_local_pw` | volume, kept |
+| `etp-redis` | `localhost:6379` | none | volume, kept |
+| `etp-dynamodb` (Ticketing only) | `http://localhost:8000` | none | in-memory, nothing to seed |
 
-Both listen on `127.0.0.1` only. Data lives in Docker volumes, so it survives restarts. The database is empty: that is correct.
-Verify:
-
-```powershell
-docker exec etp-postgres psql -U etp -d etp_local -c "select 1;"
-docker exec etp-redis redis-cli ping            # PONG
-```
-
-If the port is taken (a native Postgres or Redis on your PC), stop that one. The rest of this manual assumes 5432 and 6379.
+The database is empty the first time: that is correct, the services create their own tables.
+If a port is taken (a native Postgres or Redis on your PC), stop that program: `Get-NetTCPConnection -LocalPort 5432 -State Listen`.
 
 ### Step 3. Start Floci (fake AWS) and seed it
 
-Floci stands in for AWS so you need no real AWS keys. It also has its own web console at http://localhost:4500.
+Floci stands in for AWS so you need no real AWS keys. Its web console is http://localhost:4500. Three details are deliberate:
+
+- **HTTPS for login.** The backend only accepts HTTPS Cognito metadata, so a small proxy container (`etp-floci-tls`, `https://localhost:4567`) fronts Floci for
+  the Cognito URLs. It needs a certificate, which `setup-https.ps1` creates, so **run it before the first `docker compose up -d`** in `floci/`.
+  AWS calls (S3, SQS, the CLI) still go to `http://localhost:4566`.
+- **Region `us-east-1`.** The AWS SDK signs requests to a custom endpoint for `us-east-1`, so everything must be created there. The scripts already do.
+- **Seed once.** Seeding creates the bucket, queues and Cognito pools. Do not delete the Floci volume afterwards unless you want to start over.
 
 ```powershell
 cd floci
+./setup-https.ps1                   # one-time: trust + export the .NET dev certificate (accept the Windows prompt)
 docker compose up -d
-docker compose logs -f floci        # wait until it says it is ready, then press Ctrl+C
-./seed.ps1                          # creates bucket etp-local, SQS queues, SES identity, Cognito pools
-./seed-users.ps1                    # Admin Cognito pool with custom attributes + 5 staff users
+docker compose ps                   # etp-floci must say "healthy" (about 10 seconds); wait and repeat if it says "starting"
+./seed.ps1                          # S3 bucket etp-local, SQS queues, SES identity
+./seed-users.ps1                    # Cognito: 4 pools (Admin, User, TicketChecker, Agent), app clients, test users
 cd ..
 ```
 
-**Keep the output of both scripts.** They print Cognito `PoolId`, `ClientId` (and for Admin an `Authority` and `Metadata` URL).
-You need them in the next step. Run `seed.ps1` only once per fresh Floci volume; running it again creates duplicate pools.
-For the **Admin** pool use the values printed by `seed-users.ps1`, not `seed.ps1`.
+`seed-users.ps1` ends by printing a block of `AWS:CognitoPool:<Pool>:PoolId / ClientId / Authority / Metadata` lines for all four pools.
+You do not copy them: the next step reads them for you. Both scripts are safe to re-run: existing pools, clients, users, bucket and queues are reused,
+so nothing is duplicated.
 
-Test accounts created by `seed-users.ps1` (password for all: `Passw0rd!23`, username = phone number):
+**If you lose the output** (closed the terminal, shut down the PC): you do not need to save it. Run `./seed-users.ps1` again in `floci/` and it prints
+the same block, or list the IDs directly:
+
+```powershell
+aws --endpoint-url http://localhost:4566 cognito-idp list-user-pools --max-results 60
+aws --endpoint-url http://localhost:4566 cognito-idp list-user-pool-clients --user-pool-id <PoolId>
+```
+
+Test accounts for the Admin pool (password for all: `Passw0rd!23`, username = phone number; the other pools get one user each):
 
 | Phone | Role |
 |---|---|
@@ -152,40 +173,35 @@ Test accounts created by `seed-users.ps1` (password for all: `Passw0rd!23`, user
 | +8801700000004 | ticket_operator |
 | +8801700000005 | customer_support |
 
-Check: `aws --endpoint-url http://localhost:4566 s3 ls` lists `etp-local` (if the CLI complains about credentials, set
-`$env:AWS_ACCESS_KEY_ID="test"; $env:AWS_SECRET_ACCESS_KEY="test"; $env:AWS_REGION="ap-southeast-1"`).
-
-> The Floci setup and the `Authority`/`Metadata` URL format have not been verified against every Floci version. If login fails
-> later, see [README section 7](../README.md#7-floci-local-aws-emulation).
+Check: `aws --endpoint-url http://localhost:4566 s3 ls` lists `etp-local`. If the CLI complains about credentials or region, set them for this terminal:
+`$env:AWS_ACCESS_KEY_ID="test"; $env:AWS_SECRET_ACCESS_KEY="test"; $env:AWS_REGION="us-east-1"`. This setup was tested with Floci 2.3.0 (pinned in `floci/docker-compose.yml`).
 
 ### Step 4. Configure the services (user secrets)
 
 .NET *user secrets* are the standard way to keep config out of git: values are stored per project under
-`%APPDATA%\Microsoft\UserSecrets\`. Each of the 11 services needs the same settings, so one script applies a single JSON file to all of them.
-
-```powershell
-copy scripts\user-secrets.example.json scripts\user-secrets.json
-notepad scripts\user-secrets.json
-```
-
-`scripts\user-secrets.json` is git-ignored. In it, replace every `REPLACE_WITH_*` value:
-
-| Section | Replace with |
-|---|---|
-| `AWS:CognitoPool:Admin` (`PoolId`, `ClientId`, `Authority`, `Metadata`) | the output of `seed-users.ps1` |
-| `AWS:CognitoPool:User`, `TicketChecker`, `Agent` | the output of `seed.ps1` (`Authority` = `http://localhost:4566/<PoolId>`, `Metadata` = that plus `/.well-known/openid-configuration`) |
-| `PaymentSettings`, `TSP`, `OneIdSettings`, ... | leave the dummy values. They are only needed for payment, ticket-signing and OneID features, which cannot work locally anyway |
-
-Everything else (Floci URL, `test`/`test` keys, queue names, database and Redis addresses, service URLs) is already filled in for this setup.
-Then apply it:
+`%APPDATA%\Microsoft\UserSecrets\`. Each of the 11 services needs the same settings, so one script writes them to all of them:
 
 ```powershell
 ./scripts/Set-EtpSecrets.ps1
 ```
 
-Expected: one `ok  ETP.<Name>.Service.csproj` line per service. Check one:
-`dotnet user-secrets list --project rvl-gobcb-backend/Services/Admin/ETP.Admin.Service`.
-Edit the JSON and re-run the script any time; then restart the services. Never put real keys in any file in a repo.
+You edit no file. The script:
+
+1. starts from `scripts/user-secrets.example.json` (Floci URL, `test`/`test` keys, queue names, database and Redis addresses, service URLs; the
+   payment, TSP and OneID entries are dummies because those features cannot work locally anyway);
+2. asks the running Floci for the Cognito `PoolId` and `ClientId` of the Admin, User, TicketChecker and Agent pools and fills in
+   `PoolId`, `ClientId`, `Authority` and `Metadata` itself, so there is nothing to copy from the seed output;
+3. stops with a clear message if Floci is not running, a pool is missing (run `./seed-users.ps1`), or any `REPLACE_WITH_*` placeholder is left,
+   so a half-configured setup cannot be applied;
+4. writes the result to every service with `dotnet user-secrets`.
+
+Expected: four `cognito <Pool> pool ... client ...` lines, then one `ok  ETP.<Name>.Service.csproj` line per service. Check one:
+`dotnet user-secrets list --project rvl-gobcb-backend/Services/Admin/ETP.Admin.Service`. `./scripts/Set-EtpSecrets.ps1 -DryRun` prints the final JSON without applying it.
+
+**Re-run it** after every `./seed-users.ps1` on a fresh Floci (the IDs change), then restart the AppHost.
+
+*Optional personal overrides:* if you have a real key (for example a real payment sandbox), put only that key in `scripts/user-secrets.json`
+(git-ignored, same structure as the example). It is merged on top; values still containing `REPLACE_WITH` are ignored. Never put real keys in any file in a repo.
 
 ### Step 5. Start the backend
 
@@ -193,25 +209,31 @@ Edit the JSON and re-run the script any time; then restart the services. Never p
 dotnet run --project aspire/Etp.AppHost
 ```
 
-1. The first run downloads the Aspire packages and builds the 11 services: a few minutes.
+1. The first run downloads the Aspire packages and builds the 11 services: a few minutes. Keep this terminal open; `Ctrl+C` stops everything.
 2. The console prints `Login to the dashboard at http://localhost:15888/login?t=...`. Open that link.
 3. In the **Resources** tab each service goes *Starting* -> *Running*. Admin applies the database migrations first; the others follow.
+   Wait until all 11 are *Running* (about a minute after the build) before Step 6.
 4. If a service shows **Finished** or **Failed to start**, it crashed. Click it and read its console log ([Troubleshooting](#9-troubleshooting)).
 
 ### Step 6. Verify
 
+Open a **second** terminal in the workspace root:
+
 ```powershell
-curl http://localhost:5103/health                                   # Event -> Healthy. Try 5101 to 5111
-curl http://localhost:5103/event/api/v1/landing-page-image/public   # [] (empty list, no login needed)
-docker exec etp-postgres psql -U etp -d etp_local -tAc 'select count(*) from etp."__EFMigrationsHistory";'
+./scripts/Test-EtpLocal.ps1
 ```
 
-The last command should print **129** once all services have started once. Swagger UIs: `http://localhost:5101/admin/swagger`,
-`http://localhost:5103/event/swagger` (pattern `/<service name>/swagger`).
+It checks the five containers, the 11 `/health` endpoints, a Cognito login against Floci, and that a protected Admin endpoint answers
+**401 without a token and 200 with one**. Every line should say `PASS`; a `FAIL` line says what to do. If the health lines fail right after Step 5,
+the services are still starting: wait and run it again.
 
-Two things are **normal** on a fresh setup: the Scheduler logs `Firebase notification: processing failed` every minute (no Firebase locally),
-and Ticketing floods its log with `CryptographicException ... cannot find the path` because the ticket-signing certificate is not available locally.
-If the noise bothers you, skip Ticketing (see [Daily routine](#4-daily-routine)).
+Extra checks if you like: `curl http://localhost:5103/event/api/v1/landing-page-image/public` returns `[]`; and in DBeaver/pgAdmin
+(`localhost:5432`, db `etp_local`, user `etp`, password `etp_local_pw`) `select count(*) from etp."__EFMigrationsHistory";` returns **129** once all services have started once.
+Swagger UIs: `http://localhost:5101/admin/swagger`, `http://localhost:5103/event/swagger` (pattern `/<service name>/swagger`).
+
+Some log noise is expected locally and does not stop the services: Scheduler may log Firebase warnings (no Firebase locally), Ticketing may log
+`CryptographicException` because the ticket-signing certificate is not available, and background workers may log `Could NOT acquire lock ... Skipping this cycle`.
+To silence Ticketing, skip it (see [Daily routine](#4-daily-routine)).
 
 You are now ready to build, run and debug.
 
@@ -224,14 +246,19 @@ You are now ready to build, run and debug.
 ```powershell
 git pull
 git submodule update --init                # only needed if the pinned submodule commits changed
-docker compose up -d                       # PostgreSQL + Redis (does nothing if already running)
-(cd floci; docker compose up -d)           # fake AWS; its data persists, so do not re-seed
+docker compose up -d                       # PostgreSQL, Redis, DynamoDB (does nothing if already running)
+(cd floci; docker compose up -d)           # fake AWS; pools, queues and users persist, so do not re-seed
 dotnet run --project aspire/Etp.AppHost    # all services + dashboard
 ```
 
-Start the Docker parts before the AppHost. New database migrations that other people added are applied automatically at service startup.
-If `aws sqs list-queues` shows nothing, Floci lost its data: re-run `./seed.ps1` and `./seed-users.ps1` and update the Cognito IDs
-in `scripts\user-secrets.json` (Step 4).
+Start the Docker parts before the AppHost. Once the services are *Running*, `./scripts/Test-EtpLocal.ps1` confirms that everything works (about 20 seconds). New database migrations that other people added are applied automatically at service startup.
+
+**After a PC shutdown or reboot** there is nothing to redo: your Cognito IDs are saved in the services' user secrets,
+and Floci keeps its data in the `etp-floci-data` volume (Docker Desktop usually restarts the container by itself). Just run the two commands above.
+If you get 401 everywhere, check that Floci still has its pools: `aws --endpoint-url http://localhost:4566 cognito-idp list-user-pools --max-results 60`.
+An empty list (or `aws sqs list-queues` showing nothing) means Floci lost its data: re-run `./seed.ps1` and `./seed-users.ps1` in `floci/`,
+run `./scripts/Set-EtpSecrets.ps1` (it picks up the new IDs by itself), restart the AppHost.
+(Persistence across restarts has not been verified for Cognito on every Floci version; this check is the safety net.)
 
 **Run fewer services** (saves RAM and noise). Set this *before* starting the AppHost; names are comma separated:
 
@@ -334,7 +361,7 @@ VS Code has an **Aspire AppHost** config in `launch.json`. This is not verified 
 **Call a protected API.** Most endpoints need a Cognito token. Get one from Floci for a seeded user (use the Admin `ClientId` from `seed-users.ps1`):
 
 ```powershell
-aws --endpoint-url http://localhost:4566 cognito-idp initiate-auth --region ap-southeast-1 `
+aws --endpoint-url http://localhost:4566 cognito-idp initiate-auth --region us-east-1 `
   --auth-flow USER_PASSWORD_AUTH --client-id <ADMIN_CLIENT_ID> `
   --auth-parameters USERNAME=+8801700000001,PASSWORD=Passw0rd!23
 ```
@@ -348,7 +375,7 @@ There is also a ready Postman collection in `postman/` ([README section 10](../R
 docker exec -it etp-postgres psql -U etp -d etp_local     # then:  \dt etp.*   and   select ... ;
 ```
 
-or connect DBeaver to `localhost:5432`, database `etp_local`, user `etp`, password `etp_local_pw`.
+or (easier) connect DBeaver to `localhost:5432`, database `etp_local`, user `etp`, password `etp_local_pw`.
 There is no seed data: create events and venues through the Admin API, or ask the team lead for a sanitized dump.
 
 **Look at fake AWS.**
@@ -377,20 +404,13 @@ docker compose stop
 (cd floci; docker compose stop)
 ```
 
-**Remove containers (data kept)**
-
-```powershell
-docker compose down
-(cd floci; docker compose down)
-```
-
-**Reset data (clean database/AWS, keep images)**
+**Reset data (clean database and AWS, keep images)**
 
 ```powershell
 docker compose down -v                 # deletes the PostgreSQL and Redis volumes
 docker compose up -d
 (cd floci; docker compose down -v; docker compose up -d; ./seed.ps1; ./seed-users.ps1)
-# Floci pool IDs change on re-seed: update scripts\user-secrets.json, run ./scripts/Set-EtpSecrets.ps1, restart the AppHost
+# Floci pool IDs change on re-seed: run ./scripts/Set-EtpSecrets.ps1 again, then restart the AppHost
 ```
 
 **Full cleanup (data and images)**
@@ -398,19 +418,17 @@ docker compose up -d
 ```powershell
 docker compose down --volumes --rmi all --remove-orphans
 (cd floci; docker compose down --volumes --rmi all --remove-orphans)
-docker rm -f etp-dynamodb 2>$null
-docker rmi amazon/dynamodb-local 2>$null          # started by Aspire for Ticketing
 
 Get-ChildItem rvl-gobcb-backend/Services -Recurse -Filter '*.Service.csproj' |
   Where-Object { Select-String $_.FullName -Pattern '<UserSecretsId>' -Quiet } |
   ForEach-Object { dotnet user-secrets clear --project $_.FullName }
-Remove-Item scripts\user-secrets.json             # back up real keys first
+Remove-Item scripts\user-secrets.json -ErrorAction SilentlyContinue   # only exists if you made personal overrides
 
 docker ps -a --filter "name=etp"                  # leftovers check: should list nothing
 docker volume ls --filter "name=etp"
 ```
 
-`--rmi all` removes the `postgres` and `redis` images; if another project of yours uses them, Docker refuses to remove an image that is in use, which is the safety net.
+`docker rmi` refuses to remove an image that a container still uses, which protects other projects that share `postgres` or `redis`.
 Finally, `dotnet clean rvl-gobcb-backend/RVL-ETP.BackEnd.sln` removes build output, and `git submodule foreach "git status --porcelain"` must print nothing.
 To start again, go back to [Part 3](#3-first-time-setup).
 
@@ -420,13 +438,15 @@ To start again, go back to [Part 3](#3-first-time-setup).
 
 | Symptom | Cause and fix |
 |---|---|
-| `docker version` shows no Server / compose fails | Docker Desktop is not running. Start it and wait for the whale icon to be steady |
+| `docker version` shows no Server / containers fail to start | Docker Desktop is not running. Start it and wait for the whale icon to be steady |
 | `port is already allocated` (5432, 6379, 4566, 8000) | Another program owns the port: `Get-NetTCPConnection -LocalPort 5432 -State Listen`. Stop it (a native Postgres/Redis, LocalStack) |
-| Service stuck in **Waiting** | Aspire waits for a dependency. Check `docker compose ps` and the dashboard logs |
-| Service **Finished** right after start | It crashed; read its console log. *Redis* error: Redis is down. *`[see User Secrets]`/FormatException*: secrets not applied, re-run `Set-EtpSecrets.ps1`. `UserIssue` NullReference on `Application:ServiceName`: re-run the script |
+| Every request fails with `The MetadataAddress or Authority must use HTTPS` | The Cognito URLs in your secrets are `http://`. Run `./setup-https.ps1`, `docker compose up -d` in `floci/`, then `./scripts/Set-EtpSecrets.ps1` and restart the AppHost |
+| Valid token still gets **401** `The signature key was not found`, or **403**, or logs `User pool ... does not exist` | Floci was seeded in a different region. The AWS SDK signs requests to a custom endpoint for `us-east-1`, so Floci must hold everything in `us-east-1` (the seed scripts do this). If your pool IDs start with `ap-southeast-1_`, they are from an older setup: re-run `./seed.ps1` and `./seed-users.ps1` in `floci/`, then `./scripts/Set-EtpSecrets.ps1`, and restart the AppHost |
+| `etp-floci-tls` keeps restarting, or https://localhost:4567 does not answer | The certificate files are missing. Run `cd floci; ./setup-https.ps1`, then `docker compose up -d` again |
+| Service **Finished** right after start | It crashed; read its console log. *Redis/Postgres connection* error: infra is down, run `docker compose up -d` (`docker compose ps` to check) and restart the AppHost. *`[see User Secrets]`/FormatException*: secrets not applied, re-run `Set-EtpSecrets.ps1`. `UserIssue` NullReference on `Application:ServiceName`: re-run the script |
 | `password authentication failed for user "etp"` | The Postgres volume was created with another password. `docker compose down -v` and start again |
 | `relation "etp.xxx" does not exist` | Admin has not finished its migrations yet; wait, or check Admin's log |
-| 401 on every call | Token expired, or the Cognito IDs in your secrets no longer match Floci (they change when you re-seed). Update the file, re-run the script, restart |
+| 401 on every call | Token expired, or the Cognito IDs in your secrets no longer match Floci (they change when Floci's data is recreated). Re-run `./scripts/Set-EtpSecrets.ps1` (it reads the current IDs from Floci), restart |
 | AWS errors such as `UnrecognizedClientException` or calls reaching real AWS | Floci is not running; Aspire sets `AWS_ENDPOINT_URL` for the services it starts, but a service you launch yourself needs it too (6.2) |
 | S3 `NoSuchBucket` | Bucket missing: `aws --endpoint-url http://localhost:4566 s3 ls`; re-seed if empty |
 | Ticketing log spam `CryptographicException` | Missing TSP certificate. Skip it with `ETP_SKIP=Ticketing` unless you work on tickets |

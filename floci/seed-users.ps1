@@ -14,7 +14,7 @@
 $ErrorActionPreference = 'Stop'
 
 $env:AWS_ENDPOINT_URL      = 'http://localhost:4566'
-$env:AWS_REGION            = 'ap-southeast-1'
+$env:AWS_REGION            = 'us-east-1'
 $env:AWS_ACCESS_KEY_ID     = 'test'
 $env:AWS_SECRET_ACCESS_KEY = 'test'
 $env:AWS_PAGER             = ''
@@ -95,8 +95,8 @@ foreach ($p in $poolSecrets.Keys) {
     $s = $poolSecrets[$p]
     Write-Host "AWS:CognitoPool:$p:PoolId   = $($s.PoolId)"
     Write-Host "AWS:CognitoPool:$p:ClientId = $($s.ClientId)"
-    Write-Host "AWS:CognitoPool:$p:Authority = http://localhost:4566/$($s.PoolId)"
-    Write-Host "AWS:CognitoPool:$p:Metadata  = http://localhost:4566/$($s.PoolId)/.well-known/openid-configuration"
+    Write-Host "AWS:CognitoPool:$p:Authority = https://localhost:4567/$($s.PoolId)"
+    Write-Host "AWS:CognitoPool:$p:Metadata  = https://localhost:4567/$($s.PoolId)/.well-known/openid-configuration"
 }
 
 Write-Host "`nUsers (username = phone, password '$password'):"
