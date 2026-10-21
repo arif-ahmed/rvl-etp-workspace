@@ -117,6 +117,8 @@ pwsh ./scripts/Set-EtpSecrets.ps1
 dotnet run --project aspire/Etp.AppHost
 # Step 6: in a SECOND terminal, check containers, health, login, protected call
 pwsh ./scripts/Test-EtpLocal.ps1
+# Step 7 (optional): load BCB cricket test data (series, BPL, grounds, orders, tickets)
+pwsh ./scripts/Seed-EtpData.ps1
 ```
 
 ### Step 1. Get the code
@@ -304,6 +306,18 @@ All of these were opened and answered with HTTP 200 on a fresh setup. Health che
 Some log noise is expected locally and does not stop the services: Scheduler may log Firebase warnings (no Firebase locally), Ticketing may log
 `CryptographicException` because the ticket-signing certificate is not available, and background workers may log `Could NOT acquire lock ... Skipping this cycle`.
 To silence Ticketing, skip it (see [Daily routine](#4-daily-routine)).
+
+### Step 7. Load test data (optional)
+
+The database has its tables but no rows. With all services *Running* (Step 5), load the BCB cricket sample data from the second terminal:
+
+```bash
+# programs, grounds, matches, prices, capacity, orders, tickets, scans, issues (safe to re-run; add -Reset to reload)
+pwsh ./scripts/Seed-EtpData.ps1
+```
+
+What it contains, how to log in as the owners of the orders, and what it does not cover: [Everyday tasks, Test data](#7-everyday-tasks).
+Check: `curl.exe http://localhost:5103/event/api/v1/landing-page-image/public` now returns the landing-page images instead of `[]`.
 
 You are now ready to build, run and debug.
 
