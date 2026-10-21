@@ -1,0 +1,759 @@
+{
+  "info": {
+    "_postman_id": "5e45682b-1d97-5321-12b6-8ae8127998ed",
+    "name": "ETP - Login (all pools)",
+    "description": "Logs in every seeded user across the Admin, User, TicketChecker and Agent Cognito pools and stores access_token_* / id_token_* / refresh_token_* in the environment 'ETP Local - Services'. Run folder '00 - Resolve' first, then the pool folders (or the whole collection). Prereq: floci/seed-users.ps1.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 - Resolve",
+      "item": [
+        {
+          "name": "Resolve pool ids (ListUserPools)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const pools = pm.response.json().UserPools || [];",
+                  "{ const p = pools.find(x => x.Name === 'etp-admin'); pm.test('pool etp-admin exists (run floci/seed-users.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('admin_pool_id', p.Id); }",
+                  "{ const p = pools.find(x => x.Name === 'etp-user'); pm.test('pool etp-user exists (run floci/seed-users.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('user_pool_id', p.Id); }",
+                  "{ const p = pools.find(x => x.Name === 'etp-ticketchecker'); pm.test('pool etp-ticketchecker exists (run floci/seed-users.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('ticketchecker_pool_id', p.Id); }",
+                  "{ const p = pools.find(x => x.Name === 'etp-agent'); pm.test('pool etp-agent exists (run floci/seed-users.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('agent_pool_id', p.Id); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.ListUserPools"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "Run first. Resolves the four pool ids from the seeded pool names.",
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"MaxResults\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Resolve admin client id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const c = (pm.response.json().UserPoolClients || []).find(c => c.ClientName === pm.environment.get('client_name'));",
+                  "pm.test('app client exists', () => pm.expect(c).to.exist);",
+                  "if (c) pm.environment.set('admin_client_id', c.ClientId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.ListUserPoolClients"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{admin_pool_id}}\",\n  \"MaxResults\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Resolve user client id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const c = (pm.response.json().UserPoolClients || []).find(c => c.ClientName === pm.environment.get('client_name'));",
+                  "pm.test('app client exists', () => pm.expect(c).to.exist);",
+                  "if (c) pm.environment.set('user_client_id', c.ClientId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.ListUserPoolClients"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{user_pool_id}}\",\n  \"MaxResults\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Resolve ticketchecker client id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const c = (pm.response.json().UserPoolClients || []).find(c => c.ClientName === pm.environment.get('client_name'));",
+                  "pm.test('app client exists', () => pm.expect(c).to.exist);",
+                  "if (c) pm.environment.set('ticketchecker_client_id', c.ClientId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.ListUserPoolClients"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{ticketchecker_pool_id}}\",\n  \"MaxResults\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Resolve agent client id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const c = (pm.response.json().UserPoolClients || []).find(c => c.ClientName === pm.environment.get('client_name'));",
+                  "pm.test('app client exists', () => pm.expect(c).to.exist);",
+                  "if (c) pm.environment.set('agent_client_id', c.ClientId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.ListUserPoolClients"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "awsv4",
+              "awsv4": [
+                {
+                  "key": "accessKey",
+                  "value": "{{aws_access_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "secretKey",
+                  "value": "{{aws_secret_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "region",
+                  "value": "{{aws_region}}",
+                  "type": "string"
+                },
+                {
+                  "key": "service",
+                  "value": "cognito-idp",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserPoolId\": \"{{agent_pool_id}}\",\n  \"MaxResults\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin pool",
+      "item": [
+        {
+          "name": "Login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('token issued (no challenge)', () => pm.expect(r).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_admin', r.AccessToken);",
+                  "pm.environment.set('id_token_admin', r.IdToken);",
+                  "pm.environment.set('refresh_token_admin', r.RefreshToken);",
+                  "pm.test('id token custom:role = admin', () => pm.expect(jwt(r.IdToken)['custom:role']).to.eql('admin'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_admin}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login as event_manager",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('token issued (no challenge)', () => pm.expect(r).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_event_manager', r.AccessToken);",
+                  "pm.environment.set('id_token_event_manager', r.IdToken);",
+                  "pm.environment.set('refresh_token_event_manager', r.RefreshToken);",
+                  "pm.test('id token custom:role = event_manager', () => pm.expect(jwt(r.IdToken)['custom:role']).to.eql('event_manager'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_event_manager}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login as ticket_manager",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('token issued (no challenge)', () => pm.expect(r).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_ticket_manager', r.AccessToken);",
+                  "pm.environment.set('id_token_ticket_manager', r.IdToken);",
+                  "pm.environment.set('refresh_token_ticket_manager', r.RefreshToken);",
+                  "pm.test('id token custom:role = ticket_manager', () => pm.expect(jwt(r.IdToken)['custom:role']).to.eql('ticket_manager'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_ticket_manager}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login as ticket_operator",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('token issued (no challenge)', () => pm.expect(r).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_ticket_operator', r.AccessToken);",
+                  "pm.environment.set('id_token_ticket_operator', r.IdToken);",
+                  "pm.environment.set('refresh_token_ticket_operator', r.RefreshToken);",
+                  "pm.test('id token custom:role = ticket_operator', () => pm.expect(jwt(r.IdToken)['custom:role']).to.eql('ticket_operator'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_ticket_operator}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login as customer_support",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('token issued (no challenge)', () => pm.expect(r).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_customer_support', r.AccessToken);",
+                  "pm.environment.set('id_token_customer_support', r.IdToken);",
+                  "pm.environment.set('refresh_token_customer_support', r.RefreshToken);",
+                  "pm.test('id token custom:role = customer_support', () => pm.expect(jwt(r.IdToken)['custom:role']).to.eql('customer_support'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{admin_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_customer_support}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User pool",
+      "item": [
+        {
+          "name": "Login as user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('token issued (no challenge)', () => pm.expect(r).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_user', r.AccessToken);",
+                  "pm.environment.set('id_token_user', r.IdToken);",
+                  "pm.environment.set('refresh_token_user', r.RefreshToken);",
+                  "pm.test('id token custom:role = user', () => pm.expect(jwt(r.IdToken)['custom:role']).to.eql('user'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{user_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_user}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ticketchecker pool",
+      "item": [
+        {
+          "name": "Login as ticket_checker",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('token issued (no challenge)', () => pm.expect(r).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_ticket_checker', r.AccessToken);",
+                  "pm.environment.set('id_token_ticket_checker', r.IdToken);",
+                  "pm.environment.set('refresh_token_ticket_checker', r.RefreshToken);",
+                  "pm.test('id token custom:role = ticket-checker', () => pm.expect(jwt(r.IdToken)['custom:role']).to.eql('ticket-checker'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{ticketchecker_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_ticket_checker}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agent pool",
+      "item": [
+        {
+          "name": "Login as agent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function jwt(t){const p=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(p)));}",
+                  "pm.test('200 InitiateAuth', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json().AuthenticationResult;",
+                  "pm.test('token issued (no challenge)', () => pm.expect(r).to.exist);",
+                  "if (!r) return;",
+                  "pm.environment.set('access_token_agent', r.AccessToken);",
+                  "pm.environment.set('id_token_agent', r.IdToken);",
+                  "pm.environment.set('refresh_token_agent', r.RefreshToken);",
+                  "pm.test('id token custom:role = agent', () => pm.expect(jwt(r.IdToken)['custom:role']).to.eql('agent'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-amz-json-1.1"
+              },
+              {
+                "key": "X-Amz-Target",
+                "value": "AWSCognitoIdentityProviderService.InitiateAuth"
+              }
+            ],
+            "url": "{{floci_url}}/",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"AuthFlow\": \"USER_PASSWORD_AUTH\",\n  \"ClientId\": \"{{agent_client_id}}\",\n  \"AuthParameters\": {\n    \"USERNAME\": \"{{phone_agent}}\",\n    \"PASSWORD\": \"{{test_password}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
