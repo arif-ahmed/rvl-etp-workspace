@@ -1,0 +1,111 @@
+<#
+.SYNOPSIS
+  Loads a small, logically related test data set into the local Postgres (etp_local). Safe to re-run.
+
+.DESCRIPTION
+  Seeds a BCB cricket catalogue, in dependency order (scripts/seed/*.sql):
+    01 catalog   currency, settings, 2 programs (Ids match custom:program_ids = 1,2 of the seeded Cognito users):
+                   1 Bangladesh vs India Series (Test + ODIs + T20I, VAT on top), 2 Bangladesh Premier League (VAT inclusive);
+                 teams, 3 grounds (Mirpur, Chattogram, Sylhet: gallery > block > level + gates), 7 matches with settings,
+                 segments (the Test has 5 day-segments), price/capacity per level, discounts, promo codes, landing page
+    02 inventory per-match seat capacity, capacity adjustments, complimentary + partner reservations, a sold-out level,
+                 a limited-availability level
+    03 orders    9 bookings (Paid x6, Pending, Failed, Cancelled) with booked-user records, 14 tickets, a complimentary
+                 ticket, raffle rows
+    04 checker   gates + gate users, match-day scans (incl. a duplicate and a manual entry), user issues + chat, device tokens
+
+  Rows that belong to a user (orders, tickets, scans, issues, device tokens) carry the real Cognito `sub` of the seeded
+  Floci users, looked up from the running Floci, so the same data is visible when you log in as those users.
+
+  Prerequisites: docker compose up -d, floci seed + seed-users, and the AppHost (or the services) started once so
+  every service has run its EF migrations (the script checks for the tables it needs).
+  Seed rows use Ids below 100; rows created later through the APIs get higher Ids (identity sequences are bumped).
+
+.PARAMETER Reset
+  Deletes the seed rows (Id < 100 in the seeded tables) first, then seeds again, so edits to the SQL take effect.
+  Rows created through the APIs (Id >= 100) are left alone.
+#>
+param([switch]$Reset)
+$ErrorActionPreference = 'Stop'
+$seedDir   = Join-Path $PSScriptRoot 'seed'
+$container = 'etp-postgres'
+$env:AWS_ENDPOINT_URL = 'http://localhost:4566'; $env:AWS_REGION = 'us-east-1'
+$env:AWS_ACCESS_KEY_ID = 'test'; $env:AWS_SECRET_ACCESS_KEY = 'test'; $env:AWS_PAGER = ''
+
+function Invoke-Psql([string]$sqlText, [string[]]$extra = @()) {
+    $out = $sqlText | docker exec -i $container psql -U etp -d etp_local -v ON_ERROR_STOP=1 -At @extra 2>&1
+    if ($LASTEXITCODE -ne 0) { throw "psql failed:`n$($out -join "`n")" }
+    $out
+}
+
+if ((docker inspect -f '{{.State.Running}}' $container 2>$null) -ne 'true') { throw "Container '$container' is not running. Run: docker compose up -d" }
+if (-not (Get-Command aws -ErrorAction SilentlyContinue)) { throw 'AWS CLI not found. Install it (winget install Amazon.AWSCLI) and open a new terminal.' }
+
+# ---- the schema must exist: every service migrates its own tables at startup ----
+$need = 'Programs','Events','Capacities','UserBookingOrders','Tickets','CheckedTickets','TicketCheckerGates','ReportedIssues','UserDeviceTokens','ActivityLogs'
+$have = (Invoke-Psql "select table_name from information_schema.tables where table_schema='etp'") -split "`n"
+$missing = $need | Where-Object { $_ -notin $have }
+if ($missing) { throw "Tables missing: $($missing -join ', '). Start the AppHost (all services) once so the EF migrations run, wait until they are healthy, then re-run." }
+
+# ---- Cognito subs of the seeded users (floci/seed-users.ps1) ----
+function Get-Sub([string]$pool, [string]$phone) {
+    $id = aws cognito-idp list-user-pools --max-results 60 --query "UserPools[?Name=='etp-$pool'].Id | [0]" --output text
+    if (-not $id -or $id -eq 'None') { throw "Cognito pool 'etp-$pool' not found in Floci. Run: (cd floci; ./seed-users.ps1)" }
+    $sub = aws cognito-idp admin-get-user --user-pool-id $id --username $phone --query "UserAttributes[?Name=='sub'].Value | [0]" --output text
+    if (-not $sub -or $sub -eq 'None') { throw "User $phone not found in pool etp-$pool. Run: (cd floci; ./seed-users.ps1)" }
+    $sub
+}
+$vars = @{
+    user_sub     = Get-Sub 'user'          '+8801700000011'
+    operator_sub = Get-Sub 'admin'         '+8801700000004'
+    admin_sub    = Get-Sub 'admin'         '+8801700000001'
+    checker_sub  = Get-Sub 'ticketchecker' '+8801700000021'
+}
+$vars.GetEnumerator() | Sort-Object Name | ForEach-Object { Write-Host ("{0,-13} {1}" -f $_.Name, $_.Value) }
+$psqlVars = $vars.GetEnumerator() | ForEach-Object { '-v'; "$($_.Key)=$($_.Value)" }
+
+# ---- optional reset of the seed rows (children first) ----
+if ($Reset) {
+    Write-Host 'Reset: deleting seed rows (Id < 100) ...'
+    $byId = 'ActivityLogs','UserDeviceTokens','ReportedIssueChatMessages','ReportedIssues','CheckedTickets','TicketCheckerGateUsers','TicketCheckerGates',
+            'RaffleDraws','OfflineSoldTickets','Tickets','BookedUserRecords','UserBookingOrders','SeatReservations','EventCapacityAdjustments','Capacities',
+            'LandingPageImage','PromoCodeVenueEventGallery','PromoCodeAssigns','PromoCodes','DiscountVenueEventGallery','DiscountAssigns','Discounts',
+            'EventVenueDetails','EventSegments','EventSettings','Events','ProgramVenueDetails','ProgramVenues',
+            'BlockLevelMiniGates','BlockLevelEntryGates','GalleryBlockEntryGates','BlockLevels','GalleryBlocks','VenueGalleries','Venues',
+            'TicketLayoutConfigs','TicketAttributes','GeneralNotices','ProgramTeams','ProgramSettings','Programs','SocialMediaSettings','HeaderFooter','SystemSettings','Currencies'
+    $sql = @('SET search_path = etp;', 'BEGIN;',
+             'DELETE FROM "EventPromoCodeAssign" WHERE "PromoCodeAssignId" < 100;',
+             'DELETE FROM "PromoCodeAssignVenueGallery" WHERE "PromoCodeAssignId" < 100;',
+             'DELETE FROM "DiscountAssignEvent" WHERE "DiscountAssignId" < 100;',
+             'DELETE FROM "DiscountAssignVenueGallery" WHERE "DiscountAssignId" < 100;')
+    $sql += $byId | ForEach-Object { "DELETE FROM `"$_`" WHERE `"Id`" < 100;" }
+    $sql += 'COMMIT;'
+    $null = Invoke-Psql ($sql -join "`n")
+}
+
+# ---- run the seed files (docker cp keeps UTF-8 intact on any PowerShell version) ----
+foreach ($f in Get-ChildItem $seedDir -Filter '*.sql' | Sort-Object Name) {
+    Write-Host "seeding $($f.Name) ..."
+    docker cp $f.FullName "${container}:/tmp/$($f.Name)" | Out-Null
+    $out = docker exec $container psql -U etp -d etp_local -v ON_ERROR_STOP=1 -q @psqlVars -f "/tmp/$($f.Name)" 2>&1
+    if ($LASTEXITCODE -ne 0) { throw "$($f.Name) failed:`n$($out -join "`n")" }
+}
+
+# ---- the services cache reads in Redis (e.g. an empty landing-page list); drop those so the new rows show up at once.
+#      DataProtection-Keys* must stay (they keep issued cookies/antiforgery tokens valid). ----
+if ((docker inspect -f '{{.State.Running}}' etp-redis 2>$null) -eq 'true') {
+    $keys = @(docker exec etp-redis redis-cli --scan) | Where-Object { $_ -and $_ -notlike 'DataProtection-Keys*' }
+    foreach ($k in $keys) { docker exec etp-redis redis-cli del $k | Out-Null }
+    Write-Host "cleared $($keys.Count) cached Redis key(s)"
+}
+
+# ---- summary ----
+Write-Host "`nSeeded row counts:"
+Invoke-Psql @'
+select 'Programs', count(*) from etp."Programs" union all select 'Venues', count(*) from etp."Venues"
+union all select 'Events', count(*) from etp."Events" union all select 'EventVenueDetails', count(*) from etp."EventVenueDetails"
+union all select 'Capacities', count(*) from etp."Capacities" union all select 'UserBookingOrders', count(*) from etp."UserBookingOrders"
+union all select 'Tickets', count(*) from etp."Tickets" union all select 'CheckedTickets', count(*) from etp."CheckedTickets"
+union all select 'ReportedIssues', count(*) from etp."ReportedIssues" union all select 'LandingPageImage', count(*) from etp."LandingPageImage"
+'@ | ForEach-Object { $c = $_ -split '\|'; Write-Host ("  {0,-20} {1}" -f $c[0], $c[1]) }
+Write-Host "`nTry: curl.exe http://localhost:5103/event/api/v1/landing-page-image/public"

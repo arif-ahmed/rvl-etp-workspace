@@ -278,7 +278,7 @@ It checks the five containers, the 11 `/health` endpoints, a Cognito login again
 **401 without a token and 200 with one**. Every line should say `PASS`; a `FAIL` line says what to do. If the health lines fail right after Step 5,
 the services are still starting: wait and run it again.
 
-Extra checks if you like: `curl.exe http://localhost:5103/event/api/v1/landing-page-image/public` returns `[]`; and in DBeaver/pgAdmin
+Extra checks if you like: `curl.exe http://localhost:5103/event/api/v1/landing-page-image/public` returns `[]` on an empty database (rows once you have run the [test-data script](#7-everyday-tasks)); and in DBeaver/pgAdmin
 (`localhost:5432`, db `etp_local`, user `etp`, password `etp_local_pw`) `select count(*) from etp."__EFMigrationsHistory";` returns **129** once all services have started once.
 Swagger UIs are listed in the table below.
 
@@ -465,7 +465,40 @@ docker exec -it etp-postgres psql -U etp -d etp_local
 ```
 
 or (easier) connect DBeaver to `localhost:5432`, database `etp_local`, user `etp`, password `etp_local_pw`.
-There is no seed data: create events and venues through the Admin API, or ask the team lead for a sanitized dump.
+**Test data (BCB cricket).** The code has no seeder, so the workspace ships one. After all services were *Running* once (that applies the migrations), run:
+
+```bash
+# idempotent; add -Reset to wipe the seed rows and load them again (use it after pulling a new version of the seed)
+pwsh ./scripts/Seed-EtpData.ps1
+```
+
+It loads a small, linked cricket data set (plain SQL in `scripts/seed/`). Ground names are real; **fixtures, stand layouts and prices are sample data**, not the real BCB schedule or tariff.
+
+| Area | What you get |
+|---|---|
+| **Programs** (Ids match the Cognito users' `custom:program_ids` = 1,2) | **1 Bangladesh vs India Series** (bilateral; 15% VAT added on top, 2% platform charge, ticket prefix `BDI`) and **2 Bangladesh Premier League** (franchise tournament; prices include VAT, 3% platform charge, prefix `BPL`). Teams: Bangladesh, India; Dhaka Capitals, Chattogram Challengers, Rangpur Riders, Sylhet Strikers |
+| **Grounds** | Sher-e-Bangla National Cricket Stadium (Mirpur), Zahur Ahmed Chowdhury Stadium (Chattogram), Sylhet International Cricket Stadium. Each has gallery > block > level (a seated Pavilion with Row A/B, general stands, a Student Enclosure at Mirpur), entry gates and mini gates |
+| **Matches** (7) | 1 Test over 5 days (one segment per day = a multi-segment ticket) · 2 **1st ODI at Mirpur, live today** (started an hour ago) · 3 2nd ODI at Chattogram · 4 1st T20I at Sylhet, **unpublished draft** · 5-7 three BPL matches. Each has settings, segments, and price + capacity per level |
+| **Promotions** | Discounts: early bird 10% on the Mirpur Pavilion (active), a flat one (expired), BPL launch 15% (upcoming). Promo codes `BCBWELCOME10` (2nd ODI Pavilion), `BPLFLAT100`, `OLDCODE` (expired) |
+| **Inventory cases** | Seated rows with sold, locked and free seats; a general stand; **sold-out online** (1st ODI Student Enclosure, all 300 seats handed to a partner reservation); **limited availability** (Sylhet BPL General, 25 of 300 left, below the 10% threshold); a complimentary reservation (B9, B10; one ticket already issued) |
+| **Orders** (9, all for the `+8801700000011` user) | Paid x6, Pending (seat locked), Failed (declined), Cancelled. Series orders show VAT on top; BPL orders show VAT included; one order used a promo code, one an early-bird discount. 14 tickets (status Active, Requested, Generated), booked-user records, raffle rows |
+| **Match day** | Gates and gate staff for the ticket-checker user, scans for the live ODI (a normal entry, a duplicate scan, a manual entry) |
+| **Support and push** | 2 user issues (Open, Resolved) with chat on 1st ODI orders, device tokens, activity logs, landing-page images (hero, sponsors, notice, FAQ, one unpublished) |
+
+Rows that belong to a user carry the real Cognito `sub` of the seeded Floci users (looked up when you run the script), so log in as `+8801700000011` (user),
+`+8801700000021` (ticket checker), `+8801700000004` (ticket operator) or `+8801700000001` (admin) to see them. Seed rows use Ids below 100; the identity sequences
+are moved past 99, so rows you create later through the APIs never collide and are left alone by `-Reset`. The script also clears the services' Redis cache so new rows show up straight away.
+
+Try it: `curl.exe http://localhost:5103/event/api/v1/landing-page-image/public` returns the published images. In Swagger (Admin, with a token) `GET /admin/api/v1/events` lists the matches.
+
+**What this does not cover**
+- **Real payments and ticket PDFs.** DgePay, the TSP certificate and OneID are dummies locally, so you cannot run a genuine book > pay > ticket flow. The seed supplies the *results* (paid orders, tickets, scans) so
+  the read, list, report, admin and gate screens can be tested; writes (booking, seat lock, cancel, issue reply, check-in) work on this data but payment callbacks and ticket signing do not.
+- **S3 files.** Image, SVG and PDF values are placeholder paths, not objects in Floci.
+- **Services with no tables.** Scheduler, Utility, Platform and UserAuth store nothing in Postgres, so there is nothing to seed. The DynamoDB ticket queue is written on demand.
+- **Agent sales and OneID.** The Agent pool user exists but no agent-sold tickets are seeded.
+
+After `docker compose down -v` the seed is gone along with the schema; start the AppHost once, then run the script again.
 
 **Look at fake AWS.**
 
