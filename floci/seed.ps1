@@ -17,7 +17,10 @@ $bucket = 'etp-local'
 $queues = @('OrderSuccess', 'EventCapacity', 'FirebaseNotification', 'TicketProcessing', 'VatChallanProcessing', 'TicketSigning')   # AWS:Queue:* (names, not URLs: the code calls GetQueueUrl)
 
 # S3
-aws s3api create-bucket --bucket $bucket --create-bucket-configuration LocationConstraint=$env:AWS_REGION 2>$null | Out-Null
+# us-east-1 must NOT carry a LocationConstraint (S3 rejects it), so create without one; already existing is fine
+aws s3api create-bucket --bucket $bucket 2>$null | Out-Null
+aws s3api head-bucket --bucket $bucket 2>$null | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "Could not create the S3 bucket '$bucket' in Floci ($env:AWS_ENDPOINT_URL, region $env:AWS_REGION)" }
 Write-Host "S3 bucket: $bucket"
 
 # SQS
