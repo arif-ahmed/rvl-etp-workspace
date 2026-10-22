@@ -3035,5 +3035,257 @@ Interceptor ক্রম (app.module.ts): `AuthInterceptor`, `LoaderInterceptor`
 
 **9. Handover notes.** ① দুটি স্বাধীন refresh guard (interceptor + service) — একসাথে বদলান। ② SignalR chat connection interceptor-এর বাইরে (token query string-এ, F1.24)। ③ **Idle timeout নেই** — session-এর দৈর্ঘ্য Cognito-র refresh-token আয়ু (pool setting, repo-তে নেই)। ④ Role বদল দেখতে ৫৫ মিনিট পর্যন্ত লাগতে পারে (role cache; backend-এর নিজস্ব claim cache — F6.15)।
 
+### F6.5 Staff account provisioning (shared mechanics)
+
+> **Bangla name:** স্টাফ অ্যাকাউন্ট তৈরি (shared mechanics)
+
+**1. Name and purpose.** Staff নিজেরা sign up করেন না: administrator প্রতিটি admin/checker/agent account বানান; Admin service সংশ্লিষ্ট Cognito pool-এ ব্যবহারকারী বানায় generated **permanent** password-সহ এবং username+password ফোনে SMS করে। Screen: F1.25, F1.17, F1.26; এই feature-এ shared Cognito mechanics।
+
+**2. Trigger and actor.** Admin portal-এর user screen (global menu)। Role: admin account-এ `admin`; checker account-এ চারটি staff role; **agent account: server-side কোনো বাধা নেই** (F6.18)।
+
+**3. Business flow.** তৈরি (নাম, ফোন, email, role(s), program) → credential-সহ SMS → পরে edit / disable / enable / delete / set-password (নতুন generated password SMS-এ)। Disable, enable ও set-password user-কে সর্বত্র sign out করায়।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `POST /admin/api/v1/admin-users` (বা `/ticket-checker`, `/agent-users`) | **[HTTP + user token]** (agent-এ token enforce হয় না) | Body F1.25/F1.17/F1.26-এ |
+| 2 | Admin → Cognito | AWS SDK (static IAM key) | Admin: `ListUsers(email)` duplicate যাচাই → `AdminCreateUser(Username=phone)` temp password → `AdminSetUserPassword(Permanent=true)`। Attribute: `phone_number, name, email, custom:role (কমা-সহ), custom:program_ids, *_verified=true`। Checker: email `<phone>@gobcbticket.com`, `custom:role="TicketChecker"`। Agent: `custom:branch_location/company_name/company_branch` |
+| 3 | Admin → Notification API `POST {Notification:Endpoint}/notification/send-message` | **[HTTP, static key]** | SMS "Your account has been created successfully. Your user name is <phone> and password is <password>" |
+| 4 | অন্যান্য | — | Update: `AdminUpdateUserAttributes` + cached `user_{id}` মুছে; Disable/Enable: `AdminDisable/EnableUser` + `AdminUserGlobalSignOut` (নিজের account নিয়ে 400 "Invalid permission"); Set password: global sign-out + নতুন generated password + SMS; Delete: `AdminDeleteUser` |
+
+Generated password: ৮ অক্ষর, বড়/ছোট/সংখ্যা/`!@#$`, `System.Random` দিয়ে (`AdminUserProvider.GeneratePassword`)।
+
+**5. Components.** Portal user service; Admin service (`AdminUserProvider`, `TicketCheckerUserProvider`, `AgentUserProvider`); Cognito pool ×৩; Notification API; Redis `user_{id}` attribute cache; activity log (admin account)।
+
+**6. API contracts.** Endpoint টেবিল F1.25/F1.17/F1.26-এ। Create response (`AdminUserResponse`) sample F1.25-এ।
+
+**7. Data and side effects.** Cognito user; SMS; global sign-out; activity-log row (`Created/Updated/Deleted/Disabled/Enabled/PasswordReset`); cache invalidation।
+
+**8. Code references.** `…/Admin.Integration/Services/{AdminUserProvider,TicketCheckerUserProvider,AgentUserProvider}.cs` (password generator `AdminUserProvider.cs:588-608`); `…/Admin.Domain/Managers/AdminUserManager.cs:39-179`; Cognito client `…/Admin.Service/Configurations/DependencyConfig.cs:197-207`।
+
+**9. Handover notes.** ① Agent endpoint কোডে anonymous (F6.18)। ② Password `System.Random`-এ তৈরি ও স্পষ্ট SMS-এ, permanent সেট (প্রথম লগইনে বদলানোর বাধ্যবাধকতা নেই)। ③ Email uniqueness শুধু admin-এ; ফোন username, pool-প্রতি একবার। ④ Role/program বদল ধীরে ছড়ায় (Admin cache সাথে সাথে, UserIssue-এর নিজস্ব copy, portal-এ ৫৫ মিনিট, ইস্যু হওয়া token মেয়াদ পর্যন্ত)। ⑤ SMS ব্যর্থ হলে Cognito account তৈরি হয়েও API 400 ফেরায় (অর্ধসম্পন্ন)।
+
+### F6.6 গ্রাহক registration
+
+> **Bangla name:** গ্রাহক নিবন্ধন
+
+**1. Name and purpose.** নতুন customer GoBCB account বানান (User Cognito pool) — email **ও** ফোন one-time code দিয়ে প্রমাণের পরে, সবই external **identity API** দিয়ে; অথবা OneID দিয়ে (প্রথম OneID লগইনে account তৈরি, F6.8)।
+
+**2. Trigger and actor.** Portal `/:lang/auth/register` → verify-email → verify-phone → set-password; app `/signup → /confirmationCode → /phoneNumberOtp → /setPassword`। Actor: anonymous visitor।
+
+**3. Business flow.** ১) নাম, email, ১০-অঙ্কের ফোন (+ শর্ত) → ২) email code → ৩) SMS code → ৪) password নির্বাচন → account তৈরি, লগইনে যান। OneID বিকল্প: "Register with OneID" popup-এ OneID-র page (`environment.aws.oneIdRegisterUrl`) খোলে।
+
+**4. Technical flow.** সব call identity API-তে static key header নিয়ে (`environment.headerkey` / `AUTH_API_TOKEN`); **কোনো GoBCB service জড়িত নয়**:
+
+| # | Call | Body (client যেমন পাঠায়) |
+|---|---|---|
+| 1 | `POST user/register-cached` | portal `{ name, email (ছোট হাতে), phone, dob: "1900-01-01", address: "n/a", verification_type: "mobile", verification_id: "0123456789" }` (placeholder!); app `{ name, email, phone, address, verification_type, verification_id, dob }` |
+| 2/4 | `POST otp/send-otp` | `{ type: "email"|"sms", destination }` |
+| 3/5 | `POST otp/verify-otp` | `{ type, destination, otp }` — ফোন ধাপ `user_id` ফেরায়, provisional id হিসেবে থাকে |
+| 6 | `POST user/register` | portal `{ user_id, password }`; app `{ user_id, ekyc, address, password }` |
+| 7 | identity API → Cognito User pool | user তৈরি — repo-র বাইরে `[UNCONFIRMED]` |
+
+Client-চেনা error: `user_already_exists`, `passport_or_nid_required`, `user_not_found`, `user_data_incomplete`, `error_getting_verification_information`, `error_creating_user`, `error_saving_data_to_db`, `server_error`।
+
+**5. Components.** Portal registration component + NgRx `IdentityEffects`; app auth feature + `AuthApiServiceImpl`; identity API (external); OneID registration page; Cognito User pool।
+
+**6. API contracts.**
+
+```json
+// POST {identity}/user/register-cached   (portal)
+{ "name": "Rahim Uddin", "phone": "+8801711111111", "email": "rahim@example.com",
+  "dob": "1900-01-01", "address": "n/a", "verification_type": "mobile", "verification_id": "0123456789" }
+
+// POST {identity}/otp/verify-otp   (ফোন ধাপ)   →   200
+{ "user_id": "<identity API-র দেওয়া id>" }
+```
+
+**7. Data and side effects.** সব identity API-তে (provisional data, OTP, Cognito user) — দেখা যায় না `[UNCONFIRMED]`; portal `localStorage`-এ `rvl_init_register`, `rvl_init_id`, resend timestamp (সফলে মুছে)। GoBCB টেবিলে কিছু নয়।
+
+**8. Code references.** Portal: `…/featured/auth/components/user-registration/user-registration.component.ts:172-266`, `…/core/modules/identity/store/identity.effects.ts:38-212`, `…/core/services/api/identity-api.service.ts:30-64`। App: `data/lib/remote/api_service/auth_api_service/auth_api_service_impl.dart:34-240`, client `auth_api_client.dart`।
+
+**9. Handover notes.** ① Identity API **black box** — repository/hosting/mালিক BS23-এর কাছে নিন (Open queries)। ② Static key দুই client-এই যায় (app শুরুতে log-ও করে `lib/main/main.dart:55`)। ③ Portal placeholder তথ্য পাঠায়, app আসল মান + `ekyc` — অসঙ্গত; identity API আসল NID/passport চায় কিনা `[UNCONFIRMED]`। ④ App-এর `register` অজানা error গিলে ফেলে সফল ভেবে চলতে থাকে। ⑤ OTP response-এর `user_id`-তে client বিশ্বাস করে — server-side binding দেখা যায় না।
+
+### F6.7 ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন
+
+> **Bangla name:** ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন
+
+**1. Name and purpose.** Portal/app-এ নিবন্ধিত customer-এর sign-in — সরাসরি User Cognito pool-এর সাথে, তারপর identity API থেকে profile লোড।
+
+**2. Trigger and actor.** Portal `/:lang/auth/login`; app `/login`। Actor: customer।
+
+**3. Business flow.** ফোন (১০ অঙ্ক) + password → token → profile লোড → যেখান থেকে এসেছেন সেখানে ফেরা (portal `sessionStorage.returnUrl`) বা Home; ব্যর্থতায় Cognito-র বার্তা (app-এ "Incorrect phone number or password")। Profile না পাওয়া password-user (`user_not_found`) আবার sign out হন (portal)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Client → Cognito (User pool) | Amplify SRP `signIn("+880…", password)` | Amplify token রাখে; challenge: `NEW_PASSWORD_REQUIRED` (portal একই password-এ সম্পূর্ণ), `SMS_MFA` (**দুই client-এই ভাঙা** — note) |
+| 2 | Client → identity `GET user/my-profile` | **[HTTP + user token]** (portal: token interceptor static header-এর বদলে `Bearer`; app: `ProfileApiClient`, `?user_id=<sub>`) | Profile → NgRx store / app cache |
+| 3 | `user_not_found` | — | Portal: sign out (password user) / register (SSO user, F6.8)। App: **যেকোনো** profile error-এ → `POST user/register-sso` তারপর retry |
+| 4 | Analytics | — | Firebase `logLogin(user_id)` |
+
+App sign-in-এর আগে থাকা session সরাসরি sign out করে।
+
+**5–6. Components / contracts.** Cognito `InitiateAuth` (public client); `GET {identity}/user/my-profile` (Bearer) → `UserProfile` (shape F2.11-এ); error `NotAuthorizedException` ইত্যাদি।
+
+**7. Data and side effects.** Client token storage; portal flag `rvl_cognito_auth = true`; analytics event। GoBCB টেবিলে লেখা নেই।
+
+**8. Code references.** Portal `…/user-login/user-login.component.ts:182-224`, `…/shared/services/cognito.service.ts:49-72`, `…/identity/store/identity.effects.ts:291-343`। App `lib/presentation/feature/auth/login/login_view_model.dart`, `data/lib/repository/auth_repository_impl.dart:26-62`, `data/lib/service/aws_amplify_service.dart:38-66`, `data/lib/repository/profile_repository_impl.dart:55-86`।
+
+**9. Handover notes.** ① User-pool MFA চালু করলে দুই client-ই ভাঙে (portal MFA state-এ আটকায়; app ভুল password বলে) — MFA config repo-তে নেই `[UNCONFIRMED]`। ② App-এর register-sso fallback শুধু `user_not_found` নয়, **যেকোনো** error-এ চলে। ③ Local: portal Floci-তে চলে; app-এর Amplify local-এ আসল AWS-কে ডাকে (known gap, `docs/mobile-local.md`); তৈরি user `+8801700000011` / `Passw0rd!23`।
+
+### F6.8 OneID single sign-on
+
+> **Bangla name:** OneID সিঙ্গেল সাইন-অন
+
+**1. Name and purpose.** Password ছাড়া OneID Wallet দিয়ে sign-in: OneID **User** pool-এ `oneid` নামে external identity provider; client Cognito-র hosted sign-in খোলে ও সাধারণ User-pool token পায়। প্রথম OneID লগইনে GoBCB profile স্বয়ংক্রিয় তৈরি হয়।
+
+**2. Trigger and actor.** Portal লগইনের "Login with OneID Wallet" (popup); app-এর OneID বোতাম। Actor: OneID account-ধারী customer।
+
+**3. Business flow.** OneID চাপেন → popup/browser-এ OneID-র page (সবসময় credential চায় — portal-এ `prompt=login`) → অনুমোদন → sign-in; profile না থাকলে তৈরি; আগের page/Home-এ পড়েন।
+
+**4. Technical flow.**
+
+**Portal (popup-এ ম্যানুয়াল PKCE):**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Popup | মূল window `/:lang/auth/login?sso_init=oneid`-কে 500×700 popup (`OneID Login` নামে) খোলে; `sso_login = true` |
+| 2 | PKCE | Popup ৩২-বাইট verifier বানায় (`localStorage.pkce_key`) + S256 challenge |
+| 3 | Redirect | `https://<oauth.domain>/oauth2/authorize?identity_provider=oneid&redirect_uri={redirectSignIn}&response_type=code&client_id=…&scope=…&prompt=login&code_challenge=…&code_challenge_method=S256` → OneID |
+| 4 | Callback | popup-এ `redirectSignIn?code=…` |
+| 5 | Token exchange | `fetch`-এ `POST https://<oauth.domain>/oauth2/token` form-encoded (`grant_type=authorization_code`, `code_verifier`) |
+| 6 | সংরক্ষণ | Popup Amplify-format `localStorage` key লেখে (`CognitoIdentityServiceProvider.<clientId>.<username>.*`, `amplify-signin-with-hostedUI`), flag `sso_auth_complete`, `postMessage`, বন্ধ হয় |
+| 7 | মূল window | ৩০০ ms পোল; `Auth.currentAuthenticatedUser({bypassCache:true})` |
+| 8 | Profile | `GET user/my-profile` **[HTTP + user token]**; `user_not_found` + `sso_login` হলে → `POST user/register-sso` (body = পুরো Amplify user object!) → আবার |
+
+**App (Amplify hosted UI):** `Amplify.Auth.signInWithWebUI(provider: AuthProvider.custom('oneid'), isPreferPrivateSession: true)` → system browser; profile `?user_id=<sub>`-সহ; **যেকোনো** error-এ → `POST user/register-sso` `{"name":"","cognito_sub":<sub>}` → retry।
+
+**5. Components.** Portal popup/PKCE কোড; app `loginWithOneID`; Cognito hosted UI (User pool, provider `oneid`); OneID Wallet (external — IdP config repo-তে নেই, architecture doc Q5); identity API।
+
+**6. API contracts.**
+
+```http
+POST https://<oauth.domain>/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+grant_type=authorization_code&client_id=<userPoolWebClientId>&code=<code>&redirect_uri=<redirectSignIn>&code_verifier=<verifier>
+```
+
+`register-sso` (app): `{ "name": "", "cognito_sub": "8c1d2f7e-0000-4000-8000-000000000011" }`; portal কাঁচা Amplify user object পাঠায় (নির্দিষ্ট DTO নয়)।
+
+**7. Data and side effects.** Cognito federated user (provider-এর স্বাভাবিক আচরণ; mapping repo-তে নেই); identity-API profile; portal `localStorage` key (`pkce_key` exchange-এর পরে মুছে, `was_sso_login`, `sso_auth_complete/error`)।
+
+**8. Code references.** Portal `…/user-login/user-login.component.ts:46-73,226-419`, `…/shared/services/cognito.service.ts:23-45,302-372`, `…/identity/store/identity.effects.ts:303-320,374-427`, `…/core/config/awsConfig.ts`। App `data/lib/service/aws_amplify_service.dart:68-98`, `data/lib/repository/profile_repository_impl.dart:55-86`।
+
+**9. Handover notes.** ① **Logout OneID session শেষ করে না** — portal শুধু Cognito থেকে local sign-out (`skipFederatedLogout`); `federatedSignOut()` আছে, কেউ ডাকে না; পুনরায় লগইনের নিরাপত্তা `prompt=login`-এর উপর। ② Portal-এর `register-sso` body স্থিতিশীল DTO নয় (DevTools-এ দেখে নিন)। ③ App-এ `loginWithOneID`-এর error গিলে ফেলা — সফল কিনা নির্বিশেষে Home-এ যায়। ④ Local: `/p/oneid`-তে **fake OneID** auto-approve করে Floci token দেয় (`docs/user-portal-local.md`); app flow local সম্ভব নয়।
+
+### F6.9 গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট
+
+> **Bangla name:** গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট
+
+**1. Name and purpose.** ফোন + SMS code + নতুন password — পুরোটাই external identity API; কোনো GoBCB service জড়িত নয় `[UNCONFIRMED]`।
+
+**2. Trigger and actor.** Portal `/:lang/auth/phone-reset-password` → `reset-password-code` → `reset-password-verified`; app `/forgetPassword` → `/confirmNewPassword` → `/forgetPasswordSuccess`। Actor: sign-in-হীন customer।
+
+**3. Business flow.** ফোন লিখুন → SMS code → code + নতুন password → সফল page → লগইন।
+
+**4. Technical flow.** দুটি call, দুটোই **[HTTP, static key]**: `POST {identity}/otp/password-reset-request` `{ phone }`; তারপর `POST {identity}/otp/password-reset` `{ phone, otp, password }`। Portal ফোনটি ধাপের মাঝে `localStorage.rvl_reset_pass`-এ রাখে (সফলে মুছে)।
+
+**5–7. Components / contracts / data.** Identity API (external); client screen। চেনা `status_message` error: `phone_number_not_found`, `user_not_found`, `invalid_otp`, `exceeded_maximum_otp_generation_limit`। Cognito-তে password বদল assumed (repo-র বাইরে)।
+
+```json
+// POST {identity}/otp/password-reset
+{ "phone": "+8801711111111", "otp": "482913", "password": "N3w!Passw0rd" }
+```
+
+**8. Code references.** Portal `…/identity/store/identity.effects.ts:214-289`, `…/identity-api.service.ts:73-89`; app `data/lib/remote/api_service/auth_api_service/auth_api_service_impl.dart:243-292`, `lib/presentation/feature/auth/confirm_new_password/confirm_new_password_view_model.dart:110-155`।
+
+**9. Handover notes.** ① OTP ও password একসাথে যায় — identity API জোড়া হিসেবে যাচাই করে কিনা `[UNCONFIRMED]`। ② Reset-এ অন্য session বাতিলের কিছু দেখা যায় না। ③ Portal-এর অব্যবহৃত helper `CognitoService.forgotPassword` ভুল আর্গুমেন্টে `Auth.changePassword` ডাকে (dead code)।
+
+### F6.10 গ্রাহক session (টোকেন সংযুক্তি, পাসওয়ার্ড পরিবর্তন, লগআউট)
+
+> **Bangla name:** গ্রাহক session (টোকেন সংযুক্তি, পাসওয়ার্ড পরিবর্তন, লগআউট)
+
+**1. Name and purpose.** Portal/app কীভাবে User-pool token API call-এ জোড়ে, মেয়াদ শেষে কী হয়, আর password বদল ও logout। লগইন-লাগা প্রতিটি customer feature এর উপর নির্ভর করে।
+
+**2. Trigger and actor.** প্রতিটি HTTP call (portal `TokenInterceptor`; app API client); password/logout-এর profile screen। Actor: sign-in করা customer।
+
+**3. Business flow.** Password বদল (পুরোনো + নতুন ×২; sign-in থাকে); logout → লগইন page/screen; মেয়াদোত্তীর্ণ session → ব্যর্থ call-এর আগেই sign out।
+
+**4. Technical flow.**
+
+**Portal token সংযুক্তি — URL fragment-এর allow-list** (শুধু এগুলোতে `Authorization: Bearer` যায়): `…/booking` path (booking/capacity/order + `admin/api/v1/discount`), `userissue` API + chathub, `ticketing` path, identity-র `user/my-profile` + `user/register-sso`, `event/…/venue-details`। বাকি সব (public Event read) token ছাড়া যায়। ধাপ: `Auth.currentSession()` (Amplify প্রয়োজনে refresh করে) → তবুও `exp` পেরোলে: `rvl_cognito_auth`/profile মুছে, sign out, synthetic 401 → নয়তো header যোগ। সার্ভার-থেকে-আসা 401-এ **retry নেই**।
+
+**App token সংযুক্তি:** `TicketBanglaApiClient` (`API_BASE_URL`) ও `ProfileApiClient` (`AUTH_API_BASE_URL`) প্রতি request-এ `Amplify.Auth.fetchAuthSession()` ডেকে `Bearer` জোড়ে; `AuthApiClient` static `AUTH_API_TOKEN` ব্যবহার করে।
+
+Password বদল: portal `Auth.changePassword`, app `Amplify.Auth.updatePassword`। Logout: portal `Auth.signOut({global:false})` (SSO user `skipFederatedLogout`); app `signOut()` — FCM-token delete **comment out**।
+
+**5–7. Components / contracts / data.** Cognito User pool; নিজস্ব GoBCB endpoint নেই। App logout-এর পরেও push token নিবন্ধিত থাকে (F3.9 note)।
+
+**8. Code references.** Portal `…/core/interceptors/token.interceptor.ts:133-193` (উপরে পুরোনো সংস্করণ comment), `…/user-profile-pages.component.ts:299-340`, `…/layout/components/default/default.component.ts:128-142`; app `data/lib/remote/api_client/*.dart`, `data/lib/service/aws_amplify_service.dart:157-189`, `lib/presentation/feature/profile/profile_view_model.dart:343,370-382`।
+
+**9. Handover notes.** ① Token লাগবে এমন নতুন backend path allow-list-এ **যোগ করতেই হবে**, নইলে call token ছাড়া গিয়ে 401 খাবে। ② সবখানে logout local; OneID session থেকে যায় (F6.8)। ③ App logout-এর পরেও push আসে (F3.9)।
+
+### F6.11 অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update
+
+> **Bangla name:** অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update
+
+**1. Name and purpose.** Identity API-নির্ভর দুটি app নিয়ন্ত্রণ: customer profile মুছে ফেলা (শুধু user app) ও চালুর সময়ের সর্বনিম্ন-version gate (user app + checker app)।
+
+**2. Trigger and actor.** App Profile → Delete account; splash screen। Actor: customer / gate staff।
+
+**3. Business flow.** Delete: নিশ্চিত → profile মুছে, sign out, স্থানীয় data পরিষ্কার। Force update: প্রকাশিত সর্বনিম্ন version নতুন হলে অপসরণ-অযোগ্য "Update required" sheet store link খোলে এবং app splash পেরোয় না। Version যাচাই ব্যর্থ হলে **উপেক্ষা** হয় (app চলতে থাকে)।
+
+**4. Technical flow.** Delete: **[HTTP + user token]** `DELETE {identity}/user/delete-my-profile` (app `ProfileApiClient`) → `signOut()`, analytics `delete_user`। (Amplify-এর `deleteUser()` আছে অব্যবহৃত — app Cognito user *মুছে না*।) Version: **[HTTP, static key]** `GET user/allowed-app-version` → dotted version তুলনা (অংশ-সংখ্যা ভিন্ন হলে update দরকার); user app `data.up.<platform>` পড়ে, checker app `data.tc.<platform>`।
+
+**5–8. Components / contracts / code.** Identity API (external)। Response shape: sample F3.1-এ (পূর্ণ `up` + `tc`)। App: `profile_view_model.dart:385-393`, `auth_repository_impl.dart:247-252`; version `splash_view_model.dart`, `data/lib/repository/app_repository_impl.dart:88-115`, `data/lib/mapper/app_version_mapper.dart`; checker variant `rvl-gobcb-checker-app/data/lib/mapper/app_version_mapper.dart:9-11`।
+
+**9. Handover notes.** ① Profile-এর সাথে GoBCB-পক্ষের data (order, টিকিট, issue) মুছে কিনা এই repo-গুলোতে কোথাও নেই `[UNCONFIRMED]`। ② Portal-এ `deleteUserProfile()` আছে কিন্তু কোনো screen ডাকে না — deletion শুধু app-এ। ③ `AUTH_API_BASE_URL` checker app-এর required-env তালিকায় নেই; না থাকলে version gate নীরবে বন্ধ।
+
+### F6.12 Checker login
+
+> **Bangla name:** চেকার লগইন
+
+**1. Name and purpose.** Gate staff checker app-এ admin-তৈরি credential দিয়ে (F1.17/F6.5) **TicketChecker** Cognito pool-এ sign-in করেন — version gate পেরোনোর পরে।
+
+**2. Trigger and actor.** Checker app `/splash` → `/signIn` → `/eventPage`। Actor: gate checker (role claim `ticket-checker` scheme যোগ করে, F6.14)।
+
+**3. Business flow.** Splash version দেখে ও থাকা session খুঁজে (থাকলে সরাসরি event); নয়তো ফোন + password → event page assignment লোড করে (F4.1); event page-তেই sign-out।
+
+**4. Technical flow.** Version **[HTTP, static key]** `GET user/allowed-app-version` (`tc` entry পড়ে); sign-in Amplify Flutter `Auth.signIn("+880…", password)` (unresolved challenge-এ session `null`); প্রথম backend call **[HTTP + user token]** `GET /admin/api/v1/ticket-checker-gate/event-info`; sign-out local।
+
+**5–8. Components / contracts / code.** Cognito TicketChecker pool (`AMPLIFY_CONFIG`); identity API (version)। Checker app `sign_in_view_model.dart`, `data/lib/service/aws_amplify_service.dart:35-62`, client `auth_api_client.dart` / `ticket_api_client.dart`; required env `VDS_CERTIFICATE`, `AMPLIFY_CONFIG`, `API_BASE_URL` (`lib/main/main.dart:14-18`)।
+
+**9. Handover notes.** ① Debug build **password log করে** (`Logger.debug`, শুধু `kDebugMode`) — debug log শেয়ার করবেন না। ② App-এ password বদল/reset নেই (admin করেন; backend-এর `PUT ticket-checker/change-password`-এর কোনো client নেই)। ③ Checker disable করলে session বাতিল হয় কিন্তু app পরের server call পর্যন্ত downloaded টিকিটসহ offline চলে। ④ Local: Amplify Flutter Floci-কে নির্দেশ করতে পারে না — local sign-in অসম্ভব; তৈরি checker `+8801700000021` / `Passw0rd!23`।
+
+### F6.13 Agent pool ও offline-sold টিকিট
+
+> **Bangla name:** এজেন্ট pool ও অফলাইনে বিক্রি টিকিট
+
+**1. Name and purpose.** চতুর্থ Cognito pool (**Agent**) offline বিক্রেতাদের জন্য। তাদের একমাত্র API পূর্ব-ছাপা **Partner Sale** টিকিট বিক্রি হিসেবে রেকর্ড করে, ক্রেতার ফোন/ID-সহ। **পাঁচ repo-র কোনো client এই pool দিয়ে sign-in করে না বা API ডাকে না** `[UNCONFIRMED]` (Open queries)।
+
+**2. Trigger and actor.** অজানা external client; actor: seller agent (account F1.26/F6.5, role `agent`)।
+
+**3. Business flow.** Partner reservation-এর টিকিট তৈরি হয় (F1.11/F1.12); agent কিছু offline বিক্রি করে টিকিট নম্বর + holder পরিচয় রেকর্ড করেন; প্ল্যাটফর্ম non-partner, duplicate ও selling-stop পেরোনো টিকিট নিষেধ করে।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Agent client → Ticketing `POST /ticketing/api/v1/offline-sold-ticket` | **[HTTP + user token]** (Agent pool, policy `agent`) | `OfflineSoldTicketCreateRequest { ticketNumbers[], ticketHolderIdentification? }` |
+| 2 | Ticketing | **[Shared table]** | `TicketType == "Partner Sale"` টিকিট লোড; নেই/duplicate হলে 400 |
+| 3 | Ticketing → Event `GET /event/api/v1/events/{eventId}` | **[HTTP + user token]** (forwarded) | `TicketSellingStopDateTime` পেরোলে নিষেধ |
+| 4 | Ticketing | — | `OfflineSoldTickets` row insert (`UserId` = agent sub) |
+
+**5–6. Components / contracts.** Ticketing (`OfflineTicketSoldController` → `OfflineSoldTicketManager`), Event service, Cognito Agent pool, `Tickets` (পাঠ) / `OfflineSoldTickets` (লেখা)। সফল: `{ "message": "Offline sold tickets created successfully." }`; 400 error: "The following ticket is already sold: …", "Invalid QR || This ticket can not be sold: …", "Phone no must not exceed 20 characters.", "Ticket requests are no longer available as the ticket selling period of … has ended."
+
+**7. Data and side effects.** শুধু `OfflineSoldTickets` row — টিকিট বা reservation নিজে **হালনাগাদ হয় না**।
+
+**8. Code references.** `…/Ticketing.Service/Api/OfflineTicketSoldController.cs:30-41`; `…/Managers/OfflineSoldTicketManager.cs:21-132`; partner filter `…/Storage/Repositories/TicketRepository.cs:36-40`; pool scheme `Core/ETP.Core/Configuration/DefaultAuthenticationConfig.cs:173-214`।
+
+**9. Handover notes.** ① কোনো পরিচিত client নেই; architecture doc-ও পায়নি `[UNCONFIRMED]`। ② **`OfflineSoldTickets` পিছনে কেউ পড়ে না** (report/screen নেই) — অন্য কোনো সিস্টেম খায় কিনা BS23-কে জিজ্ঞাসা করুন। ③ Agent account ব্যবস্থাপনা anonymous (F6.18)। ④ Local agent `+8801700000031` / `Passw0rd!23`।
+
 <!-- 🔄 CONTINUE-BN -->
 
