@@ -3287,5 +3287,261 @@ Password বদল: portal `Auth.changePassword`, app `Amplify.Auth.updatePasswo
 
 **9. Handover notes.** ① কোনো পরিচিত client নেই; architecture doc-ও পায়নি `[UNCONFIRMED]`। ② **`OfflineSoldTickets` পিছনে কেউ পড়ে না** (report/screen নেই) — অন্য কোনো সিস্টেম খায় কিনা BS23-কে জিজ্ঞাসা করুন। ③ Agent account ব্যবস্থাপনা anonymous (F6.18)। ④ Local agent `+8801700000031` / `Passw0rd!23`।
 
+### F6.14 Authorization স্তর ১: pool স্কিম ও পলিসি
+
+> **Bangla name:** অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি
+
+**1. Name and purpose.** প্রতিটি service bearer token নিজেই যাচাই করে। Cognito pool-প্রতি একটি JWT authentication scheme (`user`, `admin`, `ticket-checker`, `agent`) + পঞ্চম (`service`, shared-key, অব্যবহৃত)। Endpoint `[Authorize(Policy = …)]` দিয়ে বলে কোন pool গ্রহণ করবে — নাম না থাকলে implicit-ভাবে **Admin pool** (default scheme `admin`)।
+
+**2. Trigger and actor.** `Authorization: Bearer …`-সহ প্রতিটি request, যেসব service `AddJwtBearerAuthentication` + `UseAuthentication` করে (Platform, PushNotification, UserAuth ছাড়া — ওখানে pipeline লাইন comment)।
+
+**3–4. Business/technical flow.**
+
+| # | ধাপ | বিস্তারিত |
+|---|---|---|
+| 1 | Scheme | endpoint-এর নাম-দেওয়া scheme; default = `admin` (`DefaultAuthenticateScheme`) |
+| 2 | যাচাই | Issuer `AWS:CognitoPool:<Pool>:Authority`; key `<Pool>:Metadata` (OIDC/JWKS); lifetime; **audience `client_id` claim-এ যাচাই** (Cognito access token-এ `client_id` থাকে, `aud` নয় — ID token প্রত্যাখ্যাত) |
+| 3 | সমৃদ্ধকরণ | `OnTokenValidated` কাঁচা token `AppClaimTypes.AccessToken` claim-এ রাখে (token forwarding-এর জন্য, F6.19) ও pool-প্রতি নির্দিষ্ট role claim যোগ করে (`user`, `ticket-checker`, `agent`); `admin` scheme role যোগ করে না (আসে F6.15 থেকে) |
+| 4 | Chat hub | `user`/`admin` scheme query string-এর `?access_token=` নেয় — শুধু `/userissue/chathub` ও `/admin/chathub` path-এ (WebSocket header পাঠাতে পারে না) |
+| 5 | Policy | `AuthorizationConfig`: `admin` = admin scheme-এ authenticated; `user`/`ticket-checker`/`agent` = সেই scheme **ও** একই নামের role claim; `service` = service scheme + role |
+| 6 | ব্যর্থতা | token নেই/invalid → 401 (খালি body); ভিন্ন pool → 401 (issuer অমিল) বা 403 (role নেই) |
+
+Service-প্রতি pool গ্রহণ (attribute থেকে): Admin — role-ভিত্তিক Admin + `ticket-checker-gate`-এ TicketChecker + legacy user-issue action-এ User, অনেক endpoint খোলা (F6.18); Booking — customer order-এ `user`, admin lookup-এ `admin` (role ছাড়া); Ticketing — `user` + `admin` + `agent`; UserIssue — `user`/`admin` + authorized hub; TicketChecker — `ticket-checker`; Event/PushNotification/Scheduler/Utility/Platform — নেই।
+
+**5–7. Components / contracts / data.** কোড `Core/ETP.Core/Configuration/{DefaultAuthenticationConfig,AuthorizationConfig}.cs`, `Core/ETP.Core/Constant/AppConstant.cs`; config `AWS:CognitoPool:{User,Admin,TicketChecker,Agent}:{PoolId,ClientId,Authority,Metadata}`, `Authentication:Jwt:*`; data লেখা নেই।
+
+**8. Code references.** `DefaultAuthenticationConfig.cs:16-246`; `AuthorizationConfig.cs:13-38`; registration উদাহরণ `Services/Admin/ETP.Admin.Service/Program.cs:38-39,86-87,109-110`।
+
+**9. Handover notes.** ① `Policy = admin` মানে "যে কোনো Admin-pool ব্যবহারকারী" — যেমন `customer_support` token Ticketing-এর reserved-ticket endpoint ডাকতে পারে (architecture §2.5)। ② Default scheme `admin`: শুধু `[Authorize(Roles=…)]`-এর endpoint Admin pool-এ authenticate হয়; User token পেলে 401, 403 নয়। ③ `service` scheme অব্যবহৃত (F6.19 note)। ④ API Gateway আগে থেকে token যাচাই করে কিনা unverified (architecture Q1/Q1b)। ⑤ Local-এ Floci চার pool-ই দেয়; `postman/etp-cognito-auth.postman_collection.json`-এর "04" folder সব ব্যর্থতার ধরন দেখায়।
+
+### F6.15 Authorization স্তর ২–৩: স্টাফ রোল
+
+> **Bangla name:** অথরাইজেশন স্তর ২–৩: স্টাফ রোল
+
+**1. Name and purpose.** Admin-pool ব্যবহারকারীর role Cognito attribute `custom:role`-এ (কমা-সহ)। Admin ও UserIssue service প্রতি request-এ তা role claim বানায় (স্তর ২); controller `[Authorize(Roles = …)]` দিয়ে দেয়/নেয় (স্তর ৩)।
+
+**2. Trigger and actor.** Admin বা UserIssue-তে প্রতিটি Admin-pool request। Role: `admin`, `event_manager`, `ticket_manager`, `ticket_operator` (BCB personnel), `customer_support`।
+
+**3–4. Business/technical flow.** ① `admin` scheme token যাচাই → ② `CognitoUserAttributesMiddleware` (শুধু Admin + UserIssue): `sub` পড়ে, token-এর `scope` claim থেকে pool বাছে (`aws.cognito.signin.user.admin` → Admin pool), Redis cache `User` key `user_{sub}` দিয়ে Cognito `AdminGetUser` ডাকে (**২ মিনিটের** absolute expiry, `Core/ETP.Core/Configuration/CacheConfig.cs`), `custom:role` থেকে role claim ও `custom:program_ids` থেকে `program_id` claim যোগ করে → ③ `[Authorize(Roles="a,b")]` (class ও method দুটোই প্রযোজ্য — AND) → ④ role নেই → 403 (সমৃদ্ধকরণ error গিলে যায় → role ছাড়া 403)।
+
+**Role × controller ম্যাট্রিক্স (Admin service; ✔ অনুমোদিত, — নিষেধ, "open" = auth নেই):**
+
+| Controller | admin | event_mgr | ticket_mgr | ticket_op | cust_support |
+|---|---|---|---|---|---|
+| activity-log | ✔ | ✔ | — | — | — |
+| admin-users (+২টি open endpoint) | ✔ | — | — | — | — |
+| agent-users | open | open | open | open | open |
+| dashboard (+[AuthorizeProgram]) | ✔ | — | — | ✔ | — |
+| discount (public read open) | ✔ | — | — | — | — |
+| events, eventsVenueDetails, ticket-attributes, ticket-layout, ticket-checker | ✔ | ✔ | ✔ | ✔ | — |
+| program | ✔ | ✔ | ✔ | ✔ | ✔ |
+| program-settings, programVenue(+Details), teams, venues | ✔ | ✔ | — | — | — |
+| promo-codes | ✔ | — | — | — | — |
+| raffle-draw, general-notice, landing-page-image | ✔ | ✔ | — | — | — |
+| social-media-settings, system-settings, gallery, block-level-entry-gate | ✔ | — | — | — | — |
+| ticket-checker-gate (scheme admin+ticket-checker) | ✔ | ✔ ( subset) | — | ✔ | — |
+| event-settings, header-footer, ticket-pricing, currency, token, portal-users, user-issue-chat | open | | | | |
+
+Admin-এর বাইরে role **যাচাই হয় না** (Booking/Ticketing/UserIssue pool-only `Policy = admin` ব্যবহার করে)।
+
+**5–7. Components / data.** `Core/ETP.Core/Middleware/CognitoUserAttributesMiddleware.cs:34-140`; registration `Admin.Program.cs:90`, `UserIssue.Program.cs:75`; Cognito `AdminGetUser`; Redis `user_{sub}` (২ মিনিট)।
+
+**8. Code references.** উপরের সাথে `Services/Admin/ETP.Admin.Service/Api/`-র controller attribute (যেমন `TicketCheckerGateController.cs:23-24,72`)।
+
+**9. Handover notes.** ① `scope` দিয়ে pool-নির্বাচন "দুর্ঘটনাক্রমে কাজ করে" — scope প্রতিটি SDK-token-এ স্বাভাবিক, তাই middleware সবসময় Admin pool দেখে; আজ ক্ষতিকর নয়, নকশায় ভঙ্গুর (architecture §2.5)। ② **Checker token** কঠোরতর method attribute ছাড়া `ticket-checker-gate`-এর প্রতিটি method ডাকতে পারে — `force-assign`, `remove-user`, `report`, `duplicate-tickets`-সহ (ইচ্ছাকৃত কিনা BS23 জানাক)। ③ Role বদল server-এ ≤২ মিনিট, portal UI-তে ≤৫৫ মিনিট (F6.4)। ④ Cache miss-প্রতি প্রতি user-এ ২ মিনিটে একবার `AdminGetUser` — burst load-এ Cognito rate-এর বিষয়।
+
+### F6.16 Authorization স্তর ৪: প্রোগ্রাম স্কোপ
+
+> **Bangla name:** অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ
+
+**1. Name and purpose.** `admin` ছাড়া অন্য staff তাদের নির্ধারিত program-এ (`custom:program_ids`) কাজ করবেন। `X-Program-Id` header দিয়ে দুটি আলাদা ব্যবস্থা: **data filter** (Admin-এর EF global query filter) ও **access check** (`[AuthorizeProgram]`, শুধু dashboard-এ active)।
+
+**2. Trigger and actor.** Program নির্বাচনের পরের admin-portal request (F1.1)। শুধু Admin service।
+
+**3–4. Business/technical flow.** ① `ProgramIdMiddleware` header পার্স করে `HttpContext.Items["ProgramId"]`-এ (নেই/invalid হলে 0) → ② `ProgramIdAccessor` → ③ `AdminDbContext`-এর global filter প্রতিটি `IHasProgramId` entity-তে (`ProgramId <= 0 OR entity.ProgramId == header`); ফিল্টার হওয়া entity: Event, EventVenueDetails, ProgramTeam, ProgramVenue, ProgramVenueDetails, ProgramSettings, PromoCode, PromoCodeAssign, Discount, DiscountAssign, GeneralNotice, TicketCheckerGate, TicketAttributes, TicketLayoutConfig, UserIssue, UserIssueChatMessage → ④ `[AuthorizeProgram]` (dashboard): role `admin` বা `user` pass; নয়তো header নেই/invalid → **400** "Missing or invalid X-Program-Id header."; header claim-এ নেই → **403** "User does not have permission for program with Id {id}." (সাদা-টেক্সট body)।
+
+**5–8. Components / contracts / code.** `Services/Admin/ETP.Admin.Service/Middleware/ProgramIdMiddleware.cs`; `ETP.Admin.Storage/Repositories/ProgramIdAccessor.cs`; global filter `AdminDbContext.cs:595-617`; `Attributes/AuthorizeProgramAttribute.cs`; ব্যবহার `DashboardController.cs:18` (`EventsController.cs:19`-এ comment)।
+
+**9. Handover notes.** ① **Data filter access control নয়** — header-এর উপর ভরসা; `0`/না-পাঠালে ফিল্টার সরে যায়; মালিকানা আসলে যাচাই করে শুধু dashboard। ② `AuthorizeProgramAttribute`-এর 403 branch response লেখে কিন্তু `context.Result` সেট করে না, তাই MVC action-এ ঢুকে পড়ে — read-only dashboard-তে সমস্যা নেই, write endpoint-এ পুনর্ব্যবহার করবেন না। ③ অন্য service header উপেক্ষা করে (তারা স্পষ্ট `programId` param নেয়)।
+
+### F6.17 Client-side authorization (মেনু ও গার্ড)
+
+> **Bangla name:** ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)
+
+**1. Name and purpose.** Portal-গুলো role/program অনুযায়ী menu লুকায় ও route আটকায় — **সুবিধা, নিরাপত্তা নয়**; আসল সীমানা server-side স্তর (F6.14–F6.16)।
+
+**2. Trigger and actor.** Admin portal-এর menu/route guard; user portal-এর auth guard।
+
+**3–4. Business/technical flow.** Admin portal: দুটি menu — global (program 0) ও program menu। Role-প্রতি: `admin` সব; `customer_support` → Issues; `event_manager` (+`ticket_manager`) → program/venue/event/settings; `ticket_manager` → Generate Ticket; `ticket_operator` → dashboard/generate/reports। Guard: `ProgramMenuGuard` (dashboard/events/promo/ticket-layout/issues/report-এ program > 0), `LimitedMenuGuard` (users/settings/venues/program-management-এ program == 0), `AuthGuard` + `RoleChangeService.isRouteAllowedForRole` (role-প্রতি URL-prefix allow-list; role বদল `sessionStorage.lastKnownUserRole` দিয়ে ধরা পড়ে → program reset + toast)। User portal: `AuthGuard` (শুধু `localStorage.rvl_cognito_auth == "true"` দেখে), `UnAuthGuard` (OneID popup ঢুকতে দেয়), `LanguageGuard`।
+
+**5–8. Components / code.** `rvl-gobcb-admin-portal/src/app/layout/app.menu.component.ts:39-262`; `src/app/core/guard/{auth,program-menu,limited-menu}.guard.ts`; `src/app/core/services/role-change.service.ts:31-201`; portal guard `ETP-Web/src/app/modules/core/guards/*.guard.ts`।
+
+**9. Handover notes.** ① মেনু ও সার্ভার নিয়মে কিছু জায়গায় অমিল — যেমন `customer_support` সরাসরি reserved-ticket endpoint ডাকতে পারে (F6.14 note ①) যদিও UI লুকায়; `media-configuration`/`content-editor` route-এ **কোনো guard নেই**। ② `/settings` module route-এ আছে কিন্তু কোনো menu-তে নেই (notice/landing/team/footer screen ধারণ করে)। ③ Menu role match করে substring-এ (`roles.includes('admin')`) — ভবিষ্যতে "admin"-ধারী role-ও মিলে যাবে; route allow-list সঠিকভাবে ভাঙে। ④ User-portal `AuthGuard` local flag-এ ভরসা করে; আসল প্রত্যাখ্যান হয় API-তে।
+
+### F6.18 Authorization ছাড়া endpoint-এর তালিকা
+
+> **Bangla name:** অথরাইজেশন ছাড়া endpoint-এর তালিকা
+
+**1. Name and purpose.** `BaseController`-এর `[Authorize]` comment out, তাই controller/action না বললে action anonymous। Backend-এর **৩৫৪টির মধ্যে ১৩৭টি** endpoint-এ authorization নেই। API Gateway/NLB/ingress এগুলোকে internet থেকে আটকায় কিনা repo-তে দেখা যায় না `[UNCONFIRMED]` (architecture Q1b; Open queries)।
+
+**2. Trigger and actor.** Service-এ পৌঁছাতে পারা যে কোনো HTTP client।
+
+**3–4. শ্রেণিবিভাগ** (controller audit অনুযায়ী):
+
+- **A — ইচ্ছাকৃতভাবে public:** সব `GET /event/api/v1/*`; Admin-এর `landing-page-image/public`, `general-notice/public`, `header-footer` (GET), `discount/program/...`; Admin `ticket-pricing` GET; Booking `capacity/level-user-portal-seats`; Ticketing `shared` (signature-সুরক্ষিত)।
+- **B — payment callback:** Booking `dgepay/payment-status`; `sslcommerz/payment-*`; **`payment-status-bypass`** (test hook — পৌঁছালে উচ্চ ঝুঁকি)।
+- **C — internal call (worker/অন্য service, নকশা-অনুযায়ী tokenless):** Booking `capacity/*` (GET + POST), বেশিরভাগ `seat-reservation` update (`update-reservation-status`, `update-merge-status`, `merge-status`, `update-zip-status`, `zip-status`, `update-reservation-ticket-preview`, `event-id/{publicId}`), `user-booking-order`-এর internal (`public-id`, PATCH `generate-ticket-request/{publicId}`, `update-status`, `not-notified-list`, `update-notification-status`, `promo-code/{code}`, `booked-user-record/{id}`); Ticketing `initiate`, `initiate-user-ticket`, PATCH `generate-request`, `ticket-counts`, `by-gallery-block-level`, `ticket-numbers`, `GET ?id=`, `booking-order-id`, `reserved-urls`; Admin `portal-users/{phoneNo}`; **PushNotification — সব endpoint** (device token + send)।
+- **D — authorization-ছাড়া admin operation (পর্যালোচনা দরকার):** Admin `agent-users/*` (৮), `admin-users/forget-password` + `set-forget-password`, `ticket-pricing`-র লেখা, `header-footer` PUT, `event-settings` GET/PUT; Booking `dashboard/*` (৪), `report/admin/*` (৮), `POST seat-reservation`, `GET seat-reservation/by-event-level`, `POST event-capacity-adjustment`, `GET by-event-level`; UserIssue `user-issue-chat/*` (৮)।
+- **E — legacy/test:** Admin `currency`, `token` (service-token issuer), Admin-এর নিজের `user-issue-chat/*` copy, `user-issue/user-detail/{orderId}`; TicketChecker `testing/*`; root `GET /event|/platform|/ticketChecker|/ticketing`; PushNotification `bulk-status` stub।
+
+**5–8. Components / code.** Comment-করা base attribute `Core/ETP.Core.Web/BaseController.cs:14-15`; Platform/PushNotification/UserAuth-এর `Program.cs`-এ pipeline comment; internal caller `Core/ETP.Core/ServiceClient/{BookingClient,TicketingClient,AdminClient,PushNotificationClient}/`।
+
+**9. Handover notes.** প্রস্তাবিত নিষ্পত্তি: A রাখুন; B রাখুন তবে `payment-status-bypass` production থেকে সরান; C-তে `[Authorize]` যোগ করার **আগে** service credential বা network policy আনুন (এখন যোগ করলে worker ভাঙবে — অব্যবহৃত `service` scheme, F6.19, শুরুর পথ); D-তে menu-এর ইঙ্গিত-অনুযায়ী `[Authorize]` দিন; E মুছুন। যেকোনো controller বদলের পরে আবার audit করুন।
+
+### F6.19 Service-to-service communication
+
+> **Bangla name:** সার্ভিস-থেকে-সার্ভিস যোগাযোগ
+
+**1. Name and purpose.** কে কাকে কোন credential নিয়ে ডাকে তার রেফারেন্স: token forwarding-সহ typed HTTP client, tokenless worker call, static-key external call ও SQS queue (ধারণা §0.8-এ)।
+
+**2–4. Mechanism ও registry।**
+
+| Tag | Mechanism | Credential |
+|---|---|---|
+| **[HTTP + user token]** | request-এর ভেতরের typed `HttpClient` + `DelegatedBearerAuthenticationHandler` | caller-এর Cognito access token |
+| **[HTTP, no token]** | worker থেকে একই client (`HttpContext` নেই) | নেই — F6.18-এর C-শ্রেণির endpoint-ই লক্ষ্য |
+| **[HTTP, static key]** | config থেকে স্থির header-এর client | `Notification:Authorization`, `Serverless:Authorization`, DgePay/SSLCommerz/NBR/TSP/OneID credential |
+| **[SQS: Key]** | `SqsPublisher` → queue → polling worker | static `AWS:AccessKey/SecretAccessKey` (SigV4); message-এ token নেই |
+
+Client registry (base URL key → forwarding): Admin → Event/Booking/Ticketing/UserIssue/PushNotification (forwarded) + Notification + Serverless (static)। Booking → Event/Ticketing (forwarded) + User (`Services:AppBase` → identity API, forwarded) + Serverless/Notification (static) + DgePay/SSLCommerz/NBR। Event → Booking (forwarded)। Scheduler → Booking / `IEventClient`→**`Services:Admin`** / Ticketing / Admin (worker: tokenless) + Notification (static)। TicketChecker → Ticketing (forwarded)। Ticketing → Event ×২ / Booking / User (forwarded) + Serverless (static) + TSP (mTLS) + OneID (Basic)। UserIssue → Booking/Ticketing (forwarded) + Serverless (static)। Utility → Admin/Booking/Ticketing (worker: tokenless)। বেশিরভাগ client Polly দিয়ে ৩-বার exponential backoff retry করে। Queue catalog: §0.8।
+
+**5–8. Components / code.** `Core/ETP.Core.Web/Security/DelegatedBearerAuthenticationHandler.cs`; token-as-claim `DefaultAuthenticationConfig.cs:52-53`; প্রতিটি service-এর `DependencyConfig.cs`-এ registration (Admin `:123-195`, Booking `:83-200`, Scheduler `:71-110`, Ticketing `:151-255`, UserIssue `:55-80`, Utility `:51-75`, Event `:66`, TicketChecker `:49`); shared client `Core/ETP.Core/ServiceClient/*`; publisher `Core/ETP.Core/Queue/Services/SqsPublisher.cs`।
+
+**9. Handover notes.** ① Forwarding caller-এর pool-কে callee-এর policy-র সাথে বাঁধে — এ কারণেই internal endpoint anonymous। ② Scheduler-এর `IEventClient` base `Services:Admin` (path ঠিক করে কে উত্তর দেয়) — device-token cleanup-এর বিভ্রান্তি (F5.13) এখান থেকে। ③ `Services:AppBase` = identity API-র base (`IUserClient` forwarded token নিয়ে `user/my-profile` ডাকে) `[UNCONFIRMED]`; local-এ সেটা admin portal-কে নির্দেশ করে (তাই local-এ call ব্যর্থ)। ④ Service-পক্ষে token refresh নেই — request-এর মাঝে token মেয়াদ শেষ হলে চেইন 401-এ ব্যর্থ। ⑤ MassTransit registered, অব্যবহৃত (dead)। ⑥ অব্যবহৃত `service` scheme: `GET /admin/api/v1/token` (header `ServiceApiKey`) ১-দিনের HS256 JWT দেয়; কোনো endpoint চায় না — পৌঁছানো-যায়-কিন্তু-অব্যবহৃত (F6.18-E-ও)।
+
+### F6.20 File storage (S3, CloudFront)
+
+> **Bangla name:** ফাইল স্টোরেজ (S3, CloudFront)
+
+**1. Name and purpose.** দুটি S3 bucket: **media bucket** (`AWS:Bucket:Name`) — CMS image/SVG map/chat attachment; আর **ticket bucket** (`AWS:Ticket:Bucket:Name`) — টিকিট PDF; দুটোই CloudFront-এর পেছনে, টিকিট file-এ signed URL/cookie।
+
+**2. Trigger and actor.** প্রতিটি upload/download feature (F1.2, F1.5, F1.12, F1.13, F1.28, F1.30, F2.9, F2.12, F5.7–F5.9)।
+
+**3–4. Layout ও mechanics।**
+
+| বিষয় | কোড যা করে |
+|---|---|
+| Media upload | `AwsSimpleStorageMediaManager` (`ICloudFrontMediaManager`) — event cover, logo, banner, SVG map, chat attachment (`chat-attachments/{issueId}/{guid}{ext}`, সর্বোচ্চ ১০ MB) |
+| টিকিট PDF | `AwsSimpleStorageTicketMediaManager` (`ITicketMediaManager`) — key নির্মাণ: template `{TemplateBase}/ticket-back{programId}{eventId}.pdf`; blank `{BlankBase}/user/{userId}/{publicId}/{TicketNumber}.pdf` বা `{BlankBase}/reserved/{publicId}/…`; signed `{SignedBase}/user/{CreatedBy}/{publicId}/{TicketNumber}.pdf` বা `{SignedBase}/reserved/{CreatedBy}/{publicId}/{TicketNumber}-{type}.pdf`; merged/zip `{MergeBase}/{reservationId}/{ReservationNumber}_Merged_PDF_{i}.pdf` / `_Individual_Zipped_{i}.zip` |
+| সরবরাহ | media: row-তে রাখা public CloudFront URL; টিকিট: **Ticketing API মাধ্যমে stream** (`download*`, F2.9) — সরাসরি CloudFront শুধু admin reserved download-এ signed URL/cookie দিয়ে |
+| Signed URL | `S3CloudFrontStroge.GeneratePresignedUrlAsync` (share link, F2.9) |
+| Signed cookie | `TicketingCookieManager.GetCloudFrontSignedCookie()` — RSA-SHA1-signed policy; key-pair id + private key appsettings-এ **নেই**: runtime-এ S3 JSON object থেকে পড়ে `{CloudfrontTicketValidator:BucketName}/{ObjectKey}` (`CloudfrontTicketConfig { KeyPairId, ResourceUrl, Expiration, PrivateKey }`)। `GET /ticketing/api/v1/booking-order-ticket/signed-cookie` cookie string ফেরায়; caller নিজে `CloudFront-Policy`, `CloudFront-Signature`, `CloudFront-Key-Pair-Id` cookie বসায় |
+
+**5–8. Components / code.** `Core/ETP.Core.BlobStorage/AWSS3/{AwsSimpleStorageMediaManager,AwsSimpleStorageTicketMediaManager,S3CloudFrontStroge,TicketingCookieManager}.cs`; config key + `AWS:Bucket:BaseUrl`, `AWS:Ticket:{TemplateBase,BlankBase,SignedBase,ShareBase,MergeBase,ShareExpiryMinutes}`।
+
+**9. Handover notes.** ① CloudFront signing key S3 object-এ থাকা অস্বাভাবিক — AWS-এ object-টি খুঁজে (নাম secret-এ) key rotation-এ আনুন। ② টিকিট download API দিয়ে মানে customer-দের জন্য API bandwidth, CDN নয় — সরাসরি CloudFront শুধু admin reserved download-এ। ③ Core-এ Imgix cache-purge helper আছে `[UNCONFIRMED: production-এ Imgix ব্যবহৃত কিনা]`।
+
+### F6.21 Email (SES)
+
+> **Bangla name:** ইমেইল (SES)
+
+**1. Name and purpose.** Transactional email আজ সীমিত: admin console থেকে পাঠানো reserved-ticket zip-ই একমাত্র পাঠানো।
+
+**2–4. Trigger/flow.** `EmailService` (`Core/ETP.Core.Email/Services/EmailService.cs`, `IAmazonSimpleEmailService`): সাধারণ send + template + `SendEmailWithZipAttachmentAsync` (হাতে-গড়া MIME `multipart/alternative`, base64 zip attachment, `SendRawEmailAsync`)। Sender = `AWS:Ticket:EmailSender` (`TicketOptions.EmailSender`)। `TicketManager.SendReservedTicketsAsync` ব্যবহার করে (default subject "Get your tickets", তারপর টিকিটের `Action = "emailed: {recipient}"`)। SES credential = shared AWS key।
+
+**5–8. Components / code / config.** উপরের মতো; identity-verification helper (`VerifyEmailIdentityAsync`, quota, template) feature-এ অব্যবহৃত।
+
+**9. Handover notes.** Customer-মুখী transactional email (order confirmation, receipt) কোডে নেই — invoice download (F2.9)। RVL email confirmation চাইলে এই service-ই extension point।
+
+### F6.22 SMS ও external notification service
+
+> **Bangla name:** এসএমএস ও বাহ্যিক নোটিফিকেশন সার্ভিস
+
+**1. Name and purpose.** সব SMS external **Notification API** দিয়ে (`Notification:Endpoint` + static `Notification:Authorization` header) — এর source কোনো repo-তে নেই `[UNCONFIRMED]`।
+
+**2–4. ব্যবহারকারী:** staff credential SMS (F6.2, F6.5), ticket-generated notification (F5.12), issue-resolved notification (F1.24)। Client `Core/ETP.Core/ServiceClient/NotificationClient/NotificationClient.cs` — `POST /notification/request` (`TicketGeneratedNotification` / `IssueResolvedNotification`, snake_case model `Core/ETP.Core/Models/Notification.cs`-এ) ও `POST /notification/send-message` (`SMSNotification { message_destination, message_type, the_message }`), ৩-বার exponential backoff retry। Admin, Booking, Scheduler-এ registered।
+
+**5–8. Components / code.** উপরের মতো; config `Notification:Endpoint`, `Notification:Authorization` (local-এ `https://notification.invalid/`)।
+
+**9. Handover notes.** ① API-র মালিক/hosting/capacity BS23-এর কাছে নিশ্চিত করুন (Open queries)। ② Architecture diagram-এর Lambda-র সম্ভাব্য ঠিকানাও এটি (architecture §2.6 Q1) `[UNCONFIRMED]`। ③ SMS ব্যর্থতায় admin operation অর্ধসম্পন্ন থাকে (F6.5 note ⑤)।
+
+### F6.23 Push notification (PushNotification service + Firebase)
+
+> **Bangla name:** পুশ নোটিফিকেশন (PushNotification service + Firebase)
+
+**1. Name and purpose.** Push pipeline: client FCM device token **PushNotification** service-এ রেজিস্টার করে (F3.9); প্রেরকরা (admin portal → Admin service, Scheduler) পাঠাতে বলে; সে ২০০-token batch-এ `FirebaseNotification` queue-তে দেয়; Scheduler worker FCM দিয়ে পৌঁছায় (F5.11)।
+
+**2–4. Trigger/flow।**
+
+| # | Call | Hop | নোট |
+|---|---|---|---|
+| 1 | `POST /pushnotification/api/v1/device-token` (register), `PUT` (refresh), `DELETE` (remove), `GET {userId}` | **[HTTP + user token]** (কিন্তু service-এ **কোনো auth নেই** — F6.18) | `UserDeviceTokens` row |
+| 2 | `POST …/push-notification/send-to-all` / `send-to-users` (UserIds আবশ্যক) / `send-to-user/{userId}` body `PushNotificationRequest { title, body, data?, userIds?, sendToAll }` | **[HTTP]** → `202 { message, requestId }` | `NotificationManager` token মেলায়, ২০০-প্রতি `FirebaseNotificationRequest` batch, **[SQS: FirebaseNotification]** publish (`GroupId=requestId`, `OrderId="{requestId}-batch-N"`) |
+| 3 | `GET …/push-notification/bulk-status/{requestId}` | — | stub: সবসময় `{ requestId, status: "processing", message }` — tracking নেই |
+
+Delivery পথ ও ব্যর্থতার অর্থ: F5.11। Admin service `send-to-users|send-to-all` (token-forwarded) ডাকে — যেমন support console থেকে issue-resolution push `[UNCONFIRMED: কোন screen আসলে পাঠায়]`।
+
+**5–8. Components / code.** `Services/PushNotification/` (controller + `NotificationManager.cs`); `Core/ETP.Core/Models/{PushNotificationRequest,DeviceTokenRequest}.cs`; queue message `Core/ETP.Core/Queue/Messages/Firebase*.cs`; FCM `Core/ETP.Core/PushNotification/FirebasePushNotificationService.cs` (config `FirebasePushNotificationConfig:*` থেকে গড়া service-account JSON)।
+
+**9. Handover notes.** ① পুরো service anonymous (F6.18) — পৌঁছানো মাত্র যে কেউ token row নাড়াতে পারে। ② ব্যর্থতা নীরবে হারায় (F5.11 note ①)। ③ `FirebaseBulkNotificationRequest` dead code। ④ FCM credential config key থেকে গড়া সম্পূর্ণ service-account JSON — উচ্চ-মূল্যের secret।
+
+### F6.24 Activity logging (অডিট ট্রেইল)
+
+> **Bangla name:** অ্যাক্টিভিটি লগ (অডিট ট্রেইল)
+
+**1. Name and purpose.** ছয়টি service-এর প্রতিটি entity পরিবর্তন এক `SaveChangesInterceptor` দিয়ে একটাই shared `ActivityLogs` টেবিলে (schema `etp`) রেকর্ড হয় — F1.27-এর data।
+
+**2. Trigger and actor.** Admin, Booking, Event, Ticketing, TicketChecker, UserIssue-এর যেকোনো EF `SaveChanges`।
+
+**3–4. Technical flow.** Service-প্রতি `ActivityLogInterceptor` (`Core/ETP.Core.EntityFramework/Interceptors/ActivityLogInterceptor.cs`) — service নাম, `username` claim থেকে user id (fallback `System`), `IHttpContextAccessor` থেকে IP, shared `TransactionId` (`AsyncLocal`): `Modified` → শুধু বদলানো property-র diff; `Deleted` → সম্পূর্ণ পুরোনো মান; `Added` → buffer করে `SavedChangesAsync`-এ লেখা (DB id পাওয়ার জন্য)। Audit housekeeping field (`CreatedAt/By`, `UpdatedAt/By`) বাদ; enum নামে serialize; `IFormFile` "[Image File]" মাস্ক; খালি diff skip। Row সাথে সাথে আলাদা `LoggingDbContext` দিয়ে যায়। কলাম: `Id, ServiceName, EntityName, EntityId, Action, OldValues, NewValues, EntityContext, TransactionId, Timestamp, UserId, UserName, IpAddress` (+ ServiceName/TransactionId/EntityName/EntityId/Timestamp/IpAddress index)।
+
+**5–8. Components / code.** `Core/ETP.Core.EntityFramework/{LoggingDbContext.cs,Interceptors/ActivityLogInterceptor.cs,Configuration/ActivityLogConfiguration.cs}`; service-প্রতি `*DbContext.cs` (যেমন `AdminDbContext.cs:79`); পাঠক F1.27।
+
+**9. Handover notes.** ① PushNotification ও Utility log করে **না** (interceptor নেই)। ② Insert save-এর পরে লেখা হয় — ব্যর্থ transaction-এর চেষ্টার চিহ্ন থাকে না। ③ `OldValues/NewValues` JSON diff; বড় entity মানে বড় row।
+
+### F6.25 Redis: cache, live capacity ও lock
+
+> **Bangla name:** Redis: ক্যাশ, লাইভ ক্যাপাসিটি ও লক
+
+**1. Name and purpose.** ElastiCache Redis একসাথে তিন কাজ: ছোট-TTL read cache, **লাইভ আসন/scan counter-এর ভাণ্ডার**, আর RedLock coordination।
+
+**2–4. Key family** (constant `Core/ETP.Core/Constant/AppConstant.cs`-এর `CachePrefix` + Booking/Ticketing/Admin manager-এর সংযোজন):
+
+| Family | Key | কাজ |
+|---|---|---|
+| Catalog cache | `program_details`, `program_settings_details`, `event_details`, `event_venue_details`, `event_settings_details`, `ticket_attributes_details`, `admin_event_details`, `admin_level_info`, `general_notice_published`, `landing_page_image_published`, `ticket_pricing_all` | ছোট TTL (attribute cache `User` = ২ মিনিট; venue details ১৫ দিন পর্যন্ত) |
+| Live capacity | hash `capacity` ও তার field `level_live:{eventId}_{galleryId}_{blockId}_{levelId}`, `level_live_seats:…`, `level_database:…`, `level_database_seats:…`, `level_database_purchased_seats:…`; STRING `event_live:{eventId}` (F5.2) ও `event_{eventId}` (F5.4); SET `refresh` (F5.3); hash `level_locked:{groupId}` field = orderId (১২-মিনিট মেয়াদ) | §0.8 explainer |
+| Ticketing | `event_ticket_counter:{eventId}` (ক্রমিক নম্বর), `tsp_token` (১ মিনিট), `OneId:AuthToken`, `sharedTicket:{ticketNumber}_{signature}`, `signedToken` (৬০ s), `mergeTicket`/`zipTicket` | F5.8/F5.9/F2.9 |
+| Checker | `ticket_checker_tickets:event_{eventLongId}_gate_{gateId}`, `ticket_checker_checked_tickets:{eventLongId}_{gateId}_{userId}`, hash `TicketCheckerLevelGateMap` field `{eventId}_{gateId}`, flag `ticketCheckerDbSync` | F4.x/F5.14 |
+| Lock (RedLock) | `checked_ticket` (২০ মি), `promo_code_status_updater` / `system_discount_status_updater` / `booking_status_updater` / `reservation_status_updater` / `pending_cancel_booking_status_updater` (২ মি), `notification_for_ticket_generated` (৩ মি), `event_live_capacity_refresher` (১৫ মি), `device_token_cleanup` (২ ঘ), `locked_order_refresher_{0..4}` (১৫ মি), `refresh_level_locks_{key}` (৩০ s), `user_ticket_generator_{eventId}` (১২ মি), `vat_challan_processor_{0..9}` (৫ মি), `ticket_processing_service_{reservationId}` (১ ঘ), `ticket_checker_gate_{gateId}` (২ s), `create_user_ticket_{orderId}` (৩০ s), `user_booking:{userId}`, `ticket_checker_status_reset` (৫ মি) | worker + business op |
+
+**5–8. Components / code.** `Core/ETP.Core/Configuration/{RedisConfig,DistributedLockConfig,CacheConfig}.cs`; `Core/ETP.Core/Caching/RedisService.cs`; `Core/ETP.Core.Web/ConcurrencyLock/RedisLockManager.cs`; ব্যবহার feature-প্রতি।
+
+**9. Handover notes.** ① বিক্রির মধ্যে Redis flush হলে লাইভ counter পরের worker cycle-এ DB থেকে গড়ে — ফাঁকের সময়ে অতি-বিক্রির ঝুঁকি। ② Lock-এর মেয়াদ hard-coded; tune করতে কোড বদলাতে হবে। ③ `ticketCheckerDbSync` flag ৩০-মিনিট drain cycle-এ sync fail-closed করে — ওই window-এ gate device error দেখে (নকশা-অনুযায়ী, F5.14)।
+
+### F6.26 Configuration ও secret
+
+> **Bangla name:** কনফিগারেশন ও সিক্রেট
+
+**1. Name and purpose.** প্রতিটি setting-এর উৎস: service-প্রতি `appsettings.json` (শুধু গঠন — মান `[see User Secrets]`), local-এ user-secrets, AWS-এ SSM Parameter Store (`/rvl/<env>/<service>-appsettings` → CodeBuild buildspec-এ k8s secret — architecture doc §6)।
+
+**2–4. Key reference (গুছিয়ে)।**
+
+| গ্রুপ | Key |
+|---|---|
+| Service-এর পরিচয় | `Application:ServiceName` (route prefix) |
+| Database | `ConnectionStrings:{Admin,Booking,Event,TicketChecker,UserIssue,PushNotification}` (+ অব্যবহৃত `:Ticketing`, `:Platform`, `:Scheduler`, `:UserAuth`) |
+| Peer service | `Services:{Admin,Booking,Event,Ticketing,TicketChecker,UserIssue,PushNotification,Scheduler,Platform,UserAuth}` + `Services:AppBase` (identity API) |
+| Auth | `AWS:CognitoPool:{Admin,User,TicketChecker,Agent}:{PoolId,ClientId,Authority,Metadata}`; `Authentication:Jwt:{Key,Issuer,Audience}`; `Authentication:ServiceApiKey` |
+| AWS | `AWS:{Region,AccessKey,SecretAccessKey}`; `AWS:Bucket:{Name,BaseUrl}`; `AWS:Ticket:*` (F6.20); `AWS:Queue:{OrderSuccess,EventCapacity,TicketSigning,TicketProcessing,VatChallanProcessing,FirebaseNotification}`; `CloudfrontTicketValidator:{BucketName,ObjectKey}` |
+| Cache/lock | `Cache:Redis:{InstanceName,ConnectionString,DefaultDatabase}`; `DistributedLock:Redis:{EndPoint,Port,AccessKey}` |
+| Payment/VAT | `PaymentSettings:{DgePay,SSLCommerz,NBROpenApi}:*` (merchant id/secret, base URL, DgePay `RedirectUrl`) |
+| External | `TSP:{AuthUrl,SignUrl,UserId,DigitalIdentityId}` (+ `Cert/tspgw_client.pfx`); `OneIdSettings:{TokenUrl,DocumentSyncUrl,AuthorizationToken}`; `Notification:{Endpoint,Authorization}`; `Serverless:{BaseUrl,Authorization}`; `FirebasePushNotificationConfig:*` |
+| Client | Angular `environment*.ts` (generated); Flutter `env/.env.<flavor>`: `API_BASE_URL`, `AUTH_API_BASE_URL`, `AUTH_API_TOKEN`, `AMPLIFY_CONFIG`, `CHAT_COMMUNICATION_HUB`, `PAYMENT_SUCCESS_URL`, `VDS_CERTIFICATE`, `FIREBASE_ANDROID_*`, `FIREBASE_IOS_*`, policy URL |
+
+**5–8. Components / code.** Service host-প্রতি appsettings; local `scripts/user-secrets.example.json`; client env template README-তে; SSM path pattern `buildspec-*.yaml` (architecture §6)।
+
+**9. Handover notes.** ① Service-প্রতি একটি static IAM key pair (`AWS:AccessKey/SecretAccessKey`) SQS/S3/SES/Cognito/DynamoDB-র জন্য — rotation-এর পরিধি ও per-service বিভাজন অজানা `[UNCONFIRMED]` (architecture §2.3)। ② `ConnectionStrings:Ticketing` অব্যবহৃত (Ticketing `:Booking` চড়ে) — Ticketing pod-এর DB grant দেখে Booking-এর সাথে মিলিয়ে রাখুন। ③ Ticketing-এর DynamoDB registration-এ hard-coded `http://localhost:8000` ServiceURL branch আছে — production-এ আসল endpoint ওভাররাইড করছে না তা দেখুন `[UNCONFIRMED]`। ④ Client static key (`headerkey`, `AUTH_API_TOKEN`, `serverless.authorization`) browser/app bundle-এ — জনসাধারণ্যে প্রকাশিত ধরুন।
+
 <!-- 🔄 CONTINUE-BN -->
 
