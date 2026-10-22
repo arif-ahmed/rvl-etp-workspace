@@ -1,8 +1,8 @@
-# U-07 Â· Profile and settings
+# U-07 · Profile and settings
 
-> **Bangla name:** à¦ªà§à¦°à§‹à¦«à¦¾à¦‡à¦² à¦– à¦¸à§‡à¦Ÿà¦¿à¦‚à¦¸
+> **Bangla name:** প্রোফাইল ও সেটিংস
 >
-> [â† 30 Â· User app](README.md) Â· [Contents](../README.md) Â· [Open queries](../99-open-queries.md)
+> [← 30 · User app](README.md) · [Contents](../README.md) · [Open queries](../99-open-queries.md)
 
 ## 1. Name and purpose
 
@@ -22,8 +22,8 @@ Signed-in customer, from the Home drawer or profile tab. Routes `/profile`, `/se
 
 ## 4. Technical flow
 
-1. **[HTTP + user token] â†’ identity API:** `GET user/my-profile?user_id={userId}` (`profile_api_service_impl.dart:17-22`) â†’ `UserDataResponse`. Note the app sends `user_id` as a **query parameter**, which the portal's call does not ([P-11](../20-user-portal/P-11-profile.md) Â§4) `[UNCONFIRMED: Q-60]`.
-2. **[HTTP + user token] â†’ identity API:** `PUT user/my-profile` (`:32-38`) with `verification_type`, `verification_id`, `address` and **`dob` formatted as `DateFormat("yyyy-MM-dd")`** — a date-only string, where the portal sends a full ISO timestamp. Errors are mapped to typed exceptions: `user_update_and_verification_failed` â†’ `UserUpdateAndVerificationFailedException`, anything else â†’ `UserProfileUpdateFailedException` (`:39-44`).
+1. **[HTTP + user token] → identity API:** `GET user/my-profile?user_id={userId}` (`profile_api_service_impl.dart:17-22`) → `UserDataResponse`. Note the app sends `user_id` as a **query parameter**, which the portal's call does not ([P-11](../20-user-portal/P-11-profile.md) §4) `[UNCONFIRMED: Q-60]`.
+2. **[HTTP + user token] → identity API:** `PUT user/my-profile` (`:32-38`) with `verification_type`, `verification_id`, `address` and **`dob` formatted as `DateFormat("yyyy-MM-dd")`** — a date-only string, where the portal sends a full ISO timestamp. Errors are mapped to typed exceptions: `user_update_and_verification_failed` → `UserUpdateAndVerificationFailedException`, anything else → `UserProfileUpdateFailedException` (`:39-44`).
 3. `[UNCONFIRMED: Q-61]` — **`delete-my-profile` has no caller.** `auth_api_service_impl.dart:296` implements `apiClient.delete('user/delete-my-profile')`, but no view model or screen invokes it: a search across `lib/` and `domain/` finds no caller and no route. So the API is wired in the data layer and the delete-account **UI is missing**, contradicting [X-11](../60-cross-cutting/X-11-delete-account-force-update.md), which describes it as app-only. Either the screen was removed or never built.
 4. **Change password** goes through Amplify/Cognito from the auth repository (`auth_repository_impl.dart`), not through the identity API. The form validates a minimum length of 8 and the confirmation field in `profile_view_model.dart` (`confirmNewPasswordTextFieldChecker`, `:323-325`, with `password_tab_states.dart`).
 5. **Register SSO user** (`POST user/register-sso`, `:49-54`) is used after a successful OneID sign-in, with body `{"name": "", "cognito_sub": …}` — the name is sent **empty**, so OneID users get a blank profile name until they fill it in.
@@ -42,9 +42,9 @@ Signed-in customer, from the Home drawer or profile tab. Routes `/profile`, `/se
 
 ## 6. API contracts
 
-| Method | Path | Auth | Request â†’ Response |
+| Method | Path | Auth | Request → Response |
 |---|---|---|---|
-| GET | `{AUTH_API_BASE_URL}/user/my-profile?user_id={userId}` | user bearer | — â†’ `UserDataResponse` |
+| GET | `{AUTH_API_BASE_URL}/user/my-profile?user_id={userId}` | user bearer | — → `UserDataResponse` |
 | PUT | `{AUTH_API_BASE_URL}/user/my-profile` | user bearer | `{ verification_type, verification_id, address, dob }` |
 | POST | `{AUTH_API_BASE_URL}/user/register-sso` | — | `{ name: "", cognito_sub }` |
 | DELETE | `{AUTH_API_BASE_URL}/user/delete-my-profile` | user bearer | **implemented, no caller** ([Q-61](../20-user-portal/P-11-profile.md)) |
@@ -76,7 +76,7 @@ The identity API's user row (`dob`, address, verification); the Cognito password
 
 ## 9. Handover notes
 
-1. **`delete-my-profile` is implemented but unreachable** (Â§4 note 3) `[UNCONFIRMED: Q-61]`. This contradicts [X-11](../60-cross-cutting/X-11-delete-account-force-update.md) and must be corrected there: today no client can delete an account through the UI. The endpoint exists, so the gap is purely the missing screen.
+1. **`delete-my-profile` is implemented but unreachable** (§4 note 3) `[UNCONFIRMED: Q-61]`. This contradicts [X-11](../60-cross-cutting/X-11-delete-account-force-update.md) and must be corrected there: today no client can delete an account through the UI. The endpoint exists, so the gap is purely the missing screen.
 2. **`dob` is sent as `yyyy-MM-dd`**, the portal as a full ISO timestamp. If the identity API parses both, fine; if it validates strictly, one of the two clients will fail `[UNCONFIRMED: Q-60]`.
 3. **`user_id` is passed as a query parameter** on the app's GET but not on the portal's — an inconsistency in how the same endpoint is called ([Q-60](../20-user-portal/P-11-profile.md)).
 4. **OneID registration sends an empty name** (`:51`), so the profile name is blank after a OneID sign-in until the customer edits it.

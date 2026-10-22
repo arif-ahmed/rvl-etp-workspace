@@ -1,30 +1,30 @@
-# 03 Â· Component reverse index
+# 03 · Component reverse index
 
-> **Bangla name:** à¦•à¦®à§à¦ªà§‹à¦¨à§‡à¦¨à§à¦Ÿ à¦°à¦¿à¦­à¦¾à¦°à§à¦¸ à¦‡à¦¨à¦¡à§‡à¦•à§à¦¸
+> **Bangla name:** কম্পোনেন্ট রিভার্স ইনডেক্স
 >
-> [â† Contents](README.md) Â· [Traceability matrix](02-traceability-matrix.md)
+> [← Contents](README.md) · [Traceability matrix](02-traceability-matrix.md)
 
-The matrix ([02](02-traceability-matrix.md)) goes **feature â†’ component**. This page goes the other way: **component â†’ feature**. Use it when you have a table, a queue, a Redis key, a worker or an endpoint and need to know what depends on it — before you rename it, drop it, or change its shape.
+The matrix ([02](02-traceability-matrix.md)) goes **feature → component**. This page goes the other way: **component → feature**. Use it when you have a table, a queue, a Redis key, a worker or an endpoint and need to know what depends on it — before you rename it, drop it, or change its shape.
 
 ## 1. How to use this page
 
 | You are about to… | Look at |
 |---|---|
-| Change a table's columns | Â§3 — who else maps it |
-| Rename a Redis key | Â§4 — who reads it |
-| Change a queue's message shape | Â§5 — who produces and consumes it |
-| Delete a controller | [91 Â· Endpoint index](91-appendix-b-endpoint-index.md), then Â§2 |
-| Delete a worker | Â§6 |
+| Change a table's columns | §3 — who else maps it |
+| Rename a Redis key | §4 — who reads it |
+| Change a queue's message shape | §5 — who produces and consumes it |
+| Delete a controller | [91 · Endpoint index](91-appendix-b-endpoint-index.md), then §2 |
+| Delete a worker | §6 |
 
 Anything marked **shared** has more than one service mapping it. Those are the changes that break something quietly.
 
-## 2. Service â†’ what it owns
+## 2. Service → what it owns
 
 | Service | Owns (migrated by it) | Reads (read models) | Feature files |
 |---|---|---|---|
 | **Admin** | 33 `DbSet`s — the master data | — (it is the master) | [A-01](10-admin-portal/A-01-program-selection.md) … [A-31](10-admin-portal/A-31-general-notices.md) |
-| **Booking** | `Capacity`, `SeatReservation`, `EventCapacityAdjustment`, `UserBookingOrder`, `BookedUserRecord` | **14 tables** (Â§3.2) | [P-04](20-user-portal/P-04-seat-selection.md) … [P-08](20-user-portal/P-08-ticket-generation-request.md) |
-| **Ticketing** | `Ticket`, `OfflineSoldTicket` | **16 tables** (Â§3.3) | [P-09](20-user-portal/P-09-ticket-details-downloads.md), [P-10](20-user-portal/P-10-oneid-ticket-sync.md), [S-06](50-system-initiated/S-06-booking-status-generated.md) … [S-09](50-system-initiated/S-09-ticket-merge-zip.md) |
+| **Booking** | `Capacity`, `SeatReservation`, `EventCapacityAdjustment`, `UserBookingOrder`, `BookedUserRecord` | **14 tables** (§3.2) | [P-04](20-user-portal/P-04-seat-selection.md) … [P-08](20-user-portal/P-08-ticket-generation-request.md) |
+| **Ticketing** | `Ticket`, `OfflineSoldTicket` | **16 tables** (§3.3) | [P-09](20-user-portal/P-09-ticket-details-downloads.md), [P-10](20-user-portal/P-10-oneid-ticket-sync.md), [S-06](50-system-initiated/S-06-booking-status-generated.md) … [S-09](50-system-initiated/S-09-ticket-merge-zip.md) |
 | **TicketChecker** | *(none — it writes only Redis)* | `Events`, `TicketCheckerGates`, `TicketCheckerGateUsers`, `BlockLevelEntryGates` | [C-02](40-checker-app/C-02-offline-ticket-download.md), [C-05](40-checker-app/C-05-ticket-sync.md) |
 | **UserIssue** | `ReportedIssue`, `ReportedIssueChatMessage` | `Ticket`, `UserBookingOrder` | [P-12](20-user-portal/P-12-issues-chat.md), [U-08](30-user-app/U-08-issues-chat.md) |
 | **PushNotification** | `UserDeviceToken` | — | [U-09](30-user-app/U-09-device-token.md), [S-13](50-system-initiated/S-13-device-token-cleanup.md) |
@@ -55,7 +55,7 @@ Nothing else migrates them, but several are **read** by other services — those
 | `Discount`, `DiscountAssign` | **Booking, Ticketing** | [A-16](10-admin-portal/A-16-discounts.md), [U-04](30-user-app/U-04-seat-selection-promo.md), [S-17](50-system-initiated/S-17-discount-status.md) |
 | `TicketCheckerGate`, `TicketCheckerGateUser` | **TicketChecker** | [A-18](10-admin-portal/A-18-gate-assignment.md), [C-01](40-checker-app/C-01-assigned-event-gate.md), [S-14](50-system-initiated/S-14-checked-ticket-sync.md) |
 | `CheckedTicket` | — | [S-14](50-system-initiated/S-14-checked-ticket-sync.md), [A-19](10-admin-portal/A-19-gate-reports.md) |
-| `UserIssue`, `UserIssueChatMessage` | *(the Admin copies — legacy, see [Appendix A Â§2.1](90-appendix-a-legacy.md))* | [A-24](10-admin-portal/A-24-user-issues-admin.md) |
+| `UserIssue`, `UserIssueChatMessage` | *(the Admin copies — legacy, see [Appendix A §2.1](90-appendix-a-legacy.md))* | [A-24](10-admin-portal/A-24-user-issues-admin.md) |
 | `RaffleDraw` | — | [A-20](10-admin-portal/A-20-raffle-draw.md) |
 | `Currency` | **Booking, Ticketing** | [A-09](10-admin-portal/A-09-event-level-pricing.md) |
 | `SystemSettings` | — | [X-26](60-cross-cutting/X-26-configuration.md) |
@@ -94,12 +94,12 @@ Nothing else migrates them, but several are **read** by other services — those
 These tables are mapped by more than one service with `ExcludeFromMigrations`, so **no single service owns their schema**:
 
 ```
-Discounts Â· DiscountAssigns Â· DiscountAssignEvent Â· DiscountAssignVenueGallery
-VenueGalleries Â· GalleryBlocks Â· BlockLevels Â· EventVenueDetails
-PromoCodes Â· PromoCodeAssigns Â· EventPromoCodeAssign Â· PromoCodeAssignVenueGallery
-Currencies Â· Events Â· PromoCodeVenueEventGallery
-TicketLayoutConfigs Â· BookedUserRecords Â· ProgramTeams Â· Venues Â· EventSegments Â· EventSettings
-TicketCheckerGates Â· TicketCheckerGateUsers Â· BlockLevelEntryGates
+Discounts · DiscountAssigns · DiscountAssignEvent · DiscountAssignVenueGallery
+VenueGalleries · GalleryBlocks · BlockLevels · EventVenueDetails
+PromoCodes · PromoCodeAssigns · EventPromoCodeAssign · PromoCodeAssignVenueGallery
+Currencies · Events · PromoCodeVenueEventGallery
+TicketLayoutConfigs · BookedUserRecords · ProgramTeams · Venues · EventSegments · EventSettings
+TicketCheckerGates · TicketCheckerGateUsers · BlockLevelEntryGates
 UserBookingOrders
 ```
 
@@ -139,7 +139,7 @@ See [X-19](60-cross-cutting/X-19-service-to-service.md), [S-17](50-system-initia
 
 ## 6. Worker reverse index
 
-Every background worker, its service, and its interval. A full description of each is in [50 Â· System-initiated](50-system-initiated/README.md).
+Every background worker, its service, and its interval. A full description of each is in [50 · System-initiated](50-system-initiated/README.md).
 
 | Worker | Service | Interval | Feature |
 |---|---|---|---|
@@ -171,7 +171,7 @@ The files a newcomer is most likely to need, by role.
 |---|---|
 | Service bootstrap, prefix, auth, DI | `Services/<Name>/ETP.<Name>.Service/Program.cs` |
 | Hosted services and connection strings | `Services/<Name>/ETP.<Name>.Service/Configurations/DependencyConfig.cs` |
-| Service name (the URL prefix) | `Services/<Name>/ETP.<Name>.Service/appsettings.json` â†’ `Application:ServiceName` |
+| Service name (the URL prefix) | `Services/<Name>/ETP.<Name>.Service/appsettings.json` → `Application:ServiceName` |
 | Shared DI registrations | `Configuration(s)/DependencyConfig.cs` |
 | Path-prefix convention | `Core/ETP.Core.Web` — `GlobalRoutePrefixConvention` |
 | Auth schemes | `Core/ETP.Core.Web` — `AuthScheme.User` / `.Admin` / `.Agent` |
@@ -221,4 +221,4 @@ flowchart LR
   CLI -->|"feature file"| DOC["This documentation"]
 ```
 
-**Depends on:** [02 Â· Traceability matrix](02-traceability-matrix.md). **Affects:** every change to a shared table, Redis key or queue message.
+**Depends on:** [02 · Traceability matrix](02-traceability-matrix.md). **Affects:** every change to a shared table, Redis key or queue message.

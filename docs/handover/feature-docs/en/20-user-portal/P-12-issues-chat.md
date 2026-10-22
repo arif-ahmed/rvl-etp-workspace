@@ -1,8 +1,8 @@
-# P-12 Â· Report an issue and chat with support
+# P-12 · Report an issue and chat with support
 
-> **Bangla name:** à¦‡à¦¸à§à¦¯à§ à¦°à¦¿à¦ªà§‹à¦°à§à¦Ÿ à¦– à¦¸à¦¾à¦ªà§‹à¦°à§à¦Ÿà§‡à¦° à¦¸à¦¾à¦¥à§‡ à¦šà§à¦¯à¦¾à¦Ÿ
+> **Bangla name:** ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট
 >
-> [â† 20 Â· User portal](README.md) Â· [Contents](../README.md) Â· [Open queries](../99-open-queries.md)
+> [← 20 · User portal](README.md) · [Contents](../README.md) · [Open queries](../99-open-queries.md)
 
 ## 1. Name and purpose
 
@@ -32,11 +32,11 @@ Customer on `/en/issues`, a route that **does** have `AuthGuard` (`app-routing.m
 1. **[HTTP + user token]** `POST {services.userissue}/userissue/api/v1/user-issue` (`BookingApiService.createReportIssue`, `booking-api.service.ts:143-148`) with `CreateReportIssue { publicOrderId, programId, description }`. `[Authorize(Policy = AuthScheme.User)]` (`ReportIssueController.cs:32`).
 2. `ReportIssueManager.CreateAsync` (`ReportIssueManager.cs:62-66`) validates **in the manager, not by attribute**: description over 600 characters throws `ArgumentException("Description character should not be more than 600")`; then `GetByOrderIdAsync` throws `ArgumentException("You cannot create multiple issues per order")` if the order already has one.
 3. The manager generates an `IssueNumber` with a retry loop (`:71-78`), sets `Status = "Open"` (`:87`) and seeds chat message 1 with `SenderType = "USER"` and `Message = request.Description` (`:97-109`). Response is `ReportedUserIssue`.
-4. **[HTTP + user token]** the list: `GET …/user-issue/user/{userId}` (`booking-api.service.ts:150-154`) â†’ `ReportIssue[]`. Detail: `GET …/user-issue/user-detail/{orderId}` â†’ `IssueDetails`, which adds `eventName` and `paymentInfo`.
-5. **[SignalR]** the chat. Portal service `SignalRChatService` (`core/services/signalr-chat.service.ts:11`) builds the URL `{services.userissuehub}/userissue/chathub` with `httpsâ†’wss` / `httpâ†’ws` (`:73`), authenticates with a Cognito `accessTokenFactory` (`:80-87`), and connects with **`skipNegotiation: true` + WebSockets only** (`:88-89`) and `withAutomaticReconnect([0,2000,10000,30000])` (`:91`). On connect it calls `invoke('JoinUserIssueChat', issueId.toString())` (`:101`).
+4. **[HTTP + user token]** the list: `GET …/user-issue/user/{userId}` (`booking-api.service.ts:150-154`) → `ReportIssue[]`. Detail: `GET …/user-issue/user-detail/{orderId}` → `IssueDetails`, which adds `eventName` and `paymentInfo`.
+5. **[SignalR]** the chat. Portal service `SignalRChatService` (`core/services/signalr-chat.service.ts:11`) builds the URL `{services.userissuehub}/userissue/chathub` with `https→wss` / `http→ws` (`:73`), authenticates with a Cognito `accessTokenFactory` (`:80-87`), and connects with **`skipNegotiation: true` + WebSockets only** (`:88-89`) and `withAutomaticReconnect([0,2000,10000,30000])` (`:91`). On connect it calls `invoke('JoinUserIssueChat', issueId.toString())` (`:101`).
 6. The hub `UserIssueChatHub` (`Services/UserIssue/ETP.UserIssue.Service/Hubs/UserIssueChatHub.cs:14`) is `[Authorize(AuthenticationSchemes = AuthScheme.User + "," + AuthScheme.Admin)]` (`:13`). `JoinUserIssueChat` joins the SignalR group `ReportedIssue_{id}` (`:103`) and broadcasts `"UserJoined"` with the `username` claim (`:107`). `"NewMessage"` is **server-to-client only** — it is sent with `Clients.Group(...).SendAsync("NewMessage", savedMessage)` (`:37`, `:52`), never invoked by the browser. The invocable methods are `SendMessage(CreateChatMessage)` (`:28`), `BroadcastNewMessage(object, string)` (`:49`), `LeaveUserIssueChat` (`:115`), `SendTypingIndicator` (`:132`) and `StopTyping` (`:150`). The portal also handles `UserLeft`, `UserTyping` and `UserStoppedTyping` (`signalr-chat.service.ts:133-155`).
-7. **Sending is split by content.** Text only â†’ the hub, `sendMessage` (`:212`), with **PascalCase** field names because they bind to the C# DTO: `UserIssueId`, `Message`, `SenderType`, `SenderId`, `SenderName` (`:205-211`). With an attachment â†’ REST `sendChatMessage()` and then `broadcastNewMessage()` (`:174-190`), because a hub call cannot carry the file.
-8. **[HTTP, no auth] â†’ chat REST** (`ReportIssueChatController`, `[Route("api/v1/user-issue-chat")]`, `ReportIssueChatController.cs:12`): the portal uses `…/user-issue-chat/{issueId}/messages`, `…/user-issue-chat/send` (multipart) and `…/user-issue-chat/message/{messageId}/attachment/download` (`booking-api.service.ts:192-193, 234-236, 246-248`). **This controller has no `[Authorize]` on the class or on any action**, unlike the hub, and `senderId`, `senderName` and `senderType` are client-supplied form fields — see Â§9 note 1.
+7. **Sending is split by content.** Text only → the hub, `sendMessage` (`:212`), with **PascalCase** field names because they bind to the C# DTO: `UserIssueId`, `Message`, `SenderType`, `SenderId`, `SenderName` (`:205-211`). With an attachment → REST `sendChatMessage()` and then `broadcastNewMessage()` (`:174-190`), because a hub call cannot carry the file.
+8. **[HTTP, no auth] → chat REST** (`ReportIssueChatController`, `[Route("api/v1/user-issue-chat")]`, `ReportIssueChatController.cs:12`): the portal uses `…/user-issue-chat/{issueId}/messages`, `…/user-issue-chat/send` (multipart) and `…/user-issue-chat/message/{messageId}/attachment/download` (`booking-api.service.ts:192-193, 234-236, 246-248`). **This controller has no `[Authorize]` on the class or on any action**, unlike the hub, and `senderId`, `senderName` and `senderType` are client-supplied form fields — see §9 note 1.
 9. Attachments: multipart fields `UserIssueId`, `SenderType`, `Message`, `SenderId`, `SenderName`, `AttachmentFile` (`booking-api.service.ts:215-232`; `CreateChatMessage.cs`). Stored in S3 under the folder `chat-attachments` with `ReportedIssueId` as the key segment (`ReportIssueChatManager.cs:212`), with `AttachmentFileSize = file.Length` (`:218`).
 
 ## 5. Components
@@ -52,15 +52,15 @@ Customer on `/en/issues`, a route that **does** have `AuthGuard` (`app-routing.m
 
 ## 6. API contracts
 
-| Method | Path | Auth | Request â†’ Response |
+| Method | Path | Auth | Request → Response |
 |---|---|---|---|
-| POST | `/userissue/api/v1/user-issue` | User | `CreateReportIssue { publicOrderId, programId, description }` â†’ `ReportedUserIssue`; `ArgumentException` on >600 chars or a second issue |
-| GET | `/userissue/api/v1/user-issue/user/{userId}` | User | — â†’ `ReportIssue[]` |
-| GET | `/userissue/api/v1/user-issue/user-detail/{orderId}` | User | — â†’ `IssueDetails` (adds `eventName`, `paymentInfo`) |
-| WS | `/userissue/chathub` | User or Admin bearer | client â†’ `JoinUserIssueChat`, `SendMessage`, `BroadcastNewMessage`, `LeaveUserIssueChat`, `SendTypingIndicator`, `StopTyping`; server â†’ `NewMessage`, `UserJoined`, `UserLeft`, `UserTyping`, `UserStoppedTyping` |
-| GET | `/userissue/api/v1/user-issue-chat/{id}/messages` | **none** | — â†’ `ChatMessagesListResponse { totalCount, items[], message }` |
-| POST | `/userissue/api/v1/user-issue-chat/send` | **none** | multipart `UserIssueId`, `SenderType`, `Message`, `SenderId`, `SenderName`, `AttachmentFile` â†’ `ChatMessage` |
-| GET | `/userissue/api/v1/user-issue-chat/message/{messageId}/attachment/download` | **none** | — â†’ file stream |
+| POST | `/userissue/api/v1/user-issue` | User | `CreateReportIssue { publicOrderId, programId, description }` → `ReportedUserIssue`; `ArgumentException` on >600 chars or a second issue |
+| GET | `/userissue/api/v1/user-issue/user/{userId}` | User | — → `ReportIssue[]` |
+| GET | `/userissue/api/v1/user-issue/user-detail/{orderId}` | User | — → `IssueDetails` (adds `eventName`, `paymentInfo`) |
+| WS | `/userissue/chathub` | User or Admin bearer | client → `JoinUserIssueChat`, `SendMessage`, `BroadcastNewMessage`, `LeaveUserIssueChat`, `SendTypingIndicator`, `StopTyping`; server → `NewMessage`, `UserJoined`, `UserLeft`, `UserTyping`, `UserStoppedTyping` |
+| GET | `/userissue/api/v1/user-issue-chat/{id}/messages` | **none** | — → `ChatMessagesListResponse { totalCount, items[], message }` |
+| POST | `/userissue/api/v1/user-issue-chat/send` | **none** | multipart `UserIssueId`, `SenderType`, `Message`, `SenderId`, `SenderName`, `AttachmentFile` → `ChatMessage` |
+| GET | `/userissue/api/v1/user-issue-chat/message/{messageId}/attachment/download` | **none** | — → file stream |
 | GET | `/userissue/api/v1/user-issue-chat/{id}/unread-count`, `/unread`, `/last`, `/recent` | **none** | not called by the portal |
 
 Sample, POST create (primary):
@@ -137,7 +137,7 @@ flowchart LR
 | Item | Detail |
 |---|---|
 | Test data and accounts | seeded user `+8801700000011` with at least one paid order from `scripts/seed/*.sql`; the portal prefetches the profile and the order, so both must exist |
-| Browser | `http://localhost:4200/en/issues`; DevTools â†’ Network â†’ WS to see the `/userissue/chathub` frames (`JoinUserIssueChat`, then `NewMessage`); test a 601-character description (expect the 600 error), a second issue on the same order (expect the "multiple issues" error), an 11 MB file (expect the 5 MB client-side rejection) |
+| Browser | `http://localhost:4200/en/issues`; DevTools → Network → WS to see the `/userissue/chathub` frames (`JoinUserIssueChat`, then `NewMessage`); test a 601-character description (expect the 600 error), a second issue on the same order (expect the "multiple issues" error), an 11 MB file (expect the 5 MB client-side rejection) |
 | Emulator | — (the user app has its own copy of this flow, [U-08](../30-user-app/U-08-issues-chat.md)) |
 | Postman | `postman/services/etp-userissue.postman_collection.json`: "POST /api/v1/user-issue", "GET /api/v1/user-issue/user/{userId}", "GET /api/v1/user-issue/user-detail/{orderId}", "GET /api/v1/user-issue-chat/{reportedIssueId}/messages", "POST /api/v1/user-issue-chat/send"; set `{{access_token_user}}` |
 | Visual Studio debug | `ReportIssueManager.CreateAsync` (break on the 600-char and duplicate branches), `ReportIssueChatManager.SendMessageAsync`, `UserIssueChatHub.JoinUserIssueChat`; to exercise the hub without the browser, start the service and connect from the SignalR client tool with the user-pool token |

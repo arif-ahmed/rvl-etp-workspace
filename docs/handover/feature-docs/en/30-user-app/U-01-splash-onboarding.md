@@ -1,8 +1,8 @@
-# U-01 Â· Splash, version gate and onboarding
+# U-01 · Splash, version gate and onboarding
 
-> **Bangla name:** à¦¸à§à¦ªà§à¦²à§à¦¯à¦¾à¦¶, à¦­à¦¾à¦°à§à¦¸à¦¨ à¦—à§‡à¦Ÿ à¦– à¦…à¦¨à¦¬à§‹à¦°à§à¦¡à¦¿à¦‚
+> **Bangla name:** স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং
 >
-> [â† 30 Â· User app](README.md) Â· [Contents](../README.md) Â· [Open queries](../99-open-queries.md)
+> [← 30 · User app](README.md) · [Contents](../README.md) · [Open queries](../99-open-queries.md)
 
 ## 1. Name and purpose
 
@@ -17,14 +17,14 @@ Every cold start. Route `/splash` (`RoutePath.splash`); `SplashViewModel` is con
 1. The splash appears and immediately asks the backend whether this app version is still allowed.
 2. If an update is required, a **non-dismissible** bottom sheet appears with an **Update now** button that opens `appInfo.appLink` in the browser. Navigation stops here — the app does not continue to Home or Login.
 3. Otherwise the app checks whether a Cognito session exists.
-4. Signed in â†’ **Home**, and a background call caches the user information.
-5. Not signed in and onboarding not completed â†’ **Onboard** after a 1-second delay, then **Login**.
-6. Not signed in but onboarding already completed â†’ **Login** immediately.
+4. Signed in → **Home**, and a background call caches the user information.
+5. Not signed in and onboarding not completed → **Onboard** after a 1-second delay, then **Login**.
+6. Not signed in but onboarding already completed → **Login** immediately.
 
 ## 4. Technical flow
 
 1. `SplashViewModel._onInit()` (`splash_view_model.dart:56-62`) runs its steps in order: `_checkAppVersion()`, `_getLoginStatus()`, `_getOnboardingStatus()`, `analyticsRepository.setAnalyticsUser()`, then `_navigateToNextScreen()`.
-2. **[HTTP + user token if present] â†’ identity API:** `GET user/allowed-app-version` (`app_version_api_service_impl.dart:14`) â†’ `AppInfo { isUpdateRequired, appLink, … }`.
+2. **[HTTP + user token if present] → identity API:** `GET user/allowed-app-version` (`app_version_api_service_impl.dart:14`) → `AppInfo { isUpdateRequired, appLink, … }`.
 3. When `appInfo.isUpdateRequired == true` it sets `_shouldUpdateApp` and shows a bottom sheet with `isDismissible: false` (`:76-95`). The button opens the link with `url_launcher`, and only for `http`/`https` schemes and only when not on web (`:88-91`). `_navigateToNextScreen()` returns immediately if `_shouldUpdateApp` is set (`:105`).
 4. `authRepository.isLoggedIn()` checks the Amplify/Cognito session; `appRepository.isOnBoardingCompleted()` checks local storage.
 5. **[UNCONFIRMED: Q-51]** — the version check is wrapped in `try/catch` and **swallows the error** (`:82-84`); a customer with no network at launch therefore passes the gate silently instead of being blocked, which is the desirable behaviour but means an outdated app can run offline.
@@ -43,9 +43,9 @@ Every cold start. Route `/splash` (`RoutePath.splash`); `SplashViewModel` is con
 
 ## 6. API contracts
 
-| Method | Path | Auth | Request â†’ Response |
+| Method | Path | Auth | Request → Response |
 |---|---|---|---|
-| GET | `{AUTH_API_BASE_URL}/user/allowed-app-version` | user bearer if signed in, otherwise effectively anonymous | — â†’ `AppInfo { appVersion, isUpdateRequired, appLink, … }` |
+| GET | `{AUTH_API_BASE_URL}/user/allowed-app-version` | user bearer if signed in, otherwise effectively anonymous | — → `AppInfo { appVersion, isUpdateRequired, appLink, … }` |
 
 This is the same identity API as [X-06](../60-cross-cutting/X-06-user-registration.md) and [P-11](../20-user-portal/P-11-profile.md), reached through a different client (`auth_api_client.dart:6`, base URL `dotenv.env['AUTH_API_BASE_URL']`) `[UNCONFIRMED: Q-01]`.
 
@@ -68,7 +68,7 @@ Local storage only: the onboarding-completed flag, via `SharedPreferences` behin
 ## 9. Handover notes
 
 1. **The force-update gate is client-side only.** It is enforced by the app refusing to navigate, not by any API check, so a customer who never re-opens the app keeps the old version indefinitely `[UNCONFIRMED: Q-52]`.
-2. **A failed version check is swallowed**, so offline launches always pass (Â§4 note 5).
+2. **A failed version check is swallowed**, so offline launches always pass (§4 note 5).
 3. **The update bottom sheet cannot be dismissed** (`isDismissible: false`), which is the intent — but there is also no "remind me later", so the app is unusable until updated.
 4. **The link is opened with `url_launcher`, not a store SDK**, and only when the scheme is `http`/`https`. A `market://` or `itms-apps://` link in `appLink` is ignored `[UNCONFIRMED: Q-52]`.
 5. **Analytics is initialised after the checks**, so a blocked customer is never registered in analytics.

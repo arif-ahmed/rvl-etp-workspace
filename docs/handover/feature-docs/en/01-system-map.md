@@ -147,6 +147,7 @@ Twenty-six concerns apply to more than one feature. They are in [60 · Cross-cut
 | **Messaging and notifications** | [X-22](60-cross-cutting/X-22-sms-notification.md), [X-23](60-cross-cutting/X-23-push-firebase.md), [X-24](60-cross-cutting/X-24-activity-logging.md) | You are adding a notification or an audit trail |
 | **Feature-specific auth** | [X-05](60-cross-cutting/X-05-admin-provisioning.md), [X-08](60-cross-cutting/X-08-oneid-sso.md), [X-09](60-cross-cutting/X-09-user-forgot-password.md), [X-11](60-cross-cutting/X-11-delete-account-force-update.md), [X-13](60-cross-cutting/X-13-agent-pool.md) | The specific flow, not the general rule |
 
+<a id="8-where-the-risk-is"></a>
 ## 8. Where the risk is
 
 If you read only one section of this handover, read this one. These are the places where the code is doing something that a reasonable person would not expect, ranked by consequence.
