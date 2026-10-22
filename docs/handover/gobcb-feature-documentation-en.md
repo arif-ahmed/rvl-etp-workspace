@@ -2058,6 +2058,44 @@ Capacity endpoints return plain numbers/seat lists (e.g. `level-live-capacity` �
 
 **9. Handover notes.** ① Two sources of truth meet here: the tree (structure, cached up to 15 days) and the live counters (seconds) — price changes (F1.9) can take as long as the cache TTL to appear. ② `CapacityController` has **no** `[Authorize]`; it is treated as internal/public by network placement (F6.18).
 
+### F2.5 Apply promo code
+
+> **Bangla name:** প্রোমো কোড প্রয়োগ
+
+**1. Name and purpose.** Validate a promo code against the chosen event/gallery **before** checkout and show the discount it gives, so the customer sees the corrected total in the buy dialog.
+
+**2. Trigger and actor.** Portal buy dialog promo-code field. Actor: customer, User pool (policy `user`).
+
+**3. Business flow.** The customer types the code and taps apply; the portal shows success/failure and the discount type + value; the booking (F2.6) then sends the same code and Booking re-validates server-side.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Portal → Booking `POST /booking/api/v1/user-booking-order/apply-promo-code` | **[HTTP + user token]** | `ApplyPromoCodeRequest { promoCode, programId, eventId, galleryId }` |
+| 2 | Booking manager | **[Shared table]** | Validates code against `PromoCodes`/`PromoCodeAssigns` mirror: active window (F5.16), usage limits, assignment match → `ApplyPromoCodeResponse` |
+
+**5. Components.** Portal (`booking-api.service.ts`); Booking service; promo tables (owner Admin).
+
+**6. API contracts.**
+
+```json
+// POST /booking/api/v1/user-booking-order/apply-promo-code
+{ "promoCode": "BCBWELCOME", "programId": 7,
+  "eventId": "b8e6a9d2-3f1c-4e7a-9d5f-6c2b1a8e0d34", "galleryId": 12 }
+
+// 200   (ApplyPromoCodeResponse)
+{ "isSuccess": true, "discountType": "Percentage", "discountValue": 10.0, "discountAppliedTo": "BasePrice" }
+```
+
+Main errors: `400` envelope `"Invalid promo code. Please enter a valid code."` (thrown as `ArgumentException` by `UserBookingOrderManager`).
+
+**7. Data and side effects.** Read-only (usage counting happens at booking time in F2.6).
+
+**8. Code references.** `rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/booking-api.service.ts`; `rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs` (`apply-promo-code`), `…/Managers/UserBookingOrderManager.cs`.
+
+**9. Handover notes.** The system discount (no code) is fetched separately from `GET /admin/api/v1/discount/program/{programId}/{eventId}/{galleryId}` (F1.16) and shown automatically — a promo code and a system discount can coexist; the final arithmetic is Booking's, in F2.6.
+
 ### F2.6 Booking order and online payment (DgePay)
 
 > **Bangla name:** বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)
@@ -2135,7 +2173,253 @@ Main errors: `401` (missing/expired User token on POST), `400` envelope for seat
 | DgePay client | `…/ETP.Booking.Domain/Managers/DgePayPaymentManager.cs` |
 | Workers | `…/ETP.Booking.Service/Workers/BackgroundServices/{LevelCapacityUpdateService,VatChallanProcessingService,InitiateUserTicketGenerationService}.cs` |
 
-**9. Handover notes.** ① A test endpoint `GET …/payment-status-bypass?rawData=` skips DgePay verification and directly initiates tickets — confirm it is unreachable/disabled in production `[UNCONFIRMED]`. ② Full **SSLCommerz** endpoints (`payment-success|fail|cancel|ipn`, `payment-methods`) exist next to DgePay; the architecture doc names only DgePay — confirm which gateways are live `[UNCONFIRMED]`. ③ Payment truth is the server-side status check, not the redirect. ④ The per-user lock means one concurrent order attempt per customer; a stuck lock delays that user's next attempt until it expires.
+**9. Handover notes.** ① A test endpoint `GET …/payment-status-bypass?rawData=` skips DgePay verification and directly initiates tickets — confirm it is unreachable/disabled in production `[UNCONFIRMED]`. ② Full **SSLCommerz** endpoints (`payment-success|fail|cancel|ipn`, `payment-methods`) exist next to DgePay; the architecture doc names only DgePay — confirm which gateways are live `[UNCONFIRMED]` (per-program gateway choice exists, F1.3). ③ Payment truth is the server-side status check, not the redirect. ④ The per-user lock means one concurrent order attempt per customer; a stuck lock delays that user's next attempt until it expires.
+
+### F2.7 My bookings and generation status
+
+> **Bangla name:** আমার বুকিং ও জেনারেশন স্ট্যাটাস
+
+**1. Name and purpose.** The customer's order list ("My Tickets") with each order's status, and the polling that tells the customer when their PDFs are ready.
+
+**2. Trigger and actor.** Portal `/:lang/tickets` (`AllBookingsPageComponent`, AuthGuard). Actor: customer, User pool.
+
+**3. Business flow.**
+1. After payment (and after the DgePay redirect back) the customer lands on My Tickets and sees the order (status `Paid`/`Pending`/…).
+2. While tickets are being generated (F5.7/F5.8) the page polls the generation status; when ready, tickets become downloadable (F2.9).
+3. Opening an order shows its details; the seat map of a seat-mapped order has its own screen (`/tickets/:id/seats`).
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Portal → Booking `GET /booking/api/v1/user-booking-order/list?page&pageSize&sortOrder` | **[HTTP + user token]** | Paged `UserBooking` list |
+| 2 | Portal → Booking `GET …/check-generated-status?id={publicId}` | **[HTTP + user token]** | Raw `true`/`false` — polled until `true` |
+| 3 | Payment redirect | — | Backend lands the browser on the DgePay `RedirectUrl` (a portal URL; the route `tickets` redirects to `/{lang}/tickets`) — **no query parsing**: the outcome is inferred from the order status itself |
+
+**5. Components.** Portal (`booking-api.service.ts`, tickets feature); Booking service; table `UserBookingOrders`.
+
+**6. API contracts.** `UserBooking` (`Services/Booking/ETP.Booking.Domain/Models/UserBooking.cs`) — item shape:
+
+```json
+{
+  "id": 9001,
+  "publicId": "7c9f2e64-51ab-4d3e-b1f0-9a8d6e5c4b21",
+  "programId": 7, "eventId": "b8e6a9d2-…", "eventLongId": 1042,
+  "galleryId": 12, "blockId": 7, "levelId": 45,
+  "orderNumber": "ORD-000123",
+  "numberOfSeats": 2, "hasSeats": true, "seats": "A1,A2",
+  "pricePerSeat": 1500.0, "promoCode": "BCBWELCOME", "promoDiscount": 300.0,
+  "totalCharge": 2700.0, "vat": 405.0, "vatIncludedBasePricePerSeat": 1500.0,
+  "platformCharge": 0.0, "isVatInclusive": false, "discount": 0.0,
+  "status": "Paid",                                   // Pending|Failed|Paid|Cancelled|Requested|Generated
+  "paymentTransactionId": "DPX88312",
+  "eventName": "2nd ODI — Bangladesh vs Sri Lanka",
+  "eventStartDateTime": "2026-07-08T14:00:00Z", "eventEndDateTime": "0001-01-01T00:00:00Z",
+  "ticketAvaiableFrom": "2026-06-25T10:00:00Z",        // typo "Avaiable" is the wire name
+  "vatInvoiceId": null, "vatInvoiceInfo": null, "vatInvoiceDownloadUrl": null,
+  "smartChallanNumber": null, "oneIdUserId": null, "oneIdSync": false,
+  "createdAt": "2026-07-01T09:12:33Z"
+}
+```
+
+`check-generated-status` returns bare `true`/`false`; errors `400` "Booking not found." / "Privacy error." (another user's order).
+
+**7. Data and side effects.** Read-only.
+
+**8. Code references.** `…/tickets/pages/all-bookings-page/all-bookings-page.component.ts`; `…/core/services/api/booking-api.service.ts`; controller `…/Booking.Service/Api/UserBookingOrderController.cs` (`list`, `check-generated-status`).
+
+**9. Handover notes.** ① The DgePay redirect target is secret config (`PaymentSettings:DgePay:RedirectUrl`) pointing at the portal — after handover, changing the portal domain means changing that too. ② `eventEndDateTime`/`cancelledAt` etc. serialize as `.NET` default dates when unset — don't parse them as real dates.
+
+### F2.8 Ticket generation request
+
+> **Bangla name:** টিকিট জেনারেশন রিকোয়েস্ট
+
+**1. Name and purpose.** The customer's explicit "generate my tickets" action for a paid order inside the availability window — the user-initiated twin of F5.7.
+
+**2. Trigger and actor.** Portal booking details ("request tickets" action, shown when status is `Paid`). Actor: customer, User pool.
+
+**3. Business flow.** The customer taps request; if the order is paid, tickets were not already requested, and the event's ticket-availability time has arrived, generation starts; the page returns to polling (F2.7).
+
+**4. Technical flow.** Portal → Ticketing `PATCH /ticketing/api/v1/booking-order-ticket/generate-request/{publicId}` **[HTTP + user token]** (empty body) → `TicketManager.TicketGenerateRequest` (same routine as F5.7: creates tickets + blank PDFs, publishes **[SQS: TicketSigning]**, order → `Requested`). Returns the full `UserBookingResponse` (shape in F2.9).
+
+**5–7. Components / data.** Portal; Ticketing; SQS TicketSigning; S3; `Tickets`/`UserBookingOrders` writes as in F5.7.
+
+**8. Code references.** `…/core/services/api/booking-api.service.ts` (`requestTicketsById`); `…/Ticketing.Service/Api/BookingOrderTicketController.cs` (`generate-request`), `…/Managers/TicketManager.cs` (`TicketGenerateRequest`).
+
+**9. Handover notes.** Main errors (400 envelope): `"Request to generate ticket is already taken."`, `"Only paid order requests can generate tickets"`, `"You can request after ticket availability date."`.
+
+### F2.9 Ticket details, holder info, download, share, invoice
+
+> **Bangla name:** টিকিট বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস
+
+**1. Name and purpose.** Everything a customer does with their tickets: view ticket details (number, seat, holder, gates), edit holder name/ID, download a single PDF or the whole order's zip, download the payment invoice, and create a share link.
+
+**2. Trigger and actor.** Portal `/:lang/tickets/ticket-details/:id` (`BookingDetailsComponent`). Actor: customer, User pool.
+
+**3. Business flow.**
+1. The customer opens an order: event/venue info, price breakdown (`SubTotal`, VAT, discounts) and the ticket list with per-ticket status.
+2. Before generation, the customer can edit each ticket's holder name and identification (NID/passport).
+3. When generated: download single PDF, all-as-zip, invoice PDF, or "share" which creates a time-limited public link.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Portal → Ticketing `GET /ticketing/api/v1/booking-order-ticket/details?publicId={guid}` | **[HTTP + user token]** | `UserBookingResponse` (below) — built from Booking's `UserBooking` + `Tickets` + Event `EventDetails` + `VenueDetails` + `TicketAttributes` |
+| 2 | Portal → Ticketing `PATCH /ticketing/api/v1/booking-order-ticket` | **[HTTP + user token]** | `TicketUpdateRequest { id, ticketHolderName, ticketHolderIdentification }` |
+| 3 | Downloads | **[HTTP + user token]** | `GET download?ticketNumber=` → **PDF byte stream** (`{ticketNumber}.pdf`); `GET download-all/{orderPublicId}` → **ZIP byte stream** (`{eventName}.zip`); `GET download-invoice/{publicId}` → **PDF byte stream** (`TicketInvoice.pdf`) — portal uses `responseType: 'blob'` |
+| 4 | Share | **[HTTP + user token]** | `GET share?ticketNumber=` → JSON string URL `{ShareBase}?ticketNumber=…&signature=…` (presigned, cached in Redis `sharedTicket:{ticketNumber}_{signature}` for `AWS:Ticket:ShareExpiryMinutes`); anyone opens it via `GET shared?ticketNumber&signature` **[AllowAnonymous]** → PDF stream |
+
+**5. Components.** Portal; Ticketing service; Booking (order data); S3 ticket bucket + presigned URLs; Redis shared-ticket cache.
+
+**6. API contracts.** `UserBookingResponse` = the `UserBooking` fields of F2.7 plus:
+
+```json
+{
+  "transactionId": "DPX88312", "paymentMethod": "DgePay", "subTotal": 3000.0,
+  "tickets": [
+    { "id": 45001, "ticketNumber": "BCB-ODI2-A1B2C3", "seat": "A1",
+      "ticketHolderName": "Rahim Uddin", "ticketHolderIdentification": "1990123456789",
+      "entryGates": "Gate 3 — North", "miniGates": "M2",
+      "status": "Generated", "oneIdSync": false, "blankTicketUrl": null, "signedTicketUrl": null }
+  ],
+  "eventDetails": { "…": "Event service Event model (F2.2)" },
+  "venueDetails": { "…": "UserLevelWithGates (F2.4)" },
+  "ticketAttributes": {
+    "programId": 7, "venueType": "Stadium", "showVenueName": true, "showSegmentDateTime": true,
+    "dynamicAttributes": [ { "name": "Gallery", "value": "Grandstand", "isVisible": true, "priority": 1 } ]
+  }
+}
+```
+
+(URLs inside tickets are nulled server-side; downloads go through the streaming endpoints.)
+
+**7. Data and side effects.** `Tickets.TicketHolder*` updates; Redis share cache; S3 reads.
+
+**8. Code references.** `…/tickets/pages/booking-details/booking-details.component.ts`; `…/core/services/api/booking-api.service.ts`; controller `…/Ticketing.Service/Api/BookingOrderTicketController.cs` (`details`, `PATCH`, `download`, `download-all`, `download-invoice`, `share`, `shared`); manager `…/Managers/TicketManager.cs` (`GetTicketsInfo`, `ShareTicketAsync`).
+
+**9. Handover notes.** ① Holder-info edits are only meaningful before generation — after signing the PDF is fixed. ② `share` returns a **JSON-quoted string**, not an object (`responseType: 'text'` in the portal). ③ The `shared` endpoint is anonymous by design (the signature is the secret) — keep `ShareExpiryMinutes` short.
+
+### F2.10 Sync tickets to OneID wallet
+
+> **Bangla name:** OneID ওয়ালেটে টিকিট সিঙ্ক
+
+**1. Name and purpose.** Push a signed ticket PDF (or a whole order) into the customer's OneID wallet so it lives next to their national digital identity.
+
+**2. Trigger and actor.** Portal booking details "sync to OneID" action. Actor: customer, User pool. Auto-trigger: after each user ticket is signed (F5.8) when the order has `OneIdUserId`.
+
+**3. Business flow.**
+1. The customer taps sync (per ticket or per order); the platform authenticates to OneID and uploads the PDF.
+2. Success marks the ticket `OneIdSync = true` with a timestamp; already-synced tickets are skipped.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Portal → Ticketing `POST /ticketing/api/v1/booking-order-ticket/sync-to-oneid/{ticketNumber}` or `…/sync-order-to-oneid/{orderPublicId}` | **[HTTP + user token]** | No body |
+| 2 | Ticketing `OneIdManager` | **[HTTP, static key]** | `POST {OneIdSettings:TokenUrl}` `grant_type=client_credentials` + Basic auth (`OneIdSettings:AuthorizationToken`) → token cached in Redis `OneId:AuthToken` (`expires_in − 300 s`) |
+| 3 | Upload | **[HTTP + bearer]** | `POST {OneIdSettings:DocumentSyncUrl}` multipart: `one_id`, `document_type=pdf`, `document_id` (= ticket number), file part `file`; optional `vds_qr` (currently `null`, TODO) |
+| 4 | Result | — | `OneIdSyncResponse { success, message, ticketNumber, alreadySynced, syncedAt }`; order variant adds counts (`totalTickets, syncedTickets, failedTickets, alreadySyncedTickets, results[]`) |
+
+**5. Components.** Portal; Ticketing service; OneID (external); Redis token cache; `Tickets.OneIdSync/OneIdSyncedAt`; `UserBookingOrders.OneIdUserId`.
+
+**6. API contracts.** Responses above; `404` bodies `{ "message": "Ticket not found" }` / `{ "message": "Order not found" }`; guards inside `SyncTicketToOneIdAsync` (must be signed, not already synced, `OneIdUserId` present).
+
+**7. Data and side effects.** `Tickets` sync flags; OneID-side document.
+
+**8. Code references.** `…/booking-api.service.ts` (`syncOrderToOneId`); `…/Ticketing.Service/Api/BookingOrderTicketController.cs`; `…/Managers/OneIdManager.cs`; models `…/Models/OneId/*`, `…/Models/OneIdSync/*`.
+
+**9. Handover notes.** ① Where `OneIdUserId` comes from (set during OneID SSO login? written at booking?) is not visible in the Ticketing code `[UNCONFIRMED]`. ② 401s from OneID auto-refresh the token and retry once; other failures leave the ticket unsynced for a manual retry.
+
+### F2.11 Profile
+
+> **Bangla name:** প্রোফাইল
+
+**1. Name and purpose.** View and update the customer profile (name, dob, address, verification id/type) held in the external **identity API**; change password lives in F6.10.
+
+**2. Trigger and actor.** Portal `/:lang/user-profile`. Actor: customer, User pool (+ identity API key header).
+
+**3. Business flow.** The customer sees their profile (verification status, ekyc state) and can edit address/dob/verification fields; profile completeness gates some flows.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Portal → identity `GET user/my-profile` | **[HTTP, static key]** (`environment.services.identity`, header `Authorization: environment.headerkey`) | Response `user_data` (below) |
+| 2 | Portal → identity `PUT user/my-profile` | **[HTTP, static key]** | `{ verification_type, verification_id, address, dob }` |
+
+**5. Components.** Portal (`identity-api.service.ts`, profile feature); identity API (external, source not in repos `[UNCONFIRMED]`).
+
+**6. API contracts.**
+
+```json
+// GET user/my-profile   (user_data)
+{
+  "user_data": {
+    "user_id": "a1b2c3d4-…", "name": "Rahim Uddin", "email": "rahim@example.com",
+    "phone": "+8801712345678", "dob": "1990-05-12", "address": "House 12, Mirpur, Dhaka",
+    "role": "user", "verified": true, "isProfileCompleted": "true",
+    "registration_datetime": "2026-06-01T10:00:00Z", "sso_provider": null,
+    "nonsensitive_data": { "verification": { "verification_type": "nid", "verification_id": "1990123456789" },
+                            "ekyc": { "verified": true, "data": null } },
+    "sensitive_data": { "verification": null, "payment": null, "ekyc": null }
+  }
+}
+```
+
+**7. Data and side effects.** All writes happen in the external identity API — nothing in the ETP services.
+
+**8. Code references.** `…/core/services/api/identity-api.service.ts`; `…/featured/profile/pages/user-profile-pages.component.ts`; app-side equivalent `rvl-gobcb-user-app/data/lib/remote/api_service/profile_api_service_impl.dart`.
+
+**9. Handover notes.** The identity API is the single biggest out-of-repo dependency (registration F6.6, OTP F6.6/F6.9, profile here, app version F3.1) — its ownership/SLA must be confirmed with BS23 (Open queries).
+
+### F2.12 Report an issue and chat with support
+
+> **Bangla name:** সমস্যা জানানো ও সাপোর্ট চ্যাট (ইউজার পাশ)
+
+**1. Name and purpose.** The customer raises an issue about an order (one issue per order) and chats with support in real time, with attachments — mirror of F1.24.
+
+**2. Trigger and actor.** Portal `/:lang/issues`, `/:lang/issues/issue/:id` (create), `/:lang/issues/issue-details/:id` (chat). Actor: customer, User pool.
+
+**3. Business flow.**
+1. The customer picks the order, describes the problem (≤ 600 chars) and submits — an issue number is generated.
+2. The chat screen shows the thread; typing indicators and read receipts are live; files (images/PDF/Office ≤ 10 MB) can be attached.
+3. When support resolves it (F1.24), the status flips and an SMS may confirm.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Portal → UserIssue `POST /userissue/api/v1/user-issue` | **[HTTP + user token]** | `CreateUserIssue { publicOrderId, description, programId }` — validates one-issue-per-order (calls Booking for the order), inserts issue + first message ("USER"), fetches user via Serverless |
+| 2 | List/details | **[HTTP + user token]** | `GET user-issue/user/{userId}`, `GET user-issue/user-detail/{orderId}` (order + tickets enrichment) |
+| 3 | Chat history / send | **[HTTP + user token]** | `GET user-issue-chat/{id}/messages`, `POST user-issue-chat/send` (multipart `CreateChatMessage { userIssueId, message, senderType, senderId?, senderName?, attachmentFile? }`) — attachment → S3 `chat-attachments/{issueId}/{guid}{ext}` |
+| 4 | Real-time | **[SignalR]** | Hub `{userissuehub}/userissue/chathub` (token via `accessTokenFactory`, auto-reconnect 0/2/10/30 s); same methods/events as F1.24 |
+
+**5. Components.** Portal (`booking-api.service.ts` issue calls, `signalr-chat.service.ts`, NgRx identity store); UserIssue service; Booking (order lookup); Serverless API (user); S3; SignalR public ingress `chat.gobcbticket.com.bd`.
+
+**6. API contracts.** Shapes are in F1.24 §6 (`ReportedUserIssue`, chat message). Errors: standard envelope; duplicate issue for an order → 400.
+
+**7. Data and side effects.** `ReportedIssues`/`ReportedIssueChatMessages` inserts; S3 attachments.
+
+**8. Code references.** `…/Issues/pages/{report-issue,report-issue-list,report-issue-details}/…`; `…/core/services/signalr-chat.service.ts`; owner service `rvl-gobcb-backend/Services/UserIssue/ETP.UserIssue.Service/Api/{ReportIssueController,ReportIssueChatController}.cs`, `…/Managers/{ReportIssueManager,ReportIssueChatManager}.cs`.
+
+**9. Handover notes.** ① Polling was explicitly removed in favour of SignalR — if chat "freezes", check the hub ingress first. ② The chat REST endpoints are anonymous (F6.18); messages are user-scoped only by the ids in the request.
+
+### F2.13 Language switch (EN/BN)
+
+> **Bangla name:** ভাষা পরিবর্তন (EN/BN)
+
+**1. Name and purpose.** The whole portal is bilingual; the `/:lang` route segment (`en` default, `bn`) picks the translation (`@ngx-translate`, `assets/i18n`), and the choice survives navigation and reloads.
+
+**2. Trigger and actor.** Portal language switcher. Actor: any visitor.
+
+**3–4. Business/technical flow.** `LanguageGuard` reads/writes the stored language; the redirect route `tickets → /{lang}/tickets` (F2.7's payment callback) re-injects the saved language. All data APIs are language-neutral; only UI strings and static content (terms, FAQ — F2.3) are translated.
+
+**5–8. Components / contracts / data / code.** `ETP-Web/src/app/app-routing.module.ts`, `modules/shared/services/custom-translate-loader.ts`, `assets/i18n/*`. No backend involvement.
+
+**9. Handover notes.** Backend-provided strings (event names, notices) are **not** translated — they are whatever staff entered; keep that in mind for bilingual signage.
+
+<!-- F2 complete; Part 3 next -->
 
 ## 5. System-initiated (workers and queues)
 
@@ -2477,4 +2761,197 @@ Work no person starts directly: SQS queue consumers and timer-driven background 
 
 **9. Handover notes.** The active window is what the public discount endpoint (F1.16) serves; between TTLs of that cache and this worker's 2-minute cycle a discount can be up to ~2 min late to expire.
 
-<!-- 🔄 CONTINUE -->
+## 3. User App
+
+Features started by customers in the Flutter user app (`rvl-gobcb-user-app`, app id `gobcbticket`). The app mirrors the web portal's buying flows against the **same APIs**, so each feature below focuses on what is different (native flows, WebView payment, downloads, push) and links its portal twin. Auth flows are in F6.6–F6.11. Clean architecture: `lib/presentation` (feature-first screens + view models), `domain/` (interfaces), `data/` (implementations); DI is hand-rolled (`DataModule`).
+
+### F3.1 Splash, version gate and onboarding
+
+> **Bangla name:** স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং
+
+**1. Name and purpose.** App start-up: validate environment, enforce the **minimum app version** (force-update), show onboarding, restore the session.
+
+**2. Trigger and actor.** App launch → `/splash`. Actor: app user.
+
+**3. Business flow.** Splash checks env/config, asks the identity API for allowed versions and compares with the installed build (`package_info_plus`); outdated builds show a force-update screen linking the store; fresh installs see onboarding pages, then login/home.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | App → identity `GET user/allowed-app-version` | **[HTTP, static key]** (`AUTH_API_BASE_URL` + `AUTH_API_TOKEN`) | `{ data: { up?: { android?, ios? }, tc?: { android?, ios? } } }` — each `{ version, build_number, app_link }` ("up" = user portal app, "tc" = ticket checker) |
+| 2 | Compare | — | `package_info_plus` build number vs allowed; below minimum → force update |
+| 3 | Session restore | — | Amplify session from `AMPLIFY_CONFIG`; `custom:isprofilecomplete` gates profile completion |
+
+**5. Components.** App splash/onboard features; identity API (external); package_info_plus.
+
+**6. API contracts.** Response sample:
+
+```json
+// GET {AUTH_API_BASE_URL}/user/allowed-app-version
+{ "message": null, "status": "ok",
+  "data": { "up": { "android": { "version": "2.3.0", "build_number": 120, "app_link": "https://play.google.com/…" },
+                    "ios":     { "version": "2.3.0", "build_number": 120, "app_link": "https://apps.apple.com/…" } } } }
+```
+
+**7. Data and side effects.** None locally beyond onboarding flags.
+
+**8. Code references.** `lib/presentation/feature/splash/…`; `data/lib/remote/api_service/app_version_api_service/app_version_api_service_impl.dart`; response model `data/lib/remote/response/app_version_response.dart`.
+
+**9. Handover notes.** Raising the minimum version is an identity-API data change, not an app release — but lowering it cannot un-break already-published builds; the identity API's owner must be confirmed (Open queries).
+
+### F3.2 Home and browse events
+
+> **Bangla name:** হোম ও ইভেন্ট ব্রাউজ (অ্যাপ)
+
+**1. Name and purpose.** App home (banners, upcoming events), the event list and event details — the portal F2.1/F2.2 on mobile.
+
+**2. Trigger and actor.** App `/home`, `/eventList`, `/eventDetails`. Actor: app user (anonymous browsing allowed).
+
+**3–4. Business/technical flow.** Same endpoints as the portal (Event service — anonymous): `event/api/v1/events/list`, `events/{id}`, `events/programs`, `landing-page-image/public`, `header-footer`; details screen also loads `events/venue-details/{eventId}` for buying. On login the home screen also registers the push token (F3.9). Analytics: screens log `screen_view` and network errors to Firebase Analytics.
+
+**5–7. Components / contracts / data.** As F2.1/F2.2 (Event service, Redis caches). No writes.
+
+**8. Code references.** `lib/presentation/feature/{home,event_list,event_details}/…`; `data/lib/remote/api_service/event_api_service_impl.dart`, `venue_details_api_service_impl.dart`.
+
+**9. Handover notes.** The app talks to a **single gateway host** (`API_BASE_URL`) for all services — service prefixes are appended client-side, exactly like the portal.
+
+### F3.3 Information pages (pricing, gallery, contact)
+
+> **Bangla name:** তথ্য-পেজ (প্রাইসিং, গ্যালারি, যোগাযোগ — অ্যাপ)
+
+**1. Name and purpose.** Ticket pricing, photo gallery and contact screens — portal F2.3 on mobile; legal pages open as external URLs from env config.
+
+**2–4. Trigger/flow.** App `/ticketPricing`, `/gallery`, `/contact`. Pricing: `event/api/v1/ticket-pricing/program-pricing`; gallery: `landing-page-image/public` filtered client-side to types `Gallery_Page_Segment_*`; contact: `header-footer`; terms/privacy/ICC: `TERMS_AND_CONDITIONS_URL`, `PRIVACY_AND_POLICY_URL`, `ICC_ANTI_*_POLICY_URL` env values opened in WebView/browser.
+
+**5–8. Components / contracts / code.** As F2.3. App: `lib/presentation/feature/{ticket_pricing,gallery,contact}/…`, `data/lib/remote/api_service/gallery_api_service_impl.dart`.
+
+**9. Handover notes.** Legal URLs are baked per flavor (`env/.env.<flavor>`) — updating them needs a config change at build time, unlike the portal.
+
+### F3.4 Seat selection and promo code
+
+> **Bangla name:** আসন নির্বাচন ও প্রোমো কোড (অ্যাপ)
+
+**1. Name and purpose.** Pick level/seats with live availability and apply a promo code — portal F2.4/F2.5 on mobile.
+
+**2–4. Trigger/flow.** App `/seatSelection` → `/ticketBooking`. Availability: `booking/api/v1/capacity/level-user-portal-seats?…` → `{ total, available }` (comma-separated seat strings the app splits on `,`); promo: `POST booking/api/v1/user-booking-order/apply-promo-code`; system discount: `GET admin/api/v1/discount/program/…` (model reads `name`, `discountType`, `discountValue`).
+
+**5–8. Components / contracts / code.** As F2.4/F2.5. App: `lib/presentation/feature/seat_selection/…`, `ticket_booking/…`; `data/lib/remote/response/ticket_booking/seat_availability_response.dart`, `system_discount_response.dart`.
+
+**9. Handover notes.** The app splits seat strings client-side — a seat name containing a comma would break the split (same wire format as the portal).
+
+### F3.5 Booking and WebView payment
+
+> **Bangla name:** বুকিং ও WebView পেমেন্ট
+
+**1. Name and purpose.** Create the order in-app and pay inside an in-app WebView that hosts DgePay's page; success is detected from the URL.
+
+**2. Trigger and actor.** App `/ticketBooking` → `/payment`. Actor: app user, User pool.
+
+**3. Business flow.**
+1. The customer confirms seats/holders (any promo already applied) — the app POSTs the order and gets `publicId` + `checkoutUrl`.
+2. The app opens `/payment` as a WebView on the checkout URL.
+3. When the WebView navigates to a URL **containing** the host of `PAYMENT_SUCCESS_URL`, the app treats payment as done, pops the WebView and lands on booking success/details; the backend verification is the same as F2.6 (the redirect drives the callback).
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | App → Booking `POST /booking/api/v1/user-booking-order` | **[HTTP + user token]** | Same body/response as F2.6 (`CheckoutResponse { publicId, checkoutUrl }`) |
+| 2 | WebView | — | `webview_flutter` `NavigationDelegate.onNavigationRequest`: if `request.url.contains(targetUrlHostName)` → `onPaymentSuccess(url)`, `NavigationDecision.prevent` |
+| 3 | Backend | — | DgePay callback hits Booking exactly as in F2.6 step 4–6 (the WebView is just a browser) |
+
+**5–8. Components / contracts / code.** As F2.6 plus app: `lib/presentation/feature/{ticket_booking,payment}/…` (view models), `data/lib/remote/response/check_out_response.dart`.
+
+**9. Handover notes.** ① Success detection is a **substring match** on the URL host — any DgePay redirect chain passing through that host triggers it; exactness `[UNCONFIRMED]`. ② `PAYMENT_SUCCESS_URL` fallback default is `ticket-bangla.com/tickets` in code — the real env value is set per flavor.
+
+### F3.6 My bookings and tickets
+
+> **Bangla name:** আমার বুকিং ও টিকিট (অ্যাপ)
+
+**1. Name and purpose.** Order list, booking details and all ticket actions — download single/all/invoice, edit holder, share, OneID sync — portal F2.7–F2.10 on mobile, with **native download and share**.
+
+**2. Trigger and actor.** App `/bookingList`, `/bookingDetails`. Actor: app user, User pool.
+
+**3–4. Business/technical flow.** Same endpoints as F2.7–F2.10 (`list`, `details?publicId=`, PATCH ticket, PATCH `generate-request`, `check-generated-status`, `download`, `download-all`, `download-invoice`, `sync-order-to-oneid`). Native specifics:
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Downloads | URLs built on `{API_BASE_URL}/ticketing/api/v1/booking-order-ticket/…` with Bearer header; **flutter_downloader** enqueues (`{ticketId}.pdf`, `{publicId}.zip`, `{orderId}-invoice.pdf`; public storage) |
+| 2 | Share | `share_plus` `SharePlus.instance.share(ShareParams(files: [XFile(path)], subject: 'Ticket PDF'))` |
+| 3 | Polling | booking details polls `check-generated-status` until tickets exist |
+
+**5–8. Components / contracts / code.** As F2.7–F2.10. App: `lib/presentation/feature/{booking_list,booking_details}/…`; `data/lib/service/download_service.dart`, repositories `data/lib/repository/{booking_details,ticket_booking}_repository_impl.dart`.
+
+**9. Handover notes.** The download endpoints require the Authorization header — the app downloads via its HTTP client into app storage; it does **not** use CloudFront cookies (that is the admin portal's path, F1.12).
+
+### F3.7 Profile and settings
+
+> **Bangla name:** প্রোফাইল ও সেটিংস (অ্যাপ)
+
+**1. Name and purpose.** View/update profile, change password, language, logout and delete-account entry — portal F2.11 plus app-only settings.
+
+**2. Trigger and actor.** App `/profile`, `/setting`. Actor: app user.
+
+**3–4. Business/technical flow.** Profile GET/PUT `user/my-profile` (identity API; same shapes as F2.11) — the profile client uses `AUTH_API_BASE_URL` **with the Cognito Bearer** (unlike the portal's static key); SSO users auto-registered via `user/register-sso { name, cognito_sub }`; password change via Amplify; logout clears session (and should delete the push token — see notes); delete account → F6.11.
+
+**5–8. Components / code.** `lib/presentation/feature/{profile,settings}/…`; `data/lib/remote/api_service/profile_api_service_impl.dart`, client `profile_api_client.dart`.
+
+**9. Handover notes.** ① On logout the FCM-token DELETE call exists but is **commented out** in `profile_view_model.dart` — logged-out devices may still receive pushes. ② The app declares `dio` and `amplify_authenticator` in the root pubspec but the data layer uses plain `http`/`Amplify.Auth` (dead dependencies).
+
+### F3.8 Report an issue and support chat
+
+> **Bangla name:** সমস্যা জানানো ও সাপোর্ট চ্যাট (অ্যাপ)
+
+**1. Name and purpose.** Raise issues and chat with support — portal F2.12 on mobile, over the same UserIssue service and hub.
+
+**2–4. Trigger/flow.** App `/issues`, `/reportIssue`, `/chatCommunication`. REST: `POST userissue/api/v1/user-issue`, `GET user-issue/user/{userId}`, `GET user-issue/user-detail/{orderId}`, `GET user-issue-chat/{id}/messages?pageOffset=0&pageSize=50`, multipart `POST user-issue-chat/send` (field `AttachmentFile`), `GET message/{id}/attachment/download`. Real-time: SignalR (`signalr_netcore`, WebSocket-only) hub `env['CHAT_COMMUNICATION_HUB']/userissue/chathub` with token factory; send prefers SignalR `SendMessage` with HTTP multipart fallback.
+
+**5–8. Components / code.** As F2.12. App: `lib/presentation/feature/{issues,report_issue,chat_communication}/…`; `data/lib/service/signal_r_service.dart`, `data/lib/remote/api_service/{issue,chat}_api_service_impl.dart`.
+
+**9. Handover notes.** Same anonymous-REST caveat as F2.12; the hub URL is env (`CHAT_COMMUNICATION_HUB`), i.e. `chat.gobcbticket.com.bd` in production.
+
+### F3.9 Push device-token registration
+
+> **Bangla name:** পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন
+
+**1. Name and purpose.** Register the device's FCM token with the PushNotification service so the user can receive pushes; refresh it when Firebase rotates it; delete on logout.
+
+**2. Trigger and actor.** App login (home/event list view model), token refresh callback, logout. Actor: app user.
+
+**3–4. Business/technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Firebase init | — | `Firebase.initializeApp` (options from `data/lib/firebase_options.dart`, values injected from env `FIREBASE_ANDROID_*` / `FIREBASE_IOS_*`); permission request; foreground messages → `flutter_local_notifications` (channel `high_importance_channel`) |
+| 2 | Register | **[HTTP + user token]** | `POST /pushnotification/api/v1/device-token` `{ userId (Cognito sub), fcmToken, osType }` |
+| 3 | Refresh | **[HTTP + user token]** | `onTokenRefresh` → `PUT device-token` `{ userId, oldToken, newToken, osType }` |
+| 4 | Delete | **[HTTP + user token]** | `DELETE device-token` `{ userId, fcmToken }` (call site currently commented out — see notes) |
+
+**5. Components.** App (`data/lib/service/firebase_service.dart`, `repository/firebase_repository_impl.dart`); PushNotification service; table `UserDeviceTokens` (`OsType` ∈ android/ios/web).
+
+**6. API contracts.** Bodies above; the service returns the saved entity / `202` on sends (F6.23). Errors: standard envelope (but note the service has **no auth at all**, F6.18).
+
+**7. Data and side effects.** `UserDeviceTokens` upsert/delete; token cached in shared pref `firebase_token`.
+
+**8. Code references.** `rvl-gobcb-user-app/data/lib/remote/api_service/firebase_api_service_impl.dart`; backend `rvl-gobcb-backend/Services/PushNotification/ETP.PushNotification.Service/Api/DeviceTokenController.cs`.
+
+**9. Handover notes.** One user with many devices = many rows; `send-to-user/{userId}` fans out to all of them (F6.23).
+
+### F3.10 Receiving push notifications
+
+> **Bangla name:** পুশ নোটিফিকেশন গ্রহণ
+
+**1. Name and purpose.** What the customer actually receives: event announcements (send-to-all / send-to-users from the admin side via F6.23) and ticket-generated notices — foreground banners and system notifications.
+
+**2. Trigger and actor.** FCM delivery from Scheduler worker F5.11. Actor: app user (recipient).
+
+**3–4. Business/technical flow.** FCM pushes the message to the device: foreground → `FirebaseMessaging.onMessage` → local notification with the title/body; background → system tray. Tapping routes into the app (deep link to the relevant screen, e.g. bookings for ticket-generated). The data payload keys come from whatever the sender put in `Data` (F6.23 request).
+
+**5–7. Components / contracts / data.** App firebase_service + local notifications; FCM; no backend calls on receipt.
+
+**8. Code references.** `rvl-gobcb-user-app/data/lib/service/firebase_service.dart`; sending side F6.23/F5.11.
+
+**9. Handover notes.** What exactly the "ticket generated" push contains (title/body language, data keys) is decided by the **external Notification API** (F5.12) or admin senders — not visible in these repos `[UNCONFIRMED]`.
+
+<!-- Part 3 complete; Part 6 next -->
