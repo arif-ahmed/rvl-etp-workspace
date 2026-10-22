@@ -1891,5 +1891,249 @@ Capacity endpoint সরল সংখ্যা/আসন তালিকা দ�
 
 **9. Handover notes.** ① Test endpoint `GET …/payment-status-bypass?rawData=` DgePay যাচাই এড়িয়ে সরাসরি টিকিট তৈরি শুরু করে — production-এ পৌঁছাচ্ছে না তা নিশ্চিত করুন `[UNCONFIRMED]`। ② DgePay-র পাশে পূর্ণ **SSLCommerz** endpoint (`payment-success|fail|cancel|ipn`, `payment-methods`) আছে; architecture doc শুধু DgePay-র নাম নেয় — কোন gateway live নিশ্চিত করুন `[UNCONFIRMED]` (program-প্রতি gateway নির্বাচন আছে, F1.3)। ③ Payment-এর সত্য হলো server-side status check, redirect নয়। ④ Per-user lock মানে customer-প্রতি একবারে একটি order-চেষ্টা; lock আটকে গেলে মেয়াদ শেষ না হওয়া পর্যন্ত পরের চেষ্টা দেরি করে।
 
+### F2.7 আমার booking ও generation status
+
+> **Bangla name:** আমার বুকিং ও জেনারেশন স্ট্যাটাস
+
+**1. Name and purpose.** Customer-এর order তালিকা ("My Tickets") প্রতিটি order-এর status-সহ, আর PDF তৈরি হলে জানানোর polling।
+
+**2. Trigger and actor.** Portal `/:lang/tickets` (`AllBookingsPageComponent`, AuthGuard)। Actor: customer, User pool।
+
+**3. Business flow.**
+1. Payment-এর পরে (এবং DgePay redirect ফেরার পরে) customer My Tickets-এ পড়েন ও order দেখেন (status `Paid`/`Pending`/…)।
+2. টিকিট তৈরি হওয়া পর্যন্ত (F5.7/F5.8) page generation status poll করে; রেডি হলে টিকিট download-যোগ্য হয় (F2.9)।
+3. Order খুললে বিস্তারিত দেখায়; seat-mapped order-এর আসনের ম্যাপ আলাদা screen-এ (`/tickets/:id/seats`)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Booking `GET /booking/api/v1/user-booking-order/list?page&pageSize&sortOrder` | **[HTTP + user token]** | paged `UserBooking` তালিকা |
+| 2 | Portal → Booking `GET …/check-generated-status?id={publicId}` | **[HTTP + user token]** | খালি `true`/`false` — `true` হওয়া পর্যন্ত poll |
+| 3 | Payment redirect | — | Backend browser-কে DgePay `RedirectUrl`-এ (একটি portal URL; `tickets` route `/{lang}/tickets`-এ redirect করে) নামায় — **query parse নেই**: ফলাফল order-এর status থেকেই বোঝা যায় |
+
+**5. Components.** Portal (`booking-api.service.ts`, tickets feature); Booking service; `UserBookingOrders` টেবিল।
+
+**6. API contracts.** `UserBooking` (`Services/Booking/ETP.Booking.Domain/Models/UserBooking.cs`) — item shape:
+
+```json
+{
+  "id": 9001,
+  "publicId": "7c9f2e64-51ab-4d3e-b1f0-9a8d6e5c4b21",
+  "programId": 7, "eventId": "b8e6a9d2-…", "eventLongId": 1042,
+  "galleryId": 12, "blockId": 7, "levelId": 45,
+  "orderNumber": "ORD-000123",
+  "numberOfSeats": 2, "hasSeats": true, "seats": "A1,A2",
+  "pricePerSeat": 1500.0, "promoCode": "BCBWELCOME", "promoDiscount": 300.0,
+  "totalCharge": 2700.0, "vat": 405.0, "vatIncludedBasePricePerSeat": 1500.0,
+  "platformCharge": 0.0, "isVatInclusive": false, "discount": 0.0,
+  "status": "Paid",
+  "paymentTransactionId": "DPX88312",
+  "eventName": "2nd ODI — Bangladesh vs Sri Lanka",
+  "eventStartDateTime": "2026-07-08T14:00:00Z", "eventEndDateTime": "0001-01-01T00:00:00Z",
+  "ticketAvaiableFrom": "2026-06-25T10:00:00Z",
+  "vatInvoiceId": null, "vatInvoiceInfo": null, "vatInvoiceDownloadUrl": null,
+  "smartChallanNumber": null, "oneIdUserId": null, "oneIdSync": false,
+  "createdAt": "2026-07-01T09:12:33Z"
+}
+```
+
+(status enum: `Pending|Failed|Paid|Cancelled|Requested|Generated`; `ticketAvaiableFrom`-এর বানানটি wire-এ এমনই)। `check-generated-status` খালি `true`/`false`; error `400` "Booking not found." / "Privacy error." (অন্যের order)।
+
+**7. Data and side effects.** শুধু-পাঠ।
+
+**8. Code references.** `…/tickets/pages/all-bookings-page/all-bookings-page.component.ts`; `…/core/services/api/booking-api.service.ts`; `…/Booking.Service/Api/UserBookingOrderController.cs` (`list`, `check-generated-status`)।
+
+**9. Handover notes.** ① DgePay redirect টার্গেট secret config (`PaymentSettings:DgePay:RedirectUrl`) portal-কে নির্দেশ করে — handover-এর পর portal domain বদলালে ওটিও বদলাতে হবে। ② `eventEndDateTime`/`cancelledAt` ইত্যাদি unset হলে .NET-এর default তারিখ serialize হয় — আসল তারিখ ভেবে parse করবেন না।
+
+### F2.8 Ticket generation request
+
+> **Bangla name:** টিকিট জেনারেশন রিকোয়েস্ট
+
+**1. Name and purpose.** Paid order-এর জন্য customer-এর স্পষ্ট "আমার টিকিট বানাও" action — availability window-এর ভেতরে; F5.7-এর user-চালিত যমজ।
+
+**2. Trigger and actor.** Portal booking details-এর "request tickets" action (status `Paid` হলে দেখায়)। Actor: customer, User pool।
+
+**3. Business flow.** Customer request চাপেন; order paid, আগে থেকে requested নয় এবং event-এর ticket-availability সময় এসে গেলে generation শুরু হয়; page আবার polling-এ ফেরে (F2.7)।
+
+**4. Technical flow.** Portal → Ticketing `PATCH /ticketing/api/v1/booking-order-ticket/generate-request/{publicId}` **[HTTP + user token]** (খালি body) → `TicketManager.TicketGenerateRequest` (F5.7-এর মতোই: টিকিট + blank PDF তৈরি, **[SQS: TicketSigning]** publish, order → `Requested`)। ফেরে পূর্ণ `UserBookingResponse` (shape F2.9-এ)।
+
+**5–7. Components / data.** Portal; Ticketing; SQS TicketSigning; S3; F5.7-এর মতো `Tickets`/`UserBookingOrders` লেখা।
+
+**8. Code references.** `…/core/services/api/booking-api.service.ts` (`requestTicketsById`); `…/Ticketing.Service/Api/BookingOrderTicketController.cs` (`generate-request`), `…/Managers/TicketManager.cs` (`TicketGenerateRequest`)।
+
+**9. Handover notes.** মূল error (400 envelope): `"Request to generate ticket is already taken."`, `"Only paid order requests can generate tickets"`, `"You can request after ticket availability date."`।
+
+### F2.9 Ticket details, holder তথ্য, download, share, invoice
+
+> **Bangla name:** টিকিট বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস
+
+**1. Name and purpose.** Customer তার টিকিট দিয়ে যা করেন: বিস্তারিত দেখা (নম্বর, আসন, holder, gate), holder-এর নাম/ID সম্পাদনা, একটি PDF বা পুরো order-এর zip নামানো, payment invoice নামানো, আর সময়সীমাসহ share link বানানো।
+
+**2. Trigger and actor.** Portal `/:lang/tickets/ticket-details/:id` (`BookingDetailsComponent`)। Actor: customer, User pool।
+
+**3. Business flow.**
+1. Customer order খোলেন: event/venue তথ্য, দামের ভাগ (`SubTotal`, VAT, ছাড়) ও টিকিটের তালিকা — প্রতিটির status-সহ।
+2. Generation-এর আগে প্রতিটি টিকিটের holder-এর নাম ও পরিচয় (NID/passport) সম্পাদনা করা যায়।
+3. Generated হলে: একটি PDF, সব-এক-zip, invoice PDF নামানো বা "share" — সময়সীমাসহ public link।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Ticketing `GET /ticketing/api/v1/booking-order-ticket/details?publicId={guid}` | **[HTTP + user token]** | `UserBookingResponse` (নিচে) — Booking-এর `UserBooking` + `Tickets` + Event `EventDetails` + `VenueDetails` + `TicketAttributes` থেকে বানানো |
+| 2 | Portal → Ticketing `PATCH /ticketing/api/v1/booking-order-ticket` | **[HTTP + user token]** | `TicketUpdateRequest { id, ticketHolderName, ticketHolderIdentification }` |
+| 3 | Download | **[HTTP + user token]** | `GET download?ticketNumber=` → **PDF byte stream** (`{ticketNumber}.pdf`); `GET download-all/{orderPublicId}` → **ZIP byte stream** (`{eventName}.zip`); `GET download-invoice/{publicId}` → **PDF byte stream** (`TicketInvoice.pdf`) — portal `responseType: 'blob'` ব্যবহার করে |
+| 4 | Share | **[HTTP + user token]** | `GET share?ticketNumber=` → JSON string URL `{ShareBase}?ticketNumber=…&signature=…` (presigned, Redis-এ `sharedTicket:{ticketNumber}_{signature}` key-তে `AWS:Ticket:ShareExpiryMinutes` মেয়াদে); যে কেউ `GET shared?ticketNumber&signature` **[AllowAnonymous]** দিয়ে PDF পায় |
+
+**5. Components.** Portal; Ticketing service; Booking (order data); S3 ticket bucket + presigned URL; Redis shared-ticket cache।
+
+**6. API contracts.** `UserBookingResponse` = F2.7-এর `UserBooking` field + এগুলো:
+
+```json
+{
+  "transactionId": "DPX88312", "paymentMethod": "DgePay", "subTotal": 3000.0,
+  "tickets": [
+    { "id": 45001, "ticketNumber": "BCB-ODI2-A1B2C3", "seat": "A1",
+      "ticketHolderName": "Rahim Uddin", "ticketHolderIdentification": "1990123456789",
+      "entryGates": "Gate 3 — North", "miniGates": "M2",
+      "status": "Generated", "oneIdSync": false, "blankTicketUrl": null, "signedTicketUrl": null }
+  ],
+  "eventDetails": { "…": "Event service-এর Event model (F2.2)" },
+  "venueDetails": { "…": "UserLevelWithGates (F2.4)" },
+  "ticketAttributes": {
+    "programId": 7, "venueType": "Stadium", "showVenueName": true, "showSegmentDateTime": true,
+    "dynamicAttributes": [ { "name": "Gallery", "value": "Grandstand", "isVisible": true, "priority": 1 } ]
+  }
+}
+```
+
+(টিকিটের ভেতরের URL server-side null করা; download streaming endpoint দিয়ে হয়।)
+
+**7. Data and side effects.** `Tickets.TicketHolder*` হালনাগাদ; Redis share cache; S3 পাঠ।
+
+**8. Code references.** `…/tickets/pages/booking-details/booking-details.component.ts`; `…/core/services/api/booking-api.service.ts`; `…/Ticketing.Service/Api/BookingOrderTicketController.cs` (`details`, `PATCH`, `download`, `download-all`, `download-invoice`, `share`, `shared`); `…/Managers/TicketManager.cs` (`GetTicketsInfo`, `ShareTicketAsync`)।
+
+**9. Handover notes.** ① Holder-তথ্যের সম্পাদনা generation-এর আগেই অর্থবহ — sign হওয়ার পরে PDF স্থির। ② `share` object নয়, **JSON-quoted string** ফেরায় (portal-এ `responseType: 'text'`)। ③ `shared` endpoint ইচ্ছাকৃতভাবে anonymous (signature-ই রহস্য) — `ShareExpiryMinutes` ছোট রাখুন।
+
+### F2.10 OneID wallet-এ টিকিট sync
+
+> **Bangla name:** OneID ওয়ালেটে টিকিট সিঙ্ক
+
+**1. Name and purpose.** Signed টিকিট PDF (বা পুরো order) customer-এর OneID wallet-এ পাঠানো — জাতীয় ডিজিটাল পরিচয়ের পাশে রাখার জন্য।
+
+**2. Trigger and actor.** Portal booking details-এর "sync to OneID" action। Actor: customer, User pool। Auto-trigger: order-এ `OneIdUserId` থাকলে প্রতিটি user টিকিট sign হওয়ার পরে (F5.8)।
+
+**3. Business flow.**
+1. Customer sync চাপেন (টিকিট- বা order-প্রতি); প্ল্যাটফর্ম OneID-তে authenticate করে PDF upload করে।
+2. সফল হলে টিকিট `OneIdSync = true` + timestamp; আগে-syncl হয়েছে এমন টিকিট skip হয়।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Ticketing `POST /ticketing/api/v1/booking-order-ticket/sync-to-oneid/{ticketNumber}` বা `…/sync-order-to-oneid/{orderPublicId}` | **[HTTP + user token]** | Body নেই |
+| 2 | Ticketing `OneIdManager` | **[HTTP, static key]** | `POST {OneIdSettings:TokenUrl}` `grant_type=client_credentials` + Basic auth (`OneIdSettings:AuthorizationToken`) → token Redis `OneId:AuthToken` (`expires_in − 300 s`) |
+| 3 | Upload | **[HTTP + bearer]** | `POST {OneIdSettings:DocumentSyncUrl}` multipart: `one_id`, `document_type=pdf`, `document_id` (টিকিট নম্বর), file part `file`; ঐচ্ছিক `vds_qr` (এখন `null`, TODO) |
+| 4 | ফলাফল | — | `OneIdSyncResponse { success, message, ticketNumber, alreadySynced, syncedAt }`; order variant-এ সংখ্যা (`totalTickets, syncedTickets, failedTickets, alreadySyncedTickets, results[]`) |
+
+**5. Components.** Portal; Ticketing service; OneID (external); Redis token cache; `Tickets.OneIdSync/OneIdSyncedAt`; `UserBookingOrders.OneIdUserId`।
+
+**6. API contracts.** উপরের response; `404` body `{ "message": "Ticket not found" }` / `{ "message": "Order not found" }`; `SyncTicketToOneIdAsync`-এর নিয়ম (signed হতে হবে, আগে sync নয়, `OneIdUserId` থাকতে হবে)।
+
+**7. Data and side effects.** `Tickets` sync flag; OneID-পক্ষের document।
+
+**8. Code references.** `…/booking-api.service.ts` (`syncOrderToOneId`); `…/Ticketing.Service/Api/BookingOrderTicketController.cs`; `…/Managers/OneIdManager.cs`; model `…/Models/OneId/*`, `…/Models/OneIdSync/*`।
+
+**9. Handover notes.** ① `OneIdUserId` কোথা থেকে আসে (SSO login-এ? booking-এ?) তা Ticketing কোডে দেখা যায় না `[UNCONFIRMED]`। ② OneID-র 401-এ token auto-refresh হয়ে একবার retry হয়; অন্য ব্যর্থতায় টিকিট unsynced থাকে পরে ম্যানুয়াল retry-র জন্য।
+
+### F2.11 Profile
+
+> **Bangla name:** প্রোফাইল
+
+**1. Name and purpose.** External **identity API**-তে রাখা customer profile দেখা ও হালনাগাদ (নাম, জন্মতারিখ, ঠিকানা, verification id/ধরন); password বদল F6.10-এ।
+
+**2. Trigger and actor.** Portal `/:lang/user-profile`। Actor: customer, User pool (+ identity API key header)।
+
+**3. Business flow.** Customer নিজের profile দেখেন (verification অবস্থা, ekyc) ও ঠিকানা/জন্মতারিখ/verification field সম্পাদনা করেন; profile completeness কিছু flow নিয়ন্ত্রণ করে।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → identity `GET user/my-profile` | **[HTTP, static key]** (`environment.services.identity`, header `Authorization: environment.headerkey`) | Response `user_data` (নিচে) |
+| 2 | Portal → identity `PUT user/my-profile` | **[HTTP, static key]** | `{ verification_type, verification_id, address, dob }` |
+
+**5. Components.** Portal (`identity-api.service.ts`, profile feature); identity API (external, source repo-তে নেই `[UNCONFIRMED]`)।
+
+**6. API contracts.**
+
+```json
+// GET user/my-profile   (user_data)
+{
+  "user_data": {
+    "user_id": "a1b2c3d4-…", "name": "Rahim Uddin", "email": "rahim@example.com",
+    "phone": "+8801712345678", "dob": "1990-05-12", "address": "House 12, Mirpur, Dhaka",
+    "role": "user", "verified": true, "isProfileCompleted": "true",
+    "registration_datetime": "2026-06-01T10:00:00Z", "sso_provider": null,
+    "nonsensitive_data": { "verification": { "verification_type": "nid", "verification_id": "1990123456789" },
+                            "ekyc": { "verified": true, "data": null } },
+    "sensitive_data": { "verification": null, "payment": null, "ekyc": null }
+  }
+}
+```
+
+**7. Data and side effects.** সব লেখা external identity API-তে — ETP service-এ কিছু নয়।
+
+**8. Code references.** `…/core/services/api/identity-api.service.ts`; `…/featured/profile/pages/user-profile-pages.component.ts`; app-পক্ষ `rvl-gobcb-user-app/data/lib/remote/api_service/profile_api_service_impl.dart`।
+
+**9. Handover notes.** Identity API repo-বহির্ভূত সবচেয়ে বড় নির্ভরতা (registration F6.6, OTP F6.6/F6.9, profile, app version F3.1) — মালিকানা/SLA BS23-এর সাথে নিশ্চিত করতে হবে (Open queries)।
+
+### F2.12 সমস্যা জানানো ও সাপোর্ট চ্যাট (ইউজার পাশ)
+
+> **Bangla name:** সমস্যা জানানো ও সাপোর্ট চ্যাট (ইউজার পাশ)
+
+**1. Name and purpose.** Customer কোনো order-এর ব্যাপারে issue খোলেন (order-প্রতি একটি) ও রিয়েল-টাইমে support-এর সাথে chat করেন, attachment-সহ — F1.24-এর আয়না।
+
+**2. Trigger and actor.** Portal `/:lang/issues`, `/:lang/issues/issue/:id` (তৈরি), `/:lang/issues/issue-details/:id` (chat)। Actor: customer, User pool।
+
+**3. Business flow.**
+1. Customer order বেছে সমস্যার বর্ণনা (≤৬০০ অক্ষর) দিয়ে জমা দেন — issue number তৈরি হয়।
+2. Chat screen thread দেখায়; typing indicator ও read receipt লাইভ; file (image/PDF/Office ≤ ১০ MB) যোগ করা যায়।
+3. Support resolve করলে (F1.24) status বদলায় ও SMS নিশ্চিতকরণ যেতে পারে।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → UserIssue `POST /userissue/api/v1/user-issue` | **[HTTP + user token]** | `CreateUserIssue { publicOrderId, description, programId }` — order-প্রতি-এক-issue যাচাই (Booking-কে order-এর জন্য ডাকে), issue + প্রথম বার্তা ("USER") insert, Serverless থেকে user আনে |
+| 2 | তালিকা/বিস্তারিত | **[HTTP + user token]** | `GET user-issue/user/{userId}`, `GET user-issue/user-detail/{orderId}` (order + টিকিট সমৃদ্ধ) |
+| 3 | Chat history / send | **[HTTP + user token]** | `GET user-issue-chat/{id}/messages`, `POST user-issue-chat/send` (multipart `CreateChatMessage { userIssueId, message, senderType, senderId?, senderName?, attachmentFile? }`) — attachment → S3 `chat-attachments/{issueId}/{guid}{ext}` |
+| 4 | রিয়েল-টাইম | **[SignalR]** | Hub `{userissuehub}/userissue/chathub` (token `accessTokenFactory` দিয়ে, auto-reconnect 0/2/10/30 s); method/event F1.24-এর মতোই |
+
+**5. Components.** Portal (`booking-api.service.ts`-এর issue call, `signalr-chat.service.ts`, NgRx identity store); UserIssue service; Booking (order lookup); Serverless API (user); S3; SignalR public ingress `chat.gobcbticket.com.bd`।
+
+**6. API contracts.** Shape F1.24 §6-তে (`ReportedUserIssue`, chat message)। Error: standard envelope; একই order-এ দ্বিতীয় issue → 400।
+
+**7. Data and side effects.** `ReportedIssues`/`ReportedIssueChatMessages` insert; S3 attachment।
+
+**8. Code references.** `…/Issues/pages/{report-issue,report-issue-list,report-issue-details}/…`; `…/core/services/signalr-chat.service.ts`; মালিক service `rvl-gobcb-backend/Services/UserIssue/ETP.UserIssue.Service/Api/{ReportIssueController,ReportIssueChatController}.cs`, `…/Managers/{ReportIssueManager,ReportIssueChatManager}.cs`।
+
+**9. Handover notes.** ① Polling সরিয়ে SignalR আনা হয়েছে — chat "জমে" গেলে আগে hub ingress দেখুন। ② Chat REST endpoint anonymous (F6.18); বার্তা শুধু request-এর id দিয়ে user-scoped।
+
+### F2.13 ভাষা পরিবর্তন (EN/BN)
+
+> **Bangla name:** ভাষা পরিবর্তন (EN/BN)
+
+**1. Name and purpose.** পুরো portal দ্বিভাষিক; `/:lang` route segment (`en` default, `bn`) অনুবাদ বেছে নেয় (`@ngx-translate`, `assets/i18n`), নির্বাচন navigation ও reload টিকে থাকে।
+
+**2. Trigger and actor.** Portal-এর language switcher। Actor: যে কোনো visitor।
+
+**3–4. Business/technical flow.** `LanguageGuard` জমা ভাষা পড়ে/লেখে; redirect route `tickets → /{lang}/tickets` (F2.7-এর payment callback) জমা ভাষা পুনরায় বসায়। Data API ভাষা-নিরপেক্ষ; শুধু UI string ও static content (শর্তাবলি, FAQ — F2.3) অনূদিত।
+
+**5–8. Components / contracts / data / code.** `ETP-Web/src/app/app-routing.module.ts`, `modules/shared/services/custom-translate-loader.ts`, `assets/i18n/*`। Backend জড়িত নয়।
+
+**9. Handover notes.** Backend-সরবরাহকৃত string (event-এর নাম, notice) **অনূদিত নয়** — staff যা লিখেছেন তাই; দ্বিভাষিক প্রদর্শনের সময় মনে রাখুন।
+
 <!-- 🔄 CONTINUE-BN -->
 
