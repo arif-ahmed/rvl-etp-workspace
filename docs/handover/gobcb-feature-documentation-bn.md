@@ -3543,5 +3543,100 @@ Delivery পথ ও ব্যর্থতার অর্থ: F5.11। Admin ser
 
 **9. Handover notes.** ① Service-প্রতি একটি static IAM key pair (`AWS:AccessKey/SecretAccessKey`) SQS/S3/SES/Cognito/DynamoDB-র জন্য — rotation-এর পরিধি ও per-service বিভাজন অজানা `[UNCONFIRMED]` (architecture §2.3)। ② `ConnectionStrings:Ticketing` অব্যবহৃত (Ticketing `:Booking` চড়ে) — Ticketing pod-এর DB grant দেখে Booking-এর সাথে মিলিয়ে রাখুন। ③ Ticketing-এর DynamoDB registration-এ hard-coded `http://localhost:8000` ServiceURL branch আছে — production-এ আসল endpoint ওভাররাইড করছে না তা দেখুন `[UNCONFIRMED]`। ④ Client static key (`headerkey`, `AUTH_API_TOKEN`, `serverless.authorization`) browser/app bundle-এ — জনসাধারণ্যে প্রকাশিত ধরুন।
 
-<!-- 🔄 CONTINUE-BN -->
+## 7. Open queries — BS23-এর জন্য খোলা প্রশ্ন
+
+এই ডকুমেন্টের সব `[UNCONFIRMED]` item এখানে একত্রিত। প্রতিটি প্রশ্ন BS23-কে as-is পাঠানোর উপযোগী (architecture doc-এর Open questions §9-এর একই ধাঁচে)। Architecture doc-এর প্রশ্নের (Q1–Q6) সাথে ওভারল্যাপ হলে তা বলা আছে। উত্তরের ধরন: প্রশ্ন-নম্বর + সংক্ষিপ্ত উত্তর।
+
+### OQ1. Identity API-র source কোনো repository-তে নেই
+- **কোথায়:** প্রতিটি customer-facing auth flow (F6.6 registration, F6.9 password reset, F2.11/F6.7 profile, F3.1/F6.11 app version + delete account)। Client-রা `user/register-cached`, `otp/send-otp`, `otp/verify-otp`, `user/register`, `user/register-sso`, `user/my-profile`, `user/delete-my-profile`, `user/allowed-app-version` ডাকে `environment.services.identity` (portal) / `AUTH_API_BASE_URL` (app)-তে; backend service-গুলোও একই API ডাকে `Services:AppBase` (`IUserClient`) দিয়ে।
+- **যা দেখা যায়:** backend-এর `Services/UserAuth` খালি stub। Identity API Cognito User-pool user বানায়, OTP পাঠায়, profile ও সর্বনিম্ন app version রাখে — সবই পাঁচ repo-র বাইরে। এর static key (`environment.headerkey` / `AUTH_API_TOKEN`) দুই client-এর bundle-এ।
+- **প্রশ্ন:** এই API কোথায় আছে (repository, hosting, মালিক, SLA)? `user/register` ও `otp/password-reset`-এ OTP server-side যাচাই হয় কি? Account deletion-এ Cognito user ও GoBCB-পক্ষের data মুছে কি? Source/config হস্তান্তর করুন ও static key ঘুরিয়ে দিন।
+
+### OQ2. Database topology: একটাই shared schema, "one schema per service" নয়
+- **কোথায়:** প্রতিটি `*DbContext.cs` (`DefaultSchema = "etp"`); Ticketing `ConnectionStrings:Booking` ব্যবহার করে (`TicketingDbContext`), `ConnectionStrings:Ticketing` আছে কিন্তু অব্যবহৃত; Event/TicketChecker/Ticketing/UserIssue অন্যের টেবিল `ExcludeFromMigrations` দিয়ে mirror করে।
+- **যা দেখা যায়:** একটাই Aurora database, একটাই schema `etp`, read-only mirror-সহ shared table — handover brief-এর "one schema per service" কোডের সাথে মেলে না।
+- **প্রশ্ন:** (a) shared-schema layout কোডের মতোই কি (নিশ্চিত করুন); (b) Ticketing-এর Booking connection string ব্যবহার ইচ্ছাকৃত কি; (c) আলাদা DB instance/grant পরিকল্পিত আছে কি? না হলে আমরা প্রতিটি টেবিল-পরিবর্তনকে cross-service ধরে নেব।
+
+### OQ3. "Serverless" API (admin 2FA OTP + Cognito lookup) — source ও architecture-এর Lambda
+- **কোথায়:** admin login 2FA (F6.1), staff "user not found" যাচাই, Admin/Booking/Ticketing/UserIssue-এর `user/get-bulk-users` call — `Serverless:BaseUrl` + static `Serverless:Authorization` header।
+- **প্রশ্ন:** এই API কি architecture diagram-এ API Gateway ও Cognito-র মাঝের Lambda (overlap: architecture Q1)? Source কোথায়? নোট: admin 2FA OTP ফলাফল শুধু browser যাচাই করে (OQ4) — Lambda কি server-side কিছু enforce করে?
+
+### OQ4. Anonymous admin endpoint — gateway কি আটকায়?
+- **কোথায় (কোডে `[Authorize]` নেই):** `POST/PUT/DELETE /admin/api/v1/agent-users/*` (Agent account তৈরি + password সেট); `POST /admin/api/v1/admin-users/set-forget-password` (শুধু `userId` দিয়ে যেকোনো admin-এর password সেট — OTP server-side যাচাই হয় না); `GET /admin/api/v1/admin-users/forget-password?phoneNo=` (যেকোনো account-কে RESET_REQUIRED করে); `GET /booking/api/v1/user-booking-order/payment-status-bypass` (DgePay যাচাই ছাড়াই "payment" প্রক্রিয়া করে); Ticketing `initiate`/`initiate-user-ticket`; Booking `not-notified-list`/`update-status`; সম্পূর্ণ PushNotification service; Booking `dashboard/*` + `report/admin/*`; Admin `event-settings`, `header-footer` PUT, `ticket-pricing`-র লেখা; UserIssue `user-issue-chat/*` (F6.18-এ সব ১৩৭টির তালিকা)।
+- **প্রশ্ন:** API Gateway/NLB/ingress routing কি এগুলোকে internet থেকে আটকায় (overlap: architecture Q1b)? F6.18-এর প্রতিটি শ্রেণির জন্য: রাখব, রক্ষা করব, নাকি সরাব? অগ্রাধিকার: `set-forget-password`, `agent-users/*`, `payment-status-bypass`।
+
+### OQ5. Notification API (SMS) — source ও মালিকানা
+- **কোথায়:** `Notification:Endpoint` + `Notification:Authorization`; staff credential SMS (F6.2/F6.5), ticket-generated notice (F5.12), issue-resolved notice (F1.24) পাঠায়। Source কোনো repo-তে নেই।
+- **প্রশ্ন:** এই API কোথায়, কে মালিক? নোট: SMS ব্যর্থ হলে admin operation অর্ধসম্পন্ন থাকে (account তৈরি কিন্তু API 400) — retry/queue পরিকল্পনা আছে কি? সম্পর্কিত: "ticket generated"-এ ঠিক কী পাঠায় — শুধু SMS, নাকি push-ও (OQ13)?
+
+### OQ6. SQS queue: physical নাম, FIFO, dead-letter queue
+- **কোথায়:** `AWS:Queue:{OrderSuccess, EventCapacity, TicketSigning, TicketProcessing, VatChallanProcessing, FirebaseNotification}` — সব মান secret।
+- **প্রশ্ন:** প্রতি environment-এর physical queue নাম/URL দিন; কোনগুলো FIFO (publisher `.fifo` suffix অনুমান করে — F5.1/F5.2-এর ক্রম-নির্ভরতা এর উপর); কোডের মন্তব্যের অনুমিত DLQ configuration ও redrive policy কী?
+
+### OQ7. কোন payment gateway live?
+- **কোথায়:** Booking-এ DgePay ও SSLCommerz উভয়ের পূর্ণ flow আছে; `ProgramSettings.PaymentGateway` program-প্রতি বাছে (DgePay=1, SSLCommerz=2)।
+- **প্রশ্ন:** production-এর কোন program কোন gateway ব্যবহার করে? SSLCommerz কোথাও live কি? `payment-status-bypass` কি production routing-এ বন্ধ (OQ4)?
+
+### OQ8. Cognito pool-গুলোতে MFA configuration
+- **কোথায়:** admin login `SMS_MFA` ভুলভাবে handle করে (F6.1 note ③); user login User-pool MFA চালু থাকলে ভাঙে (F6.7 note ①); admin 2FA OTP browser-only (F6.1 note ①)।
+- **প্রশ্ন:** কোনো pool-এ (Admin/User) MFA চালু আছে কি? থাকলে client ঠিক করা দরকার; browser-only admin 2FA-ই যদি নিয়ন্ত্রণ, তাহলে API-Gateway-স্তরের সুরক্ষা আছে কি (OQ4) — কোড তা enforce করে না।
+
+### OQ9. Scheduler device-token cleanup routing
+- **কোথায়:** Scheduler-এর `DeviceTokenCleanupService` `DELETE api/v1/device-token/cleanup` ডাকে `IEventClient` দিয়ে যার base URL `Services:Admin`; ওই route-এর একমাত্র implementation **PushNotification** service-এ (F5.13)।
+- **প্রশ্ন:** `Services:Admin` কি `/api/v1/device-token/*`-কে PushNotification-এ পাঠানো কোনো gateway, নাকি এই cleanup production-এ নীরবে ভাঙা?
+
+### OQ10. TSP signing: certificate lifecycle ও TLS validation
+- **কোথায়:** Ticketing `TSP:AuthUrl`/`TSP:SignUrl` client cert `Cert/tspgw_client.pfx`-সহ sign করে; দুই client-এই `ServerCertificateCustomValidationCallback => true` (F5.8); checker app QR offline যাচাই করে `VDS_CERTIFICATE` দিয়ে (শুধু Android Kotlin implementation — F4.3)।
+- **প্রশ্ন:** (a) বর্তমান client certificate-এর মেয়াদ কবে শেষ, rotation প্রক্রিয়া কী (`VDS_CERTIFICATE`-এর জন্য app update লাগবে)? (b) server-certificate validation বন্ধ করা কি ইচ্ছাকৃত (network constraint)? (c) checker app-এর iOS build কি signature verify করে (আমরা শুধু Kotlin পেয়েছি)?
+
+### OQ11. OneID integration-এর বিস্তারিত
+- **কোথায়:** SSO federation `oneid` (F6.8), wallet sync (F2.10)। Overlap: architecture Q5।
+- **প্রশ্ন:** (a) `UserBookingOrders.OneIdUserId` কোথায় সেট হয় (SSO login flow? booking?); (b) Cognito-তে OneID identity-provider config ও attribute mapping (repo-তে নেই); (c) document sync-এর `vds_qr` field `TODO` stub হিসেবে `null` পাঠায় — এই feature কাজ করার কথা ছিল কি?
+
+### OQ12. Production-এ DynamoDB ব্যবহার
+- **কোথায়:** Ticketing DynamoDB register করে hard-coded `ServiceURL http://localhost:8000` branch-সহ (`DependencyConfig.cs`); একমাত্র ব্যবহার test hook `TestTicketGeneratorController` (`TicketGeneratorQueue`)।
+- **প্রশ্ন:** Production-এ DynamoDB আসলে ব্যবহৃত হয় কি? না হলে registration ও test controller সরানো যাবে? হ্যাঁ হলে আসল endpoint configuration কী?
+
+### OQ13. "Ticket generated" push — কে পাঠায় ও কী থাকে?
+- **কোথায়:** F5.12 Notification API-তে `TicketGeneratedNotification` পাঠায়; user app push পায় (F3.10) যার title/body/data key এই repo-তে দেখা যায় না; `bulk-status/{requestId}` stub।
+- **প্রশ্ন:** Notification API (বা অন্য সিস্টেম) কি ticket generation-এর FCM push পাঠায়? তার template (title/body ভাষা, deep-link data key) জানান এবং push delivery tracking কোথাও আছে কি।
+
+### OQ14. Agent pool / offline-sold ticket — client ও ভোক্তা
+- **কোথায়:** F6.13 — পাঁচ repo-র কোনো client Agent pool দিয়ে sign-in করে না বা `POST /ticketing/api/v1/offline-sold-ticket` ডাকে না; `OfflineSoldTickets` পিছনে কেউ পড়ে না (report/screen নেই)।
+- **প্রশ্ন:** agent-রা কোন system/app ব্যবহার করে? `OfflineSoldTickets` কে খায় (reconciliation? ছাপা?)? Handover-এর পরে feature রাখা হবে কি?
+
+### OQ15. মুছে ফেলার আগে নিশ্চিত করতে হবে এমন dead/legacy code
+- **কোথায়:** MassTransit event bus registered, consumer নেই (সব service); Event service-এর অব্যবহৃত `AWS:Queue:FirebaseNotification` registration; `AWS:Ticket:MergeBuffer` config key অপ্রয়োজিত; `ConnectionStrings:{Ticketing,Platform,Scheduler,UserAuth}` অব্যবহৃত; Admin `/api/v1/token` service-scheme issuer (পৌঁছানো-যায়, অব্যবহৃত); Admin-এর নিজের `/admin/chathub` + Admin `user-issue-chat` copy (portal UserIssue hub ব্যবহার করে); Admin `currency` controller অপ্রয়োজিত; admin portal-এর `ChangePasswordService` অস্তিত্বহীন endpoint ডাকে; user portal-এর legacy identity endpoint (`/token`, `/refreshToken`, …); user portal-এর Innovatrics DOT auto-capture package declared কিন্তু অব্যবহৃত; checker app-এর demo `movie*` screen; `FirebaseBulkNotificationRequest` অব্যবহৃত; checker app-এ `go_router` declared কিন্তু অব্যবহৃত।
+- **প্রশ্ন:** প্রতিটির জন্য: handover-এর পরে মুছে ফেলা নিরাপদ, নাকি ভবিষ্যৎ ব্যবহারের জন্য রাখা?
+
+### OQ16. Production-এ Swagger exposure
+- **কোথায়:** প্রতিটি service `app.UseSwagger` + UI শর্তহীনভাবে register করে (`/<prefix>/swagger`)।
+- **প্রশ্ন:** Production-এ Swagger পৌঁছানো কি ইচ্ছাকৃত (takeover team-এর জন্য দরকারি), নাকি environment-gate করা উচিত?
+
+### OQ17. IAM key: ভাগাভাগি ও rotation
+- **কোথায়:** প্রতিটি service SQS/S3/SES/Cognito/DynamoDB-তে একটি static pair `AWS:AccessKey/SecretAccessKey` দিয়েauthenticate করে (SSM → k8s secret; architecture §2.3)। IRSA/role-ভিত্তিক ব্যবস্থা নেই; queue message unsigned।
+- **প্রশ্ন:** একটি key pair কি সব service-এ ভাগ হয়? তার IAM policy কী অনুমতি দেয়? Rotation প্রক্রিয়া কী (এবং কি per-service policy ভাগ করা যায়)? Overlap: architecture §2.5 item 7।
+
+### OQ18. CloudFront ticket signing key S3-এ সংরক্ষিত
+- **কোথায়:** `TicketingCookieManager` `CloudfrontTicketConfig` (KeyPairId, PrivateKey, ResourceUrl, Expiration) S3 object থেকে পড়ে — নাম `CloudfrontTicketValidator:{BucketName,ObjectKey}` (F6.20)।
+- **প্রশ্ন:** bucket/object-এর অবস্থান জানান ও এই key pair-কে handover + rotation পরিকল্পনায় আনুন। সাথে Imgix (Core-এ cache-purge helper আছে) production-এ ব্যবহৃত কিনা জানান।
+
+### OQ19. Gate controller-এ checker token
+- **কোথায়:** `TicketCheckerGateController` class স্তরে `ticket-checker` scheme নেয়, ফলে checker token `force-assign`, `force-unassign`, `update-download-status`, `remove-user`, `report`, `export`, `duplicate-tickets`, `manual-entry-tickets` — সব ডাকতে পারে (F6.15 note ②)।
+- **প্রশ্ন:** ইচ্ছাকৃত (checker-রা বিশ্বস্ত staff), নাকি এগুলো শুধু admin-scheme হওয়া উচিত?
+
+### OQ20. Program scoping data filter, access check নয়
+- **কোথায়:** `X-Program-Id` EF query filter চালায় যা header-এর উপর ভরসা করে; মালিকানা যাচাই করে শুধু dashboard (`[AuthorizeProgram]`); `EventsController`-এ attribute comment out (F1.1/F6.16)।
+- **প্রশ্ন:** Non-admin staff-দের জন্য program-ভিত্তিক বিচ্ছিন্নতা অন্য কোথাও (gateway?) enforce হয়, নাকি তা গ্রহণকৃত ঝুঁকি — নয়তো handover-এর পরে `[AuthorizeProgram]` event/তালিকায় বাড়ানো হবে?
+
+### OQ21. `SystemSettings.SeatLockTimeout` — কোথাও ব্যবহৃত হয়?
+- **কোথায়:** setting আছে (F1.30), অথচ Booking lock-এর ১২-মিনিট মেয়াদ hard-coded (F5.3)।
+- **প্রশ্ন:** `SeatLockTimeout` কি কিছু পড়ে (অন্য সিস্টেম?), নাকি ১২-মিনিট ধ্রুবকই আসল configuration?
+
+### OQ22. কোড থেকে পড়া যায়নি এমন ops রীতি
+- (a) venue-details cache TTL ১৫ দিন পর্যন্ত (F1.9/F2.4) — BS23 জরুরি দাম বদল কীভাবে প্রকাশ করে (manual cache clear?) (b) payment-discrepancy report-এর matching নিয়ম (F1.22) (c) কোন screen আসলে `push-notification/send-to-users` দিয়ে push পাঠায় (F6.23) (d) client env key-এর production মান (`PAYMENT_SUCCESS_URL` host, OneID URL, `CHAT_COMMUNICATION_HUB`) — সব secret-পক্ষে `[UNCONFIRMED]`।
+
+---
+
+*বাংলা সংস্করণের সমাপ্তি। ইংরেজি সংস্করণ (`gobcb-feature-documentation-en.md`) অভিন্ন কনটেন্ট ও কাঠামো বহন করে।*
 
