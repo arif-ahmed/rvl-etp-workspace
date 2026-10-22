@@ -49,7 +49,7 @@ Not a user feature. The categories below say who is meant to call each endpoint.
 |---|---|
 | `GET /booking/api/v1/user-booking-order/dgepay/payment-status` | DgePay redirect after payment ([P-06](../20-user-portal/P-06-booking-payment.md)) |
 | `POST /booking/api/v1/user-booking-order/sslcommerz/payment-success`, `-fail`, `-cancel`, `-ipn` | SSLCommerz callbacks (Appendix A) |
-| `GET /booking/api/v1/user-booking-order/payment-status-bypass` | Takes `rawData` and processes it like a callback; see [P-06](../20-user-portal/P-06-booking-payment.md) — high risk if reachable |
+| `GET /booking/api/v1/user-booking-order/payment-status-bypass` | Takes an order's public id in `rawData`, **does not ask the gateway** (the status check is commented out and the status is hard-coded `Paid`, payment info text "BY PASS TRANSACTION - TEST"), marks the order paid, publishes `OrderSuccess` and asks Ticketing to create tickets; see [P-06](../20-user-portal/P-06-booking-payment.md) and [S-01](../50-system-initiated/S-01-level-capacity-update.md). **Critical if reachable.** |
 
 ### Category C — internal calls from other services or workers
 
