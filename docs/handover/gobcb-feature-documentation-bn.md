@@ -646,5 +646,442 @@ BCB/BS23-এর staff-রা Angular admin portal-এ (`rvl-gobcb-admin-portal`)
 
 **9. Handover notes.** ① এই controller-এ `[AuthorizeProgram]` comment out — event তালিকার program scoping attribute নয়, স্পষ্ট `programId` parameter-এর উপর নির্ভর করে। ② `minimumPrice`, selling window ও VAT field settings flow-এ (F1.3/F1.8/F1.9) রক্ষিত, create form-এ নয়। ③ Admin-এ `GET /admin/api/v1/events/search`-ও আছে (অন্য admin screen ব্যবহার করে) — একই controller।
 
+### F1.8 Event settings override
+
+> **Bangla name:** ইভেন্ট সেটিংস (ওভাররাইড)
+
+**1. Name and purpose.** একটি event-এর জন্য program settings (F1.3) override করা: selling window, কেনাকাটার সীমা, VAT/service charge, ticket prefix, payment gateway।
+
+**2. Trigger and actor.** Admin portal → event details-এর Settings tab (`/events/event-details/:id`)। Role: F1.7-এর মতো। **নোট:** `EventSettingsController`-এ **কোনো `[Authorize]` নেই** (F6.18 দ্রষ্টব্য)।
+
+**3. Business flow.** Staff event-এর Settings tab খুলে উত্তরাধিকার-পাওয়া যেকোনো নিয়ম বদলান (যেমন playoff-এর জন্য selling ঘণ্টা বাড়ান), save করেন; এরপর থেকে program-এর বদলে event-এর নিজের row প্রযোজ্য হয়।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `GET /admin/api/v1/event-settings/{eventId}` | **[HTTP + user token]** | event-এর কার্যকর settings |
+| 2 | Portal → Admin `PUT /admin/api/v1/event-settings/{eventId}` | **[HTTP + user token]** | JSON `EventSettings` |
+| 3 | Admin DB + cache | — | `EventSettings` row; Redis key family `event_settings_details` |
+
+**5. Components.** Admin portal (`event-settings.service.ts`); Admin service; `EventSettings` টেবিল।
+
+**6. API contracts.** `EventSettings`-এর field F1.3-এর `ProgramSettings`-এর মতোই, `ProgramId`-এর জায়গায় `EventId`। Error: standard envelope।
+
+**7. Data and side effects.** `EventSettings` upsert; Ticketing টিকিট নম্বর বানানোর সময় prefix পড়ে (F5.8: `{eventSettings.TicketNumberPrefix}{unique code}`)।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/events/services/event-settings.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/EventSettingsController.cs`।
+
+**9. Handover notes.** Controller-এ `[Authorize]` নেই মানে নিরাপত্তা শুধু network placement — F6.18-এর তালিকায়।
+
+### F1.9 Event venue details ও level-প্রতি pricing
+
+> **Bangla name:** ইভেন্ট ভেন্যু ডিটেইলস ও লেভেল-ভিত্তিক দাম
+
+**1. Name and purpose.** এক event-এর venue গাছ দেখা এবং কোনো level-এর **price per seat** সেট করা — event-এর price map (ও public `MinimumPrice`) এখানেই নির্ধারিত হয়।
+
+**2. Trigger and actor.** Admin portal → event details / venue details screen। Role: `admin`, `event_manager`, `ticket_manager`, `ticket_operator` (`EventsVenueDetailsController`)।
+
+**3. Business flow.**
+1. Staff event-এর venue details খোলেন: gallery → block → level, capacity ও gate-সহ।
+2. একটি level-এর দাম দেন (level-প্রতি একটি সহজ call)।
+3. Public event model-এ `MinimumPrice` নতুন হিসাব হয় (F2.2) ও user seat map-এ নতুন দাম দেখায়।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `GET /admin/api/v1/eventsVenueDetails/venue-details/{eventId}` | **[HTTP + user token]** | `EventVenueDetailsTree` |
+| 2 | Portal → Admin `PUT /admin/api/v1/eventsVenueDetails/{eventId}/{levelId}/{price}` | **[HTTP + user token]** | level-এর দাম set |
+| 3 | Admin DB | **[Shared table]** | `EventVenueDetails` (মালিক Admin) — Event service publicly একই table serve করে (F2.4) |
+
+**5. Components.** Admin portal (`event.service.ts`); Admin service; `EventVenueDetails` টেবিল।
+
+**6. API contracts.** আরও: `GET {eventId}?isForTicket=`, `GET get-level/{eventId}/{levelId}` → `UserLevelWithGates` (sample F2.4-এ), `POST galleries/by-event-ids` (body `List<long>`, কয়েক event-এর gallery)। Error: standard envelope।
+
+**7. Data and side effects.** `EventVenueDetails`-এ দাম বদল; public venue-details cache (`event_venue_details`, TTL ১৫ দিন পর্যন্ত) বিলম্ব তৈরি করে — note দ্রষ্টব্য।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/events/services/event.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/EventsVenueDetailsController.cs`।
+
+**9. Handover notes.** Public seat map অনেকদিন Redis cache-এ থাকায় দাম বদলালে portal-এ দেখতে দেরি হতে পারে — তাৎক্ষণিক দরকার হলে cache key (`event_venue_details*`) মুছুন, নয়তো BS23 কীভাবে সামলায় জেনে নিন `[UNCONFIRMED]`।
+
+### F1.10 Event capacity adjustment
+
+> **Bangla name:** ইভেন্ট ক্যাপাসিটি সমন্বয়
+
+**1. Name and purpose.** স্বাভাবিক বিক্রির বাইরে কোনো level-এর sellable capacity বাড়ানো/কমানো (allocate/deallocate) — যেমন টিকিট শেষ হওয়ার পর অতিরিক্ত block খোলা।
+
+**2. Trigger and actor.** Admin portal → event ticket console (`/events/event-ticket`)। Role: **Booking** service-এর admin-pool endpoint (`EventCapacityAdjustmentController`-এ স্পষ্ট role নেই — F6.18)।
+
+**3. Business flow.**
+1. Staff event-এর capacity screen-এ level ও action (Allocate/Deallocate) ও seat সংখ্যা দেন।
+2. Save করলে adjustment রেকর্ড হয় ও level capacity বদলায়।
+3. Queue message event-এর live capacity recompute করে (F5.2), public counter-ও সেটি অনুসরণ করে।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Booking `POST /booking/api/v1/event-capacity-adjustment` | **[HTTP + user token]** | `EventCapacityAdjustment` (নিচে) |
+| 2 | Booking `CapacityManager` | — | `EventCapacityAdjustments` row লেখে, `Capacities` হালনাগাদ করে; **[SQS: OrderSuccess]** `LevelCapacityUpdate` ও **[SQS: EventCapacity]** `EventLiveCapacityUpdate` publish করে |
+| 3 | Worker | **[Worker]** | F5.1 DB+Redis level capacity হালনাগাদ করে; F5.2 event live counter |
+
+**5. Components.** Admin portal; Booking service; SQS `OrderSuccess` + `EventCapacity`; Redis `capacity` hash; `EventCapacityAdjustments`, `Capacities` টেবিল।
+
+**6. API contracts.**
+
+```json
+// POST /booking/api/v1/event-capacity-adjustment   (EventCapacityAdjustment)
+{
+  "id": 55, "eventId": 1042, "galleryId": 12, "blockId": 7, "levelId": 45,
+  "ticketingCapacity": 100, "hasSeats": false, "seats": null, "availableSeats": null,
+  "action": "Allocate",                 // enum string (Booking-এ enum string হিসেবে serialize, §0.7)
+  "adjustmentNumber": "ADJ-000123"
+}
+```
+
+আরও `GET by-event-level?eventId&levelId&action&programId`, `GET by-event?eventId`, `GET count/{eventId}?action=`। Error: `no_seats_available` → 400 envelope (§0.7)।
+
+**7. Data and side effects.** Adjustment row + capacity হালনাগাদ; দুটি SQS message; worker-দের দ্বারা Redis counter refresh।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/events/services/event.service.ts` (booking capacity-adjustment call); `rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/EventCapacityAdjustmentController.cs`, `…/Domain/Managers/CapacityManager.cs`।
+
+**9. Handover notes.** চলমান বিক্রির মধ্যে adjustment user order-এর সাথে প্রতিযোগিতা করে — manager Redis locked-capacity key (`level_locked:…`) সম্মান করে; বিক্রির মধ্যে বড় deallocate সাবধানে করুন।
+
+### F1.11 Seat reservation (complimentary / partner)
+
+> **Bangla name:** আসন রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)
+
+**1. Name and purpose.** Online বিক্রির বাইরে আসন ধরে রাখা **complimentary** (VIP/অতিথি) বা **partner** (sponsor/agent)-এর জন্য; reserved আসন পরে ছাপা টিকিট হয় (F1.12)।
+
+**2. Trigger and actor.** Admin portal → event ticket console। Role: admin pool (Booking `SeatReservationController`)।
+
+**3. Business flow.**
+1. Staff event + level বেছে সংখ্যক আসন (বা level-এর শতাংশ) reserve করেন — reservation type (Complimentary/Partner) ও category (DigitalPrint / Printing / ReservedOnly)-সহ।
+2. সিস্টেম reservation number-সহ reservation বানায় ও আসন ধরে রাখে।
+3. Summary screen-এ reservation-প্রতি requested / generated / remaining দেখায়; আসন পরে ছাড়াও যায়।
+4. Reservation-এর টিকিট তৈরি হয় F1.12-তে।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Booking `POST /booking/api/v1/seat-reservation` | **[HTTP + user token]** | `SeatReservation` (নিচে) |
+| 2 | Portal → Booking `POST /booking/api/v1/seat-reservation/event/{eventId}?percentage=` | **[HTTP + user token]** | এক level-এর শতাংশ bulk reserve |
+| 3 | Booking manager | — | `SeatReservations` row; capacity কমে; Redis locked/level key হালনাগাদ |
+| 4 | Summary | **[HTTP + user token]** | `GET summary/{eventId}` → `List<ReservationSummary>` |
+
+**5. Components.** Admin portal; Booking service; `SeatReservations`, `Capacities` টেবিল; Redis।
+
+**6. API contracts.** `SeatReservation` (`Domain/Models/SeatReservation.cs`) — মূল field: `EventId, GalleryId, BlockId, LevelId, NumberOfSeats, HasSeats, Seats, Action ("Allocate"/"Deallocate"), Status, Type (Complimentary/Partner), ReservationCategory (DigitalPrint/Printing/ReservedOnly), MergeStatus, ZipStatus, PublicId, ProgramId, ReservationNumber`। Enum (Booking, string হিসেবে): `ReservationStatus {Draft, Generated, Requested, Closed, Locked, Merging, Merged}`, `ReservationType {Complimentary, Partner}`, `ReservationCategory {DigitalPrint, Printing, ReservedOnly}`, `MergeStatus {None, Requested, Merging, Merged, Failed}`, `ZipStatus {None, Requested, Zipping, Zipped, Failed}`। `ReservationSummary` (`Domain/Models/ReservationSummary.cs`):
+
+```json
+// GET /booking/api/v1/seat-reservation/summary/{eventId}?levelId=&programId=   (item)
+{
+  "id": 301, "publicId": "5f0c…-guid", "ref": "RES-000045",
+  "eventId": 1042, "galleryId": 12, "blockId": 7, "levelId": 45, "programId": 7,
+  "status": "Requested", "type": "Partner", "reservationCategory": "DigitalPrint",
+  "mergeStatus": "None", "zipStatus": "None",
+  "ticketGeneratedCount": 40, "generatedSeats": "A11..A50",
+  "ticketRequestedCount": 40, "requestedSeats": "A11..A50",
+  "reserved": 50, "remainingReserved": 10, "reservedSeats": "A1..A50",
+  "released": 0, "releasedSeats": null,
+  "blankTicketPreviewUrl": "https://<cloudfront>/tickets/reserved/…/preview.pdf"
+}
+```
+
+অন্যান্য endpoint: `GET by-event-level?eventId&levelId&actionType&programId`, `GET by-event`, `GET count/{eventId}?actionType=`, `GET remainingReserveCount/{eventId}`, `GET reservations-count?eventId&levelIds`। Error: standard envelope (`no_seats_available` → 400)।
+
+**7. Data and side effects.** `SeatReservations` row; capacity কমে; এই call থেকে নিজে কোনো queue message নয় (F1.12/F5.9 গল্প এগিয়ে নেয়)।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/events/services/event.service.ts` (seat-reservation call); `rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/SeatReservationController.cs`, `…/Managers/SeatReservationManager.cs`।
+
+**9. Handover notes.** এই controller-এর কিছু update endpoint (`update-reservation-status`, `update-merge-status`, `update-zip-status`, `event-id/{publicId}` …) **worker ও internal service-এর জন্য** (F5.9) এবং তাদের `[Authorize]` নেই — F6.18।
+
+### F1.12 Reserved ticket generation ও distribution
+
+> **Bangla name:** রিজার্ভড টিকিট তৈরি ও বিতরণ
+
+**1. Name and purpose.** "Generate Tickets" console: reservation-কে আসল টিকিটে রূপ দেওয়া — blank PDF তৈরি, TSP দিয়ে sign, reservation-প্রতি merge/zip, portal থেকে download, বা partner-কে zip email।
+
+**2. Trigger and actor.** Admin portal → `/events/event-ticket`, `/events/generate-ticket/:id`। Role: admin pool; Ticketing endpoint-গুলো `[Authorize(Policy = admin)]`।
+
+**3. Business flow.**
+1. Staff event-এর ticket console খুলে reservation-এর টিকিট বানান (level-প্রতি সংখ্যা/আসন, ticket type; "test" mode আছে যা শুধু preview PDF বানায়)।
+2. "Sign" blank-গুলো TSP signing pipeline-এ পাঠায় — টিকিট `Generated` হয়।
+3. "Merge" reservation-এর PDF একত্র করে; "Zip" আলাদা PDF গুলো zip করে (দুটোই Utility worker-এ চলে)।
+4. Staff merged/zip artifact download করেন (**signed token** বা CloudFront cookie দিয়ে সুরক্ষিত), বা zip **email** করেন।
+5. Console reservation-প্রতি merged/zipped টিকিট-নম্বরের তালিকাও দেখায়।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Ticketing `POST /ticketing/api/v1/booking-order-ticket/reserve-ticket?eventId&levelId` | **[HTTP + user token]** | `List<ReservedTicketRequest>`; Ticket row তৈরি (`Status=Requested`, type default "Partner Sale"), blank PDF S3-এ `{BlankBase}/reserved/{orderPublicId}/{TicketNumber}.pdf`, প্রতিটির জন্য **[SQS: TicketSigning]** publish |
+| 2 | Worker | **[Worker]** | F5.8 TSP দিয়ে sign → `GenerateSignedTicketAsync` (reserved type-এ টিকিটের তথ্য PDF-এ আঁকা হয়, `{SignedBase}/reserved/{CreatedBy}/{orderPublicId}/{TicketNumber}-{type}.pdf`-এ সংরক্ষণ) |
+| 3 | Portal → Ticketing `POST …/sign-reserve-ticket?eventId&levelId` | **[HTTP + user token]** | sign-না-হওয়া requested টিকিট আবার signing queue-তে |
+| 4 | Portal → Ticketing `GET …/merge-reserved/{reservationId}` | **[HTTP + user token]** | **[SQS: TicketProcessing]** `ProcessingType=Merge` (F5.9 Utility worker → `{MergeBase}/{reservationId}/{ReservationNumber}_Merged_PDF_{i}.pdf`) |
+| 5 | Portal → Ticketing `GET …/zip-reserved/{reservationId}` | **[HTTP + user token]** | একই ভাবে `ProcessingType=Zip` → `{ReservationNumber}_Individual_Zipped_{i}.zip` |
+| 6 | Portal → Ticketing `GET …/download-merged?reservationId&signedToken` / `POST …/download-reserved` | **[HTTP + user token]** | artifact stream; `signedToken` আসে `POST …/generate-signed-token` থেকে |
+| 7 | Portal → Ticketing `POST …/send-reserved` | **[HTTP + user token]** | SES দিয়ে zip email (`AWS:Ticket:EmailSender`, default subject "Get your tickets"); টিকিটের `Action` = `emailed: {recipient}` |
+| 8 | লগইনের সময় | — | `admin`, `ticket_manager`, `ticket_operator` role-দের জন্য portal `GET …/signed-cookie` আনে (F6.1) যাতে browser সরাসরি CloudFront থেকে নামাতে পারে |
+
+**5. Components.** Admin portal; Ticketing service; Utility service; SQS `TicketSigning` + `TicketProcessing`; TSP gateway; S3 ticket bucket (`AWS:Ticket:*` path); CloudFront signed URL/cookie; SES; `Tickets`, `SeatReservations` টেবিল।
+
+**6. API contracts.** নির্বাচিত:
+
+```json
+// POST /ticketing/api/v1/booking-order-ticket/reserve-ticket?eventId=1042&levelId=45
+[ { "id": 301, "amount": 40, "hasSeats": true, "seats": ["A11","A12"], "ticketType": "Partner Sale", "isTest": false } ]
+
+// POST /ticketing/api/v1/booking-order-ticket/send-reserved   (TicketRequest)
+{
+  "ticketNumbers": ["BCB-ODI2-P0001","BCB-ODI2-P0002"],
+  "fileName": "partner-batch-1",
+  "email": { "recipient": "partner@example.com", "subject": "Your reserved tickets", "body": "Please find attached." }
+}
+```
+
+অন্যান্য endpoint: `GET|PUT reserve-ticket` (তালিকা/পুনরায় তৈরি), `POST download-test-blank-reserved` (`BlankTicketRequest`), `GET merged-ticket-number/{reservationId}`, `GET zipped-ticket-number/{reservationId}`, `GET reserved-urls?reservationId`, `POST generate-signed-token`, `GET signed-cookie` (cookie string ফেরায় — **caller** নিজে তিনটি `CloudFront-*` cookie বসায়)। Error: standard envelope; template না পেলে `ArgumentException` ("Ticket Layout Config … not found", 400)।
+
+**7. Data and side effects.** `Tickets` row (`Status` Requested→Generated, `SignedTicketUrl`); `SeatReservations.MergeStatus/ZipStatus` transition (None→Requested→Merging→Merged / Zipping→Zipped, error-এ Failed); S3 file (blank/signed/merged/zip); SES email; SQS message।
+
+**8. Code references.**
+
+| কী | কোথায় |
+|---|---|
+| Portal service | `rvl-gobcb-admin-portal/src/app/features/events/services/event.service.ts` |
+| Console page | `…/features/events/pages/event-ticket/…`, `…/components/generate-ticket/…` |
+| Controller | `rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service/Api/BookingOrderTicketController.cs` |
+| Manager | `…/ETP.Ticketing.Domain/Managers/TicketManager.cs` (`CreateReservationTicketsAsync`, `PublishBulkTicketToSign`, `RequestMergeTicketsAsync`, `RequestZipTicketsAsync`, `SendReservedTicketsAsync`) |
+| CloudFront | `rvl-gobcb-backend/Core/ETP.Core.BlobStorage/AWSS3/{S3CloudFrontStroge,TicketingCookieManager}.cs` |
+
+**9. Handover notes.** ① Reserved টিকিটের QR-তে `Platform=offline` ও Name/Phone-এর বদলে `Complimentary` field — checker app সেগুলো বিশেষভাবে দেখে (F4.3)। ② signed-cookie endpoint `Set-Cookie` header নয়, **string** ফেরায় — portal `document.cookie` দিয়ে cookie লেখে (F6.1)। ③ Test mode (`isTest`) শুধু reservation-এ preview URL রাখে, আসল টিকিট হয় না।
+
+### F1.13 Ticket layout ও ticket attributes
+
+> **Bangla name:** টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট
+
+**1. Name and purpose.** টিকিট ছাপার **PDF template** রক্ষণাবেক্ষণ (program/venue/gallery-প্রতি, ছয় রকম variant: single/multiple segment × user/partner/complimentary, সাথে back page) এবং **ticket attributes** (টিকিটে কোন field দেখাবে ও কোন ক্রমে)।
+
+**2. Trigger and actor.** Admin portal → `/ticket-layout` (`/program-management`-এর layout screen-ও)। Role: `admin`, `event_manager`, `ticket_manager`, `ticket_operator` (`TicketLayoutConfigsController`, `TicketAttributesController`)।
+
+**3. Business flow.**
+1. Staff layout config বানান: নাম, program, venue (ঐচ্ছিক gallery), ticket size (QR-এর অবস্থান ঠিক করে), default text।
+2. Template PDF upload করেন (variant-প্রতি একটি) ও back-page PDF; publish করলেই সেটিই Ticketing ব্যবহার করে।
+3. Ticket attributes দৃশ্যমান field ঠিক করে (gallery/block/level/entry gate/mini gate/venue name/segment datetime) — show flag ও ordering priority-সহ; DITF (exhibition) variant-এ ticket type / entry / exit time যোগ।
+4. `download-backpage/{eventId}` দিয়ে event-এর কার্যকর back page দেখা যায়।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `POST /admin/api/v1/ticket-layout` | **[HTTP + user token]** | `TicketLayoutConfigCreated` |
+| 2 | Portal → Admin `POST /admin/api/v1/ticket-layout/upload/{id}?ticketLayoutType=` | **[HTTP + user token]** | multipart PDF upload → S3 media bucket; URL config-এ |
+| 3 | Admin DB | **[Shared table]** | `TicketLayoutConfigs` (মালিক Admin); Ticketing পড়ে (published config program/venue/gallery-প্রতি F5.8-এর template নির্বাচন চালায়) |
+| 4 | Portal → Admin `PUT /admin/api/v1/ticket-attributes/{id}` / `GET program/{programId}` | **[HTTP + user token]** | `TicketAttributes` upsert/read |
+
+**5. Components.** Admin portal; Admin service; S3 media bucket; Ticketing (published layout-এর ভোক্তা); `TicketLayoutConfigs`, `TicketAttributes` টেবিল।
+
+**6. API contracts.**
+
+```json
+// POST /admin/api/v1/ticket-layout   (TicketLayoutConfigCreated)
+{ "id": 0, "ticketLayoutName": "SBNCS 2026 layouts", "ticketType": null,
+  "defaultText": "Bangladesh Cricket Board", "ticketSize": "Default",
+  "partnerSaleDefaultText": "Partner — not for sale", "programId": 7, "venueId": 2, "venueGalleryId": 12 }
+```
+
+`TicketLayoutType` enum (upload variant): `SingleSegmentUser(0), MultipleSegmentUser(1), SingleSegmentPartner(2), MultipleSegmentPartner(3), SingleSegmentComplimentary(4), MultipleSegmentComplimentary(5)`। Ticket attributes (`TicketAttributes`): show flag `ShowGallery, ShowBlock, ShowLevelRow, ShowEntryGate, ShowMiniGate, ShowVenueName, ShowSegmentDateTime` (+ DITF: `ShowTicketType, ShowEntryTime, ShowExitTime`) ও সংশ্লিষ্ট `*Priority` ক্রম field (default 1–8)। অন্যান্য endpoint: `GET ""` paged (`searchText`), `GET program/{programId}`, `GET venue/{programId}/{venueId}`, `GET configs/{programId}/{venueId}/{venueGalleryId}`, `GET published/…`, `GET back-page/…`, `GET {id}`, `PUT {id}` (`TicketLayoutConfigUpdated`), `DELETE {id}`, `PUT publish|unpublish|duplicate/{id}`, `POST upload/back-page/{id}`, `DELETE delete-pdf/{id}` (+ back-page), `GET {id}/{ticketLayoutType}` (URL), `GET download-backpage/{eventId}` (PDF stream)। Error: `ArgumentException("Ticket Layout Config with ID {id} not found.")` → 400।
+
+**7. Data and side effects.** `TicketLayoutConfigs`/`TicketAttributes` row; S3-এ PDF; `TicketSize` QR position-এ ম্যাপ করে (`Default/Vertical [900,650,650]`, `A4 [1650,915,650]`, `Horizontal [2494,1055,650]`) — F5.8-এ ব্যবহৃত।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/ticket-layout-management/services/ticket-layout.service.ts` (`program-management/services/`-এ কাছাকাছি আরেকটি আছে); `…/program-management/services/ticket-attributes.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/{TicketLayoutConfigsController,TicketAttributesController}.cs`।
+
+**9. Handover notes.** ① Ticketing **published** config-ই ব্যবহার করে (`GetPublishedAsync(programId, venueId, galleryId)`); upload-করা কিন্তু unpublished PDF উপেক্ষিত। ② কোনো gallery-র published template না থাকলে টিকিট তৈরির সময় exception (400) — বিক্রি খোলার আগে layout publish করুন।
+
+### F1.14 Ticket-pricing content page
+
+> **Bangla name:** টিকিট-প্রাইসিং কনটেন্ট পেজ
+
+**1. Name and purpose.** Public "ticket pricing" page-এর editorial content (program/venue অনুযায়ী নাম-দেওয়া দামের স্তর) রক্ষণাবেক্ষণ — portal ও app-এ দেখায় (F2.3)।
+
+**2. Trigger and actor.** Admin portal → `/content-editor/ticket-pricing`। Role: `TicketPricingController`-এ **কোনো `[Authorize]` নেই** (F6.18); portal-এ screen-টি admin-only।
+
+**3. Business flow.** Staff program/venue-প্রতি pricing entry বানান — নাম-দেওয়া attribute (স্তরের নাম + দাম) সহ — publish/unpublish করেন; public page (F2.3) published entry দেখায়।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `POST /admin/api/v1/ticket-pricing` | **[HTTP + user token]** | `CreateOrUpdateTicketPricing` |
+| 2 | Admin DB | **[Shared table]** | `TicketPricings` + `TicketPricingAttributes`; Event service `list` publicly দেয় (Redis key `ticket_pricing_all`) |
+
+**5. Components.** Admin portal (`content-editor.service.ts`); Admin service; Event service (public read); `TicketPricings`, `TicketPricingAttributes` টেবিল।
+
+**6. API contracts.**
+
+```json
+// POST /admin/api/v1/ticket-pricing   (CreateOrUpdateTicketPricing)
+{
+  "programName": "Bangladesh Tour of Sri Lanka 2026",
+  "venueName": "Sher-e-Bangla National Cricket Stadium",
+  "isPublished": false,
+  "attributes": [
+    { "attributeName": "Grandstand", "attributePrice": 500 },
+    { "attributeName": "Premium", "attributePrice": 1500 }
+  ]
+}
+```
+
+Endpoint: `GET ""` paged, `GET list`, `GET {id}`, `PUT {id}`, `DELETE {id}`, `PUT publish/{id}`, `PUT unpublish/{id}`, `DELETE attribute/{attributeId}`। Public shape: `TicketPricingProgram` (sample F2.3-এ)। Error: standard envelope।
+
+**7. Data and side effects.** Pricing টেবিল upsert; Redis `ticket_pricing_all` cache TTL পর্যন্ত পুরোনো।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/content-editor/services/content-editor.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TicketPricingController.cs`; public দিক `…/Event.Service/Api/TicketPricingController.cs`।
+
+**9. Handover notes.** এটি **editorial** content (দেখানোর নাম ও দাম), বিক্রি চালানো আসল level-দাম (F1.9) থেকে আলাদা — দুটি একসাথে না রাখলে আলাদা হয়ে যেতে পারে; হাতে মিলিয়ে রাখতে হয়।
+
+### F1.15 Promo code
+
+> **Bangla name:** প্রোমো কোড ব্যবস্থাপনা
+
+**1. Name and purpose.** **Promo code** তৈরি (checkout-এ customer যে ছাড়ের কোড লেখে) — ছাড়ের মান, মেয়াদ, ব্যবহারের সীমা ও assignment (কোন program/event/gallery-তে প্রযোজ্য) সহ।
+
+**2. Trigger and actor.** Admin portal → `/promo-management`, `/promo-management/create`, `/promo-management/edit-promo/:promoCodeId`। Role: শুধু `admin` (`PromoCodeController`-এ `[Authorize(Roles = admin)]`)।
+
+**3. Business flow.**
+1. Staff Promo Management → Create Promo Code খোলেন।
+2. Code, নাম, program, discount type (শতাংশ/ফিক্সড), মান, শুরু/শেষ date-time, মোট ব্যবহারের সীমা ও per-user সীমা দেন।
+5. Code-টি program/event/gallery-তে assign করেন (assign type + টার্গেট তালিকা)।
+4. Save করলে মেয়াদের জন্য code active; background worker (F5.16) তারিখ অনুযায়ী auto expire/reactivate করে।
+5. তালিকায় paged code দেখায়; অন্য screen-এ save-এর আগে `exists` যাচাই।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal `promo-management.service.ts` → Admin `POST /admin/api/v1/promo-codes` | **[HTTP + user token]** | JSON `CreateOrUpdatePromoCode` |
+| 2 | Admin `PromoCodeController` → `PromoCodeManager` | — | `PromoCodes` + `PromoCodeAssigns` (+ `PromoCodeVenueEventGallery` join row) insert |
+| 3 | Checkout (user) | **[Shared table]** | Booking কোড apply-এর সময় নিজের mirror দিয়ে `PromoCodes`/`PromoCodeAssigns` পড়ে (F2.5) |
+| 4 | Admin worker | **[Worker: 2 min]** | `PromoCodeStatusUpdateService` তারিখ অনুযায়ী status ওল্টায় (F5.16) |
+
+**5. Components.** Admin portal; Admin service; Booking (read mirror); `PromoCodes`, `PromoCodeAssigns`, `PromoCodeVenueEventGallery` টেবিল।
+
+**6. API contracts.** Base: `/admin/api/v1/promo-codes`। Auth: Admin pool, role `admin`।
+
+| Method | Path | Request | Response |
+|---|---|---|---|
+| GET | `` | `pageOffset,pageSize,sortBy,sortOrder` | paged promo code (মোট `X-Total-Count` নয় — `{items,totalCount}`) |
+| GET | `list` | — | সব code (dropdown-এর জন্য) |
+| GET | `{id}` | — | একটি promo code |
+| GET | `code/{code}/{eventId}` | — | event-এ কোড অনুসন্ধান |
+| GET | `exists` | — | অস্তিত্ব যাচাই |
+| POST / PUT `{id}` | `` / `{id}` | `CreateOrUpdatePromoCode` | তৈরি/হালনাগাদ entity |
+| DELETE | `{id}` | — | মোছা entity |
+
+`CreateOrUpdatePromoCode` (`Services/Admin/ETP.Admin.Domain/Models/PromoCodes/CreateOrUpdatePromoCode.cs`):
+
+```json
+// POST /admin/api/v1/promo-codes
+{
+  "code": "BCBWELCOME",
+  "name": "Welcome offer",
+  "programId": 7,
+  "discountType": 1,            // DiscountType enum (Admin-এ enum সংখ্যা হিসেবে, §0.7)
+  "discountValue": 10.0,
+  "discountAppliedTo": 1,       // DiscountAppliedType
+  "startDateTime": "2026-06-20T00:00:00Z",
+  "endDateTime": "2026-07-10T23:59:59Z",
+  "totalUsageLimit": 5000,
+  "limitPerUser": 2,
+  "assignTo": [
+    { "assignType": 1, "programId": 7, "eventIds": [1042], "galleryIds": [12] }
+  ]
+}
+```
+
+মূল error: standard envelope (§0.7); একই code → manager থেকে 400।
+
+**7. Data and side effects.** উপরের টেবিল; queue message নেই; email নেই; F5.16 পরে একই row-তে `Status` হালনাগাদ করে।
+
+**8. Code references.**
+
+| কী | কোথায় |
+|---|---|
+| Portal service | `rvl-gobcb-admin-portal/src/app/features/promo-management/services/promo-management.service.ts` |
+| Page | `rvl-gobcb-admin-portal/src/app/features/promo-management/pages/…` |
+| Controller | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/PromoCodeController.cs` |
+| Worker | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Workers/BackgroundServices/PromoCodeStatusUpdateService.cs` |
+| Read mirror | `rvl-gobcb-backend/Services/Booking/ETP.Booking.Storage/DbContexts/BookingDbContext.cs` |
+
+**9. Handover notes.** ① শুধু `admin` role promo code সামলাতে পারে, অথচ প্রতিটি customer checkout একই row-এর উপর নির্ভরশীল — BS23-এর কাছে ইচ্ছাকৃত কিনা যাচাই করুন। ② `DiscountType`/`AssignType` enum-এর সংখ্যা Admin সংখ্যা হিসেবে serialize করে (§0.7); Angular UI সংখ্যা পাঠায়।
+
+### F1.16 System discount
+
+> **Bangla name:** সিস্টেম ডিসকাউন্ট ব্যবস্থাপনা
+
+**1. Name and purpose.** **স্বয়ংক্রিয় ছাড়** তৈরি (কোড লাগে না — যেমন early-bird) — মান, মেয়াদ ও program/event/gallery assignment-সহ। User portal মেয়াদের ভেতরে দাম দেখানোর সময় স্বয়ংক্রিয়ভাবে প্রয়োগ করে (F2.4)।
+
+**2. Trigger and actor.** Admin portal → `/promo-management/discount`, `…/create-discount`, `…/edit-discount/:discountId`। Role: `admin` (`DiscountController`)।
+
+**3. Business flow.**
+1. Staff Discount Management → Create Discount খোলেন।
+2. নাম, program, discount type/মান ও মেয়াদ দেন, টার্গেট assign করেন (event/gallery)।
+3. Save করলে discount তৈরি; মেয়াদে public price endpoint স্বয়ংক্রিয়ভাবে প্রয়োগ করে; worker F5.17 তারিখে status ওল্টায়।
+4. Checkout-এর সময় user portal-এর পড়ার জন্য একটি anonymous read endpoint-ও আছে (`program/{programId}/{eventId}/{galleryId}`)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `POST /admin/api/v1/discount` | **[HTTP + user token]** | JSON `CreateOrUpdateDiscount` |
+| 2 | Admin `DiscountController` → manager | — | `Discounts` + `DiscountAssigns` (+ join row) insert |
+| 3 | Checkout-এ user portal | **[HTTP + user token]** (auth লাগে না — `[AllowAnonymous]`) | `GET /admin/api/v1/discount/program/{programId}/{eventId}/{galleryId}` সেই scope-এর active discount |
+| 4 | Booking-এর দাম হিসাব | **[Shared table]** | Booking `Discounts`/`DiscountAssigns` mirror করে ও `TotalCharge` কমায় (F2.6) |
+| 5 | Admin worker | **[Worker: 2 min]** | `SystemDiscountStatusUpdateService` তারিখে activate/expire করে (F5.17) |
+
+**5. Components.** Admin portal; Admin service (মালিক); Booking (mirror); user portal (পাঠক); `Discounts`, `DiscountAssigns`, `DiscountVenueEventGallery` টেবিল।
+
+**6. API contracts.** Base: `/admin/api/v1/discount`। Auth: Admin pool, role `admin` (public read ছাড়া)।
+
+| Method | Path | Auth | Request | Response |
+|---|---|---|---|---|
+| GET | `` | admin | paged query | paged discount |
+| GET | `list` / `{id}` / `exists?eventIds=&discountId=` | admin | — | তালিকা / একটি / যাচাই |
+| POST / PUT `{id}` | | admin | `CreateOrUpdateDiscount` | entity |
+| DELETE | `{id}` | admin | — | entity |
+| GET | `program/{programId}/{eventId}/{galleryId}` | **anonymous** | — | scope-এর active discount |
+
+`CreateOrUpdateDiscount` (`Services/Admin/ETP.Admin.Domain/Models/Discounts/CreateOrUpdateDiscount.cs`):
+
+```json
+// POST /admin/api/v1/discount
+{
+  "name": "Early bird — Grandstand",
+  "programId": 7,
+  "discountType": 1,
+  "discountValue": 15.0,
+  "startDateTime": "2026-06-20T00:00:00Z",
+  "endDateTime": "2026-06-27T23:59:59Z",
+  "discountAssigns": [
+    { "assignType": 1, "eventIds": [1042], "galleryIds": [12] }
+  ]
+}
+```
+
+**7. Data and side effects.** উপরের টেবিল; queue/email নেই।
+
+**8. Code references.**
+
+| কী | কোথায় |
+|---|---|
+| Portal service | `rvl-gobcb-admin-portal/src/app/features/promo-management/services/promo-management.service.ts` |
+| Controller | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/DiscountController.cs` |
+| Portal থেকে public read | `rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/booking-api.service.ts` |
+| Worker | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Workers/BackgroundServices/SystemDiscountStatusUpdateService.cs` |
+
+**9. Handover notes.** ① Public discount endpoint ইচ্ছাকৃতভাবে `[AllowAnonymous]` (checkout page-এ কোনোক্রমে লগইনের আগে দরকার) — শুধু discount metadata দেয়। ② Promo code ও system discount একসাথে প্রযোজ্য হলে নিয়ম Booking-এর দাম হিসাবের ভেতরে (F2.6) — কোনোটি বদলানোর আগে পরীক্ষা করুন।
+
 <!-- 🔄 CONTINUE-BN -->
 
