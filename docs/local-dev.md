@@ -321,8 +321,8 @@ Check: `curl.exe http://localhost:5103/event/api/v1/landing-page-image/public` n
 
 You are now ready to build, run and debug.
 
-**Admin portal (optional):** to log in to the Angular admin portal against this backend, see [admin-portal-local.md](admin-portal-local.md)
-(`pwsh ./scripts/Setup-AdminPortal.ps1 -Start`).
+**Portals (optional):** to log in to the Angular portals against this backend, see [admin-portal-local.md](admin-portal-local.md)
+(`pwsh ./scripts/Setup-AdminPortal.ps1 -Start`) and [user-portal-local.md](user-portal-local.md) (`pwsh ./scripts/Setup-UserPortal.ps1 -Start`).
 
 ---
 
