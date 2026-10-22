@@ -1558,258 +1558,6 @@ Also `GET {id}`, `DELETE {id}`, `POST disable/{id}`, `POST enable/{id}`, `POST s
 
 **9. Handover notes.** The notice text is a single description field (no rich text/bangla variant) — the portal renders it as-is.
 
-## 4. Checker App
-
-Features used by gate staff in the Flutter checker app (`rvl-gobcb-checker-app`), TicketChecker Cognito pool. The app is **offline-first**: it keeps the gate's tickets and the scan counters in a local database (drift/SQLite) and synchronizes with the backend on a timer. Login is F6.12.
-
-> 📦 **Explainer: offline-first with a local database**
-> On match day the stadium gate cannot depend on connectivity. The checker app downloads the valid ticket numbers once (F4.2), validates every scan **on the device** against that local list and a certificate embedded in the app (F4.3), records scans locally, and pushes/pulls counters to the backend every 90 seconds (F4.5). The backend keeps the same counters in Redis so other devices at the same gate converge.
-
-### F4.1 Assigned event and gate
-
-> **Bangla name:** নির্ধারিত ইভেন্ট ও গেট দেখা
-
-**1. Name and purpose.** After login the checker sees the event(s) and entry gate(s) an administrator assigned to them, and picks the one to work on.
-
-**2. Trigger and actor.** Checker app → `/eventPage` (event/gate picker). Actor: gate checker, TicketChecker pool (policy `ticket-checker`).
-
-**3. Business flow.**
-1. The checker signs in (F6.12) and opens the event page.
-2. The app shows the assigned event(s) with cover image, dates, the entry gate name(s) and whether offline ticket download is enabled for them.
-3. Choosing an event/gate opens the scanner dashboard (`/qrPage`).
-4. The list is cached on the device so it still opens when offline.
-
-**4. Technical flow.**
-
-| # | From → To | Hop | What happens |
-|---|---|---|---|
-| 1 | App → Admin `GET /admin/api/v1/ticket-checker-gate/event-info` | **[HTTP + user token]** | Returns the checker's `TicketCheckerEventInfo` (assigned event + gates + `IsDownloadEnabled`) |
-| 2 | Admin service | — | Reads `TicketCheckerGates` / `TicketCheckerGateUsers` (owner Admin) for the signed-in `sub` |
-| 3 | App storage | — | Response cached in shared preferences (`event-list`) for offline fallback; re-fetched on every sync cycle (F4.5) |
-
-**5. Components.** Checker app; Admin service; TicketChecker pool; tables `TicketCheckerGates`, `TicketCheckerGateUsers`.
-
-**6. API contracts.**
-
-`GET /admin/api/v1/ticket-checker-gate/event-info` — auth: TicketChecker pool (policy `ticket-checker`).
-
-```json
-// 200
-{
-  "ticketCheckerGateId": 88,
-  "eventId": "b8e6a9d2-3f1c-4e7a-9d5f-6c2b1a8e0d34",
-  "eventLongId": 1042,
-  "eventName": "2nd ODI — Bangladesh vs Sri Lanka",
-  "eventCoverImage": "https://<cloudfront>/<key>.jpg",
-  "eventStartDateTime": "2026-07-08T14:00:00Z",
-  "eventEndDateTime": null,
-  "isDownloadEnabled": true,
-  "entryGateName": "Gate 3 — North",
-  "entryGateIds": [3, 4],
-  "userSubId": "a1b2c3d4-…",
-  "userName": "Gate Checker 12"
-}
-```
-
-Main errors: standard envelope; the app surfaces `ticket_checker_event_not_found` when the account has no assignment.
-
-**7. Data and side effects.** None server-side; shared-preferences cache on device.
-
-**8. Code references.**
-
-| What | Where |
-|---|---|
-| Event page | `rvl-gobcb-checker-app/lib/presentation/feature/event_page/…` |
-| API call | `rvl-gobcb-checker-app/data/lib/remote/api_service/ticket_api_service_impl.dart` |
-| Controller | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TicketCheckerGateController.cs` (`event-info`) |
-| Assignment itself | F1.18 (admin-side gate assignment) |
-
-**9. Handover notes.** ① Assignment is done by an admin in the admin portal (F1.18); a checker without an assignment sees no events. ② `EntryGateIds` is a list — one assignment can cover several physical gates; scans are validated against the list (F4.3).
-
-### F4.2 Ticket download for offline checking
-
-> **Bangla name:** অফলাইন টিকিট যাচাইয়ের জন্য টিকিট ডাউনলোড
-
-**1. Name and purpose.** Fill the device's local database with the valid ticket numbers of the assigned event/gate, so validation works without network.
-
-**2. Trigger and actor.** Checker app, first sync after choosing an event (and the manual "sync" button on the scanner dashboard). Actor: gate checker.
-
-**3. Business flow.**
-1. After picking the event/gate the app performs a sync (F4.5).
-2. The backend answer contains the **full ticket-number map** for that event/gate — this is the download.
-3. The app writes the numbers into its local drift database and is ready to scan offline.
-4. Whether the checker may keep an offline copy is controlled by the `IsDownloadEnabled` flag (F4.1), which admins can reset (F1.18 update-download-status; cleanup worker F5.15).
-
-**4. Technical flow.**
-
-| # | From → To | Hop | What happens |
-|---|---|---|---|
-| 1 | App → TicketChecker `POST /ticketchecker/api/v1/tickets/sync-tickets` | **[HTTP + user token]** | Empty/small scan map; response = authoritative full ticket map (below) |
-| 2 | TicketChecker `TicketsManager` | — | On first call per event/gate it hydrates the Redis hash `ticket_checker_tickets:event_{eventLongId}_gate_{gateId}` from the Ticketing service (`GET /ticketing/api/v1/booking-order-ticket/ticket-numbers?eventId=…&levelIds=…`), under RedLock `ticket_checker_gate_{gateId}` |
-| 3 | TicketChecker DB | **[Shared table]** | Reads `Events`, `TicketCheckerGates`, `BlockLevelEntryGates` mirrors to resolve the checker's gates |
-| 4 | App | — | Stores ticket numbers in the local drift DB (`QrDao`); subsequent syncs only update counters |
-
-**5. Components.** Checker app (drift DB); TicketChecker service (Redis + lock); Ticketing service (ticket numbers); tables — none written by this flow.
-
-**6. API contracts.** Same endpoint as F4.5 — `POST /ticketchecker/api/v1/tickets/sync-tickets`, body `{"<ticketNumber>": 0}` or the pending scans; response is the full map:
-
-```json
-// 200
-{
-  "BCB-ODI2-GL12-A1": 0,
-  "BCB-ODI2-GL12-A2": 0,
-  "BCB-ODI2-GL12-A3": 1
-}
-```
-
-(count = how many times that ticket has already been used across devices at this gate.)
-
-**7. Data and side effects.** Redis hash `ticket_checker_tickets:event_…_gate_…` created on first sync; local DB rows on the device; nothing in PostgreSQL (scans reach the DB via F5.14, not here).
-
-**8. Code references.**
-
-| What | Where |
-|---|---|
-| Sync + local DB | `rvl-gobcb-checker-app/data/lib/repository/qr_repository_impl.dart`, `data/lib/local/drift_database/…` |
-| Manager | `rvl-gobcb-backend/Services/TicketChecker/ETP.TicketChecker.Domain/Managers/TicketsManager.cs` |
-| Ticket source | `rvl-gobcb-backend/Core/ETP.Core/ServiceClient/TicketingClient/TicketingClient.cs` |
-
-**9. Handover notes.** ① The Redis flag `ticketCheckerDbSync` makes the sync endpoint refuse calls while the Admin drain job (F5.14) is writing scans to the DB — during that window the app gets an error and retries. ② Ticket numbers of the whole gate (potentially tens of thousands) travel in one JSON map — keep an eye on payload size for big galleries.
-
-### F4.3 QR scan validation
-
-> **Bangla name:** QR স্ক্যান করে টিকিট যাচাই
-
-**1. Name and purpose.** The core gate operation: scan a ticket's QR code and decide — offline, on the device — whether the holder may enter.
-
-**2. Trigger and actor.** Checker app → `/qrPage` (scanner). Actor: gate checker.
-
-**3. Business flow.** For each scan the app shows one of five results with a distinct sound:
-1. **Valid** — ticket belongs to this event and gate, signature OK, not used before (entry recorded locally).
-2. **Already checked** — the ticket was used before (on this or another device).
-3. **Wrong event** — the QR's event id does not match the assigned event.
-4. **Wrong gate** — the ticket's entry gate is not among the assigned gates.
-5. **Invalid** — signature verification failed or the ticket is not in the local list (e.g. offline-sold ticket → the app asks for confirmation, F6.13).
-
-**4. Technical flow.**
-
-| # | Step | What happens |
-|---|---|---|
-| 1 | Scan | Forked `flutter_barcode_scanner` plugin reads the QR string |
-| 2 | Decode | `vds_qr_decoder.dart` base64-decodes (gzip-aware) the **VDS** (Visible Digital Seal) payload: `payload`, `signature`, `certSN`, `issuerDN` |
-| 3 | Verify signature | **Offline** via Kotlin `MethodChannel('certificate/methods').verifyCertificate` (android `MainActivity.kt`) against the PEM certificate from the `VDS_CERTIFICATE` env value |
-| 4 | Check rules | Event id and entry gate compared with `TicketCheckerEventInfo` (F4.1); usage counter compared with the local DB (F4.2) |
-| 5 | Record | Valid scan stored locally with `isSynced: false`; pushed by F4.5 |
-
-> 📦 **Explainer: VDS QR and why verification is offline**
-> Each ticket PDF carries a QR code in the EU VDS format, produced when the TSP signs the PDF (F5.8). The QR contains the ticket data plus a cryptographic signature made with the TSP's certificate. The app ships the **public** certificate (`VDS_CERTIFICATE`); verifying the signature is pure math on the device, so no network is needed to prove a QR is genuine. Gate/event rules are then simple comparisons against local data.
-
-**5. Components.** Checker app (scanner plugin, VDS decoder, MethodChannel, drift DB, `assets/sounds/`); TSP certificate chain (created in F5.8).
-
-**6. API contracts.** None — this feature is entirely offline.
-
-**7. Data and side effects.** Local drift DB rows (scan + `isManual=false`); nothing sent until F4.5.
-
-**8. Code references.**
-
-| What | Where |
-|---|---|
-| Scan + states | `rvl-gobcb-checker-app/lib/presentation/feature/qr_page/qr_page_view_model.dart`, `qr_page/state/qr_check_state.dart` |
-| VDS decode | `rvl-gobcb-checker-app/data/lib/service/vds_qr_decoder.dart` |
-| Signature verify (Android) | `rvl-gobcb-checker-app/android/app/src/main/kotlin/com/mahfuznow/hello_flutter/MainActivity.kt` |
-
-**9. Handover notes.** ① Only the Android (Kotlin) side of `verifyCertificate` was found — iOS parity is `[UNCONFIRMED]`. ② Rotating the TSP signing certificate requires shipping an app update with a new `VDS_CERTIFICATE` (or a multi-cert mechanism — none found). ③ `MethodChannel` name is `certificate/methods`.
-
-### F4.4 Manual entry
-
-> **Bangla name:** ম্যানুয়াল এন্ট্রি (টিকিট নম্বর টাইপ করে যাচাই)
-
-**1. Name and purpose.** Admit a holder when the QR cannot be read: the checker types the ticket number and the app validates it against the same local rules.
-
-**2. Trigger and actor.** Checker app → `/manualEntry` (and `/manualTicketValidation`, see F4.6). Actor: gate checker.
-
-**3. Business flow.**
-1. The scanner dashboard offers Manual Entry.
-2. The checker types the ticket number.
-3. The app applies the same checks as a QR scan (used before / event / gate) against the local DB and shows the result.
-4. A manual admission is marked `isManual` and synced as **−1** (F4.5) so the backend can distinguish it (manual-entry reports, F1.19).
-
-**4. Technical flow.** Same as F4.3 steps 4–5, with the typed number instead of a decoded QR; no signature check (nothing to verify without the QR).
-
-**5. Components.** Checker app (manual_entry feature, drift DB).
-
-**6. API contracts.** None directly; the −1 marker travels in F4.5's map.
-
-**7. Data and side effects.** Local DB row with `isManual = true`.
-
-**8. Code references.** `rvl-gobcb-checker-app/lib/presentation/feature/manual_entry/…`, `…/manual_ticket_validation/…`.
-
-**9. Handover notes.** ① A manual entry cannot verify authenticity — it only checks the number against the downloaded list; offline-sold tickets (F6.13) also surface here as confirmable. ② The signed map value −1 vs +1 is the only manual/QR distinction server-side.
-
-### F4.5 Scan sync (90-second heartbeat)
-
-> **Bangla name:** স্ক্যান সিঙ্ক (৯০ সেকেন্ডের হার্টবিট)
-
-**1. Name and purpose.** Upload this device's new scans, download the authoritative usage counters of all devices at the gate, and refresh event validity — every 90 seconds or on demand.
-
-**2. Trigger and actor.** Checker app background timer (90 s) and the manual sync button. Actor: gate checker.
-
-**3. Business flow.**
-1. Every 90 seconds the app sends its unsent scans (ticket number → +1 for QR, −1 for manual).
-2. The backend adds them to the gate's counters in Redis and returns the **complete** counter map.
-3. The app replaces its local counters — so scans made on other devices at the same gate appear as "already checked".
-4. The app also re-fetches event info (F4.1) each cycle and falls back to the cached copy offline.
-
-**4. Technical flow.**
-
-| # | From → To | Hop | What happens |
-|---|---|---|---|
-| 1 | App → TicketChecker `POST /ticketchecker/api/v1/tickets/sync-tickets` | **[HTTP + user token]** | Body: pending scan map; auth policy `ticket-checker` |
-| 2 | `TicketsManager.UpdateAndSyncTickets` | — | Refuses while Redis flag `ticketCheckerDbSync` is set (F5.14 draining); takes RedLock `ticket_checker_gate_{gateId}` (expiry 2 s, wait 5 s) |
-| 3 | Redis | — | `HashIncrementAsync` per ticket (+1 or −1) on `ticket_checker_tickets:event_…_gate_…`; also maintains the per-checker cache `ticket_checker_checked_tickets:{eventLongId}_{gateId}_{userSubId}` (`ConcurrentDictionary<string, TicketInfo>`) |
-| 4 | Response | — | Full hash returned (`HashGetAllAsync<int>`); app marks local scans `isSynced` and updates counters |
-
-**5. Components.** Checker app; TicketChecker service; Redis (counters, flag, lock); Ticketing service (only for first hydration, F4.2).
-
-**6. API contracts.** `POST /ticketchecker/api/v1/tickets/sync-tickets` — auth: TicketChecker pool (policy `ticket-checker`). Body `Dictionary<string,int>`:
-
-```json
-{ "BCB-ODI2-GL12-A7": 1, "BCB-ODI2-GL12-A9": -1 }
-```
-
-Response: the full counter map (sample in F4.2). Main errors: standard envelope; app-handled messages include `user_disabled_for_this_gate` (checker disabled for the gate mid-shift) and `ticket_checker_event_not_found`.
-
-**7. Data and side effects.** Redis hashes updated; scans reach PostgreSQL only through the Admin drain worker (F5.14) which persists them to `CheckedTickets`.
-
-**8. Code references.**
-
-| What | Where |
-|---|---|
-| Timer + sync | `rvl-gobcb-checker-app/lib/presentation/feature/qr_page/qr_page_view_model.dart` |
-| API service | `rvl-gobcb-checker-app/data/lib/remote/api_service/ticket_api_service_impl.dart` |
-| Controller | `rvl-gobcb-backend/Services/TicketChecker/ETP.TicketChecker.Service/Api/TicketController.cs` |
-| Manager | `rvl-gobcb-backend/Services/TicketChecker/ETP.TicketChecker.Domain/Managers/TicketsManager.cs` |
-
-**9. Handover notes.** ① Counters live in Redis only until F5.14 drains them — reports in the admin portal (F1.19) read the DB table, so scans appear in reports with up to ~30 minutes delay. ② If the app is offline longer than the lock/flag windows, nothing is lost: scans queue locally and sync later; only the "already checked on another device" freshness suffers.
-
-### F4.6 Signature-only ticket validation
-
-> **Bangla name:** শুধু সিগনেচার যাচাই (ম্যানুয়াল টিকিট ভ্যালিডেশন)
-
-**1. Name and purpose.** Check that a QR is a genuine signed ticket **without** applying gate/event rules and without recording an entry — used when staff want to inspect a suspicious QR.
-
-**2. Trigger and actor.** Checker app → `/manualTicketValidation`. Actor: gate checker.
-
-**3. Business flow.** The checker scans (or types) the ticket; the app decodes the VDS QR and verifies the signature offline exactly as in F4.3, but reports only genuine/fake — it does not compare event or gate and does not increment any counter.
-
-**4. Technical flow.** F4.3 steps 1–3 only; no local counter write, nothing synced.
-
-**5–7. Components / contracts / side effects.** Same as F4.3 minus rules and counters; no API calls, no data written.
-
-**8. Code references.** `rvl-gobcb-checker-app/lib/presentation/feature/manual_ticket_validation/…`.
-
-**9. Handover notes.** The distinction between this screen and F4.4 is easy to miss: F4.4 admits a holder (records an entry), this screen only verifies authenticity.
-
 ## 2. User Web Portal
 
 Features started by customers in the Angular user web portal (`rvl-gobcb-user-portal/ETP-Web`), User Cognito pool (or OneID SSO). The portal is bilingual (`/:lang/en|bn` routes, F2.13) and stateless except for auth/session (F6.10). Registration and login are cross-cutting (F6.6–F6.10).
@@ -2421,6 +2169,451 @@ Main errors: `401` (missing/expired User token on POST), `400` envelope for seat
 
 <!-- F2 complete; Part 3 next -->
 
+## 3. User App
+
+Features started by customers in the Flutter user app (`rvl-gobcb-user-app`, app id `gobcbticket`). The app mirrors the web portal's buying flows against the **same APIs**, so each feature below focuses on what is different (native flows, WebView payment, downloads, push) and links its portal twin. Auth flows are in F6.6–F6.11. Clean architecture: `lib/presentation` (feature-first screens + view models), `domain/` (interfaces), `data/` (implementations); DI is hand-rolled (`DataModule`).
+
+### F3.1 Splash, version gate and onboarding
+
+> **Bangla name:** স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং
+
+**1. Name and purpose.** App start-up: validate environment, enforce the **minimum app version** (force-update), show onboarding, restore the session.
+
+**2. Trigger and actor.** App launch → `/splash`. Actor: app user.
+
+**3. Business flow.** Splash checks env/config, asks the identity API for allowed versions and compares with the installed build (`package_info_plus`); outdated builds show a force-update screen linking the store; fresh installs see onboarding pages, then login/home.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | App → identity `GET user/allowed-app-version` | **[HTTP, static key]** (`AUTH_API_BASE_URL` + `AUTH_API_TOKEN`) | `{ data: { up?: { android?, ios? }, tc?: { android?, ios? } } }` — each `{ version, build_number, app_link }` ("up" = user portal app, "tc" = ticket checker) |
+| 2 | Compare | — | `package_info_plus` build number vs allowed; below minimum → force update |
+| 3 | Session restore | — | Amplify session from `AMPLIFY_CONFIG`; `custom:isprofilecomplete` gates profile completion |
+
+**5. Components.** App splash/onboard features; identity API (external); package_info_plus.
+
+**6. API contracts.** Response sample:
+
+```json
+// GET {AUTH_API_BASE_URL}/user/allowed-app-version
+{ "message": null, "status": "ok",
+  "data": { "up": { "android": { "version": "2.3.0", "build_number": 120, "app_link": "https://play.google.com/…" },
+                    "ios":     { "version": "2.3.0", "build_number": 120, "app_link": "https://apps.apple.com/…" } } } }
+```
+
+**7. Data and side effects.** None locally beyond onboarding flags.
+
+**8. Code references.** `lib/presentation/feature/splash/…`; `data/lib/remote/api_service/app_version_api_service/app_version_api_service_impl.dart`; response model `data/lib/remote/response/app_version_response.dart`.
+
+**9. Handover notes.** Raising the minimum version is an identity-API data change, not an app release — but lowering it cannot un-break already-published builds; the identity API's owner must be confirmed (Open queries).
+
+### F3.2 Home and browse events
+
+> **Bangla name:** হোম ও ইভেন্ট ব্রাউজ (অ্যাপ)
+
+**1. Name and purpose.** App home (banners, upcoming events), the event list and event details — the portal F2.1/F2.2 on mobile.
+
+**2. Trigger and actor.** App `/home`, `/eventList`, `/eventDetails`. Actor: app user (anonymous browsing allowed).
+
+**3–4. Business/technical flow.** Same endpoints as the portal (Event service — anonymous): `event/api/v1/events/list`, `events/{id}`, `events/programs`, `landing-page-image/public`, `header-footer`; details screen also loads `events/venue-details/{eventId}` for buying. On login the home screen also registers the push token (F3.9). Analytics: screens log `screen_view` and network errors to Firebase Analytics.
+
+**5–7. Components / contracts / data.** As F2.1/F2.2 (Event service, Redis caches). No writes.
+
+**8. Code references.** `lib/presentation/feature/{home,event_list,event_details}/…`; `data/lib/remote/api_service/event_api_service_impl.dart`, `venue_details_api_service_impl.dart`.
+
+**9. Handover notes.** The app talks to a **single gateway host** (`API_BASE_URL`) for all services — service prefixes are appended client-side, exactly like the portal.
+
+### F3.3 Information pages (pricing, gallery, contact)
+
+> **Bangla name:** তথ্য-পেজ (প্রাইসিং, গ্যালারি, যোগাযোগ — অ্যাপ)
+
+**1. Name and purpose.** Ticket pricing, photo gallery and contact screens — portal F2.3 on mobile; legal pages open as external URLs from env config.
+
+**2–4. Trigger/flow.** App `/ticketPricing`, `/gallery`, `/contact`. Pricing: `event/api/v1/ticket-pricing/program-pricing`; gallery: `landing-page-image/public` filtered client-side to types `Gallery_Page_Segment_*`; contact: `header-footer`; terms/privacy/ICC: `TERMS_AND_CONDITIONS_URL`, `PRIVACY_AND_POLICY_URL`, `ICC_ANTI_*_POLICY_URL` env values opened in WebView/browser.
+
+**5–8. Components / contracts / code.** As F2.3. App: `lib/presentation/feature/{ticket_pricing,gallery,contact}/…`, `data/lib/remote/api_service/gallery_api_service_impl.dart`.
+
+**9. Handover notes.** Legal URLs are baked per flavor (`env/.env.<flavor>`) — updating them needs a config change at build time, unlike the portal.
+
+### F3.4 Seat selection and promo code
+
+> **Bangla name:** আসন নির্বাচন ও প্রোমো কোড (অ্যাপ)
+
+**1. Name and purpose.** Pick level/seats with live availability and apply a promo code — portal F2.4/F2.5 on mobile.
+
+**2–4. Trigger/flow.** App `/seatSelection` → `/ticketBooking`. Availability: `booking/api/v1/capacity/level-user-portal-seats?…` → `{ total, available }` (comma-separated seat strings the app splits on `,`); promo: `POST booking/api/v1/user-booking-order/apply-promo-code`; system discount: `GET admin/api/v1/discount/program/…` (model reads `name`, `discountType`, `discountValue`).
+
+**5–8. Components / contracts / code.** As F2.4/F2.5. App: `lib/presentation/feature/seat_selection/…`, `ticket_booking/…`; `data/lib/remote/response/ticket_booking/seat_availability_response.dart`, `system_discount_response.dart`.
+
+**9. Handover notes.** The app splits seat strings client-side — a seat name containing a comma would break the split (same wire format as the portal).
+
+### F3.5 Booking and WebView payment
+
+> **Bangla name:** বুকিং ও WebView পেমেন্ট
+
+**1. Name and purpose.** Create the order in-app and pay inside an in-app WebView that hosts DgePay's page; success is detected from the URL.
+
+**2. Trigger and actor.** App `/ticketBooking` → `/payment`. Actor: app user, User pool.
+
+**3. Business flow.**
+1. The customer confirms seats/holders (any promo already applied) — the app POSTs the order and gets `publicId` + `checkoutUrl`.
+2. The app opens `/payment` as a WebView on the checkout URL.
+3. When the WebView navigates to a URL **containing** the host of `PAYMENT_SUCCESS_URL`, the app treats payment as done, pops the WebView and lands on booking success/details; the backend verification is the same as F2.6 (the redirect drives the callback).
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | App → Booking `POST /booking/api/v1/user-booking-order` | **[HTTP + user token]** | Same body/response as F2.6 (`CheckoutResponse { publicId, checkoutUrl }`) |
+| 2 | WebView | — | `webview_flutter` `NavigationDelegate.onNavigationRequest`: if `request.url.contains(targetUrlHostName)` → `onPaymentSuccess(url)`, `NavigationDecision.prevent` |
+| 3 | Backend | — | DgePay callback hits Booking exactly as in F2.6 step 4–6 (the WebView is just a browser) |
+
+**5–8. Components / contracts / code.** As F2.6 plus app: `lib/presentation/feature/{ticket_booking,payment}/…` (view models), `data/lib/remote/response/check_out_response.dart`.
+
+**9. Handover notes.** ① Success detection is a **substring match** on the URL host — any DgePay redirect chain passing through that host triggers it; exactness `[UNCONFIRMED]`. ② `PAYMENT_SUCCESS_URL` fallback default is `ticket-bangla.com/tickets` in code — the real env value is set per flavor.
+
+### F3.6 My bookings and tickets
+
+> **Bangla name:** আমার বুকিং ও টিকিট (অ্যাপ)
+
+**1. Name and purpose.** Order list, booking details and all ticket actions — download single/all/invoice, edit holder, share, OneID sync — portal F2.7–F2.10 on mobile, with **native download and share**.
+
+**2. Trigger and actor.** App `/bookingList`, `/bookingDetails`. Actor: app user, User pool.
+
+**3–4. Business/technical flow.** Same endpoints as F2.7–F2.10 (`list`, `details?publicId=`, PATCH ticket, PATCH `generate-request`, `check-generated-status`, `download`, `download-all`, `download-invoice`, `sync-order-to-oneid`). Native specifics:
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Downloads | URLs built on `{API_BASE_URL}/ticketing/api/v1/booking-order-ticket/…` with Bearer header; **flutter_downloader** enqueues (`{ticketId}.pdf`, `{publicId}.zip`, `{orderId}-invoice.pdf`; public storage) |
+| 2 | Share | `share_plus` `SharePlus.instance.share(ShareParams(files: [XFile(path)], subject: 'Ticket PDF'))` |
+| 3 | Polling | booking details polls `check-generated-status` until tickets exist |
+
+**5–8. Components / contracts / code.** As F2.7–F2.10. App: `lib/presentation/feature/{booking_list,booking_details}/…`; `data/lib/service/download_service.dart`, repositories `data/lib/repository/{booking_details,ticket_booking}_repository_impl.dart`.
+
+**9. Handover notes.** The download endpoints require the Authorization header — the app downloads via its HTTP client into app storage; it does **not** use CloudFront cookies (that is the admin portal's path, F1.12).
+
+### F3.7 Profile and settings
+
+> **Bangla name:** প্রোফাইল ও সেটিংস (অ্যাপ)
+
+**1. Name and purpose.** View/update profile, change password, language, logout and delete-account entry — portal F2.11 plus app-only settings.
+
+**2. Trigger and actor.** App `/profile`, `/setting`. Actor: app user.
+
+**3–4. Business/technical flow.** Profile GET/PUT `user/my-profile` (identity API; same shapes as F2.11) — the profile client uses `AUTH_API_BASE_URL` **with the Cognito Bearer** (unlike the portal's static key); SSO users auto-registered via `user/register-sso { name, cognito_sub }`; password change via Amplify; logout clears session (and should delete the push token — see notes); delete account → F6.11.
+
+**5–8. Components / code.** `lib/presentation/feature/{profile,settings}/…`; `data/lib/remote/api_service/profile_api_service_impl.dart`, client `profile_api_client.dart`.
+
+**9. Handover notes.** ① On logout the FCM-token DELETE call exists but is **commented out** in `profile_view_model.dart` — logged-out devices may still receive pushes. ② The app declares `dio` and `amplify_authenticator` in the root pubspec but the data layer uses plain `http`/`Amplify.Auth` (dead dependencies).
+
+### F3.8 Report an issue and support chat
+
+> **Bangla name:** সমস্যা জানানো ও সাপোর্ট চ্যাট (অ্যাপ)
+
+**1. Name and purpose.** Raise issues and chat with support — portal F2.12 on mobile, over the same UserIssue service and hub.
+
+**2–4. Trigger/flow.** App `/issues`, `/reportIssue`, `/chatCommunication`. REST: `POST userissue/api/v1/user-issue`, `GET user-issue/user/{userId}`, `GET user-issue/user-detail/{orderId}`, `GET user-issue-chat/{id}/messages?pageOffset=0&pageSize=50`, multipart `POST user-issue-chat/send` (field `AttachmentFile`), `GET message/{id}/attachment/download`. Real-time: SignalR (`signalr_netcore`, WebSocket-only) hub `env['CHAT_COMMUNICATION_HUB']/userissue/chathub` with token factory; send prefers SignalR `SendMessage` with HTTP multipart fallback.
+
+**5–8. Components / code.** As F2.12. App: `lib/presentation/feature/{issues,report_issue,chat_communication}/…`; `data/lib/service/signal_r_service.dart`, `data/lib/remote/api_service/{issue,chat}_api_service_impl.dart`.
+
+**9. Handover notes.** Same anonymous-REST caveat as F2.12; the hub URL is env (`CHAT_COMMUNICATION_HUB`), i.e. `chat.gobcbticket.com.bd` in production.
+
+### F3.9 Push device-token registration
+
+> **Bangla name:** পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন
+
+**1. Name and purpose.** Register the device's FCM token with the PushNotification service so the user can receive pushes; refresh it when Firebase rotates it; delete on logout.
+
+**2. Trigger and actor.** App login (home/event list view model), token refresh callback, logout. Actor: app user.
+
+**3–4. Business/technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Firebase init | — | `Firebase.initializeApp` (options from `data/lib/firebase_options.dart`, values injected from env `FIREBASE_ANDROID_*` / `FIREBASE_IOS_*`); permission request; foreground messages → `flutter_local_notifications` (channel `high_importance_channel`) |
+| 2 | Register | **[HTTP + user token]** | `POST /pushnotification/api/v1/device-token` `{ userId (Cognito sub), fcmToken, osType }` |
+| 3 | Refresh | **[HTTP + user token]** | `onTokenRefresh` → `PUT device-token` `{ userId, oldToken, newToken, osType }` |
+| 4 | Delete | **[HTTP + user token]** | `DELETE device-token` `{ userId, fcmToken }` (call site currently commented out — see notes) |
+
+**5. Components.** App (`data/lib/service/firebase_service.dart`, `repository/firebase_repository_impl.dart`); PushNotification service; table `UserDeviceTokens` (`OsType` ∈ android/ios/web).
+
+**6. API contracts.** Bodies above; the service returns the saved entity / `202` on sends (F6.23). Errors: standard envelope (but note the service has **no auth at all**, F6.18).
+
+**7. Data and side effects.** `UserDeviceTokens` upsert/delete; token cached in shared pref `firebase_token`.
+
+**8. Code references.** `rvl-gobcb-user-app/data/lib/remote/api_service/firebase_api_service_impl.dart`; backend `rvl-gobcb-backend/Services/PushNotification/ETP.PushNotification.Service/Api/DeviceTokenController.cs`.
+
+**9. Handover notes.** One user with many devices = many rows; `send-to-user/{userId}` fans out to all of them (F6.23).
+
+### F3.10 Receiving push notifications
+
+> **Bangla name:** পুশ নোটিফিকেশন গ্রহণ
+
+**1. Name and purpose.** What the customer actually receives: event announcements (send-to-all / send-to-users from the admin side via F6.23) and ticket-generated notices — foreground banners and system notifications.
+
+**2. Trigger and actor.** FCM delivery from Scheduler worker F5.11. Actor: app user (recipient).
+
+**3–4. Business/technical flow.** FCM pushes the message to the device: foreground → `FirebaseMessaging.onMessage` → local notification with the title/body; background → system tray. Tapping routes into the app (deep link to the relevant screen, e.g. bookings for ticket-generated). The data payload keys come from whatever the sender put in `Data` (F6.23 request).
+
+**5–7. Components / contracts / data.** App firebase_service + local notifications; FCM; no backend calls on receipt.
+
+**8. Code references.** `rvl-gobcb-user-app/data/lib/service/firebase_service.dart`; sending side F6.23/F5.11.
+
+**9. Handover notes.** What exactly the "ticket generated" push contains (title/body language, data keys) is decided by the **external Notification API** (F5.12) or admin senders — not visible in these repos `[UNCONFIRMED]`.
+
+## 4. Checker App
+
+Features used by gate staff in the Flutter checker app (`rvl-gobcb-checker-app`), TicketChecker Cognito pool. The app is **offline-first**: it keeps the gate's tickets and the scan counters in a local database (drift/SQLite) and synchronizes with the backend on a timer. Login is F6.12.
+
+> 📦 **Explainer: offline-first with a local database**
+> On match day the stadium gate cannot depend on connectivity. The checker app downloads the valid ticket numbers once (F4.2), validates every scan **on the device** against that local list and a certificate embedded in the app (F4.3), records scans locally, and pushes/pulls counters to the backend every 90 seconds (F4.5). The backend keeps the same counters in Redis so other devices at the same gate converge.
+
+### F4.1 Assigned event and gate
+
+> **Bangla name:** নির্ধারিত ইভেন্ট ও গেট দেখা
+
+**1. Name and purpose.** After login the checker sees the event(s) and entry gate(s) an administrator assigned to them, and picks the one to work on.
+
+**2. Trigger and actor.** Checker app → `/eventPage` (event/gate picker). Actor: gate checker, TicketChecker pool (policy `ticket-checker`).
+
+**3. Business flow.**
+1. The checker signs in (F6.12) and opens the event page.
+2. The app shows the assigned event(s) with cover image, dates, the entry gate name(s) and whether offline ticket download is enabled for them.
+3. Choosing an event/gate opens the scanner dashboard (`/qrPage`).
+4. The list is cached on the device so it still opens when offline.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | App → Admin `GET /admin/api/v1/ticket-checker-gate/event-info` | **[HTTP + user token]** | Returns the checker's `TicketCheckerEventInfo` (assigned event + gates + `IsDownloadEnabled`) |
+| 2 | Admin service | — | Reads `TicketCheckerGates` / `TicketCheckerGateUsers` (owner Admin) for the signed-in `sub` |
+| 3 | App storage | — | Response cached in shared preferences (`event-list`) for offline fallback; re-fetched on every sync cycle (F4.5) |
+
+**5. Components.** Checker app; Admin service; TicketChecker pool; tables `TicketCheckerGates`, `TicketCheckerGateUsers`.
+
+**6. API contracts.**
+
+`GET /admin/api/v1/ticket-checker-gate/event-info` — auth: TicketChecker pool (policy `ticket-checker`).
+
+```json
+// 200
+{
+  "ticketCheckerGateId": 88,
+  "eventId": "b8e6a9d2-3f1c-4e7a-9d5f-6c2b1a8e0d34",
+  "eventLongId": 1042,
+  "eventName": "2nd ODI — Bangladesh vs Sri Lanka",
+  "eventCoverImage": "https://<cloudfront>/<key>.jpg",
+  "eventStartDateTime": "2026-07-08T14:00:00Z",
+  "eventEndDateTime": null,
+  "isDownloadEnabled": true,
+  "entryGateName": "Gate 3 — North",
+  "entryGateIds": [3, 4],
+  "userSubId": "a1b2c3d4-…",
+  "userName": "Gate Checker 12"
+}
+```
+
+Main errors: standard envelope; the app surfaces `ticket_checker_event_not_found` when the account has no assignment.
+
+**7. Data and side effects.** None server-side; shared-preferences cache on device.
+
+**8. Code references.**
+
+| What | Where |
+|---|---|
+| Event page | `rvl-gobcb-checker-app/lib/presentation/feature/event_page/…` |
+| API call | `rvl-gobcb-checker-app/data/lib/remote/api_service/ticket_api_service_impl.dart` |
+| Controller | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TicketCheckerGateController.cs` (`event-info`) |
+| Assignment itself | F1.18 (admin-side gate assignment) |
+
+**9. Handover notes.** ① Assignment is done by an admin in the admin portal (F1.18); a checker without an assignment sees no events. ② `EntryGateIds` is a list — one assignment can cover several physical gates; scans are validated against the list (F4.3).
+
+### F4.2 Ticket download for offline checking
+
+> **Bangla name:** অফলাইন টিকিট যাচাইয়ের জন্য টিকিট ডাউনলোড
+
+**1. Name and purpose.** Fill the device's local database with the valid ticket numbers of the assigned event/gate, so validation works without network.
+
+**2. Trigger and actor.** Checker app, first sync after choosing an event (and the manual "sync" button on the scanner dashboard). Actor: gate checker.
+
+**3. Business flow.**
+1. After picking the event/gate the app performs a sync (F4.5).
+2. The backend answer contains the **full ticket-number map** for that event/gate — this is the download.
+3. The app writes the numbers into its local drift database and is ready to scan offline.
+4. Whether the checker may keep an offline copy is controlled by the `IsDownloadEnabled` flag (F4.1), which admins can reset (F1.18 update-download-status; cleanup worker F5.15).
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | App → TicketChecker `POST /ticketchecker/api/v1/tickets/sync-tickets` | **[HTTP + user token]** | Empty/small scan map; response = authoritative full ticket map (below) |
+| 2 | TicketChecker `TicketsManager` | — | On first call per event/gate it hydrates the Redis hash `ticket_checker_tickets:event_{eventLongId}_gate_{gateId}` from the Ticketing service (`GET /ticketing/api/v1/booking-order-ticket/ticket-numbers?eventId=…&levelIds=…`), under RedLock `ticket_checker_gate_{gateId}` |
+| 3 | TicketChecker DB | **[Shared table]** | Reads `Events`, `TicketCheckerGates`, `BlockLevelEntryGates` mirrors to resolve the checker's gates |
+| 4 | App | — | Stores ticket numbers in the local drift DB (`QrDao`); subsequent syncs only update counters |
+
+**5. Components.** Checker app (drift DB); TicketChecker service (Redis + lock); Ticketing service (ticket numbers); tables — none written by this flow.
+
+**6. API contracts.** Same endpoint as F4.5 — `POST /ticketchecker/api/v1/tickets/sync-tickets`, body `{"<ticketNumber>": 0}` or the pending scans; response is the full map:
+
+```json
+// 200
+{
+  "BCB-ODI2-GL12-A1": 0,
+  "BCB-ODI2-GL12-A2": 0,
+  "BCB-ODI2-GL12-A3": 1
+}
+```
+
+(count = how many times that ticket has already been used across devices at this gate.)
+
+**7. Data and side effects.** Redis hash `ticket_checker_tickets:event_…_gate_…` created on first sync; local DB rows on the device; nothing in PostgreSQL (scans reach the DB via F5.14, not here).
+
+**8. Code references.**
+
+| What | Where |
+|---|---|
+| Sync + local DB | `rvl-gobcb-checker-app/data/lib/repository/qr_repository_impl.dart`, `data/lib/local/drift_database/…` |
+| Manager | `rvl-gobcb-backend/Services/TicketChecker/ETP.TicketChecker.Domain/Managers/TicketsManager.cs` |
+| Ticket source | `rvl-gobcb-backend/Core/ETP.Core/ServiceClient/TicketingClient/TicketingClient.cs` |
+
+**9. Handover notes.** ① The Redis flag `ticketCheckerDbSync` makes the sync endpoint refuse calls while the Admin drain job (F5.14) is writing scans to the DB — during that window the app gets an error and retries. ② Ticket numbers of the whole gate (potentially tens of thousands) travel in one JSON map — keep an eye on payload size for big galleries.
+
+### F4.3 QR scan validation
+
+> **Bangla name:** QR স্ক্যান করে টিকিট যাচাই
+
+**1. Name and purpose.** The core gate operation: scan a ticket's QR code and decide — offline, on the device — whether the holder may enter.
+
+**2. Trigger and actor.** Checker app → `/qrPage` (scanner). Actor: gate checker.
+
+**3. Business flow.** For each scan the app shows one of five results with a distinct sound:
+1. **Valid** — ticket belongs to this event and gate, signature OK, not used before (entry recorded locally).
+2. **Already checked** — the ticket was used before (on this or another device).
+3. **Wrong event** — the QR's event id does not match the assigned event.
+4. **Wrong gate** — the ticket's entry gate is not among the assigned gates.
+5. **Invalid** — signature verification failed or the ticket is not in the local list (e.g. offline-sold ticket → the app asks for confirmation, F6.13).
+
+**4. Technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Scan | Forked `flutter_barcode_scanner` plugin reads the QR string |
+| 2 | Decode | `vds_qr_decoder.dart` base64-decodes (gzip-aware) the **VDS** (Visible Digital Seal) payload: `payload`, `signature`, `certSN`, `issuerDN` |
+| 3 | Verify signature | **Offline** via Kotlin `MethodChannel('certificate/methods').verifyCertificate` (android `MainActivity.kt`) against the PEM certificate from the `VDS_CERTIFICATE` env value |
+| 4 | Check rules | Event id and entry gate compared with `TicketCheckerEventInfo` (F4.1); usage counter compared with the local DB (F4.2) |
+| 5 | Record | Valid scan stored locally with `isSynced: false`; pushed by F4.5 |
+
+> 📦 **Explainer: VDS QR and why verification is offline**
+> Each ticket PDF carries a QR code in the EU VDS format, produced when the TSP signs the PDF (F5.8). The QR contains the ticket data plus a cryptographic signature made with the TSP's certificate. The app ships the **public** certificate (`VDS_CERTIFICATE`); verifying the signature is pure math on the device, so no network is needed to prove a QR is genuine. Gate/event rules are then simple comparisons against local data.
+
+**5. Components.** Checker app (scanner plugin, VDS decoder, MethodChannel, drift DB, `assets/sounds/`); TSP certificate chain (created in F5.8).
+
+**6. API contracts.** None — this feature is entirely offline.
+
+**7. Data and side effects.** Local drift DB rows (scan + `isManual=false`); nothing sent until F4.5.
+
+**8. Code references.**
+
+| What | Where |
+|---|---|
+| Scan + states | `rvl-gobcb-checker-app/lib/presentation/feature/qr_page/qr_page_view_model.dart`, `qr_page/state/qr_check_state.dart` |
+| VDS decode | `rvl-gobcb-checker-app/data/lib/service/vds_qr_decoder.dart` |
+| Signature verify (Android) | `rvl-gobcb-checker-app/android/app/src/main/kotlin/com/mahfuznow/hello_flutter/MainActivity.kt` |
+
+**9. Handover notes.** ① Only the Android (Kotlin) side of `verifyCertificate` was found — iOS parity is `[UNCONFIRMED]`. ② Rotating the TSP signing certificate requires shipping an app update with a new `VDS_CERTIFICATE` (or a multi-cert mechanism — none found). ③ `MethodChannel` name is `certificate/methods`.
+
+### F4.4 Manual entry
+
+> **Bangla name:** ম্যানুয়াল এন্ট্রি (টিকিট নম্বর টাইপ করে যাচাই)
+
+**1. Name and purpose.** Admit a holder when the QR cannot be read: the checker types the ticket number and the app validates it against the same local rules.
+
+**2. Trigger and actor.** Checker app → `/manualEntry` (and `/manualTicketValidation`, see F4.6). Actor: gate checker.
+
+**3. Business flow.**
+1. The scanner dashboard offers Manual Entry.
+2. The checker types the ticket number.
+3. The app applies the same checks as a QR scan (used before / event / gate) against the local DB and shows the result.
+4. A manual admission is marked `isManual` and synced as **−1** (F4.5) so the backend can distinguish it (manual-entry reports, F1.19).
+
+**4. Technical flow.** Same as F4.3 steps 4–5, with the typed number instead of a decoded QR; no signature check (nothing to verify without the QR).
+
+**5. Components.** Checker app (manual_entry feature, drift DB).
+
+**6. API contracts.** None directly; the −1 marker travels in F4.5's map.
+
+**7. Data and side effects.** Local DB row with `isManual = true`.
+
+**8. Code references.** `rvl-gobcb-checker-app/lib/presentation/feature/manual_entry/…`, `…/manual_ticket_validation/…`.
+
+**9. Handover notes.** ① A manual entry cannot verify authenticity — it only checks the number against the downloaded list; offline-sold tickets (F6.13) also surface here as confirmable. ② The signed map value −1 vs +1 is the only manual/QR distinction server-side.
+
+### F4.5 Scan sync (90-second heartbeat)
+
+> **Bangla name:** স্ক্যান সিঙ্ক (৯০ সেকেন্ডের হার্টবিট)
+
+**1. Name and purpose.** Upload this device's new scans, download the authoritative usage counters of all devices at the gate, and refresh event validity — every 90 seconds or on demand.
+
+**2. Trigger and actor.** Checker app background timer (90 s) and the manual sync button. Actor: gate checker.
+
+**3. Business flow.**
+1. Every 90 seconds the app sends its unsent scans (ticket number → +1 for QR, −1 for manual).
+2. The backend adds them to the gate's counters in Redis and returns the **complete** counter map.
+3. The app replaces its local counters — so scans made on other devices at the same gate appear as "already checked".
+4. The app also re-fetches event info (F4.1) each cycle and falls back to the cached copy offline.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | App → TicketChecker `POST /ticketchecker/api/v1/tickets/sync-tickets` | **[HTTP + user token]** | Body: pending scan map; auth policy `ticket-checker` |
+| 2 | `TicketsManager.UpdateAndSyncTickets` | — | Refuses while Redis flag `ticketCheckerDbSync` is set (F5.14 draining); takes RedLock `ticket_checker_gate_{gateId}` (expiry 2 s, wait 5 s) |
+| 3 | Redis | — | `HashIncrementAsync` per ticket (+1 or −1) on `ticket_checker_tickets:event_…_gate_…`; also maintains the per-checker cache `ticket_checker_checked_tickets:{eventLongId}_{gateId}_{userSubId}` (`ConcurrentDictionary<string, TicketInfo>`) |
+| 4 | Response | — | Full hash returned (`HashGetAllAsync<int>`); app marks local scans `isSynced` and updates counters |
+
+**5. Components.** Checker app; TicketChecker service; Redis (counters, flag, lock); Ticketing service (only for first hydration, F4.2).
+
+**6. API contracts.** `POST /ticketchecker/api/v1/tickets/sync-tickets` — auth: TicketChecker pool (policy `ticket-checker`). Body `Dictionary<string,int>`:
+
+```json
+{ "BCB-ODI2-GL12-A7": 1, "BCB-ODI2-GL12-A9": -1 }
+```
+
+Response: the full counter map (sample in F4.2). Main errors: standard envelope; app-handled messages include `user_disabled_for_this_gate` (checker disabled for the gate mid-shift) and `ticket_checker_event_not_found`.
+
+**7. Data and side effects.** Redis hashes updated; scans reach PostgreSQL only through the Admin drain worker (F5.14) which persists them to `CheckedTickets`.
+
+**8. Code references.**
+
+| What | Where |
+|---|---|
+| Timer + sync | `rvl-gobcb-checker-app/lib/presentation/feature/qr_page/qr_page_view_model.dart` |
+| API service | `rvl-gobcb-checker-app/data/lib/remote/api_service/ticket_api_service_impl.dart` |
+| Controller | `rvl-gobcb-backend/Services/TicketChecker/ETP.TicketChecker.Service/Api/TicketController.cs` |
+| Manager | `rvl-gobcb-backend/Services/TicketChecker/ETP.TicketChecker.Domain/Managers/TicketsManager.cs` |
+
+**9. Handover notes.** ① Counters live in Redis only until F5.14 drains them — reports in the admin portal (F1.19) read the DB table, so scans appear in reports with up to ~30 minutes delay. ② If the app is offline longer than the lock/flag windows, nothing is lost: scans queue locally and sync later; only the "already checked on another device" freshness suffers.
+
+### F4.6 Signature-only ticket validation
+
+> **Bangla name:** শুধু সিগনেচার যাচাই (ম্যানুয়াল টিকিট ভ্যালিডেশন)
+
+**1. Name and purpose.** Check that a QR is a genuine signed ticket **without** applying gate/event rules and without recording an entry — used when staff want to inspect a suspicious QR.
+
+**2. Trigger and actor.** Checker app → `/manualTicketValidation`. Actor: gate checker.
+
+**3. Business flow.** The checker scans (or types) the ticket; the app decodes the VDS QR and verifies the signature offline exactly as in F4.3, but reports only genuine/fake — it does not compare event or gate and does not increment any counter.
+
+**4. Technical flow.** F4.3 steps 1–3 only; no local counter write, nothing synced.
+
+**5–7. Components / contracts / side effects.** Same as F4.3 minus rules and counters; no API calls, no data written.
+
+**8. Code references.** `rvl-gobcb-checker-app/lib/presentation/feature/manual_ticket_validation/…`.
+
+**9. Handover notes.** The distinction between this screen and F4.4 is easy to miss: F4.4 admits a holder (records an entry), this screen only verifies authenticity.
+
 ## 5. System-initiated (workers and queues)
 
 Work no person starts directly: SQS queue consumers and timer-driven background workers. Read §0.8 explainers first (queue-driven processing, background workers, distributed locks, Redis live counters). Endpoints these workers call have **no `[Authorize]`** and are protected by network placement only (F6.18).
@@ -2760,199 +2953,6 @@ Work no person starts directly: SQS queue consumers and timer-driven background 
 **5–8. Components / data / code.** Admin service; `Discounts` updates. `…/Workers/BackgroundServices/SystemDiscountStatusUpdateService.cs`, `…/Managers/DiscountManager.cs`.
 
 **9. Handover notes.** The active window is what the public discount endpoint (F1.16) serves; between TTLs of that cache and this worker's 2-minute cycle a discount can be up to ~2 min late to expire.
-
-## 3. User App
-
-Features started by customers in the Flutter user app (`rvl-gobcb-user-app`, app id `gobcbticket`). The app mirrors the web portal's buying flows against the **same APIs**, so each feature below focuses on what is different (native flows, WebView payment, downloads, push) and links its portal twin. Auth flows are in F6.6–F6.11. Clean architecture: `lib/presentation` (feature-first screens + view models), `domain/` (interfaces), `data/` (implementations); DI is hand-rolled (`DataModule`).
-
-### F3.1 Splash, version gate and onboarding
-
-> **Bangla name:** স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং
-
-**1. Name and purpose.** App start-up: validate environment, enforce the **minimum app version** (force-update), show onboarding, restore the session.
-
-**2. Trigger and actor.** App launch → `/splash`. Actor: app user.
-
-**3. Business flow.** Splash checks env/config, asks the identity API for allowed versions and compares with the installed build (`package_info_plus`); outdated builds show a force-update screen linking the store; fresh installs see onboarding pages, then login/home.
-
-**4. Technical flow.**
-
-| # | From → To | Hop | What happens |
-|---|---|---|---|
-| 1 | App → identity `GET user/allowed-app-version` | **[HTTP, static key]** (`AUTH_API_BASE_URL` + `AUTH_API_TOKEN`) | `{ data: { up?: { android?, ios? }, tc?: { android?, ios? } } }` — each `{ version, build_number, app_link }` ("up" = user portal app, "tc" = ticket checker) |
-| 2 | Compare | — | `package_info_plus` build number vs allowed; below minimum → force update |
-| 3 | Session restore | — | Amplify session from `AMPLIFY_CONFIG`; `custom:isprofilecomplete` gates profile completion |
-
-**5. Components.** App splash/onboard features; identity API (external); package_info_plus.
-
-**6. API contracts.** Response sample:
-
-```json
-// GET {AUTH_API_BASE_URL}/user/allowed-app-version
-{ "message": null, "status": "ok",
-  "data": { "up": { "android": { "version": "2.3.0", "build_number": 120, "app_link": "https://play.google.com/…" },
-                    "ios":     { "version": "2.3.0", "build_number": 120, "app_link": "https://apps.apple.com/…" } } } }
-```
-
-**7. Data and side effects.** None locally beyond onboarding flags.
-
-**8. Code references.** `lib/presentation/feature/splash/…`; `data/lib/remote/api_service/app_version_api_service/app_version_api_service_impl.dart`; response model `data/lib/remote/response/app_version_response.dart`.
-
-**9. Handover notes.** Raising the minimum version is an identity-API data change, not an app release — but lowering it cannot un-break already-published builds; the identity API's owner must be confirmed (Open queries).
-
-### F3.2 Home and browse events
-
-> **Bangla name:** হোম ও ইভেন্ট ব্রাউজ (অ্যাপ)
-
-**1. Name and purpose.** App home (banners, upcoming events), the event list and event details — the portal F2.1/F2.2 on mobile.
-
-**2. Trigger and actor.** App `/home`, `/eventList`, `/eventDetails`. Actor: app user (anonymous browsing allowed).
-
-**3–4. Business/technical flow.** Same endpoints as the portal (Event service — anonymous): `event/api/v1/events/list`, `events/{id}`, `events/programs`, `landing-page-image/public`, `header-footer`; details screen also loads `events/venue-details/{eventId}` for buying. On login the home screen also registers the push token (F3.9). Analytics: screens log `screen_view` and network errors to Firebase Analytics.
-
-**5–7. Components / contracts / data.** As F2.1/F2.2 (Event service, Redis caches). No writes.
-
-**8. Code references.** `lib/presentation/feature/{home,event_list,event_details}/…`; `data/lib/remote/api_service/event_api_service_impl.dart`, `venue_details_api_service_impl.dart`.
-
-**9. Handover notes.** The app talks to a **single gateway host** (`API_BASE_URL`) for all services — service prefixes are appended client-side, exactly like the portal.
-
-### F3.3 Information pages (pricing, gallery, contact)
-
-> **Bangla name:** তথ্য-পেজ (প্রাইসিং, গ্যালারি, যোগাযোগ — অ্যাপ)
-
-**1. Name and purpose.** Ticket pricing, photo gallery and contact screens — portal F2.3 on mobile; legal pages open as external URLs from env config.
-
-**2–4. Trigger/flow.** App `/ticketPricing`, `/gallery`, `/contact`. Pricing: `event/api/v1/ticket-pricing/program-pricing`; gallery: `landing-page-image/public` filtered client-side to types `Gallery_Page_Segment_*`; contact: `header-footer`; terms/privacy/ICC: `TERMS_AND_CONDITIONS_URL`, `PRIVACY_AND_POLICY_URL`, `ICC_ANTI_*_POLICY_URL` env values opened in WebView/browser.
-
-**5–8. Components / contracts / code.** As F2.3. App: `lib/presentation/feature/{ticket_pricing,gallery,contact}/…`, `data/lib/remote/api_service/gallery_api_service_impl.dart`.
-
-**9. Handover notes.** Legal URLs are baked per flavor (`env/.env.<flavor>`) — updating them needs a config change at build time, unlike the portal.
-
-### F3.4 Seat selection and promo code
-
-> **Bangla name:** আসন নির্বাচন ও প্রোমো কোড (অ্যাপ)
-
-**1. Name and purpose.** Pick level/seats with live availability and apply a promo code — portal F2.4/F2.5 on mobile.
-
-**2–4. Trigger/flow.** App `/seatSelection` → `/ticketBooking`. Availability: `booking/api/v1/capacity/level-user-portal-seats?…` → `{ total, available }` (comma-separated seat strings the app splits on `,`); promo: `POST booking/api/v1/user-booking-order/apply-promo-code`; system discount: `GET admin/api/v1/discount/program/…` (model reads `name`, `discountType`, `discountValue`).
-
-**5–8. Components / contracts / code.** As F2.4/F2.5. App: `lib/presentation/feature/seat_selection/…`, `ticket_booking/…`; `data/lib/remote/response/ticket_booking/seat_availability_response.dart`, `system_discount_response.dart`.
-
-**9. Handover notes.** The app splits seat strings client-side — a seat name containing a comma would break the split (same wire format as the portal).
-
-### F3.5 Booking and WebView payment
-
-> **Bangla name:** বুকিং ও WebView পেমেন্ট
-
-**1. Name and purpose.** Create the order in-app and pay inside an in-app WebView that hosts DgePay's page; success is detected from the URL.
-
-**2. Trigger and actor.** App `/ticketBooking` → `/payment`. Actor: app user, User pool.
-
-**3. Business flow.**
-1. The customer confirms seats/holders (any promo already applied) — the app POSTs the order and gets `publicId` + `checkoutUrl`.
-2. The app opens `/payment` as a WebView on the checkout URL.
-3. When the WebView navigates to a URL **containing** the host of `PAYMENT_SUCCESS_URL`, the app treats payment as done, pops the WebView and lands on booking success/details; the backend verification is the same as F2.6 (the redirect drives the callback).
-
-**4. Technical flow.**
-
-| # | From → To | Hop | What happens |
-|---|---|---|---|
-| 1 | App → Booking `POST /booking/api/v1/user-booking-order` | **[HTTP + user token]** | Same body/response as F2.6 (`CheckoutResponse { publicId, checkoutUrl }`) |
-| 2 | WebView | — | `webview_flutter` `NavigationDelegate.onNavigationRequest`: if `request.url.contains(targetUrlHostName)` → `onPaymentSuccess(url)`, `NavigationDecision.prevent` |
-| 3 | Backend | — | DgePay callback hits Booking exactly as in F2.6 step 4–6 (the WebView is just a browser) |
-
-**5–8. Components / contracts / code.** As F2.6 plus app: `lib/presentation/feature/{ticket_booking,payment}/…` (view models), `data/lib/remote/response/check_out_response.dart`.
-
-**9. Handover notes.** ① Success detection is a **substring match** on the URL host — any DgePay redirect chain passing through that host triggers it; exactness `[UNCONFIRMED]`. ② `PAYMENT_SUCCESS_URL` fallback default is `ticket-bangla.com/tickets` in code — the real env value is set per flavor.
-
-### F3.6 My bookings and tickets
-
-> **Bangla name:** আমার বুকিং ও টিকিট (অ্যাপ)
-
-**1. Name and purpose.** Order list, booking details and all ticket actions — download single/all/invoice, edit holder, share, OneID sync — portal F2.7–F2.10 on mobile, with **native download and share**.
-
-**2. Trigger and actor.** App `/bookingList`, `/bookingDetails`. Actor: app user, User pool.
-
-**3–4. Business/technical flow.** Same endpoints as F2.7–F2.10 (`list`, `details?publicId=`, PATCH ticket, PATCH `generate-request`, `check-generated-status`, `download`, `download-all`, `download-invoice`, `sync-order-to-oneid`). Native specifics:
-
-| # | Step | What happens |
-|---|---|---|
-| 1 | Downloads | URLs built on `{API_BASE_URL}/ticketing/api/v1/booking-order-ticket/…` with Bearer header; **flutter_downloader** enqueues (`{ticketId}.pdf`, `{publicId}.zip`, `{orderId}-invoice.pdf`; public storage) |
-| 2 | Share | `share_plus` `SharePlus.instance.share(ShareParams(files: [XFile(path)], subject: 'Ticket PDF'))` |
-| 3 | Polling | booking details polls `check-generated-status` until tickets exist |
-
-**5–8. Components / contracts / code.** As F2.7–F2.10. App: `lib/presentation/feature/{booking_list,booking_details}/…`; `data/lib/service/download_service.dart`, repositories `data/lib/repository/{booking_details,ticket_booking}_repository_impl.dart`.
-
-**9. Handover notes.** The download endpoints require the Authorization header — the app downloads via its HTTP client into app storage; it does **not** use CloudFront cookies (that is the admin portal's path, F1.12).
-
-### F3.7 Profile and settings
-
-> **Bangla name:** প্রোফাইল ও সেটিংস (অ্যাপ)
-
-**1. Name and purpose.** View/update profile, change password, language, logout and delete-account entry — portal F2.11 plus app-only settings.
-
-**2. Trigger and actor.** App `/profile`, `/setting`. Actor: app user.
-
-**3–4. Business/technical flow.** Profile GET/PUT `user/my-profile` (identity API; same shapes as F2.11) — the profile client uses `AUTH_API_BASE_URL` **with the Cognito Bearer** (unlike the portal's static key); SSO users auto-registered via `user/register-sso { name, cognito_sub }`; password change via Amplify; logout clears session (and should delete the push token — see notes); delete account → F6.11.
-
-**5–8. Components / code.** `lib/presentation/feature/{profile,settings}/…`; `data/lib/remote/api_service/profile_api_service_impl.dart`, client `profile_api_client.dart`.
-
-**9. Handover notes.** ① On logout the FCM-token DELETE call exists but is **commented out** in `profile_view_model.dart` — logged-out devices may still receive pushes. ② The app declares `dio` and `amplify_authenticator` in the root pubspec but the data layer uses plain `http`/`Amplify.Auth` (dead dependencies).
-
-### F3.8 Report an issue and support chat
-
-> **Bangla name:** সমস্যা জানানো ও সাপোর্ট চ্যাট (অ্যাপ)
-
-**1. Name and purpose.** Raise issues and chat with support — portal F2.12 on mobile, over the same UserIssue service and hub.
-
-**2–4. Trigger/flow.** App `/issues`, `/reportIssue`, `/chatCommunication`. REST: `POST userissue/api/v1/user-issue`, `GET user-issue/user/{userId}`, `GET user-issue/user-detail/{orderId}`, `GET user-issue-chat/{id}/messages?pageOffset=0&pageSize=50`, multipart `POST user-issue-chat/send` (field `AttachmentFile`), `GET message/{id}/attachment/download`. Real-time: SignalR (`signalr_netcore`, WebSocket-only) hub `env['CHAT_COMMUNICATION_HUB']/userissue/chathub` with token factory; send prefers SignalR `SendMessage` with HTTP multipart fallback.
-
-**5–8. Components / code.** As F2.12. App: `lib/presentation/feature/{issues,report_issue,chat_communication}/…`; `data/lib/service/signal_r_service.dart`, `data/lib/remote/api_service/{issue,chat}_api_service_impl.dart`.
-
-**9. Handover notes.** Same anonymous-REST caveat as F2.12; the hub URL is env (`CHAT_COMMUNICATION_HUB`), i.e. `chat.gobcbticket.com.bd` in production.
-
-### F3.9 Push device-token registration
-
-> **Bangla name:** পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন
-
-**1. Name and purpose.** Register the device's FCM token with the PushNotification service so the user can receive pushes; refresh it when Firebase rotates it; delete on logout.
-
-**2. Trigger and actor.** App login (home/event list view model), token refresh callback, logout. Actor: app user.
-
-**3–4. Business/technical flow.**
-
-| # | From → To | Hop | What happens |
-|---|---|---|---|
-| 1 | Firebase init | — | `Firebase.initializeApp` (options from `data/lib/firebase_options.dart`, values injected from env `FIREBASE_ANDROID_*` / `FIREBASE_IOS_*`); permission request; foreground messages → `flutter_local_notifications` (channel `high_importance_channel`) |
-| 2 | Register | **[HTTP + user token]** | `POST /pushnotification/api/v1/device-token` `{ userId (Cognito sub), fcmToken, osType }` |
-| 3 | Refresh | **[HTTP + user token]** | `onTokenRefresh` → `PUT device-token` `{ userId, oldToken, newToken, osType }` |
-| 4 | Delete | **[HTTP + user token]** | `DELETE device-token` `{ userId, fcmToken }` (call site currently commented out — see notes) |
-
-**5. Components.** App (`data/lib/service/firebase_service.dart`, `repository/firebase_repository_impl.dart`); PushNotification service; table `UserDeviceTokens` (`OsType` ∈ android/ios/web).
-
-**6. API contracts.** Bodies above; the service returns the saved entity / `202` on sends (F6.23). Errors: standard envelope (but note the service has **no auth at all**, F6.18).
-
-**7. Data and side effects.** `UserDeviceTokens` upsert/delete; token cached in shared pref `firebase_token`.
-
-**8. Code references.** `rvl-gobcb-user-app/data/lib/remote/api_service/firebase_api_service_impl.dart`; backend `rvl-gobcb-backend/Services/PushNotification/ETP.PushNotification.Service/Api/DeviceTokenController.cs`.
-
-**9. Handover notes.** One user with many devices = many rows; `send-to-user/{userId}` fans out to all of them (F6.23).
-
-### F3.10 Receiving push notifications
-
-> **Bangla name:** পুশ নোটিফিকেশন গ্রহণ
-
-**1. Name and purpose.** What the customer actually receives: event announcements (send-to-all / send-to-users from the admin side via F6.23) and ticket-generated notices — foreground banners and system notifications.
-
-**2. Trigger and actor.** FCM delivery from Scheduler worker F5.11. Actor: app user (recipient).
-
-**3–4. Business/technical flow.** FCM pushes the message to the device: foreground → `FirebaseMessaging.onMessage` → local notification with the title/body; background → system tray. Tapping routes into the app (deep link to the relevant screen, e.g. bookings for ticket-generated). The data payload keys come from whatever the sender put in `Data` (F6.23 request).
-
-**5–7. Components / contracts / data.** App firebase_service + local notifications; FCM; no backend calls on receipt.
-
-**8. Code references.** `rvl-gobcb-user-app/data/lib/service/firebase_service.dart`; sending side F6.23/F5.11.
-
-**9. Handover notes.** What exactly the "ticket generated" push contains (title/body language, data keys) is decided by the **external Notification API** (F5.12) or admin senders — not visible in these repos `[UNCONFIRMED]`.
 
 ## 6. Cross-cutting (authentication, authorization, platform services)
 
@@ -3349,4 +3349,355 @@ Change password: portal `Auth.changePassword`, app `Amplify.Auth.updatePassword`
 
 **9. Handover notes.** ① No known client; the architecture doc also couldn't find one `[UNCONFIRMED]`. ② **Nothing reads `OfflineSoldTickets` back** (no report/screen) — confirm with BS23 whether another system consumes it. ③ Agent account management is anonymous (F6.18). ④ Seeded local agent `+8801700000031` / `Passw0rd!23`.
 
-<!-- 🔄 CONTINUE -->
+### F6.14 Authorization layer 1: pool schemes and policies
+
+> **Bangla name:** অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি
+
+**1. Name and purpose.** Every service validates the bearer token itself. One JWT authentication scheme per Cognito pool (`user`, `admin`, `ticket-checker`, `agent`) plus a fifth (`service`, shared-key, unused). An endpoint says which pool it accepts via `[Authorize(Policy = …)]` — or implicitly the **Admin pool** when it only names roles (default scheme `admin`).
+
+**2. Trigger and actor.** Every request with `Authorization: Bearer …`, in every service that calls `AddJwtBearerAuthentication` + `UseAuthentication` (all except Platform, PushNotification, UserAuth where the pipeline lines are commented out).
+
+**3–4. Business/technical flow.**
+
+| # | Step | Detail |
+|---|---|---|
+| 1 | Scheme | The scheme(s) the endpoint names; default = `admin` (`DefaultAuthenticateScheme`) |
+| 2 | Validate | Issuer `AWS:CognitoPool:<Pool>:Authority`; keys from `<Pool>:Metadata` (OIDC/JWKS); lifetime; **audience checked on the `client_id` claim** (Cognito access tokens carry `client_id`, not `aud` — ID tokens are rejected) |
+| 3 | Enrich | `OnTokenValidated` stores the raw token as `AppClaimTypes.AccessToken` (used for token forwarding, F6.19) and adds a fixed role claim per pool (`user`, `ticket-checker`, `agent`); the `admin` scheme adds none (roles come from F6.15) |
+| 4 | Chat hubs | `user`/`admin` schemes accept `?access_token=` from the query string, only on `/userissue/chathub` and `/admin/chathub` (WebSockets can't send headers) |
+| 5 | Policy | `admin` = authenticated by admin scheme; `user`/`ticket-checker`/`agent` = that scheme **and** matching role claim; `service` = service scheme + role |
+| 6 | Fail | no/invalid token → 401 empty body; other pool → 401 (issuer mismatch) or 403 (role missing) |
+
+Per-service pool acceptance (from attributes): Admin — role-based Admin + TicketChecker on `ticket-checker-gate` + User on legacy user-issue actions, many endpoints open (F6.18); Booking — `user` for customer orders, `admin` (no roles) for admin lookups; Ticketing — `user` + `admin` + `agent`; UserIssue — `user`/`admin` + authorized hub; TicketChecker — `ticket-checker`; Event/PushNotification/Scheduler/Utility/Platform — none.
+
+**5–7. Components / contracts / data.** Code `Core/ETP.Core/Configuration/{DefaultAuthenticationConfig,AuthorizationConfig}.cs`, `Core/ETP.Core/Constant/AppConstant.cs`; config `AWS:CognitoPool:{User,Admin,TicketChecker,Agent}:{PoolId,ClientId,Authority,Metadata}`, `Authentication:Jwt:*`; no data writes.
+
+**8. Code references.** `DefaultAuthenticationConfig.cs:16-246`; `AuthorizationConfig.cs:13-38`; registration example `Services/Admin/ETP.Admin.Service/Program.cs:38-39,86-87,109-110`.
+
+**9. Handover notes.** ① `Policy = admin` means "any Admin-pool user" — e.g. a `customer_support` token can call Ticketing's reserved-ticket endpoints (architecture §2.5). ② Default scheme `admin`: an endpoint with only `[Authorize(Roles=…)]` authenticates against the Admin pool; a User token gets 401. ③ The `service` scheme is unused (F6.19 note). ④ Whether API Gateway pre-validates tokens is unverified (architecture Q1/Q1b). ⑤ Locally Floci provides all four pools and `postman/etp-cognito-auth.postman_collection.json` folder "04" demonstrates every failure mode.
+
+### F6.15 Authorization layers 2–3: staff roles
+
+> **Bangla name:** অথরাইজেশন স্তর ২–৩: স্টাফ রোল
+
+**1. Name and purpose.** Admin-pool users carry roles in the Cognito attribute `custom:role` (comma-separated). The Admin and UserIssue services turn it into role claims per request (layer 2); controllers allow/deny with `[Authorize(Roles = …)]` (layer 3).
+
+**2. Trigger and actor.** Every Admin-pool request to Admin or UserIssue. Roles: `admin`, `event_manager`, `ticket_manager`, `ticket_operator` (BCB personnel), `customer_support`.
+
+**3–4. Business/technical flow.** ① `admin` scheme validates → ② `CognitoUserAttributesMiddleware` (Admin + UserIssue only) reads `sub`, picks the pool by the token's `scope` claim (`aws.cognito.signin.user.admin` → Admin), calls Cognito `AdminGetUser` via Redis cache `User` key `user_{sub}` (**2-minute** absolute expiry, `Core/ETP.Core/Configuration/CacheConfig.cs`), adds role claims from `custom:role` and `program_id` claims from `custom:program_ids` → ③ `[Authorize(Roles="a,b")]` (class AND method apply) → ④ missing role → 403 (enrichment errors are swallowed → 403 without roles).
+
+**Role × controller matrix (Admin service; ✔ allowed, — denied, "open" = no auth):**
+
+| Controller | admin | event_mgr | ticket_mgr | ticket_op | cust_support |
+|---|---|---|---|---|---|
+| activity-log | ✔ | ✔ | — | — | — |
+| admin-users (+2 open endpoints) | ✔ | — | — | — | — |
+| agent-users | open | open | open | open | open |
+| dashboard (+[AuthorizeProgram]) | ✔ | — | — | ✔ | — |
+| discount (public read open) | ✔ | — | — | — | — |
+| events, eventsVenueDetails, ticket-attributes, ticket-layout, ticket-checker | ✔ | ✔ | ✔ | ✔ | — |
+| program | ✔ | ✔ | ✔ | ✔ | ✔ |
+| program-settings, programVenue(+Details), teams, venues | ✔ | ✔ | — | — | — |
+| promo-codes | ✔ | — | — | — | — |
+| raffle-draw, general-notice, landing-page-image | ✔ | ✔ | — | — | — |
+| social-media-settings, system-settings, gallery, block-level-entry-gate | ✔ | — | — | — | — |
+| ticket-checker-gate (schemes admin+ticket-checker) | ✔ | ✔ (subset) | — | ✔ | — |
+| event-settings, header-footer, ticket-pricing, currency, token, portal-users, user-issue-chat | open | | | | |
+
+Outside Admin, roles are **not** checked (Booking/Ticketing/UserIssue use pool-only `Policy = admin`).
+
+**5–7. Components / data.** `Core/ETP.Core/Middleware/CognitoUserAttributesMiddleware.cs:34-140`; registrations `Admin.Program.cs:90`, `UserIssue.Program.cs:75`; Cognito `AdminGetUser`; Redis `user_{sub}` (2 min).
+
+**8. Code references.** As above + controller attributes under `Services/Admin/ETP.Admin.Service/Api/` (e.g. `TicketCheckerGateController.cs:23-24,72`).
+
+**9. Handover notes.** ① Pool selection by `scope` "works by accident" — the scope is standard on every SDK-issued token, so the middleware always picks the Admin pool; harmless today, fragile by design (architecture §2.5). ② A **checker token** can call every method of `ticket-checker-gate` without a stricter method attribute — including `force-assign`, `remove-user`, `report`, `duplicate-tickets` (check with BS23 whether intended). ③ Role changes take ≤ 2 min server-side (cache) but ≤ 55 min in the portal UI (F6.4). ④ One `AdminGetUser` per user per 2 minutes per cache miss — a Cognito rate consideration on burst traffic.
+
+### F6.16 Authorization layer 4: program scope
+
+> **Bangla name:** অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ
+
+**1. Name and purpose.** Staff other than `admin` should only work on their assigned programs (`custom:program_ids`). Two separate mechanisms use the `X-Program-Id` header: a **data filter** (EF global query filter in Admin) and an **access check** (`[AuthorizeProgram]`, active only on the dashboard).
+
+**2. Trigger and actor.** Admin-portal requests after program selection (F1.1). Admin service only.
+
+**3–4. Business/technical flow.** ① `ProgramIdMiddleware` parses the header into `HttpContext.Items["ProgramId"]` (0 if missing/invalid) → ② `ProgramIdAccessor` → ③ `AdminDbContext` global filter on every `IHasProgramId` entity (`ProgramId <= 0 OR entity.ProgramId == header`); filtered entities: Event, EventVenueDetails, ProgramTeam, ProgramVenue, ProgramVenueDetails, ProgramSettings, PromoCode, PromoCodeAssign, Discount, DiscountAssign, GeneralNotice, TicketCheckerGate, TicketAttributes, TicketLayoutConfig, UserIssue, UserIssueChatMessage → ④ `[AuthorizeProgram]` (dashboard): role `admin` or `user` passes; otherwise header missing/invalid → **400** "Missing or invalid X-Program-Id header."; header not in `program_id` claims → **403** "User does not have permission for program with Id {id}." (plain-text body).
+
+**5–8. Components / contracts / code.** `Services/Admin/ETP.Admin.Service/Middleware/ProgramIdMiddleware.cs`; `ETP.Admin.Storage/Repositories/ProgramIdAccessor.cs`; global filter `AdminDbContext.cs:595-617`; `Attributes/AuthorizeProgramAttribute.cs`; usage `DashboardController.cs:18` (commented out at `EventsController.cs:19`).
+
+**9. Handover notes.** ① **The data filter is not an access control** — it trusts the header; sending `0`/no header removes the filter; only the dashboard actually checks ownership. ② The 403 branch of `AuthorizeProgramAttribute` writes the response but doesn't set `context.Result`, so MVC continues into the action — fine for the read-only dashboard, unsafe to reuse on write endpoints. ③ Other services ignore the header (they take explicit `programId` params).
+
+### F6.17 Client-side authorization (menus and guards)
+
+> **Bangla name:** ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)
+
+**1. Name and purpose.** The portals hide menus and block routes by role/program — **convenience, not security**; the server-side layers (F6.14–F6.16) are the real boundary.
+
+**2. Trigger and actor.** Admin portal menu/route guards; user portal auth guards.
+
+**3–4. Business/technical flow.** Admin portal: two menus — global (program 0) and program menu. Per role: `admin` sees everything; `customer_support` → Issues; `event_manager` (+`ticket_manager`) → programs/venues/events/settings; `ticket_manager` → Generate Ticket; `ticket_operator` → dashboard/generate/reports. Guards: `ProgramMenuGuard` (program > 0 for dashboard/events/promo/ticket-layout/issues/report), `LimitedMenuGuard` (program == 0 for users/settings/venues/program-management), `AuthGuard` + `RoleChangeService.isRouteAllowedForRole` (URL-prefix allow-list per role; role change detected via `sessionStorage.lastKnownUserRole` → program reset + toast). User portal: `AuthGuard` (checks only `localStorage.rvl_cognito_auth == "true"`), `UnAuthGuard` (lets the OneID popup through), `LanguageGuard`.
+
+**5–8. Components / code.** `rvl-gobcb-admin-portal/src/app/layout/app.menu.component.ts:39-262`; `src/app/core/guard/{auth,program-menu,limited-menu}.guard.ts`; `src/app/core/services/role-change.service.ts:31-201`; portal guards `ETP-Web/src/app/modules/core/guards/*.guard.ts`.
+
+**9. Handover notes.** ① Menus and server rules disagree in places — e.g. `customer_support` can call reserved-ticket endpoints directly (F6.14 note ①) while the UI hides them; `media-configuration`/`content-editor` routes have **no guard**. ② The `/settings` module is routed but not in any menu (holds notices/landing/teams/footer screens). ③ The menu matches roles by substring (`roles.includes('admin')`) — a future role containing "admin" would match; the route allow-list splits correctly. ④ User-portal `AuthGuard` trusts a local flag; the real rejection happens at the API.
+
+### F6.18 Endpoints without authorization
+
+> **Bangla name:** অথরাইজেশন ছাড়া endpoint-এর তালিকা
+
+**1. Name and purpose.** `BaseController`'s `[Authorize]` is commented out, so an action is anonymous unless the controller/action declares `[Authorize]`. **137 of 354 backend endpoints** have no authorization. Whether API Gateway/NLB/ingress blocks any of them from the internet is not visible in the repos `[UNCONFIRMED]` (architecture Q1b; Open queries).
+
+**2. Trigger and actor.** Any HTTP client that can reach the service.
+
+**3–4. Classification** (per controller audit):
+
+- **A — public by design:** all `GET /event/api/v1/*`; Admin `landing-page-image/public`, `general-notice/public`, `header-footer` (GET), `discount/program/...`; Admin `ticket-pricing` GETs; Booking `capacity/level-user-portal-seats`; Ticketing `shared` (signature-protected).
+- **B — payment callbacks:** Booking `dgepay/payment-status`; `sslcommerz/payment-*`; **`payment-status-bypass`** (test hook — high risk if reachable).
+- **C — internal calls (workers/other services, tokenless by design):** Booking `capacity/*` (GETs + POST), most `seat-reservation` updates (`update-reservation-status`, `update-merge-status`, `merge-status`, `update-zip-status`, `zip-status`, `update-reservation-ticket-preview`, `event-id/{publicId}`), `user-booking-order` internals (`public-id`, `generate-ticket-request/{publicId}` PATCH, `update-status`, `not-notified-list`, `update-notification-status`, `promo-code/{code}`, `booked-user-record/{id}`); Ticketing `initiate`, `initiate-user-ticket`, `generate-request` PATCH, `ticket-counts`, `by-gallery-block-level`, `ticket-numbers`, `GET ?id=`, `booking-order-id`, `reserved-urls`; Admin `portal-users/{phoneNo}`; **PushNotification — every endpoint** (device tokens + sends).
+- **D — admin-portal operations without authorization (review needed):** Admin `agent-users/*` (8), `admin-users/forget-password` + `set-forget-password`, `ticket-pricing` writes, `header-footer` PUT, `event-settings` GET/PUT; Booking `dashboard/*` (4), `report/admin/*` (8), `POST seat-reservation`, `GET seat-reservation/by-event-level`, `POST event-capacity-adjustment`, `GET by-event-level`; UserIssue `user-issue-chat/*` (8).
+- **E — legacy/test:** Admin `currency`, `token` (service-token issuer), Admin's own `user-issue-chat/*` copy, `user-issue/user-detail/{orderId}`; TicketChecker `testing/*`; root `GET /event|/platform|/ticketChecker|/ticketing`; PushNotification `bulk-status` stub.
+
+**5–8. Components / code.** Commented base attribute `Core/ETP.Core.Web/BaseController.cs:14-15`; pipeline commented out in Platform/PushNotification/UserAuth `Program.cs`; internal callers `Core/ETP.Core/ServiceClient/{BookingClient,TicketingClient,AdminClient,PushNotificationClient}/`.
+
+**9. Handover notes.** Recommended dispositions: A keep; B keep but remove `payment-status-bypass` from production; C protect with a service credential or network policy **before** adding `[Authorize]` (adding it now breaks the workers — the unused `service` scheme, F6.19, is a starting point); D add the `[Authorize]` the menu implies; E remove. Re-audit after any controller change.
+
+### F6.19 Service-to-service communication
+
+> **Bangla name:** সার্ভিস-থেকে-সার্ভিস যোগাযোগ
+
+**1. Name and purpose.** The reference for who calls whom and with which credential: typed HTTP clients with token forwarding, tokenless worker calls, static-key external calls, and SQS queues (concepts in §0.8).
+
+**2–4. Mechanisms and registry.**
+
+| Tag | Mechanism | Credential |
+|---|---|---|
+| **[HTTP + user token]** | typed `HttpClient` + `DelegatedBearerAuthenticationHandler` inside a request | caller's Cognito access token |
+| **[HTTP, no token]** | same client from a worker (no `HttpContext`) | none — targets F6.18 category-C endpoints |
+| **[HTTP, static key]** | client with a fixed header | `Notification:Authorization`, `Serverless:Authorization`, DgePay/SSLCommerz/NBR/TSP/OneID credentials |
+| **[SQS: Key]** | `SqsPublisher` → queue → polling worker | static `AWS:AccessKey`/`SecretAccessKey` (SigV4); no token in the message |
+
+Client registry (base URL keys → forwarding): Admin → Event/Booking/Ticketing/UserIssue/PushNotification (forwarded) + Notification + Serverless (static). Booking → Event/Ticketing (forwarded) + User (`Services:AppBase` → identity API, forwarded) + Serverless/Notification (static) + DgePay/SSLCommerz/NBR. Event → Booking (forwarded). Scheduler → Booking/`IEventClient`→**`Services:Admin`**/Ticketing/Admin (workers: tokenless) + Notification (static). TicketChecker → Ticketing (forwarded). Ticketing → Event ×2/Booking/User (forwarded) + Serverless (static) + TSP (mTLS) + OneID (Basic). UserIssue → Booking/Ticketing (forwarded) + Serverless (static). Utility → Admin/Booking/Ticketing (workers: tokenless). Most clients retry 3× with exponential backoff (Polly). Queue catalog: §0.8.
+
+**5–8. Components / code.** `Core/ETP.Core.Web/Security/DelegatedBearerAuthenticationHandler.cs`; token-as-claim `DefaultAuthenticationConfig.cs:52-53`; registrations in each service's `DependencyConfig.cs` (Admin `:123-195`, Booking `:83-200`, Scheduler `:71-110`, Ticketing `:151-255`, UserIssue `:55-80`, Utility `:51-75`, Event `:66`, TicketChecker `:49`); shared clients `Core/ETP.Core/ServiceClient/*`; publisher `Core/ETP.Core/Queue/Services/SqsPublisher.cs`.
+
+**9. Handover notes.** ① Forwarding couples the caller's pool to the callee's policy — that is why internal endpoints are anonymous. ② Scheduler's `IEventClient` base is `Services:Admin` (paths decide the target) — the device-token cleanup confusion (F5.13) comes from this. ③ `Services:AppBase` = identity API base (`IUserClient` calls `user/my-profile` with the forwarded token) `[UNCONFIRMED]`; locally it points at the admin portal (so those calls fail locally). ④ No service-side token refresh — a token expiring mid-request fails the chain with 401. ⑤ MassTransit registered, unused (dead). ⑥ The unused `service` scheme: `GET /admin/api/v1/token` (header `ServiceApiKey`) issues a 1-day HS256 JWT; no endpoint requires it — reachable but unused (also F6.18-E).
+
+### F6.20 File storage (S3, CloudFront)
+
+> **Bangla name:** ফাইল স্টোরেজ (S3, CloudFront)
+
+**1. Name and purpose.** Two S3 buckets serve the platform: the **media bucket** (`AWS:Bucket:Name`) for CMS images/SVG maps/chat attachments and the **ticket bucket** (`AWS:Ticket:Bucket:Name`) for ticket PDFs; CloudFront fronts both with signed URLs/cookies for ticket files.
+
+**2. Trigger and actor.** Every upload/download feature (F1.2, F1.5, F1.12, F1.13, F1.28, F1.30, F2.9, F2.12, F5.7–F5.9).
+
+**3–4. Layout and mechanics.**
+
+| Concern | What the code does |
+|---|---|
+| Media uploads | `AwsSimpleStorageMediaManager` (`ICloudFrontMediaManager`) — event covers, logos, banners, SVG maps, chat attachments (`chat-attachments/{issueId}/{guid}{ext}`, max 10 MB) |
+| Ticket PDFs | `AwsSimpleStorageTicketMediaManager` (`ITicketMediaManager`) — key builders: templates `{TemplateBase}/ticket-back{programId}{eventId}.pdf`; blanks `{BlankBase}/user/{userId}/{publicId}/{TicketNumber}.pdf` or `{BlankBase}/reserved/{publicId}/…`; signed `{SignedBase}/user/{CreatedBy}/{publicId}/{TicketNumber}.pdf` or `{SignedBase}/reserved/{CreatedBy}/{publicId}/{TicketNumber}-{type}.pdf`; merged/zip `{MergeBase}/{reservationId}/{ReservationNumber}_Merged_PDF_{i}.pdf` / `_Individual_Zipped_{i}.zip` |
+| Serving | media: public CloudFront URLs stored on rows; tickets: **streamed by the Ticketing API** (`download*` endpoints, F2.9) — direct CloudFront only for admin reserved downloads via signed URL/cookie |
+| Signed URLs | `S3CloudFrontStroge.GeneratePresignedUrlAsync` (share links, F2.9) |
+| Signed cookies | `TicketingCookieManager.GetCloudFrontSignedCookie()` — RSA-SHA1-signed policy; key-pair id + private key are **not in appsettings**: read at runtime from an S3 JSON object `{CloudfrontTicketValidator:BucketName}/{ObjectKey}` (`CloudfrontTicketConfig { KeyPairId, ResourceUrl, Expiration, PrivateKey }`). `GET /ticketing/api/v1/booking-order-ticket/signed-cookie` returns the cookie string; the caller sets `CloudFront-Policy`, `CloudFront-Signature`, `CloudFront-Key-Pair-Id` |
+
+**5–8. Components / code.** `Core/ETP.Core.BlobStorage/AWSS3/{AwsSimpleStorageMediaManager,AwsSimpleStorageTicketMediaManager,S3CloudFrontStroge,TicketingCookieManager}.cs`; config keys above + `AWS:Bucket:BaseUrl`, `AWS:Ticket:{TemplateBase,BlankBase,SignedBase,ShareBase,MergeBase,ShareExpiryMinutes}`.
+
+**9. Handover notes.** ① The CloudFront signing key living in an S3 object is unusual — find that object in AWS (name in secrets) and include it in key rotation. ② Ticket downloads through the API mean API bandwidth, not CDN, for customers — only admin reserved downloads use CloudFront directly. ③ Imgix cache-purge helpers exist in the Core library `[UNCONFIRMED: whether Imgix is used in production]`.
+
+### F6.21 Email (SES)
+
+> **Bangla name:** ইমেইল (SES)
+
+**1. Name and purpose.** Transactional email is minimal today: reserved-ticket zips emailed from the admin console (F1.12) are the only send.
+
+**2–4. Trigger/flow.** `EmailService` (`Core/ETP.Core.Email/Services/EmailService.cs`, `IAmazonSimpleEmailService`): plain send + templates + `SendEmailWithZipAttachmentAsync` (hand-rolled MIME `multipart/alternative`, base64 zip attachment, `SendRawEmailAsync`). Sender address = `AWS:Ticket:EmailSender` (`TicketOptions.EmailSender`). `TicketManager.SendReservedTicketsAsync` uses it (default subject "Get your tickets", then sets ticket `Action = "emailed: {recipient}"`). SES credentials = shared AWS keys.
+
+**5–8. Components / code / config.** As above; also identity-verification helpers (`VerifyEmailIdentityAsync`, quota, templates) unused by features.
+
+**9. Handover notes.** No customer-facing transactional emails (order confirmation, receipt) exist in the code — the invoice is a download (F2.9). If RVL wants email confirmations, this service is the extension point.
+
+### F6.22 SMS and the external notification service
+
+> **Bangla name:** এসএমএস ও বাহ্যিক নোটিফিকেশন সার্ভিস
+
+**1. Name and purpose.** All SMS goes through the external **Notification API** (`Notification:Endpoint` + static `Notification:Authorization` header) — its source is in none of the repos `[UNCONFIRMED]`.
+
+**2–4. What uses it:** staff credential SMS (F6.2, F6.5), ticket-generated notification (F5.12), issue-resolved notification (F1.24). Client `Core/ETP.Core/ServiceClient/NotificationClient/NotificationClient.cs` posts `POST /notification/request` (`TicketGeneratedNotification` / `IssueResolvedNotification`, snake_case models in `Core/ETP.Core/Models/Notification.cs`) and `POST /notification/send-message` (`SMSNotification { message_destination, message_type, the_message }`), 3 retries with exponential backoff. Registered in Admin, Booking and Scheduler.
+
+**5–8. Components / code.** As above; config `Notification:Endpoint`, `Notification:Authorization` (locally `https://notification.invalid/`).
+
+**9. Handover notes.** ① Owner/hosting/capacity of this API must be confirmed with BS23 (Open queries). ② It is also the plausible home of the Lambda shown in the architecture diagram (architecture §2.6 Q1) `[UNCONFIRMED]`. ③ SMS failure leaves half-done admin operations (F6.5 note ⑤).
+
+### F6.23 Push notifications (PushNotification service + Firebase)
+
+> **Bangla name:** পুশ নোটিফিকেশন (PushNotification সার্ভিস + Firebase)
+
+**1. Name and purpose.** The push pipeline: clients register FCM device tokens with the **PushNotification** service (F3.9); senders (admin portal via Admin service, Scheduler) ask it to send; it batches tokens onto the `FirebaseNotification` queue; the Scheduler worker delivers via FCM (F5.11).
+
+**2–4. Trigger/flow.**
+
+| # | Call | Hop | Notes |
+|---|---|---|---|
+| 1 | `POST /pushnotification/api/v1/device-token` (register), `PUT` (refresh), `DELETE` (remove), `GET {userId}` | **[HTTP + user token]** (but the service has **no auth at all** — F6.18) | `UserDeviceTokens` rows |
+| 2 | `POST …/push-notification/send-to-all` / `send-to-users` (UserIds required) / `send-to-user/{userId}` body `PushNotificationRequest { title, body, data?, userIds?, sendToAll }` | **[HTTP]** → `202 { message, requestId }` | `NotificationManager` resolves tokens, batches 200 per `FirebaseNotificationRequest`, publishes **[SQS: FirebaseNotification]** (`GroupId=requestId`, `OrderId="{requestId}-batch-N"`) |
+| 3 | `GET …/push-notification/bulk-status/{requestId}` | — | stub: always `{ requestId, status: "processing", message }` — no tracking exists |
+
+Delivery path and failure semantics: F5.11. Admin service also calls `send-to-users|send-to-all` (token-forwarded) — e.g. an issue-resolution push from the support console `[UNCONFIRMED: which screens actually send]`.
+
+**5–8. Components / code.** `Services/PushNotification/` (controllers + `NotificationManager.cs`); `Core/ETP.Core/Models/{PushNotificationRequest,DeviceTokenRequest}.cs`; queue messages `Core/ETP.Core/Queue/Messages/Firebase*.cs`; FCM `Core/ETP.Core/PushNotification/FirebasePushNotificationService.cs` (service-account JSON from config `FirebasePushNotificationConfig:*`).
+
+**9. Handover notes.** ① The whole service is anonymous (F6.18) — token rows can be manipulated by anyone who reaches it. ② Failures are silently dropped (F5.11 note ①). ③ `FirebaseBulkNotificationRequest` is dead code. ④ FCM credentials are a full service-account JSON assembled from config keys — treat as high-value secret.
+
+### F6.24 Activity logging (audit trail)
+
+> **Bangla name:** অ্যাক্টিভিটি লগ (অডিট ট্রেইল)
+
+**1. Name and purpose.** Every entity change in six services is recorded to one shared `ActivityLogs` table (schema `etp`) by a `SaveChangesInterceptor` — the data behind F1.27.
+
+**2. Trigger and actor.** Any EF `SaveChanges` in Admin, Booking, Event, Ticketing, TicketChecker, UserIssue.
+
+**3–4. Technical flow.** `ActivityLogInterceptor` (`Core/ETP.Core.EntityFramework/Interceptors/ActivityLogInterceptor.cs`) per service (service name, user id from the `username` claim — fallback `System` — IP from `IHttpContextAccessor`, shared `TransactionId` via `AsyncLocal`): `Modified` → diff of changed properties only; `Deleted` → full original values; `Added` → buffered and written in `SavedChangesAsync` (so DB ids are captured). Audit housekeeping fields (`CreatedAt/By`, `UpdatedAt/By`) excluded; enums serialized by name; `IFormFile` masked "[Image File]"; empty diffs skipped. Rows written immediately through a separate `LoggingDbContext`. Table columns: `Id, ServiceName, EntityName, EntityId, Action, OldValues, NewValues, EntityContext, TransactionId, Timestamp, UserId, UserName, IpAddress` (+ indexes on ServiceName/TransactionId/EntityName/EntityId/Timestamp/IpAddress).
+
+**5–8. Components / code.** `Core/ETP.Core.EntityFramework/{LoggingDbContext.cs,Interceptors/ActivityLogInterceptor.cs,Configuration/ActivityLogConfiguration.cs}`; attached per service `*DbContext.cs` (e.g. `AdminDbContext.cs:79`); reader F1.27.
+
+**9. Handover notes.** ① PushNotification and Utility do **not** log (no interceptor). ② Inserts are logged after save — a failed transaction leaves no trace of the attempt. ③ `OldValues/NewValues` are JSON diffs; large entities make big rows.
+
+### F6.25 Redis: cache, live capacity and locks
+
+> **Bangla name:** Redis: ক্যাশ, লাইভ ক্যাপাসিটি ও লক
+
+**1. Name and purpose.** ElastiCache Redis is three things at once: a short-TTL read cache, the **live seat/scan counter store**, and the RedLock coordination layer.
+
+**2–4. Key families** (constants `Core/ETP.Core/Constant/AppConstant.cs` `CachePrefix` + compositions in Booking/Ticketing/Admin managers):
+
+| Family | Keys | Purpose |
+|---|---|---|
+| Catalog cache | `program_details`, `program_settings_details`, `event_details`, `event_venue_details`, `event_settings_details`, `ticket_attributes_details`, `admin_event_details`, `admin_level_info`, `general_notice_published`, `landing_page_image_published`, `ticket_pricing_all` | short TTLs (attribute cache `User` = 2 min; venue details up to 15 days) |
+| Live capacity | hash `capacity` with fields `level_live:{eventId}_{galleryId}_{blockId}_{levelId}`, `level_live_seats:…`, `level_database:…`, `level_database_seats:…`, `level_database_purchased_seats:…`; STRINGs `event_live:{eventId}` (F5.2) and `event_{eventId}` (F5.4); SET `refresh` (F5.3); hash `level_locked:{groupId}` field = orderId (12-min expiry) | §0.8 explainer |
+| Ticketing | `event_ticket_counter:{eventId}` (consecutive numbers), `tsp_token` (1 min), `OneId:AuthToken`, `sharedTicket:{ticketNumber}_{signature}`, `signedToken` (60 s), `mergeTicket`/`zipTicket` | F5.8/F5.9/F2.9 |
+| Checker | `ticket_checker_tickets:event_{eventLongId}_gate_{gateId}`, `ticket_checker_checked_tickets:{eventLongId}_{gateId}_{userId}`, hash `TicketCheckerLevelGateMap` field `{eventId}_{gateId}`, flag `ticketCheckerDbSync` | F4.x/F5.14 |
+| Locks (RedLock) | `checked_ticket` (20 min), `promo_code_status_updater` / `system_discount_status_updater` / `booking_status_updater` / `reservation_status_updater` / `pending_cancel_booking_status_updater` (2 min), `notification_for_ticket_generated` (3 min), `event_live_capacity_refresher` (15 min), `device_token_cleanup` (2 h), `locked_order_refresher_{0..4}` (15 min), `refresh_level_locks_{key}` (30 s), `user_ticket_generator_{eventId}` (12 min), `vat_challan_processor_{0..9}` (5 min), `ticket_processing_service_{reservationId}` (1 h), `ticket_checker_gate_{gateId}` (2 s), `create_user_ticket_{orderId}` (30 s), `user_booking:{userId}`, `ticket_checker_status_reset` (5 min) | workers + business ops |
+
+**5–8. Components / code.** `Core/ETP.Core/Configuration/{RedisConfig,DistributedLockConfig,CacheConfig}.cs`; `Core/ETP.Core/Caching/RedisService.cs`; `Core/ETP.Core.Web/ConcurrencyLock/RedisLockManager.cs`; usage per feature.
+
+**9. Handover notes.** ① If Redis is flushed mid-sale, live counters rebuild from the DB on the next worker cycles (§0.8) — expect brief over-selling risk during the gap. ② Lock expiries are hard-coded; tuning them requires code changes. ③ The checker `ticketCheckerDbSync` flag makes sync fail closed during the 30-minute drain cycle — gate devices see errors for that window (by design, F5.14).
+
+### F6.26 Configuration and secrets
+
+> **Bangla name:** কনফিগারেশন ও সিক্রেট
+
+**1. Name and purpose.** Where every setting comes from: per-service `appsettings.json` (structure only — values are `[see User Secrets]`), user-secrets locally, and SSM Parameter Store in AWS (`/rvl/<env>/<service>-appsettings` → Kubernetes secrets via CodeBuild buildspec — architecture doc §6).
+
+**2–4. Key reference (grouped).**
+
+| Group | Keys |
+|---|---|
+| Identity of a service | `Application:ServiceName` (route prefix) |
+| Database | `ConnectionStrings:{Admin,Booking,Event,TicketChecker,UserIssue,PushNotification}` (+ unused `:Ticketing`, `:Platform`, `:Scheduler`, `:UserAuth`) |
+| Peer services | `Services:{Admin,Booking,Event,Ticketing,TicketChecker,UserIssue,PushNotification,Scheduler,Platform,UserAuth}` + `Services:AppBase` (identity API) |
+| Auth | `AWS:CognitoPool:{Admin,User,TicketChecker,Agent}:{PoolId,ClientId,Authority,Metadata}`; `Authentication:Jwt:{Key,Issuer,Audience}`; `Authentication:ServiceApiKey` |
+| AWS | `AWS:{Region,AccessKey,SecretAccessKey}`; `AWS:Bucket:{Name,BaseUrl}`; `AWS:Ticket:*` (F6.20); `AWS:Queue:{OrderSuccess,EventCapacity,TicketSigning,TicketProcessing,VatChallanProcessing,FirebaseNotification}`; `CloudfrontTicketValidator:{BucketName,ObjectKey}` |
+| Cache/locks | `Cache:Redis:{InstanceName,ConnectionString,DefaultDatabase}`; `DistributedLock:Redis:{EndPoint,Port,AccessKey}` |
+| Payments/VAT | `PaymentSettings:{DgePay,SSLCommerz,NBROpenApi}:*` (merchant ids/secrets, base URLs, DgePay `RedirectUrl`) |
+| External | `TSP:{AuthUrl,SignUrl,UserId,DigitalIdentityId}` (+ `Cert/tspgw_client.pfx`); `OneIdSettings:{TokenUrl,DocumentSyncUrl,AuthorizationToken}`; `Notification:{Endpoint,Authorization}`; `Serverless:{BaseUrl,Authorization}`; `FirebasePushNotificationConfig:*` |
+| Clients | Angular `environment*.ts` (generated); Flutter `env/.env.<flavor>`: `API_BASE_URL`, `AUTH_API_BASE_URL`, `AUTH_API_TOKEN`, `AMPLIFY_CONFIG`, `CHAT_COMMUNICATION_HUB`, `PAYMENT_SUCCESS_URL`, `VDS_CERTIFICATE`, `FIREBASE_ANDROID_*`, `FIREBASE_IOS_*`, policy URLs |
+
+**5–8. Components / code.** appsettings per service host; local `scripts/user-secrets.example.json`; client env templates in READMEs; SSM path pattern from `buildspec-*.yaml` (architecture §6).
+
+**9. Handover notes.** ① One static IAM key pair (`AWS:AccessKey/SecretAccessKey`) is shared for SQS/S3/SES/Cognito/DynamoDB per service — rotation scope and per-service separation unknown `[UNCONFIRMED]` (architecture §2.3). ② No `ConnectionStrings:Ticketing` is used (Ticketing rides `:Booking`) — keep the DB grants for the Ticketing pods aligned to Booking's. ③ Ticketing's DynamoDB registration contains a hard-coded `http://localhost:8000` ServiceURL branch — check it doesn't override the real endpoint in production `[UNCONFIRMED]`. ④ Client static keys (`headerkey`, `AUTH_API_TOKEN`, `serverless.authorization`) ship inside browser/app bundles — assume public.
+
+## 7. Open queries for BS23
+
+Every `[UNCONFIRMED]` item in this document, collected here. Each query is written to be sent to BS23 as-is (same style as the architecture doc's Open questions, §9). Where a query overlaps the architecture doc's questions (Q1–Q6) it says so. Reply format: query number + a short answer.
+
+### OQ1. The identity API has no source in any repository
+- **Where:** every customer-facing auth flow (F6.6 registration, F6.9 password reset, F2.11/F6.7 profile, F3.1/F6.11 app version + delete account). Clients call `user/register-cached`, `otp/send-otp`, `otp/verify-otp`, `user/register`, `user/register-sso`, `user/my-profile`, `user/delete-my-profile`, `user/allowed-app-version` at `environment.services.identity` (portal) / `AUTH_API_BASE_URL` (apps); backend services call the same API via `Services:AppBase` (`IUserClient`).
+- **What we see:** `Services/UserAuth` in the backend is an empty stub. The identity API creates Cognito User-pool users, sends OTPs, stores profiles and publishes minimum app versions — all outside the five repos. Its static key (`environment.headerkey` / `AUTH_API_TOKEN`) ships inside both client bundles.
+- **Ask:** where does this API live (repository, hosting, owner, SLA)? Does it validate the OTP server-side in `user/register` and `otp/password-reset`? Does account deletion remove the Cognito user and any GoBCB-side data? Please hand over its source/config and rotate the static key.
+
+### OQ2. Database topology: one shared schema, not "one schema per service"
+- **Where:** every `*DbContext.cs` (`DefaultSchema = "etp"`); Ticketing uses `ConnectionStrings:Booking` (`TicketingDbContext`), and `ConnectionStrings:Ticketing` exists but is unused; Event/TicketChecker/Ticketing/UserIssue map other services' tables with `ExcludeFromMigrations`.
+- **What we see:** one Aurora database, one schema `etp`, shared tables with read-only mirrors — the handover brief's "one schema per service" does not match the code.
+- **Ask:** (a) the shared-schema layout is exactly as coded (confirm); (b) Ticketing intentionally uses the Booking connection string (confirm); (c) are separate DB instances or grants planned? Until then we will treat any table change as cross-service.
+
+### OQ3. The "Serverless" API (admin 2FA OTP + Cognito lookups) — source and the architecture Lambda
+- **Where:** admin portal login 2FA (F6.1), staff "user not found" checks, `user/get-bulk-users` called by Admin/Booking/Ticketing/UserIssue via `Serverless:BaseUrl` with a static `Serverless:Authorization` header.
+- **Ask:** is this API the Lambda between API Gateway and Cognito in the architecture diagram (overlap: architecture Q1)? Where is its source? Note: the admin 2FA OTP result is only checked in the browser (see OQ4) — does the Lambda enforce anything server-side?
+
+### OQ4. Anonymous admin endpoints — are they blocked at the gateway?
+- **Where (code, no `[Authorize]`):** `POST/PUT/DELETE /admin/api/v1/agent-users/*` (create Agent accounts + set passwords); `POST /admin/api/v1/admin-users/set-forget-password` (sets any admin's password given only a `userId` — the OTP is never checked server-side); `GET /admin/api/v1/admin-users/forget-password?phoneNo=` (forces any account into RESET_REQUIRED); `GET /booking/api/v1/user-booking-order/payment-status-bypass` (processes a "payment" without DgePay verification); Ticketing `initiate`/`initiate-user-ticket`; Booking `not-notified-list`/`update-status`; the entire PushNotification service; Booking `dashboard/*` + `report/admin/*`; Admin `event-settings`, `header-footer` PUT, `ticket-pricing` writes; UserIssue `user-issue-chat/*` (F6.18 lists all 137).
+- **Ask:** does API Gateway/NLB/ingress routing actually block these from the internet (overlap: architecture Q1b)? For each category in F6.18: keep, protect, or remove? Priority: `set-forget-password`, `agent-users/*`, `payment-status-bypass`.
+
+### OQ5. The Notification API (SMS) — source and ownership
+- **Where:** `Notification:Endpoint` + `Notification:Authorization`; sends staff-credential SMS (F6.2/F6.5), ticket-generated notices (F5.12), issue-resolved notices (F1.24). Source not in any repo.
+- **Ask:** where does this API live and who owns it? Note SMS failures currently leave half-completed admin operations (account created but 400 returned) — is a retry/queue planned? Related: what exactly does it send for "ticket generated" — SMS only, or also push (OQ13)?
+
+### OQ6. SQS queues: physical names, FIFO, dead-letter queues
+- **Where:** `AWS:Queue:{OrderSuccess, EventCapacity, TicketSigning, TicketProcessing, VatChallanProcessing, FirebaseNotification}` — all values are secrets.
+- **Ask:** please provide the physical queue names/URLs per environment; which are FIFO (the publisher auto-detects a `.fifo` suffix — ordering assumptions in F5.1/F5.2 depend on it); what are the DLQ configurations and redrive policies the code comments assume?
+
+### OQ7. Which payment gateways are live?
+- **Where:** Booking implements full flows for both DgePay and SSLCommerz; `ProgramSettings.PaymentGateway` selects per program (DgePay=1, SSLCommerz=2).
+- **Ask:** which gateway does each production program use? Is SSLCommerz live anywhere? Is `payment-status-bypass` disabled in production routing (see OQ4)?
+
+### OQ8. MFA configuration on the Cognito pools
+- **Where:** admin login handles `SMS_MFA` incorrectly (F6.1 note ③); user login breaks if User-pool MFA is on (F6.7 note ①); the admin 2FA OTP is browser-only (F6.1 note ①).
+- **Ask:** is MFA enabled on any pool (Admin/User)? If yes, the clients need fixes before it matters; if the browser-only admin 2FA is the intended control, please confirm that API-Gateway-level protection exists (OQ4), because the code does not enforce it.
+
+### OQ9. Scheduler device-token cleanup routing
+- **Where:** Scheduler `DeviceTokenCleanupService` calls `DELETE api/v1/device-token/cleanup` through `IEventClient` whose base URL is `Services:Admin`; the only implementation of that route is in the **PushNotification** service (F5.13).
+- **Ask:** does `Services:Admin` point at a gateway that routes `/api/v1/device-token/*` to PushNotification, or is this cleanup silently broken in production?
+
+### OQ10. TSP signing: certificate lifecycle and TLS validation
+- **Where:** Ticketing signs via `TSP:AuthUrl`/`TSP:SignUrl` with client cert `Cert/tspgw_client.pfx`; `ServerCertificateCustomValidationCallback => true` on both clients (F5.8); checker apps verify QRs offline against `VDS_CERTIFICATE` (Android Kotlin implementation only — F4.3).
+- **Ask:** (a) when does the current client certificate expire and what is the rotation procedure (app update needed for `VDS_CERTIFICATE`)? (b) is disabling server-certificate validation intentional (network constraint)? (c) does the checker app's iOS build verify the signature (we found only the Kotlin implementation)?
+
+### OQ11. OneID integration details
+- **Where:** SSO federation `oneid` (F6.8), wallet sync (F2.10). Overlaps architecture Q5.
+- **Ask:** (a) where is `UserBookingOrders.OneIdUserId` set (SSO login flow? booking?); (b) the OneID identity-provider config and attribute mapping in Cognito (not in repos); (c) the `vds_qr` field for document sync is a `TODO` stub sending `null` — was that feature expected to work?
+
+### OQ12. DynamoDB usage in production
+- **Where:** Ticketing registers DynamoDB with a hard-coded `ServiceURL http://localhost:8000` branch (`DependencyConfig.cs`); the only table use is the test hook `TestTicketGeneratorController` (`TicketGeneratorQueue`).
+- **Ask:** is DynamoDB used in production at all? If not, can the registration and test controller be removed? If yes, what is the real endpoint configuration?
+
+### OQ13. "Ticket generated" push — who sends it and what does it contain?
+- **Where:** F5.12 sends a `TicketGeneratedNotification` to the Notification API; the user app receives a push (F3.10) whose title/body/data keys are not visible in these repos; `bulk-status/{requestId}` is a stub.
+- **Ask:** does the Notification API (or another system) send the FCM push for ticket generation? Please share its template (title/body language, deep-link data keys) and whether push delivery tracking exists anywhere.
+
+### OQ14. Agent pool / offline-sold tickets — client and consumers
+- **Where:** F6.13 — no client in the five repos signs in with the Agent pool or calls `POST /ticketing/api/v1/offline-sold-ticket`; nothing reads `OfflineSoldTickets` back (no report/screen).
+- **Ask:** which system/app do agents use? What consumes `OfflineSoldTickets` (reconciliation? printing?)? Should the feature be kept after handover?
+
+### OQ15. Dead/legacy code to confirm before removal
+- **Where:** MassTransit event bus registered, no consumers (all services); Event service's unused `AWS:Queue:FirebaseNotification` registration; `AWS:Ticket:MergeBuffer` config key unreferenced; `ConnectionStrings:{Ticketing,Platform,Scheduler,UserAuth}` unused; Admin `/api/v1/token` service-scheme issuer (reachable, unused); Admin's own `/admin/chathub` + Admin `user-issue-chat` copy (portal uses the UserIssue hub); Admin `currency` controller unreferenced; the admin portal's `ChangePasswordService` calls a non-existent endpoint; user portal's legacy identity endpoints (`/token`, `/refreshToken`, …); Innovatrics DOT auto-capture packages declared but unused in the user portal; checker app's demo `movie*` screens; `FirebaseBulkNotificationRequest` unused; `go_router` declared but unused in the checker app.
+- **Ask:** for each: safe to delete after handover, or planned for future use?
+
+### OQ16. Swagger exposure in production
+- **Where:** every service registers `app.UseSwagger` + UI unconditionally (`/<prefix>/swagger`).
+- **Ask:** is Swagger intentionally reachable in production (useful for the takeover team), or should it be environment-gated?
+
+### OQ17. IAM keys: sharing and rotation
+- **Where:** each service authenticates to SQS/S3/SES/Cognito/DynamoDB with one static pair `AWS:AccessKey/SecretAccessKey` (SSM → k8s secrets; architecture §2.3). No IRSA/role-based mechanism found; queue messages are unsigned.
+- **Ask:** is one key pair shared across all services? What does its IAM policy allow? What is the rotation procedure (and can we split per-service policies)? Overlaps architecture §2.5 item 7.
+
+### OQ18. CloudFront ticket signing key stored in S3
+- **Where:** `TicketingCookieManager` reads `CloudfrontTicketConfig` (KeyPairId, PrivateKey, ResourceUrl, Expiration) from an S3 object named by `CloudfrontTicketValidator:{BucketName,ObjectKey}` (F6.20).
+- **Ask:** please share the bucket/object location and include this key pair in the handover + rotation plan. Also confirm whether Imgix (cache-purge helpers exist in Core) is used in production.
+
+### OQ19. Checker tokens on the gate controller
+- **Where:** `TicketCheckerGateController` accepts the `ticket-checker` scheme at class level, so a checker token can call `force-assign`, `force-unassign`, `update-download-status`, `remove-user`, `report`, `export`, `duplicate-tickets`, `manual-entry-tickets` (F6.15 note ②).
+- **Ask:** intended (checkers are trusted staff), or should those actions be admin-scheme only?
+
+### OQ20. Program scoping is a data filter, not an access check
+- **Where:** `X-Program-Id` drives an EF query filter that trusts the header; only the dashboard verifies ownership (`[AuthorizeProgram]`); on `EventsController` the attribute is commented out (F1.1/F6.16).
+- **Ask:** is per-program isolation for non-admin staff enforced elsewhere (gateway? accepted risk?), or should `[AuthorizeProgram]` be extended to events/lists after handover?
+
+### OQ21. `SystemSettings.SeatLockTimeout` — used anywhere?
+- **Where:** the setting exists (F1.30) while Booking hard-codes the 12-minute lock expiry (F5.3).
+- **Ask:** does anything read `SeatLockTimeout` (other systems?), or is the 12-minute constant the real configuration?
+
+### OQ22. Ops conventions we could not read from code
+- (a) venue-details cache TTL is up to 15 days (F1.9/F2.4) — how does BS23 publish urgent price changes (manual cache clear?) (b) the payment-discrepancy report's matching rules (F1.22) (c) which screens actually send pushes through `push-notification/send-to-users` (F6.23) (d) the production values behind client env keys (`PAYMENT_SUCCESS_URL` host, OneID URLs, `CHAT_COMMUNICATION_HUB`) — all secret-side `[UNCONFIRMED]`.
+
+---
+
+*End of the English document. The Bangla version (`gobcb-feature-documentation-bn.md`) carries identical content and structure.*
