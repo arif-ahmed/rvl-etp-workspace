@@ -2954,4 +2954,399 @@ Features started by customers in the Flutter user app (`rvl-gobcb-user-app`, app
 
 **9. Handover notes.** What exactly the "ticket generated" push contains (title/body language, data keys) is decided by the **external Notification API** (F5.12) or admin senders — not visible in these repos `[UNCONFIRMED]`.
 
-<!-- Part 3 complete; Part 6 next -->
+## 6. Cross-cutting (authentication, authorization, platform services)
+
+Concerns shared by many features: sign-in for each client, the four authorization layers, service-to-service calls, storage, messaging, logging, cache and configuration. Cognito pools: **Admin, User, TicketChecker, Agent** — a fifth `service` scheme exists for a shared-key JWT that is currently unused (F6.19 note).
+
+### F6.1 Admin login (phone OTP + password)
+
+> **Bangla name:** অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)
+
+**1. Name and purpose.** Three-step staff sign-in: 10-digit phone → 6-digit SMS code → Cognito password. A success gives the browser Admin-pool tokens that every admin API call carries; three roles also get CloudFront download cookies.
+
+**2. Trigger and actor.** Admin portal `/auth/login` (`LoginComponent`). Actor: staff (roles `admin`, `event_manager`, `ticket_manager`, `ticket_operator`, `customer_support`).
+
+**3. Business flow.**
+1. The staff member types the phone (without `+880`).
+2. The portal asks the Serverless API to send an SMS code ("User not found." for unknown numbers).
+3. The staff member types the code (resend allowed after 2 minutes).
+4. After a valid code the password field appears; the portal signs in to Cognito with `+880<phone>` + password.
+5. The portal reads `custom:role` and lands on the role's default page (`/program-management` for admin/event_manager(+ticket_manager); `/home` for others).
+6. For roles `admin`, `ticket_manager`, `ticket_operator` it also fetches CloudFront signed cookies (F1.12 downloads).
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Portal → Serverless `POST {serverless.baseUrl}/admin/login-2fa-send-otp` | **[HTTP, static key]** | `{ otp_type: "sms", destination: "+880…" }`; success `status_message == "otp_generated_and_enqueued_successfully"` |
+| 2 | Portal → Serverless `POST …/admin/login-2fa-verify-otp` | **[HTTP, static key]** | Adds `otp`; success `sms_otp_verified_successfully`, else `invalid_otp` |
+| 3 | Portal → Cognito | Amplify `Auth.signIn(phone, password)` | Returns tokens or a challenge: `NEW_PASSWORD_REQUIRED` (portal answers `completeNewPassword` with the same password), `SMS_MFA` (returned, not handled — see notes) |
+| 4 | Portal → Cognito | `currentSession()/currentUserInfo()` | Access token cached 55 min; `custom:role` cached 55 min |
+| 5 | Portal → Ticketing `GET /ticketing/api/v1/booking-order-ticket/signed-cookie` | **[HTTP + user token]** | Roles admin/ticket_manager/ticket_operator; response string split into three `CloudFront-*` cookies written via `document.cookie` (domain = `environment.cloudFront.mainDomain`) |
+
+No GoBCB service is involved in steps 1–4; services see the user only on the next API call (F6.14).
+
+**5. Components.** Portal (`LoginComponent`, `CognitoService`, `EventService.setSignedCookie()`); Serverless API (external, source not in repos `[UNCONFIRMED]`); Cognito Admin pool; Ticketing (cookie); browser storage (Amplify tokens, `sessionStorage.lastKnownUserRole`, `localStorage.globalProgramId`, cookies).
+
+**6. API contracts.**
+
+```json
+// POST {serverless}/admin/login-2fa-send-otp          // static Authorization header
+{ "otp_type": "sms", "destination": "+8801700000001" }
+// 200 → { "status_message": "otp_generated_and_enqueued_successfully" }
+
+// POST {serverless}/admin/login-2fa-verify-otp
+{ "otp_type": "sms", "destination": "+8801700000001", "otp": "123456" }
+// 200 → { "status_message": "sms_otp_verified_successfully" }   // invalid → "invalid_otp"
+```
+
+Cognito calls (Amplify, public client): `InitiateAuth`/`RespondToAuthChallenge` — errors `NotAuthorizedException`, `UserNotFoundException`… mapped to text in `getCognitoErrorMessage`. `signed-cookie` auth: policy `admin`, 401 otherwise.
+
+**7. Data and side effects.** Nothing written by the GoBCB backend at login; the Serverless API sends an SMS; browser stores tokens/role/cookies.
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/modules/auth/login/login.component.ts:124-249`; `…/core/services/cognito.service.ts:213-246` (sign-in), `:261-302` (caches), `:444-472` (OTP calls); `…/core/config/aws-exports.ts`; signed cookie `…/features/events/services/event.service.ts:234`; skip lists `…/core/interceptors/auth.interceptor.ts:19-29`, `…/interceptors/program-id.interceptor.ts:15`.
+
+**9. Handover notes.** ① **The SMS code is checked only by the browser** — the OTP result never reaches Cognito or the services; anyone with a staff password can sign in by calling Cognito directly. Whether the Admin pool itself enforces MFA is not visible in the repos `[UNCONFIRMED]`. ② The Serverless static key ships in the browser bundle (readable by anyone). ③ `SMS_MFA` resolves as pseudo-success then fails to load the role — a `confirmMFA()` helper exists but no screen calls it. ④ Signed-cookie roles use exact-string match on `custom:role`, so a two-role user (`event_manager,ticket_manager`) gets no cookie at login (top bar has a refresh action). ⑤ Locally: OTP stub accepts any phone with code `123456` (`scripts/Setup-AdminPortal.ps1` proxy); seeded test users in `floci/seed-users.ps1`, passwords in `docs/local-dev.md`.
+
+### F6.2 Admin forgot password
+
+> **Bangla name:** অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া
+
+**1. Name and purpose.** Set a new admin password after proving control of the phone via SMS code; the Admin service writes it to Cognito, revokes sessions and SMSes the new password to the phone.
+
+**2. Trigger and actor.** Admin portal `/auth/forgot-password`. Actor: staff member, anonymous.
+
+**3. Business flow.** Phone → SMS code (same Serverless calls as F6.1; verify returns `user_id`) → new password (policy: ≥ 8 chars, upper/lower/digit/symbol) → `set-forget-password` → sessions revoked, new password SMSed, back to login. The screen's "Resend" instead triggers Cognito's email flow whose code this screen never submits (inconsistent leftover).
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1–2 | Serverless send/verify OTP | **[HTTP, static key]** | As F6.1; portal keeps `response.user_id` |
+| 3 | Portal → Admin `POST /admin/api/v1/admin-users/set-forget-password` | **[HTTP, no token]** (`[AllowAnonymous]`) | `{ userId, password }` |
+| 4 | Admin → Cognito | AWS SDK | `AdminGetUser` (read phone), `AdminUserGlobalSignOut`, `AdminSetUserPassword(Permanent=true)` |
+| 5 | Admin → Notification API `POST {Notification:Endpoint}/notification/send-message` | **[HTTP, static key]** | SMS "Your password has been changed successfully. New Password is …" (clear text) |
+| 6 | Activity log | — | `AdminUser / PasswordResetCompleted` |
+
+Also reachable but unused by the UI: `GET /admin/api/v1/admin-users/forget-password?phoneNo=` → Cognito `AdminResetUserPassword` (forces `RESET_REQUIRED`), returns `true/false`.
+
+**5. Components.** Portal (`ForgotPasswordComponent`, `CognitoService.submitPassword()`); Admin service (`AdminUsersController` → `AdminUserManager` → `AdminUserProvider`); Cognito; Notification API (external); activity log.
+
+**6. API contracts.** `set-forget-password`: `200` with literal body `200`; 400 envelope carries the Cognito policy message via `ArgumentException`. Sample:
+
+```json
+// POST /admin/api/v1/admin-users/set-forget-password
+{ "userId": "3f6c2a8e-0000-4000-8000-000000000001", "password": "N3w!Passw0rd" }
+// 400 → { "status": 400, "title": "Password did not conform with policy: …" }
+```
+
+**7. Data and side effects.** Cognito password replaced + all sessions revoked; clear-text SMS; activity-log rows.
+
+**8. Code references.** `…/modules/auth/forgot-password/forgot-password.component.ts:123-263`; `…/core/services/cognito.service.ts:432-434`; `…/Admin.Service/Api/AdminUsersController.cs:28-39,185-196`; `…/Admin.Domain/Managers/AdminUserManager.cs:197-231`; `…/Admin.Integration/Services/AdminUserProvider.cs:508-586`.
+
+**9. Handover notes.** ① **The backend does not check the OTP**: `set-forget-password` is anonymous and trusts the body's `userId` (Cognito `sub` or the phone-username) — anyone who can reach the service can reset any admin's password unless API Gateway blocks the route `[UNCONFIRMED]` (Open queries). ② Passwords travel by SMS in clear text (same pattern as provisioning, F6.5). ③ The unused-but-open `GET forget-password` endpoint can force any account into `RESET_REQUIRED` with just a phone number — candidate for removal.
+
+### F6.3 Admin change password and logout
+
+> **Bangla name:** অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট
+
+**1. Name and purpose.** A signed-in admin replaces their password (then signs out); logout ends the browser session and clears program selection and cookies. Both run browser↔Cognito only.
+
+**2. Trigger and actor.** Admin portal top bar profile menu (`/change-password`, logout). Actor: any signed-in staff.
+
+**3. Business flow.** Change: old + new password (≥ 8 chars, must differ) → success message → auto sign-out to login; wrong old password → "Current password is wrong." Logout: confirm → sign out, program id reset to 0, `CloudFront-*` cookies expired, login page.
+
+**4. Technical flow.** Change: Amplify `Auth.changePassword(user, old, new)` (Cognito `ChangePassword`). Logout: `Auth.signOut()` (local only), `ProgramService.setProgramId(0)`, `clearSignedCookie()`.
+
+**5–6. Components / contracts.** Portal components + Cognito only — **no GoBCB endpoint**. (A server-side `AdminUserManager.ChangePasswordAsync` exists with no controller; the portal's `ChangePasswordService` calls a non-existent `PUT /admin/api/v1/Users/change-password` and is unused — both dead code.)
+
+**7. Data and side effects.** Cognito password changed; browser storage/cookies cleared on logout.
+
+**8. Code references.** `…/modules/auth/change-password/change-password.component.ts:50-85`; `…/core/services/cognito.service.ts:303-352`; `…/layout/app.topbar.component.ts:80-120`; dead: `…/Admin.Domain/Managers/AdminUserManager.cs:181-195`, `…/change-password/change-password.service.ts:20-22`.
+
+**9. Handover notes.** ① Sign-out is **local** (no `{global:true}`) — other sessions stay alive until their refresh tokens expire; global revocation happens only via disable/password reset (F6.5). ② Cookie clean-up expires the cookies **without** the `domain` attribute they were set with, so browsers may keep the real CloudFront cookies until expiry — verify on a deployed environment.
+
+### F6.4 Admin session handling (token attach and refresh)
+
+> **Bangla name:** অ্যাডমিন সেশন (টোকেন সংযুক্তি ও রিফ্রেশ)
+
+**1. Name and purpose.** How every admin-portal API call gets its `Authorization` and `X-Program-Id` headers, how tokens refresh before expiry, and when the portal gives up and returns to login.
+
+**2. Trigger and actor.** Every HTTP call the portal makes; invisible to the user while healthy.
+
+**3. Business flow.** While the Cognito refresh token is valid the session survives reloads and idle time; when refresh fails (expired/revoked) the next call triggers sign-out + login page.
+
+**4. Technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Skip list | `/admin-users/forget-password`, `admin/login-2fa-*`, `/admin-users/set-forget-password` get no token |
+| 2 | Token | `CognitoService.getAccessToken()`: cached 55 min, proactive refresh 2 min before `exp` |
+| 3 | Attach | `Authorization: Bearer …` (AuthInterceptor) |
+| 4 | Program | `X-Program-Id: <globalProgramId>` (0 = global) on every request except `/admin/login-2fa*` |
+| 5 | On 401 | Single-flight refresh (`isRefreshing` + `BehaviorSubject`): `Auth.currentSession()`, retry the failed request once with the new token; concurrent requests wait |
+| 6 | Refresh fails | Clear caches + `lastKnownUserRole`, `Auth.signOut()`, navigate `/auth/login` |
+
+Interceptor order (app.module.ts): `AuthInterceptor`, `LoaderInterceptor`, `ProgramIdInterceptor`.
+
+**5–6. Components / contracts.** Portal interceptors + `CognitoService`; headers consumed per F6.14 (`Authorization`) and F6.16 (`X-Program-Id` — Admin service only; other services ignore it).
+
+**7. Data and side effects.** Browser-only caches (token 55 min, user info 55 min).
+
+**8. Code references.** `…/core/interceptors/auth.interceptor.ts:14-102`; `…/interceptors/program-id.interceptor.ts:14-29`; `…/core/services/cognito.service.ts:88-211,261-302`; `…/app.module.ts:22-33`.
+
+**9. Handover notes.** ① Two independent refresh guards (interceptor + service) — change them together. ② The SignalR chat connection is outside the interceptors (token in query string, F1.24). ③ **No idle timeout** — session length is Cognito's refresh-token lifetime (pool setting, not in the repos). ④ Role changes need up to 55 min to appear (role cache; the backend has its own claim cache — F6.15).
+
+### F6.5 Staff account provisioning
+
+> **Bangla name:** স্টাফ অ্যাকাউন্ট তৈরি (shared mechanics)
+
+**1. Name and purpose.** Staff never sign up themselves: an administrator creates every admin / ticket-checker / agent account; the Admin service creates the user in the matching Cognito pool with a generated **permanent** password and SMSes username+password to the phone. Screens: F1.25, F1.17, F1.26; this feature documents the shared Cognito mechanics.
+
+**2. Trigger and actor.** Admin portal user screens (global menu). Roles: `admin` for admin accounts; four staff roles for checker accounts; **agent accounts: no server-side restriction** (F6.18).
+
+**3. Business flow.** Create (name, phone, email, role(s), programs) → SMS with credentials → later edit / disable / enable / delete / set-password (new generated password by SMS). Disable, enable and set-password also globally sign the user out.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Portal → Admin `POST /admin/api/v1/admin-users` (or `/ticket-checker`, `/agent-users`) | **[HTTP + user token]** (agents: token not enforced) | See F1.25/F1.17/F1.26 bodies |
+| 2 | Admin → Cognito | AWS SDK (static IAM keys) | Admins: `ListUsers(email)` duplicate check → `AdminCreateUser(Username=phone)` with temp password → `AdminSetUserPassword(Permanent=true)`. Attributes: `phone_number, name, email, custom:role (comma-separated), custom:program_ids, *_verified=true`. Checkers: email `<phone>@gobcbticket.com`, `custom:role="TicketChecker"`. Agents: `custom:branch_location/company_name/company_branch` |
+| 3 | Admin → Notification API `POST {Notification:Endpoint}/notification/send-message` | **[HTTP, static key]** | SMS "Your account has been created successfully. Your user name is <phone> and password is <password>" |
+| 4 | Side ops | — | Update: `AdminUpdateUserAttributes` + remove cached `user_{id}`; Disable/Enable: `AdminDisable/EnableUser` + `AdminUserGlobalSignOut` (own account refused: 400 "Invalid permission"); Set password: global sign-out + new generated password + SMS; Delete: `AdminDeleteUser` |
+
+Generated passwords: 8 chars, upper/lower/digit/`!@#$`, built with `System.Random` (`AdminUserProvider.GeneratePassword`).
+
+**5. Components.** Portal user services; Admin service (`AdminUserProvider`, `TicketCheckerUserProvider`, `AgentUserProvider`); Cognito pools ×3; Notification API; Redis `user_{id}` attribute cache; activity log (admin accounts).
+
+**6. API contracts.** Endpoint tables in F1.25/F1.17/F1.26. Sample create response (`AdminUserResponse`) in F1.25.
+
+**7. Data and side effects.** Cognito users; SMS; global sign-outs; activity-log rows (`Created/Updated/Deleted/Disabled/Enabled/PasswordReset`); cache invalidation.
+
+**8. Code references.** `…/Admin.Integration/Services/{AdminUserProvider,TicketCheckerUserProvider,AgentUserProvider}.cs` (password generator `AdminUserProvider.cs:588-608`); `…/Admin.Domain/Managers/AdminUserManager.cs:39-179`; Cognito client registration `…/Admin.Service/Configurations/DependencyConfig.cs:197-207`.
+
+**9. Handover notes.** ① Agent endpoints are anonymous in code (F6.18). ② Passwords are `System.Random`-generated and sent in clear SMS, set permanent (no forced first-login change). ③ Email uniqueness is checked only for admins; the phone is the username, once per pool. ④ Role/program changes propagate slowly (Admin cache cleared instantly, UserIssue has its own copy, portal caches 55 min, issued tokens unchanged until expiry). ⑤ SMS failure returns 400 although the Cognito account was already created (half-done op).
+
+### F6.6 Customer registration
+
+> **Bangla name:** গ্রাহক নিবন্ধন
+
+**1. Name and purpose.** A new customer creates a GoBCB account (User Cognito pool) after proving email **and** phone with one-time codes — all through the external **identity API**; or registers with OneID instead (account created at first OneID login, F6.8).
+
+**2. Trigger and actor.** Portal `/:lang/auth/register` → verify-email → verify-phone → set-password; app `/signup → /confirmationCode → /phoneNumberOtp → /setPassword`. Actor: anonymous visitor.
+
+**3. Business flow.** 1) Name, email, 10-digit phone (+ terms) → 2) email code → 3) SMS code → 4) choose password → account created, go to login. OneID alternative: "Register with OneID" opens OneID's page (`environment.aws.oneIdRegisterUrl`) in a popup.
+
+**4. Technical flow.** All calls to the identity API with the static key header (`environment.headerkey` / `AUTH_API_TOKEN`); **no GoBCB service is involved**:
+
+| # | Call | Body (as sent) |
+|---|---|---|
+| 1 | `POST user/register-cached` | portal `{ name, email (lower-case), phone, dob: "1900-01-01", address: "n/a", verification_type: "mobile", verification_id: "0123456789" }` (placeholders!); app `{ name, email, phone, address, verification_type, verification_id, dob }` |
+| 2/4 | `POST otp/send-otp` | `{ type: "email"|"sms", destination }` |
+| 3/5 | `POST otp/verify-otp` | `{ type, destination, otp }` — the phone step returns `user_id`, kept as the provisional id |
+| 6 | `POST user/register` | portal `{ user_id, password }`; app `{ user_id, ekyc, address, password }` |
+| 7 | identity API → Cognito User pool | user created — outside the repos `[UNCONFIRMED]` |
+
+Client-recognised errors: `user_already_exists`, `passport_or_nid_required`, `user_not_found`, `user_data_incomplete`, `error_getting_verification_information`, `error_creating_user`, `error_saving_data_to_db`, `server_error`.
+
+**5. Components.** Portal registration components + NgRx `IdentityEffects`; app auth feature + `AuthApiServiceImpl`; identity API (external); OneID registration page; Cognito User pool.
+
+**6. API contracts.**
+
+```json
+// POST {identity}/user/register-cached   (portal)
+{ "name": "Rahim Uddin", "phone": "+8801711111111", "email": "rahim@example.com",
+  "dob": "1900-01-01", "address": "n/a", "verification_type": "mobile", "verification_id": "0123456789" }
+
+// POST {identity}/otp/verify-otp   (phone step)   →   200
+{ "user_id": "<id issued by the identity API>" }
+```
+
+**7. Data and side effects.** All in the identity API (provisional data, OTPs, Cognito user) — not visible `[UNCONFIRMED]`; portal `localStorage` keeps `rvl_init_register`, `rvl_init_id`, resend timestamps (cleared after success). No GoBCB table is written.
+
+**8. Code references.** Portal: `…/featured/auth/components/user-registration/user-registration.component.ts:172-266`, `…/core/modules/identity/store/identity.effects.ts:38-212`, `…/core/services/api/identity-api.service.ts:30-64`. App: `data/lib/remote/api_service/auth_api_service/auth_api_service_impl.dart:34-240`, client `auth_api_client.dart`.
+
+**9. Handover notes.** ① The identity API is a **black box** — get its repository/hosting/owner from BS23 (Open queries). ② The static key ships in both clients (app even logs it at start `lib/main/main.dart:55`). ③ The portal sends placeholder identity data while the app sends real values + `ekyc` — inconsistent; whether the identity API enforces real NID/passport is `[UNCONFIRMED]`. ④ App `register` swallows unknown errors and continues as if it succeeded. ⑤ The client trusts `user_id` from the OTP response — whether the identity API binds `user/register` to a verified OTP server-side is not visible.
+
+### F6.7 Customer login with phone and password
+
+> **Bangla name:** ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন
+
+**1. Name and purpose.** Registered customer sign-in on portal/app directly against the User Cognito pool, followed by profile load from the identity API.
+
+**2. Trigger and actor.** Portal `/:lang/auth/login`; app `/login`. Actor: customer.
+
+**3. Business flow.** Phone (10 digits) + password → tokens → profile load → back to the originating page (portal `sessionStorage.returnUrl`) or Home; failure shows Cognito's message ("Incorrect phone number or password" in the app). A password user whose profile is missing (`user_not_found`) is signed back out (portal).
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Client → Cognito (User pool) | Amplify SRP `signIn("+880…", password)` | Tokens stored by Amplify; challenges: `NEW_PASSWORD_REQUIRED` (portal completes with same password), `SMS_MFA` (**broken on both clients** — see notes) |
+| 2 | Client → identity `GET user/my-profile` | **[HTTP + user token]** (portal: token interceptor swaps the static header for `Bearer`; app: `ProfileApiClient` with `?user_id=<sub>`) | Profile → NgRx store / app cache |
+| 3 | `user_not_found` | — | Portal: sign out (password user) / register (SSO user, F6.8). App: **any** profile error → `POST user/register-sso` then retry |
+| 4 | Analytics | — | Firebase `logLogin(user_id)` |
+
+The app signs out any existing session before signing in.
+
+**5–6. Components / contracts.** Cognito `InitiateAuth` (public client); `GET {identity}/user/my-profile` (Bearer) → `UserProfile` (shape in F2.11); errors `NotAuthorizedException` etc.
+
+**7. Data and side effects.** Client token storage; portal flag `rvl_cognito_auth = true`; analytics event. No GoBCB table writes.
+
+**8. Code references.** Portal `…/user-login/user-login.component.ts:182-224`, `…/shared/services/cognito.service.ts:49-72`, `…/identity/store/identity.effects.ts:291-343`. App `lib/presentation/feature/auth/login/login_view_model.dart`, `data/lib/repository/auth_repository_impl.dart:26-62`, `data/lib/service/aws_amplify_service.dart:38-66`, `data/lib/repository/profile_repository_impl.dart:55-86`.
+
+**9. Handover notes.** ① If User-pool MFA were enabled, both clients break (portal hangs at the MFA state; app reports wrong password) — MFA config not in the repos `[UNCONFIRMED]`. ② The app's register-sso fallback fires on **any** error, not just `user_not_found`. ③ Local testing: portal works against Floci; the app's Amplify talks to real AWS locally (known gap, `docs/mobile-local.md`); seeded customer `+8801700000011` / `Passw0rd!23`.
+
+### F6.8 OneID single sign-on
+
+> **Bangla name:** OneID সিঙ্গেল সাইন-অন
+
+**1. Name and purpose.** Sign in with the OneID Wallet instead of a password: OneID is an external identity provider named `oneid` in the **User** pool; the client opens Cognito's hosted sign-in with that provider and receives normal User-pool tokens. First OneID login auto-creates the GoBCB profile.
+
+**2. Trigger and actor.** Portal login "Login with OneID Wallet" (popup); app OneID button. Actor: customer with a OneID account.
+
+**3. Business flow.** Press OneID → popup/browser shows OneID's page (always asks credentials — `prompt=login` in the portal) → approve → signed in; profile auto-created if missing; land on the originating page/Home.
+
+**4. Technical flow.**
+
+**Portal (manual PKCE in a popup):**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Popup | Main window opens `/:lang/auth/login?sso_init=oneid` as a 500×700 popup named `OneID Login`; sets `sso_login = true` |
+| 2 | PKCE | Popup generates a 32-byte verifier (`localStorage.pkce_key`) + S256 challenge |
+| 3 | Redirect | `https://<oauth.domain>/oauth2/authorize?identity_provider=oneid&redirect_uri={redirectSignIn}&response_type=code&client_id=…&scope=…&prompt=login&code_challenge=…&code_challenge_method=S256` → OneID |
+| 4 | Callback | `redirectSignIn?code=…` in the popup |
+| 5 | Token exchange | `fetch` `POST https://<oauth.domain>/oauth2/token` form-encoded (`grant_type=authorization_code`, `code_verifier`) |
+| 6 | Store | Popup writes Amplify-format `localStorage` keys (`CognitoIdentityServiceProvider.<clientId>.<username>.*`, `amplify-signin-with-hostedUI`), flags `sso_auth_complete`, `postMessage`, closes |
+| 7 | Main window | Polls 300 ms; `Auth.currentAuthenticatedUser({bypassCache:true})` |
+| 8 | Profile | `GET user/my-profile` **[HTTP + user token]**; on `user_not_found` + `sso_login` → `POST user/register-sso` (body = the whole Amplify user object!) → retry |
+
+**App (Amplify hosted UI):** `Amplify.Auth.signInWithWebUI(provider: AuthProvider.custom('oneid'), isPreferPrivateSession: true)` → system browser; profile fetch with `?user_id=<sub>`; on **any** error → `POST user/register-sso` `{"name":"","cognito_sub":<sub>}` → retry.
+
+**5. Components.** Portal popup/PKCE code; app `loginWithOneID`; Cognito hosted UI (User pool, provider `oneid`); OneID Wallet (external — IdP config not in repos, architecture doc Q5); identity API.
+
+**6. API contracts.**
+
+```http
+POST https://<oauth.domain>/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+grant_type=authorization_code&client_id=<userPoolWebClientId>&code=<code>&redirect_uri=<redirectSignIn>&code_verifier=<verifier>
+```
+
+`register-sso` (app): `{ "name": "", "cognito_sub": "8c1d2f7e-0000-4000-8000-000000000011" }`; portal sends the raw Amplify user object (no defined DTO).
+
+**7. Data and side effects.** Cognito federated user (standard provider behaviour; mapping not in repos); identity-API profile; portal `localStorage` keys (`pkce_key` removed after exchange, `was_sso_login`, `sso_auth_complete/error`).
+
+**8. Code references.** Portal `…/user-login/user-login.component.ts:46-73,226-419`, `…/shared/services/cognito.service.ts:23-45,302-372`, `…/identity/store/identity.effects.ts:303-320,374-427`, `…/core/config/awsConfig.ts`. App `data/lib/service/aws_amplify_service.dart:68-98`, `data/lib/repository/profile_repository_impl.dart:55-86`.
+
+**9. Handover notes.** ① **Logout does not end the OneID session** — portal signs out of Cognito locally (`skipFederatedLogout`); `federatedSignOut()` exists but is never called; re-login safety relies on `prompt=login`. ② The portal's `register-sso` body is not a stable DTO (inspect in DevTools before changing the identity API). ③ App errors during `loginWithOneID` are swallowed — it navigates Home regardless. ④ Local: a **fake OneID** at `/p/oneid` auto-approves and returns Floci tokens (`docs/user-portal-local.md`); the app flow cannot run locally.
+
+### F6.9 Customer forgot/reset password
+
+> **Bangla name:** গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট
+
+**1. Name and purpose.** Phone + SMS code + new password — entirely through the external identity API; no GoBCB service is involved `[UNCONFIRMED]`.
+
+**2. Trigger and actor.** Portal `/:lang/auth/phone-reset-password` → `reset-password-code` → `reset-password-verified`; app `/forgetPassword` → `/confirmNewPassword` → `/forgetPasswordSuccess`. Actor: customer, not signed in.
+
+**3. Business flow.** Enter phone → SMS code arrives → enter code + new password → success page → login.
+
+**4. Technical flow.** Two calls, both **[HTTP, static key]**: `POST {identity}/otp/password-reset-request` `{ phone }`; then `POST {identity}/otp/password-reset` `{ phone, otp, password }`. Portal keeps the phone in `localStorage.rvl_reset_pass` between the steps (cleared on success).
+
+**5–7. Components / contracts / data.** Identity API (external); client screens. Recognised `status_message` errors: `phone_number_not_found`, `user_not_found`, `invalid_otp`, `exceeded_maximum_otp_generation_limit`. Password change in Cognito is assumed (outside repos).
+
+```json
+// POST {identity}/otp/password-reset
+{ "phone": "+8801711111111", "otp": "482913", "password": "N3w!Passw0rd" }
+```
+
+**8. Code references.** Portal `…/identity/store/identity.effects.ts:214-289`, `…/identity-api.service.ts:73-89`; app `data/lib/remote/api_service/auth_api_service/auth_api_service_impl.dart:243-292`, `lib/presentation/feature/auth/confirm_new_password/confirm_new_password_view_model.dart:110-155`.
+
+**9. Handover notes.** ① OTP and password travel together — the identity API must validate them as a pair `[UNCONFIRMED]`. ② Nothing visible revokes other sessions on reset. ③ An unused portal helper `CognitoService.forgotPassword` calls `Auth.changePassword` with wrong arguments (dead code).
+
+### F6.10 Customer session handling (token attach, change password, logout)
+
+> **Bangla name:** গ্রাহক সেশন (টোকেন সংযুক্তি, পাসওয়ার্ড পরিবর্তন, লগআউট)
+
+**1. Name and purpose.** How the portal/app attach the User-pool token to API calls, what happens on expiry, and the change-password/logout flows. Every customer feature with a login depends on this.
+
+**2. Trigger and actor.** Every HTTP call (portal `TokenInterceptor`; app API clients); profile screens for password/logout. Actor: signed-in customer.
+
+**3. Business flow.** Change password (current + new ×2; stays signed in); logout → login page/screen; expired session → signed out automatically before a failing call.
+
+**4. Technical flow.**
+
+**Portal token attach — an allow-list of URL fragments** (only these get `Authorization: Bearer`): `…/booking` paths (booking/capacity/orders + `admin/api/v1/discount`), `userissue` API + chathub, `ticketing` paths, identity `user/my-profile` + `user/register-sso`, `event/…/venue-details`. Everything else (public Event reads) goes tokenless. Steps: `Auth.currentSession()` (Amplify refreshes as needed) → if `exp` still passed: clear `rvl_cognito_auth`/profile, sign out, synthetic 401 → else attach header. **No retry-on-401** from the server.
+
+**App token attach:** `TicketBanglaApiClient` (`API_BASE_URL`) and `ProfileApiClient` (`AUTH_API_BASE_URL`) call `Amplify.Auth.fetchAuthSession()` per request and attach `Bearer`; `AuthApiClient` uses the static `AUTH_API_TOKEN`.
+
+Change password: portal `Auth.changePassword`, app `Amplify.Auth.updatePassword`. Logout: portal `Auth.signOut({global:false})` (SSO users `skipFederatedLogout`); app `signOut()` — the FCM-token delete is **commented out**.
+
+**5–7. Components / contracts / data.** Cognito User pool; no GoBCB endpoint of its own. Push tokens stay registered after app logout (F3.9 note).
+
+**8. Code references.** Portal `…/core/interceptors/token.interceptor.ts:133-193` (earlier version commented out above), `…/user-profile-pages.component.ts:299-340`, `…/layout/components/default/default.component.ts:128-142`; app `data/lib/remote/api_client/*.dart`, `data/lib/service/aws_amplify_service.dart:157-189`, `lib/presentation/feature/profile/profile_view_model.dart:343,370-382`.
+
+**9. Handover notes.** ① A new backend path needing a token **must be added to the allow-list**, or calls go out tokenless and get 401. ② Logout is local everywhere; OneID session survives (F6.8). ③ App logout keeps push delivery (see F3.9).
+
+### F6.11 Delete account and app force-update
+
+> **Bangla name:** অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update
+
+**1. Name and purpose.** Two identity-API-backed app controls: delete the customer profile (user app), and the minimum-version gate at start-up (user app + checker app).
+
+**2. Trigger and actor.** App Profile → Delete account; splash screens. Actor: customer / gate staff.
+
+**3. Business flow.** Delete: confirm → profile deleted, signed out, local data cleared. Force update: if the published minimum version is newer, a non-dismissible "Update required" sheet opens the store link and the app never leaves splash. A failed version check is **ignored** (app continues).
+
+**4. Technical flow.** Delete: **[HTTP + user token]** `DELETE {identity}/user/delete-my-profile` (app `ProfileApiClient`) → `signOut()`, analytics `delete_user`. (Amplify `deleteUser()` exists unused — the Cognito user is *not* deleted by the app.) Version: **[HTTP, static key]** `GET user/allowed-app-version` → app mapper compares dotted versions (different part-count ⇒ update required); user app reads `data.up.<platform>`, checker app reads `data.tc.<platform>`.
+
+**5–8. Components / contracts / code.** Identity API (external). Response shape: sample in F3.1 (full `up` + `tc`). App code: `profile_view_model.dart:385-393`, `auth_repository_impl.dart:247-252`; version `splash_view_model.dart`, `data/lib/repository/app_repository_impl.dart:88-115`, `data/lib/mapper/app_version_mapper.dart`; checker variant `rvl-gobcb-checker-app/data/lib/mapper/app_version_mapper.dart:9-11`.
+
+**9. Handover notes.** ① Whether GoBCB-side data (orders, tickets, issues) is deleted with the profile is handled nowhere in these repos `[UNCONFIRMED]`. ② The portal has `deleteUserProfile()` but no screen calls it — deletion is app-only. ③ `AUTH_API_BASE_URL` is not in the checker app's required-env list; missing it silently disables the version gate.
+
+### F6.12 Checker login
+
+> **Bangla name:** চেকার লগইন
+
+**1. Name and purpose.** Gate staff sign in to the checker app with the credentials an admin created (F1.17/F6.5), against the **TicketChecker** Cognito pool, after passing the version gate.
+
+**2. Trigger and actor.** Checker app `/splash` → `/signIn` → `/eventPage`. Actor: gate checker (role claim `ticket-checker` added by the scheme, F6.14).
+
+**3. Business flow.** Splash checks version + existing session (straight to events if signed in); otherwise phone + password → event page loads assignments (F4.1); sign-out lives on the event page.
+
+**4. Technical flow.** Version **[HTTP, static key]** `GET user/allowed-app-version` (reads `tc` entries); sign-in via Amplify Flutter `Auth.signIn("+880…", password)` (any unresolved challenge leaves the session `null`); first backend call **[HTTP + user token]** `GET /admin/api/v1/ticket-checker-gate/event-info`; sign-out local.
+
+**5–8. Components / contracts / code.** Cognito TicketChecker pool (`AMPLIFY_CONFIG`); identity API (version). Checker app `sign_in_view_model.dart`, `data/lib/service/aws_amplify_service.dart:35-62`, clients `auth_api_client.dart` / `ticket_api_client.dart`; required env `VDS_CERTIFICATE`, `AMPLIFY_CONFIG`, `API_BASE_URL` (`lib/main/main.dart:14-18`).
+
+**9. Handover notes.** ① Debug builds **log the password** (`Logger.debug`, `kDebugMode` only) — never share debug logs. ② No password change/reset in the app (admins reset; the backend `PUT ticket-checker/change-password` has no client). ③ Disabling a checker signs out the session but the app keeps working offline with downloaded tickets until the next server call. ④ Local: Amplify Flutter can't target Floci — sign-in untestable locally; seeded checker `+8801700000021` / `Passw0rd!23`.
+
+### F6.13 Agent pool and offline-sold tickets
+
+> **Bangla name:** এজেন্ট pool ও অফলাইনে বিক্রি টিকিট
+
+**1. Name and purpose.** The fourth Cognito pool (**Agent**) exists for offline seller agents. Their only API records that pre-printed **Partner Sale** tickets were sold, with the buyer's phone/ID. **No client in the five repos signs in with this pool or calls this API** `[UNCONFIRMED]` (Open queries).
+
+**2. Trigger and actor.** Unknown external client; actor: seller agent (accounts from F1.26/F6.5, role `agent`).
+
+**3. Business flow.** Partner tickets are generated for partner reservations (F1.11/F1.12); an agent sells some offline and records ticket numbers + holder identification; the platform refuses non-partner tickets, duplicates, and tickets past the event's selling-stop time.
+
+**4. Technical flow.**
+
+| # | From → To | Hop | What happens |
+|---|---|---|---|
+| 1 | Agent client → Ticketing `POST /ticketing/api/v1/offline-sold-ticket` | **[HTTP + user token]** (Agent pool, policy `agent`) | `OfflineSoldTicketCreateRequest { ticketNumbers[], ticketHolderIdentification? }` |
+| 2 | Ticketing | **[Shared table]** | Loads `Tickets` where `TicketType == "Partner Sale"`; missing/duplicate numbers → 400 |
+| 3 | Ticketing → Event `GET /event/api/v1/events/{eventId}` | **[HTTP + user token]** (forwarded) | Reject if `TicketSellingStopDateTime` passed |
+| 4 | Ticketing | — | Inserts `OfflineSoldTickets` rows (`UserId` = agent sub) |
+
+**5–6. Components / contracts.** Ticketing (`OfflineTicketSoldController` → `OfflineSoldTicketManager`), Event service, Cognito Agent pool, tables `Tickets` (read) / `OfflineSoldTickets` (write). Success: `{ "message": "Offline sold tickets created successfully." }`; 400 errors: "The following ticket is already sold: …", "Invalid QR || This ticket can not be sold: …", "Phone no must not exceed 20 characters.", "Ticket requests are no longer available as the ticket selling period of … has ended."
+
+**7. Data and side effects.** `OfflineSoldTickets` rows only — the ticket itself and its reservation are **not** updated.
+
+**8. Code references.** `…/Ticketing.Service/Api/OfflineTicketSoldController.cs:30-41`; `…/Managers/OfflineSoldTicketManager.cs:21-132`; partner filter `…/Storage/Repositories/TicketRepository.cs:36-40`; pool scheme `Core/ETP.Core/Configuration/DefaultAuthenticationConfig.cs:173-214`.
+
+**9. Handover notes.** ① No known client; the architecture doc also couldn't find one `[UNCONFIRMED]`. ② **Nothing reads `OfflineSoldTickets` back** (no report/screen) — confirm with BS23 whether another system consumes it. ③ Agent account management is anonymous (F6.18). ④ Seeded local agent `+8801700000031` / `Passw0rd!23`.
+
+<!-- 🔄 CONTINUE -->
