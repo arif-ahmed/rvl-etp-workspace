@@ -2892,5 +2892,148 @@ Response: পূর্ণ counter map (sample F4.2-এ)। মূল error: stan
 
 **9. Handover notes.** Active window-ই public discount endpoint (F1.16) দেয়; ওই cache-এর TTL ও এই worker-এর ২-মিনিট cycle-র কারণে discount expire হতে ~২ মিনিট দেরি হতে পারে।
 
+## 6. Cross-cutting (authentication, authorization, platform service)
+
+অনেক feature-এর সাথে সম্পর্কিত বিষয়: প্রতিটি client-এর sign-in, authorization-এর চার স্তর, service-to-service call, storage, messaging, logging, cache ও configuration। Cognito pool: **Admin, User, TicketChecker, Agent** — পঞ্চম `service` scheme (shared-key JWT) আছে কিন্তু অব্যবহৃত (F6.19 note)।
+
+### F6.1 Admin login (ফোন OTP + পাসওয়ার্ড)
+
+> **Bangla name:** অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)
+
+**1. Name and purpose.** তিন-ধাপে staff sign-in: ১০-অঙ্কের ফোন → ৬-অঙ্কের SMS code → Cognito password। সফল হলে browser Admin-pool token পায় যা প্রতিটি admin API call বহন করে; তিনটি role CloudFront download cookie-ও পায়।
+
+**2. Trigger and actor.** Admin portal `/auth/login` (`LoginComponent`)। Actor: staff (role `admin`, `event_manager`, `ticket_manager`, `ticket_operator`, `customer_support`)।
+
+**3. Business flow.**
+1. Staff `+880` ছাড়া ফোন লেখেন।
+2. Portal Serverless API-কে SMS code পাঠাতে বলে (অজানা নম্বরে "User not found.")।
+3. Staff code লেখেন (২ মিনিট পরে resend)।
+4. বৈধ code-এর পরে password field আসে; portal `+880<phone>` + password দিয়ে Cognito-তে sign-in করে।
+5. Portal `custom:role` পড়ে role-এর default page-এ নামে (`/program-management` — admin/event_manager(+ticket_manager); বাকিরা `/home`)।
+6. `admin`, `ticket_manager`, `ticket_operator` role-দের জন্য CloudFront signed cookie-ও আনে (F1.12-এর download)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Serverless `POST {serverless.baseUrl}/admin/login-2fa-send-otp` | **[HTTP, static key]** | `{ otp_type: "sms", destination: "+880…" }`; সফলতা `status_message == "otp_generated_and_enqueued_successfully"` |
+| 2 | Portal → Serverless `POST …/admin/login-2fa-verify-otp` | **[HTTP, static key]** | `otp` যোগ; সফলতা `sms_otp_verified_successfully`, নয়তো `invalid_otp` |
+| 3 | Portal → Cognito | Amplify `Auth.signIn(phone, password)` | Token বা challenge: `NEW_PASSWORD_REQUIRED` (portal একই password দিয়ে `completeNewPassword`), `SMS_MFA` (ফেরত আসে, handle হয় না — note) |
+| 4 | Portal → Cognito | `currentSession()/currentUserInfo()` | Access token ৫৫ মিনিট cache; `custom:role` ৫৫ মিনিট cache |
+| 5 | Portal → Ticketing `GET /ticketing/api/v1/booking-order-ticket/signed-cookie` | **[HTTP + user token]** | Role admin/ticket_manager/ticket_operator; response string থেকে তিনটি `CloudFront-*` cookie `document.cookie` দিয়ে (domain = `environment.cloudFront.mainDomain`) |
+
+ধাপ ১–৪-এ কোনো GoBCB service জড়িত নয়; service-রা user-কে দেখে পরের API call-এ (F6.14)।
+
+**5. Components.** Portal (`LoginComponent`, `CognitoService`, `EventService.setSignedCookie()`); Serverless API (external, source repo-তে নেই `[UNCONFIRMED]`); Cognito Admin pool; Ticketing (cookie); browser storage (Amplify token, `sessionStorage.lastKnownUserRole`, `localStorage.globalProgramId`, cookie)।
+
+**6. API contracts.**
+
+```json
+// POST {serverless}/admin/login-2fa-send-otp          // static Authorization header
+{ "otp_type": "sms", "destination": "+8801700000001" }
+// 200 → { "status_message": "otp_generated_and_enqueued_successfully" }
+
+// POST {serverless}/admin/login-2fa-verify-otp
+{ "otp_type": "sms", "destination": "+8801700000001", "otp": "123456" }
+// 200 → { "status_message": "sms_otp_verified_successfully" }   // ভুল → "invalid_otp"
+```
+
+Cognito call (Amplify, public client): `InitiateAuth`/`RespondToAuthChallenge` — error `NotAuthorizedException`, `UserNotFoundException`… `getCognitoErrorMessage`-এ টেক্সট ম্যাপ হয়। `signed-cookie` auth: policy `admin`, নয়তো 401।
+
+**7. Data and side effects.** লগইনে GoBCB backend কিছু লেখে না; Serverless API SMS পাঠায়; browser-এ token/role/cookie।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/modules/auth/login/login.component.ts:124-249`; `…/core/services/cognito.service.ts:213-246` (sign-in), `:261-302` (cache), `:444-472` (OTP call); `…/core/config/aws-exports.ts`; signed cookie `…/features/events/services/event.service.ts:234`; skip list `…/core/interceptors/auth.interceptor.ts:19-29`, `…/interceptors/program-id.interceptor.ts:15`।
+
+**9. Handover notes.** ① **SMS code শুধু browser যাচাই করে** — OTP ফলাফল Cognito বা service-এ পৌঁছায় না; staff password জানলে কেউ Cognito সরাসরি ডেকে ঢুকতে পারে। Admin pool নিজে MFA enforce করে কিনা repo-তে দেখা যায় না `[UNCONFIRMED]`। ② Serverless static key browser bundle-এ (সবাই পড়তে পারে)। ③ `SMS_MFA` pseudo-সফল হয়ে পরে role আনতে ব্যর্থ হয় — `confirmMFA()` helper আছে, কোনো screen ডাকে না। ④ Signed-cookie role exact-string match — দুই-role ব্যবহারকারী (`event_manager,ticket_manager`) লগইনে cookie পান না (top bar-এ refresh action)। ⑤ Local: OTP stub যেকোনো ফোনে code `123456` (`scripts/Setup-AdminPortal.ps1` proxy); test user `floci/seed-users.ps1`-এ, password `docs/local-dev.md`-এ।
+
+### F6.2 Admin forgot password
+
+> **Bangla name:** অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া
+
+**1. Name and purpose.** ফোনের নিয়ন্ত্রণ SMS code দিয়ে প্রমাণ করে নতুন admin password সেট করা; Admin service তা Cognito-তে লেখে, সব session বাতিল করে ও নতুন password SMS করে।
+
+**2. Trigger and actor.** Admin portal `/auth/forgot-password`। Actor: staff, anonymous।
+
+**3. Business flow.** ফোন → SMS code (F6.1-এর মতো Serverless call; verify `user_id` ফেরায়) → নতুন password (নীতি: ≥৮ অক্ষর, বড়/ছোট/সংখ্যা/চিহ্ন) → `set-forget-password` → session বাতিল, নতুন password SMS, লগইনে ফেরা। Screen-এর "Resend" বরং Cognito-র email flow চালু করে যার code এই screen জমা দেয় না (অসঙ্গতিপূর্ণ)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1–2 | Serverless send/verify OTP | **[HTTP, static key]** | F6.1-এর মতো; portal `response.user_id` রাখে |
+| 3 | Portal → Admin `POST /admin/api/v1/admin-users/set-forget-password` | **[HTTP, no token]** (`[AllowAnonymous]`) | `{ userId, password }` |
+| 4 | Admin → Cognito | AWS SDK | `AdminGetUser` (ফোন পড়ে), `AdminUserGlobalSignOut`, `AdminSetUserPassword(Permanent=true)` |
+| 5 | Admin → Notification API `POST {Notification:Endpoint}/notification/send-message` | **[HTTP, static key]** | SMS "Your password has been changed successfully. New Password is …" (স্পষ্ট টেক্সটে) |
+| 6 | Activity log | — | `AdminUser / PasswordResetCompleted` |
+
+UI-বিহীন কিন্তু পৌঁছানো-যায়: `GET /admin/api/v1/admin-users/forget-password?phoneNo=` → Cognito `AdminResetUserPassword` (`RESET_REQUIRED` করে), `true/false` ফেরায়।
+
+**5. Components.** Portal (`ForgotPasswordComponent`, `CognitoService.submitPassword()`); Admin service (`AdminUsersController` → `AdminUserManager` → `AdminUserProvider`); Cognito; Notification API (external); activity log।
+
+**6. API contracts.** `set-forget-password`: `200` + literal body `200`; 400 envelope-এ `ArgumentException` হয়ে Cognito-র নীতি-বার্তা। Sample:
+
+```json
+// POST /admin/api/v1/admin-users/set-forget-password
+{ "userId": "3f6c2a8e-0000-4000-8000-000000000001", "password": "N3w!Passw0rd" }
+// 400 → { "status": 400, "title": "Password did not conform with policy: …" }
+```
+
+**7. Data and side effects.** Cognito password প্রতিস্থাপন + সব session বাতিল; স্পষ্ট টেক্সট SMS; activity-log row।
+
+**8. Code references.** `…/modules/auth/forgot-password/forgot-password.component.ts:123-263`; `…/core/services/cognito.service.ts:432-434`; `…/Admin.Service/Api/AdminUsersController.cs:28-39,185-196`; `…/Admin.Domain/Managers/AdminUserManager.cs:197-231`; `…/Admin.Integration/Services/AdminUserProvider.cs:508-586`।
+
+**9. Handover notes.** ① **Backend OTP যাচাই করে না**: `set-forget-password` anonymous এবং body-র `userId`-তে (Cognito `sub` বা ফোন-username) বিশ্বাস করে — API Gateway route না আটকালে service-এ পৌঁছানো যে কেউ যেকোনো admin-এর password রিসেট করতে পারে `[UNCONFIRMED]` (Open queries)। ② Password SMS-এ স্পষ্ট টেক্সটে যায় (provisioning-ও একই, F6.5)। ③ অব্যবহৃত-কিন্তু-খোলা `GET forget-password` শুধু ফোন দিয়ে যেকোনো account-কে `RESET_REQUIRED` করতে পারে — মুছে ফেলার প্রার্থী।
+
+### F6.3 Admin change password ও logout
+
+> **Bangla name:** অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট
+
+**1. Name and purpose.** Sign-in করা admin নিজের password বদলান (তারপর sign out); logout browser session শেষ করে ও program নির্বাচন ও cookie মুছে। দুটোই browser↔Cognito-তে সীমিত।
+
+**2. Trigger and actor.** Admin portal top bar-এর profile menu (`/change-password`, logout)। Actor: যে কোনো sign-in করা staff।
+
+**3. Business flow.** Change: পুরোনো + নতুন password ×২ (≥৮ অক্ষর, ভিন্ন হতে হবে) → সফল বার্তা → এক সেকেন্ডে auto sign-out ও লগইন; ভুল পুরোনো password-এ "Current password is wrong."। Logout: নিশ্চিত → sign out, program id 0, `CloudFront-*` cookie মেয়াদোত্তীর্ণ, লগইন page।
+
+**4. Technical flow.** Change: Amplify `Auth.changePassword(user, old, new)` (Cognito `ChangePassword`)। Logout: `Auth.signOut()` (শুধু local), `ProgramService.setProgramId(0)`, `clearSignedCookie()`।
+
+**5–6. Components / contracts.** Portal component + Cognito — **কোনো GoBCB endpoint নেই**। (Server-side `AdminUserManager.ChangePasswordAsync` আছে controller ছাড়া; portal-এর `ChangePasswordService` অস্তিত্বহীন `PUT /admin/api/v1/Users/change-password` ডাকে ও অব্যবহৃত — দুটোই dead code।)
+
+**7. Data and side effects.** Cognito password বদল; logout-এ browser storage/cookie মুছে।
+
+**8. Code references.** `…/modules/auth/change-password/change-password.component.ts:50-85`; `…/core/services/cognito.service.ts:303-352`; `…/layout/app.topbar.component.ts:80-120`; dead: `…/Admin.Domain/Managers/AdminUserManager.cs:181-195`, `…/change-password/change-password.service.ts:20-22`।
+
+**9. Handover notes.** ① Sign-out **local** (`{global:true}` নয়) — অন্য session তাদের refresh token শেষ না হওয়া পর্যন্ত বেঁচে; global বাতিল হয় কেবল disable/password reset-এ (F6.5)। ② Cookie পরিষ্কারকরণ `domain` attribute ছাড়া করে, তাই browser আসল CloudFront cookie মেয়াদ শেষ পর্যন্ত রাখতে পারে — deployed environment-এ যাচাই করুন।
+
+### F6.4 Admin session (টোকেন সংযুক্তি ও রিফ্রেশ)
+
+> **Bangla name:** অ্যাডমিন সেশন (টোকেন সংযুক্তি ও রিফ্রেশ)
+
+**1. Name and purpose.** Admin portal-এর প্রতিটি API call কীভাবে `Authorization` ও `X-Program-Id` header পায়, token মেয়াদের আগে কীভাবে refresh হয়, আর কখন হাল ছেড়ে লগইনে ফেরে।
+
+**2. Trigger and actor.** Portal-এর প্রতিটি HTTP call; সুস্থ থাকলে user কিছু দেখেন না।
+
+**3. Business flow.** Cognito refresh token বৈধ থাকা পর্যন্ত session reload ও idle টিকে থাকে; refresh ব্যর্থ হলে (মেয়াদ/বাতিল) পরের call sign-out + লগইন page ঘটায়।
+
+**4. Technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Skip list | `/admin-users/forget-password`, `admin/login-2fa-*`, `/admin-users/set-forget-password`-এ token যায় না |
+| 2 | Token | `CognitoService.getAccessToken()`: ৫৫ মিনিট cache, `exp`-এর ২ মিনিট আগে proactive refresh |
+| 3 | সংযুক্তি | `Authorization: Bearer …` (AuthInterceptor) |
+| 4 | Program | `/admin/login-2fa*` ছাড়া প্রতিটি request-এ `X-Program-Id: <globalProgramId>` (0 = global) |
+| 5 | 401-এ | Single-flight refresh (`isRefreshing` + `BehaviorSubject`): `Auth.currentSession()`, ব্যর্থ request নতুন token-এ একবার retry; মাঝের request অপেক্ষা করে |
+| 6 | Refresh ব্যর্থ | cache + `lastKnownUserRole` মুছে, `Auth.signOut()`, `/auth/login`-এ navigate |
+
+Interceptor ক্রম (app.module.ts): `AuthInterceptor`, `LoaderInterceptor`, `ProgramIdInterceptor`।
+
+**5–6. Components / contracts.** Portal interceptor + `CognitoService`; header ভোক্তা F6.14 (`Authorization`) ও F6.16 (`X-Program-Id` — শুধু Admin service; বাকিরা উপেক্ষা করে)।
+
+**7. Data and side effects.** শুধু browser cache (token ৫৫ মিনিট, user info ৫৫ মিনিট)।
+
+**8. Code references.** `…/core/interceptors/auth.interceptor.ts:14-102`; `…/interceptors/program-id.interceptor.ts:14-29`; `…/core/services/cognito.service.ts:88-211,261-302`; `…/app.module.ts:22-33`।
+
+**9. Handover notes.** ① দুটি স্বাধীন refresh guard (interceptor + service) — একসাথে বদলান। ② SignalR chat connection interceptor-এর বাইরে (token query string-এ, F1.24)। ③ **Idle timeout নেই** — session-এর দৈর্ঘ্য Cognito-র refresh-token আয়ু (pool setting, repo-তে নেই)। ④ Role বদল দেখতে ৫৫ মিনিট পর্যন্ত লাগতে পারে (role cache; backend-এর নিজস্ব claim cache — F6.15)।
+
 <!-- 🔄 CONTINUE-BN -->
 
