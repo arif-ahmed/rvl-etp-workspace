@@ -93,10 +93,10 @@ Write-Host "AWS:Bucket:Name           = etp-local"
 Write-Host "AWS:Bucket:BaseUrl        = http://localhost:4566"
 foreach ($p in $poolSecrets.Keys) {
     $s = $poolSecrets[$p]
-    Write-Host "AWS:CognitoPool:$p:PoolId   = $($s.PoolId)"
-    Write-Host "AWS:CognitoPool:$p:ClientId = $($s.ClientId)"
-    Write-Host "AWS:CognitoPool:$p:Authority = https://localhost:4567/$($s.PoolId)"
-    Write-Host "AWS:CognitoPool:$p:Metadata  = https://localhost:4567/$($s.PoolId)/.well-known/openid-configuration"
+    Write-Host "AWS:CognitoPool:$($p):PoolId   = $($s.PoolId)"
+    Write-Host "AWS:CognitoPool:$($p):ClientId = $($s.ClientId)"
+    Write-Host "AWS:CognitoPool:$($p):Authority = https://localhost:4567/$($s.PoolId)"
+    Write-Host "AWS:CognitoPool:$($p):Metadata  = https://localhost:4567/$($s.PoolId)/.well-known/openid-configuration"
 }
 
 Write-Host "`nUsers (username = phone, password '$password'):"
