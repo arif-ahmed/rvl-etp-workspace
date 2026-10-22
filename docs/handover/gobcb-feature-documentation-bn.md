@@ -2328,5 +2328,229 @@ Flutter user app-এ (`rvl-gobcb-user-app`, app id `gobcbticket`) customer-দ�
 
 **9. Handover notes.** "ticket generated" push-এ ঠিক কী আছে (title/body ভাষা, data key) তা **external Notification API** (F5.12) বা admin প্রেরকের হাতে — এই repo-গুলোতে দেখা যায় না `[UNCONFIRMED]`।
 
+## 4. Checker App
+
+Flutter checker app-এ (`rvl-gobcb-checker-app`) gate staff-দের feature, TicketChecker Cognito pool। App **offline-first**: gate-এর টিকিট ও scan counter স্থানীয় database-এ (drift/SQLite) রাখে ও timer-এ backend-এর সাথে sync করে। লগইন F6.12।
+
+> 📦 **Explainer: স্থানীয় database-সহ offline-first**
+> ম্যাচডেতে gate-এর নেটওয়ার্কে ভরসা করা যায় না। Checker app বৈধ টিকিট নম্বর একবার নামায় (F4.2), প্রতিটি scan **device-এই** যাচাই করে — স্থানীয় তালিকা ও app-এর ভেতরে থাকা certificate দিয়ে (F4.3), scan স্থানীয়ভাবে রেকর্ড করে, আর প্রতি ৯০ সেকেন্ডে counter backend-এ ঠেলে দেয়/টেনে আনে (F4.5)। Backend একই counter Redis-এ রাখে, তাই একই gate-এর অন্য device-গুলো মিলে যায়।
+
+### F4.1 নির্ধারিত event ও gate
+
+> **Bangla name:** নির্ধারিত ইভেন্ট ও গেট দেখা
+
+**1. Name and purpose.** লগইনের পরে checker তাঁর প্রশাসক-নির্ধারিত event ও entry gate দেখেন ও কাজের জন্য বেছে নেন।
+
+**2. Trigger and actor.** Checker app → `/eventPage` (event/gate picker)। Actor: gate checker, TicketChecker pool (policy `ticket-checker`)।
+
+**3. Business flow.**
+1. Checker সাইন-ইন করেন (F6.12) ও event page খোলেন।
+2. App নির্ধারিত event (cover image, তারিখ, entry gate-এর নাম ও offline download চালু কিনা) দেখায়।
+3. Event/gate বেছে নিলে scanner dashboard (`/qrPage`) খোলে।
+4. তালিকা device-এ cached, তাই offline-এও খোলে।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | App → Admin `GET /admin/api/v1/ticket-checker-gate/event-info` | **[HTTP + user token]** | চেকারের `TicketCheckerEventInfo` (নির্ধারিত event + gate + `IsDownloadEnabled`) |
+| 2 | Admin service | — | লগইন করা `sub`-এর জন্য `TicketCheckerGates` / `TicketCheckerGateUsers` পড়ে (মালিক Admin) |
+| 3 | App storage | — | Response shared preference-এ (`event-list`) offline fallback হিসেবে; প্রতি sync cycle-এ আবার আনে (F4.5) |
+
+**5. Components.** Checker app; Admin service; TicketChecker pool; `TicketCheckerGates`, `TicketCheckerGateUsers` টেবিল।
+
+**6. API contracts.**
+
+```json
+// 200
+{
+  "ticketCheckerGateId": 88,
+  "eventId": "b8e6a9d2-3f1c-4e7a-9d5f-6c2b1a8e0d34",
+  "eventLongId": 1042,
+  "eventName": "2nd ODI — Bangladesh vs Sri Lanka",
+  "eventCoverImage": "https://<cloudfront>/<key>.jpg",
+  "eventStartDateTime": "2026-07-08T14:00:00Z",
+  "eventEndDateTime": null,
+  "isDownloadEnabled": true,
+  "entryGateName": "Gate 3 — North",
+  "entryGateIds": [3, 4],
+  "userSubId": "a1b2c3d4-…",
+  "userName": "Gate Checker 12"
+}
+```
+
+মূল error: standard envelope; assignment না থাকলে app `ticket_checker_event_not_found` দেখায়।
+
+**7. Data and side effects.** Server-এ কিছু নয়; device-এ shared-preferences cache।
+
+**8. Code references.** `rvl-gobcb-checker-app/lib/presentation/feature/event_page/…`; `data/lib/remote/api_service/ticket_api_service_impl.dart`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TicketCheckerGateController.cs` (`event-info`); assignment নিজে F1.18।
+
+**9. Handover notes.** ① Assignment admin portal-এ (F1.18); assignment-হীন checker কোনো event দেখেন না। ② `EntryGateIds` তালিকা — এক assignment কয়েক gate ঢাকতে পারে; scan তালিকার সাথে যাচাই হয় (F4.3)।
+
+### F4.2 Offline যাচাইয়ের টিকিট download
+
+> **Bangla name:** অফলাইন টিকিট যাচাইয়ের জন্য টিকিট ডাউনলোড
+
+**1. Name and purpose.** নির্ধারিত event/gate-এর বৈধ টিকিট নম্বর দিয়ে device-এর স্থানীয় database ভরাট — যাতে নেটওয়ার্ক ছাড়াই যাচাই চলে।
+
+**2. Trigger and actor.** Checker app-এ event বেছে নেওয়ার পরে প্রথম sync (ও scanner dashboard-এর ম্যানুয়াল "sync" বোতাম)। Actor: gate checker।
+
+**3. Business flow.**
+1. Event/gate বেছে নেওয়ার পরে app একটি sync করে (F4.5)।
+2. Backend-এর উত্তরে ওই event/gate-র **সম্পূর্ণ টিকিট-নম্বর map** থাকে — এটাই download।
+3. App নম্বরগুলো স্থানীয় drift database-এ লিখে offline scan-এর জন্য প্রস্তুত হয়।
+4. Checker offline copy রাখতে পারবে কিনা `IsDownloadEnabled` flag (F4.1) নিয়ন্ত্রণ করে, যা admin রিসেট করতে পারেন (F1.18; cleanup worker F5.15)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | App → TicketChecker `POST /ticketchecker/api/v1/tickets/sync-tickets` | **[HTTP + user token]** | খালি/ছোট scan map; response = প্রামাণিক পূর্ণ টিকিট map (নিচে) |
+| 2 | TicketChecker `TicketsManager` | — | Event/gate-প্রতি প্রথম call-এ Ticketing service থেকে Redis hash `ticket_checker_tickets:event_{eventLongId}_gate_{gateId}` ভরে (`GET /ticketing/api/v1/booking-order-ticket/ticket-numbers?eventId=…&levelIds=…`), RedLock `ticket_checker_gate_{gateId}`-এর ভেতরে |
+| 3 | TicketChecker DB | **[Shared table]** | Checker-এর gate বের করতে `Events`, `TicketCheckerGates`, `BlockLevelEntryGates` mirror পড়ে |
+| 4 | App | — | টিকিট নম্বর স্থানীয় drift DB-তে (`QrDao`); পরের sync শুধু counter হালনাগাদ করে |
+
+**5. Components.** Checker app (drift DB); TicketChecker service (Redis + lock); Ticketing service (টিকিট নম্বর); এই flow-এ লেখা টেবিল নেই।
+
+**6. API contracts.** Endpoint F4.5-এর মতোই — `POST /ticketchecker/api/v1/tickets/sync-tickets`, body `{"<ticketNumber>": 0}` বা pending scan; response পূর্ণ map:
+
+```json
+// 200
+{
+  "BCB-ODI2-GL12-A1": 0,
+  "BCB-ODI2-GL12-A2": 0,
+  "BCB-ODI2-GL12-A3": 1
+}
+```
+
+(সংখ্যা = ওই টিকিট এই gate-এ ইতিমধ্যে কতবার ব্যবহৃত হয়েছে — সব device মিলিয়ে।)
+
+**7. Data and side effects.** প্রথম sync-এ Redis hash `ticket_checker_tickets:event_…_gate_…` তৈরি; device-এ স্থানীয় DB row; PostgreSQL-এ কিছু নয় (scan DB-তে পৌঁছায় F5.14-এর মাধ্যমে, এখানে নয়)।
+
+**8. Code references.** `rvl-gobcb-checker-app/data/lib/repository/qr_repository_impl.dart`, `data/lib/local/drift_database/…`; `rvl-gobcb-backend/Services/TicketChecker/ETP.TicketChecker.Domain/Managers/TicketsManager.cs`; টিকিট উৎস `rvl-gobcb-backend/Core/ETP.Core/ServiceClient/TicketingClient/TicketingClient.cs`।
+
+**9. Handover notes.** ① Redis flag `ticketCheckerDbSync` চালু থাকা অবস্থায় (F5.14 drain চলাকালে) sync endpoint refuse করে — app error পেয়ে retry করে। ② পুরো gate-এর টিকিট (হাজার হাজার হতে পারে) এক JSON map-এ যায় — বড় gallery-তে payload size খেয়াল রাখুন।
+
+### F4.3 QR scan validation
+
+> **Bangla name:** QR স্ক্যান করে টিকিট যাচাই
+
+**1. Name and purpose.** Gate-এর মূল কাজ: টিকিটের QR স্ক্যান করে — offline-এ, device-এই — ঠিক করা যে প্রবেশকারী ঢুকতে পারবেন কিনা।
+
+**2. Trigger and actor.** Checker app → `/qrPage` (scanner)। Actor: gate checker।
+
+**3. Business flow.** প্রতিটি scan-এ app আলাদা শব্দসহ পাঁচরকম ফলাফল দেখায়:
+1. **Valid** — টিকিট এই event ও gate-এর, signature ঠিক, আগে ব্যবহৃত নয় (প্রবেশ স্থানীয়ভাবে রেকর্ড)।
+2. **Already checked** — টিকিট আগে ব্যবহৃত (এই বা অন্য device-এ)।
+3. **Wrong event** — QR-এর event id নির্ধারিত event-এর সাথে মেলে না।
+4. **Wrong gate** — টিকিটের entry gate নির্ধারিত gate-গুলোর ভেতরে নয়।
+5. **Invalid** — signature যাচাই ব্যর্থ বা টিকিট স্থানীয় তালিকায় নেই (offline-sold টিকিট → app নিশ্চিতকরণ চায়, F6.13)।
+
+**4. Technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Scan | fork করা `flutter_barcode_scanner` plugin QR string পড়ে |
+| 2 | Decode | `vds_qr_decoder.dart` **VDS** (Visible Digital Seal) payload base64-decode করে (gzip-aware): `payload`, `signature`, `certSN`, `issuerDN` |
+| 3 | Signature যাচাই | **Offline** — Kotlin `MethodChannel('certificate/methods').verifyCertificate` (android `MainActivity.kt`) `VDS_CERTIFICATE` env-এর PEM certificate দিয়ে |
+| 4 | নিয়ম যাচাই | Event id ও entry gate `TicketCheckerEventInfo`-র (F4.1) সাথে; ব্যবহারের সংখ্যা স্থানীয় DB-র (F4.2) সাথে তুলনা |
+| 5 | রেকর্ড | Valid scan স্থানীয়ভাবে `isSynced: false` হিসেবে জমা; F4.5 ঠেলে দেয় |
+
+> 📦 **Explainer: VDS QR ও কেন যাচাই offline**
+> প্রতিটি টিকিট PDF-এ EU VDS ফরম্যাটের QR থাকে, যা TSP PDF sign করার সময় তৈরি হয় (F5.8)। QR-তে টিকিটের data-র সাথে TSP-র certificate দিয়ে করা ক্রিপ্টোগ্রাফিক signature থাকে। App-এ **public** certificate (`VDS_CERTIFICATE`) থাকে; signature যাচাই শুধু গণিত — QR সত্য কিনা প্রমাণে নেটওয়ার্ক লাগে না। এরপর gate/event নিয়ম স্থানীয় data-র সাথে সরল তুলনা।
+
+**5. Components.** Checker app (scanner plugin, VDS decoder, MethodChannel, drift DB, `assets/sounds/`); TSP certificate chain (F5.8-এ তৈরি)।
+
+**6. API contracts.** নেই — এই feature সম্পূর্ণ offline।
+
+**7. Data and side effects.** স্থানীয় drift DB row (scan + `isManual=false`); F4.5-এর আগে কিছু যায় না।
+
+**8. Code references.** `rvl-gobcb-checker-app/lib/presentation/feature/qr_page/qr_page_view_model.dart`, `qr_page/state/qr_check_state.dart`; `data/lib/service/vds_qr_decoder.dart`; `android/app/src/main/kotlin/com/mahfuznow/hello_flutter/MainActivity.kt`।
+
+**9. Handover notes.** ① `verifyCertificate`-র শুধু Android (Kotlin) দিক পাওয়া গেছে — iOS-এ আছে কিনা `[UNCONFIRMED]`। ② TSP signing certificate ঘুরিয়ে দিলে নতুন `VDS_CERTIFICATE`-সহ app update দিতে হবে (বহু-cert ব্যবস্থা নেই)। ③ MethodChannel-এর নাম `certificate/methods`।
+
+### F4.4 Manual entry
+
+> **Bangla name:** ম্যানুয়াল এন্ট্রি (টিকিট নম্বর টাইপ করে যাচাই)
+
+**1. Name and purpose.** QR পড়া না গেলে প্রবেশকারীকে ঢাকানো: checker টিকিট নম্বর টাইপ করেন ও app একই স্থানীয় নিয়মে যাচাই করে।
+
+**2. Trigger and actor.** Checker app → `/manualEntry` (এবং `/manualTicketValidation`, F4.6)। Actor: gate checker।
+
+**3. Business flow.**
+1. Scanner dashboard-এ Manual entry আছে।
+2. Checker টিকিট নম্বর টাইপ করেন।
+3. App QR scan-এর মতোই যাচাই করে (আগে-ব্যবহৃত / event / gate) ও ফলাফল দেখায়।
+4. Manual প্রবেশ `isManual` চিহ্নিত হয় ও **−1** হিসেবে sync হয় (F4.5), যাতে backend আলাদা করে চিনতে পারে (manual-entry report, F1.19)।
+
+**4. Technical flow.** F4.3-এর ৪–৫ নং ধাপের মতোই, decoded QR-এর বদলে টাইপ করা নম্বর; signature যাচাই নেই (QR ছাড়া যাচাইয়ের উপায় নেই)।
+
+**5. Components.** Checker app (manual_entry feature, drift DB)।
+
+**6. API contracts.** সরাসরি নেই; −1 চিহ্ন F4.5-এর map-এ যায়।
+
+**7. Data and side effects.** স্থানীয় DB row `isManual = true`।
+
+**8. Code references.** `rvl-gobcb-checker-app/lib/presentation/feature/manual_entry/…`, `…/manual_ticket_validation/…`।
+
+**9. Handover notes.** ① Manual প্রবেশে সত্যতা প্রমাণিত হয় না — শুধু নামানো তালিকার সাথে নম্বর মেলায়; offline-sold টিকিট (F6.13) এখানে নিশ্চিতযোগ্য হয়ে আসে। ② Map-এর +1/−1-ই server-এ manual/QR পার্থক্যের একমাত্র চিহ্ন।
+
+### F4.5 Scan sync (৯০ সেকেন্ডের হার্টবিট)
+
+> **Bangla name:** স্ক্যান সিঙ্ক (৯০ সেকেন্ডের হার্টবিট)
+
+**1. Name and purpose.** এই device-এর নতুন scan আপলোড, gate-এর সব device-এর প্রামাণিক ব্যবহার-সংখ্যা ডাউনলোড, আর event-এর বৈধতা refresh — প্রতি ৯০ সেকেন্ডে বা চাহিদামতো।
+
+**2. Trigger and actor.** App-এর background timer (৯০ s) ও ম্যানুয়াল sync বোতাম। Actor: gate checker।
+
+**3. Business flow.**
+1. প্রতি ৯০ সেকেন্ডে app তার না-পাঠানো scan পাঠায় (টিকিট নম্বর → +1 QR, −1 manual)।
+2. Backend সেগুলো gate-এর counter-এ যোগ করে ও **সম্পূর্ণ** counter map ফেরায়।
+3. App স্থানীয় counter প্রতিস্থাপন করে — অন্য device-এর scan এখানে "already checked" হয়ে দেখা যায়।
+4. প্রতি cycle-এ app event info-ও (F4.1) আবার আনে; offline হলে cached copy।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | App → TicketChecker `POST /ticketchecker/api/v1/tickets/sync-tickets` | **[HTTP + user token]** | Body: pending scan map; policy `ticket-checker` |
+| 2 | `TicketsManager.UpdateAndSyncTickets` | — | Redis flag `ticketCheckerDbSync` চালু থাকলে refuse (F5.14); RedLock `ticket_checker_gate_{gateId}` (expiry ২ s, wait ৫ s) নেয় |
+| 3 | Redis | — | টিকিট-প্রতি `HashIncrementAsync` (+1/−1) hash `ticket_checker_tickets:event_…_gate_…`-এ; চেকার-প্রতি cache `ticket_checker_checked_tickets:{eventLongId}_{gateId}_{userSubId}` (`ConcurrentDictionary<string, TicketInfo>`) রাখে |
+| 4 | Response | — | পূর্ণ hash ফেরে (`HashGetAllAsync<int>`); app স্থানীয় scan `isSynced` করে ও counter হালনাগাদ করে |
+
+**5. Components.** Checker app; TicketChecker service; Redis (counter, flag, lock); Ticketing service (শুধু প্রথম ভরাটে, F4.2)।
+
+**6. API contracts.** `POST /ticketchecker/api/v1/tickets/sync-tickets` — auth: TicketChecker pool (policy `ticket-checker`)। Body `Dictionary<string,int>`:
+
+```json
+{ "BCB-ODI2-GL12-A7": 1, "BCB-ODI2-GL12-A9": -1 }
+```
+
+Response: পূর্ণ counter map (sample F4.2-এ)। মূল error: standard envelope; app-নিয়ন্ত্রিত বার্তা `user_disabled_for_this_gate` (শিফটের মধ্যে checker disable) ও `ticket_checker_event_not_found`।
+
+**7. Data and side effects.** Redis hash হালনাগাদ; scan PostgreSQL-এ পৌঁছায় শুধু Admin drain worker-এ (F5.14) যা `CheckedTickets`-এ লেখে।
+
+**8. Code references.** `rvl-gobcb-checker-app/lib/presentation/feature/qr_page/qr_page_view_model.dart`; `data/lib/remote/api_service/ticket_api_service_impl.dart`; `rvl-gobcb-backend/Services/TicketChecker/ETP.TicketChecker.Service/Api/TicketController.cs`; `…/Managers/TicketsManager.cs`।
+
+**9. Handover notes.** ① Counter শুধু Redis-ে F5.14 drain না হওয়া পর্যন্ত — admin report (F1.19) DB টেবিল পড়ে, তাই scan report-এ ~৩০ মিনিট পর্যন্ত দেরি। ② App দীর্ঘ offline থাকলেও scan হারায় না: স্থানীয়ভাবে জমা হয়ে পরে sync হয়; শুধু "অন্য device-এ already checked" সতেজতা কমে।
+
+### F4.6 শুধু signature যাচাই (ম্যানুয়াল টিকিট ভ্যালিডেশন)
+
+> **Bangla name:** শুধু সিগনেচার যাচাই (ম্যানুয়াল টিকিট ভ্যালিডেশন)
+
+**1. Name and purpose.** QR-এর signature **ছাড়া** gate/event নিয়ম প্রয়োগ এবং প্রবেশ রেকর্ড না করে শুধু সত্য-নকল যাচাই — সন্দেহজনক QR পরীক্ষার জন্য।
+
+**2. Trigger and actor.** Checker app → `/manualTicketValidation`। Actor: gate checker।
+
+**3. Business flow.** Checker scan (বা টাইপ) করেন; app VDS QR decode করে F4.3-এর মতোই offline signature যাচাই করে, কিন্তু শুধু সত্য/নকল জানায় — event/gate তুলনা করে না, counter বাড়ায় না।
+
+**4. Technical flow.** F4.3-এর ১–৩ ধাপ শুধু; স্থানীয় counter লেখা নেই, sync হয় না।
+
+**5–7. Components / contracts / side effects.** F4.3-এর মতো নিয়ম ও counter বাদে; API call নেই, data লেখা নেই।
+
+**8. Code references.** `rvl-gobcb-checker-app/lib/presentation/feature/manual_ticket_validation/…`।
+
+**9. Handover notes.** এই screen আর F4.4-এর পার্থক্য চোখে পড়ে না: F4.4 প্রবেশকারীকে ঢাকায় (প্রবেশ রেকর্ড করে), এই screen শুধু সত্যতা যাচাই করে।
+
 <!-- 🔄 CONTINUE-BN -->
 
