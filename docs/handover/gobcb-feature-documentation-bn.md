@@ -2135,5 +2135,198 @@ Capacity endpoint সরল সংখ্যা/আসন তালিকা দ�
 
 **9. Handover notes.** Backend-সরবরাহকৃত string (event-এর নাম, notice) **অনূদিত নয়** — staff যা লিখেছেন তাই; দ্বিভাষিক প্রদর্শনের সময় মনে রাখুন।
 
+## 3. User App
+
+Flutter user app-এ (`rvl-gobcb-user-app`, app id `gobcbticket`) customer-দের শুরু করা feature। App কেনার flow-গুলো **একই API**-তে web portal-এর আয়না, তাই নিচের প্রতিটি feature শুধু ভিন্ন জিনিস (native flow, WebView payment, download, push) নিয়ে আলোচনা করে ও portal-যমজের link দেয়। Auth flow F6.6–F6.11-তে। Clean architecture: `lib/presentation` (feature-first screen + view model), `domain/` (interface), `data/` (implementation); DI হাতে গড়া (`DataModule`)।
+
+### F3.1 Splash, version gate ও onboarding
+
+> **Bangla name:** স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং
+
+**1. Name and purpose.** App চালু হওয়া: environment যাচাই, **সর্বনিম্ন app version** enforce (force-update), onboarding দেখানো, session ফিরিয়ে আনা।
+
+**2. Trigger and actor.** App launch → `/splash`। Actor: app user।
+
+**3. Business flow.** Splash env/config দেখে, identity API থেকে allowed version নিয়ে ইনস্টল করা build-এর সাথে তুলনে করে (`package_info_plus`); পুরোনো build-এ force-update screen দেখায় store link-সহ; নতুন ইনস্টলে onboarding page, তারপর login/home।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | App → identity `GET user/allowed-app-version` | **[HTTP, static key]** (`AUTH_API_BASE_URL` + `AUTH_API_TOKEN`) | `{ data: { up?: { android?, ios? }, tc?: { android?, ios? } } }` — প্রতিটি `{ version, build_number, app_link }` ("up" = user portal app, "tc" = ticket checker) |
+| 2 | তুলনা | — | `package_info_plus` build number বনাম allowed; নিচে হলে force update |
+| 3 | Session restore | — | `AMPLIFY_CONFIG` থেকে Amplify session; `custom:isprofilecomplete` profile completion নিয়ন্ত্রণ করে |
+
+**5. Components.** App-এর splash/onboard feature; identity API (external); package_info_plus।
+
+**6. API contracts.** Response sample:
+
+```json
+// GET {AUTH_API_BASE_URL}/user/allowed-app-version
+{ "message": null, "status": "ok",
+  "data": { "up": { "android": { "version": "2.3.0", "build_number": 120, "app_link": "https://play.google.com/…" },
+                    "ios":     { "version": "2.3.0", "build_number": 120, "app_link": "https://apps.apple.com/…" } } } }
+```
+
+**7. Data and side effects.** onboarding flag ছাড়া স্থানীয় কিছু নয়।
+
+**8. Code references.** `lib/presentation/feature/splash/…`; `data/lib/remote/api_service/app_version_api_service/app_version_api_service_impl.dart`; response model `data/lib/remote/response/app_version_response.dart`।
+
+**9. Handover notes.** সর্বনিম্ন version বাড়ানো identity-API-র data পরিবর্তন, app release নয় — কিন্তু নামানো দিয়ে প্রকাশিত ভাঙা build ঠিক হয় না; identity API-র মালিক নিশ্চিত করতে হবে (Open queries)।
+
+### F3.2 Home ও event browse (অ্যাপ)
+
+> **Bangla name:** হোম ও ইভেন্ট ব্রাউজ (অ্যাপ)
+
+**1. Name and purpose.** App home (banner, আসন্ন event), event তালিকা ও বিস্তারিত — মোবাইলে portal F2.1/F2.2।
+
+**2. Trigger and actor.** App `/home`, `/eventList`, `/eventDetails`। Actor: app user (anonymous browsing চলে)।
+
+**3–4. Business/technical flow.** Portal-ের মতোই endpoint (Event service — anonymous): `event/api/v1/events/list`, `events/{id}`, `events/programs`, `landing-page-image/public`, `header-footer`; details screen কেনার জন্য `events/venue-details/{eventId}`-ও আনে। লগইনে home screen push token রেজিস্টার করে (F3.9)। Analytics: screen `screen_view` ও network error Firebase Analytics-এ যায়।
+
+**5–7. Components / contracts / data.** F2.1/F2.2-এর মতো (Event service, Redis cache)। লেখা নেই।
+
+**8. Code references.** `lib/presentation/feature/{home,event_list,event_details}/…`; `data/lib/remote/api_service/event_api_service_impl.dart`, `venue_details_api_service_impl.dart`।
+
+**9. Handover notes.** App সব service-এর জন্য **একটাই gateway host** (`API_BASE_URL`) ব্যবহার করে — service prefix client-এ যোগ হয়, portal-এর মতোই।
+
+### F3.3 Information page (pricing, gallery, যোগাযোগ — অ্যাপ)
+
+> **Bangla name:** তথ্য-পেজ (প্রাইসিং, গ্যালারি, যোগাযোগ — অ্যাপ)
+
+**1. Name and purpose.** টিকিট pricing, ফটো gallery ও যোগাযোগ screen — মোবাইলে portal F2.3; legal page env config-এর URL হিসেবে বাইরে খোলে।
+
+**2–4. Trigger/flow.** App `/ticketPricing`, `/gallery`, `/contact`। Pricing: `event/api/v1/ticket-pricing/program-pricing`; gallery: `landing-page-image/public` client-এ `Gallery_Page_Segment_*` ছেঁকে; contact: `header-footer`; terms/privacy/ICC: `TERMS_AND_CONDITIONS_URL`, `PRIVACY_AND_POLICY_URL`, `ICC_ANTI_*_POLICY_URL` env WebView/browser-এ।
+
+**5–8. Components / contracts / code.** F2.3-এর মতো। App: `lib/presentation/feature/{ticket_pricing,gallery,contact}/…`, `data/lib/remote/api_service/gallery_api_service_impl.dart`।
+
+**9. Handover notes.** Legal URL flavor-প্রতি (`env/.env.<flavor>`) বসানো — বদলাতে হলে build-সময়ের config বদলাতে হয়, portal-এর মতো নয়।
+
+### F3.4 Seat selection ও promo code (অ্যাপ)
+
+> **Bangla name:** আসন নির্বাচন ও প্রোমো কোড (অ্যাপ)
+
+**1. Name and purpose.** লাইভ availability-সহ level/আসন বাছাই ও promo code apply — মোবাইলে portal F2.4/F2.5।
+
+**2–4. Trigger/flow.** App `/seatSelection` → `/ticketBooking`। Availability: `booking/api/v1/capacity/level-user-portal-seats?…` → `{ total, available }` (কমা-দিয়ে আসন string, app কমা ধরে ভাঙে); promo: `POST booking/api/v1/user-booking-order/apply-promo-code`; system discount: `GET admin/api/v1/discount/program/…` (model পড়ে `name`, `discountType`, `discountValue`)।
+
+**5–8. Components / contracts / code.** F2.4/F2.5-এর মতো। App: `lib/presentation/feature/seat_selection/…`, `ticket_booking/…`; `data/lib/remote/response/ticket_booking/seat_availability_response.dart`, `system_discount_response.dart`।
+
+**9. Handover notes.** App আসনের string client-এ ভাঙে — আসনের নামে কমা থাকলে ভাঙা ভুল হবে (portal-এর মতোই wire format)।
+
+### F3.5 Booking ও WebView payment
+
+> **Bangla name:** বুকিং ও WebView পেমেন্ট
+
+**1. Name and purpose.** App-এর ভেতরে order তৈরি করে in-app WebView-এ DgePay-র page-এ পরিশোধ; URL থেকে সফলতা বোঝা হয়।
+
+**2. Trigger and actor.** App `/ticketBooking` → `/payment`। Actor: app user, User pool।
+
+**3. Business flow.**
+1. Customer আসন/holder নিশ্চিত করেন (promo আগেই প্রয়োগ) — app order POST করে `publicId` + `checkoutUrl` পায়।
+2. App `/payment`-এ WebView খুলে checkout URL দেখায়।
+3. WebView যখন `PAYMENT_SUCCESS_URL`-এর host-**ধারণকারী** URL-এ যায়, app payment সফল ধরে WebView বন্ধ করে booking success/details-এ যায়; backend যাচাই F2.6-এর মতোই (redirect callback চালায়)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | App → Booking `POST /booking/api/v1/user-booking-order` | **[HTTP + user token]** | F2.6-এর মতো body/response (`CheckoutResponse { publicId, checkoutUrl }`) |
+| 2 | WebView | — | `webview_flutter`-এর `NavigationDelegate.onNavigationRequest`: `request.url.contains(targetUrlHostName)` হলে → `onPaymentSuccess(url)`, `NavigationDecision.prevent` |
+| 3 | Backend | — | DgePay callback F2.6 ধাপ ৪–৬-এর মতোই Booking-এ পড়ে (WebView শুধু browser) |
+
+**5–8. Components / contracts / code.** F2.6 + app: `lib/presentation/feature/{ticket_booking,payment}/…` (view model), `data/lib/remote/response/check_out_response.dart`।
+
+**9. Handover notes.** ① সফলতা শনাক্তকরণ URL-এর host-এ **substring match** — ওই host-এর ভেতর দিয়ে যাওয়া যেকোনো DgePay redirect chain এটে ট্রিগার করতে পারে; নির্ভুলতা `[UNCONFIRMED]`। ② `PAYMENT_SUCCESS_URL`-এর কোডে fallback default `ticket-bangla.com/tickets` — আসল মান flavor-প্রতি সেট।
+
+### F3.6 আমার booking ও টিকিট (অ্যাপ)
+
+> **Bangla name:** আমার বুকিং ও টিকিট (অ্যাপ)
+
+**1. Name and purpose.** Order তালিকা, booking বিস্তারিত ও সব টিকিট-action — একটি/সব/invoice নামানো, holder সম্পাদনা, share, OneID sync — মোবাইলে F2.7–F2.10, **native download ও share**-সহ।
+
+**2. Trigger and actor.** App `/bookingList`, `/bookingDetails`। Actor: app user, User pool।
+
+**3–4. Business/technical flow.** F2.7–F2.10-এর মতোই endpoint (`list`, `details?publicId=`, PATCH ticket, PATCH `generate-request`, `check-generated-status`, `download`, `download-all`, `download-invoice`, `sync-order-to-oneid`)। Native বৈশিষ্ট্য:
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Download | `{API_BASE_URL}/ticketing/api/v1/booking-order-ticket/…` URL-এ Bearer header-সহ; **flutter_downloader** enqueue (`{ticketId}.pdf`, `{publicId}.zip`, `{orderId}-invoice.pdf`; public storage) |
+| 2 | Share | `share_plus`-এর `SharePlus.instance.share(ShareParams(files: [XFile(path)], subject: 'Ticket PDF'))` |
+| 3 | Polling | booking বিস্তারিত `check-generated-status` poll করে টিকিট না হওয়া পর্যন্ত |
+
+**5–8. Components / contracts / code.** F2.7–F2.10-এর মতো। App: `lib/presentation/feature/{booking_list,booking_details}/…`; `data/lib/service/download_service.dart`, `data/lib/repository/{booking_details,ticket_booking}_repository_impl.dart`।
+
+**9. Handover notes.** Download endpoint-এ Authorization header লাগে — app নিজের HTTP client দিয়ে app storage-এ নামায়; CloudFront cookie ব্যবহার করে **না** (ওটা admin portal-এর পথ, F1.12)।
+
+### F3.7 Profile ও settings (অ্যাপ)
+
+> **Bangla name:** প্রোফাইল ও সেটিংস (অ্যাপ)
+
+**1. Name and purpose.** Profile দেখা/হালনাগাদ, password বদল, ভাষা, logout ও delete-account প্রবেশ — portal F2.11 + app-এর নিজস্ব settings।
+
+**2. Trigger and actor.** App `/profile`, `/setting`। Actor: app user।
+
+**3–4. Business/technical flow.** Profile GET/PUT `user/my-profile` (identity API; shape F2.11-এর মতো) — profile client `AUTH_API_BASE_URL` **Cognito Bearer-সহ** ব্যবহার করে (portal-এর static key-এর বিপরীতে); SSO user `user/register-sso { name, cognito_sub }` দিয়ে auto-register; password বদল Amplify দিয়ে; logout session মুছে (ও push token মুছে উচিত — note দ্রষ্টব্য); delete account → F6.11।
+
+**5–8. Components / code.** `lib/presentation/feature/{profile,settings}/…`; `data/lib/remote/api_service/profile_api_service_impl.dart`, client `profile_api_client.dart`।
+
+**9. Handover notes.** ① Logout-এ FCM-token DELETE call আছে কিন্তু `profile_view_model.dart`-এ **comment out** — লগআউট করা device এখনো push পেতে পারে। ② Root pubspec-এ `dio` ও `amplify_authenticator` declared কিন্তু data layer plain `http`/`Amplify.Auth` ব্যবহার করে (dead dependency)।
+
+### F3.8 সমস্যা জানানো ও সাপোর্ট চ্যাট (অ্যাপ)
+
+> **Bangla name:** সমস্যা জানানো ও সাপোর্ট চ্যাট (অ্যাপ)
+
+**1. Name and purpose.** Issue খোলা ও support-এর সাথে chat — মোবাইলে F2.12, একই UserIssue service ও hub-এ।
+
+**2–4. Trigger/flow.** App `/issues`, `/reportIssue`, `/chatCommunication`। REST: `POST userissue/api/v1/user-issue`, `GET user-issue/user/{userId}`, `GET user-issue/user-detail/{orderId}`, `GET user-issue-chat/{id}/messages?pageOffset=0&pageSize=50`, multipart `POST user-issue-chat/send` (field `AttachmentFile`), `GET message/{id}/attachment/download`। রিয়েল-টাইম: SignalR (`signalr_netcore`, শুধু WebSocket) hub `env['CHAT_COMMUNICATION_HUB']/userissue/chathub` token factory-সহ; send প্রথমে SignalR `SendMessage`, HTTP multipart fallback।
+
+**5–8. Components / code.** F2.12-এর মতো। App: `lib/presentation/feature/{issues,report_issue,chat_communication}/…`; `data/lib/service/signal_r_service.dart`, `data/lib/remote/api_service/{issue,chat}_api_service_impl.dart`।
+
+**9. Handover notes.** F2.12-এর anonymous-REST সতর্কতা এখানেও; hub URL env (`CHAT_COMMUNICATION_HUB`) — production-এ `chat.gobcbticket.com.bd`।
+
+### F3.9 Push device-token registration
+
+> **Bangla name:** পুশ ডিভাইস-টোকন রেজিস্ট্রেশন
+
+**1. Name and purpose.** Device-এর FCM token PushNotification service-এ রেজিস্টার করা যাতে user push পান; Firebase ঘুরিয়ে দিলে refresh; logout-এ delete।
+
+**2. Trigger and actor.** App লগইন (home/event list view model), token refresh callback, logout। Actor: app user।
+
+**3–4. Business/technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Firebase init | — | `Firebase.initializeApp` (option `data/lib/firebase_options.dart`, মান env থেকে `FIREBASE_ANDROID_*` / `FIREBASE_IOS_*`); permission; foreground বার্তা → `flutter_local_notifications` (channel `high_importance_channel`) |
+| 2 | Register | **[HTTP + user token]** | `POST /pushnotification/api/v1/device-token` `{ userId (Cognito sub), fcmToken, osType }` |
+| 3 | Refresh | **[HTTP + user token]** | `onTokenRefresh` → `PUT device-token` `{ userId, oldToken, newToken, osType }` |
+| 4 | Delete | **[HTTP + user token]** | `DELETE device-token` `{ userId, fcmToken }` (call এখন comment out — note দ্রষ্টব্য) |
+
+**5. Components.** App (`data/lib/service/firebase_service.dart`, `repository/firebase_repository_impl.dart`); PushNotification service; `UserDeviceTokens` টেবিল (`OsType` ∈ android/ios/web)।
+
+**6. API contracts.** উপরের body; send-এ `202` (F6.23)। Error: standard envelope (কিন্তু service-এ **কোনো auth নেই**, F6.18)।
+
+**7. Data and side effects.** `UserDeviceTokens` upsert/delete; token shared pref `firebase_token`-এ।
+
+**8. Code references.** `rvl-gobcb-user-app/data/lib/remote/api_service/firebase_api_service_impl.dart`; backend `rvl-gobcb-backend/Services/PushNotification/ETP.PushNotification.Service/Api/DeviceTokenController.cs`।
+
+**9. Handover notes.** এক user-এর অনেক device = অনেক row; `send-to-user/{userId}` সবগুলোতে পাঠায় (F6.23)।
+
+### F3.10 Push notification গ্রহণ
+
+> **Bangla name:** পুশ নোটিফিকেশন গ্রহণ
+
+**1. Name and purpose.** Customer প্রকৃতপক্ষে যা পান: event ঘোষণা (F6.23-এর send-to-all/send-to-users) ও ticket-generated notice — foreground banner ও system notification।
+
+**2. Trigger and actor.** Scheduler worker F5.11-এর FCM delivery। Actor: app user (প্রাপক)।
+
+**3–4. Business/technical flow.** FCM device-এ ঠেলে দেয়: foreground → `FirebaseMessaging.onMessage` → title/body-সহ local notification; background → system tray। ট্যাপ করলে app-এর সংশ্লিষ্ট screen-এ যায় (যেমন ticket-generated-এ bookings)। Data payload-র key প্রেরকের `Data`-এর উপর নির্ভর করে (F6.23 request)।
+
+**5–7. Components / contracts / data.** App-এর firebase_service + local notification; FCM; গ্রহণে backend call নেই।
+
+**8. Code references.** `rvl-gobcb-user-app/data/lib/service/firebase_service.dart`; প্রেরক পক্ষ F6.23/F5.11।
+
+**9. Handover notes.** "ticket generated" push-এ ঠিক কী আছে (title/body ভাষা, data key) তা **external Notification API** (F5.12) বা admin প্রেরকের হাতে — এই repo-গুলোতে দেখা যায় না `[UNCONFIRMED]`।
+
 <!-- 🔄 CONTINUE-BN -->
 
