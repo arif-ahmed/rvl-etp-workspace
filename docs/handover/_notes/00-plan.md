@@ -84,3 +84,9 @@ Rule from user (2026-10-22): take inspiration from those files, but NEVER modify
   (`Application:ServiceName` values are camelCase for some services; ASP.NET routing is case-insensitive.)
 - Local dev ports (Aspire): Admin 5101, Booking 5102, Event 5103, Platform 5104, PushNotification 5105,
   Scheduler 5106, TicketChecker 5107, Ticketing 5108, UserAuth 5109, UserIssue 5110, Utility 5111.
+
+## ENVIRONMENT WARNING (2026-10-22)
+
+Something in the host environment periodically runs `git checkout main` in the workspace repo on its own (seen twice in reflog; cause unknown - IDE/sync tool suspected).
+ALWAYS run `git branch --show-current` before editing/committing; if on main, `git checkout docs/feature-documentation-v2` first (committed files reappear).
+Commit after every Part to minimize loss.

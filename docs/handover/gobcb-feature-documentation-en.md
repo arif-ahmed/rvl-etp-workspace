@@ -2137,4 +2137,344 @@ Main errors: `401` (missing/expired User token on POST), `400` envelope for seat
 
 **9. Handover notes.** ① A test endpoint `GET …/payment-status-bypass?rawData=` skips DgePay verification and directly initiates tickets — confirm it is unreachable/disabled in production `[UNCONFIRMED]`. ② Full **SSLCommerz** endpoints (`payment-success|fail|cancel|ipn`, `payment-methods`) exist next to DgePay; the architecture doc names only DgePay — confirm which gateways are live `[UNCONFIRMED]`. ③ Payment truth is the server-side status check, not the redirect. ④ The per-user lock means one concurrent order attempt per customer; a stuck lock delays that user's next attempt until it expires.
 
+## 5. System-initiated (workers and queues)
+
+Work no person starts directly: SQS queue consumers and timer-driven background workers. Read §0.8 explainers first (queue-driven processing, background workers, distributed locks, Redis live counters). Endpoints these workers call have **no `[Authorize]`** and are protected by network placement only (F6.18).
+
+### F5.1 Level capacity update (OrderSuccess queue)
+
+> **Bangla name:** লেভেল ক্যাপাসিটি আপডেট (OrderSuccess কিউ)
+
+**1. Name and purpose.** After every order event (payment success, cancel, admin capacity change) apply the seat delta to the level's durable capacity and the Redis live counter, and release the seat lock.
+
+**2. Trigger and actor.** SQS queue `AWS:Queue:OrderSuccess`; publisher: Booking (`UserBookingOrderManager` on payment success/cancel; `CapacityManager` on admin changes). No human actor.
+
+**3. Business flow.** For each booked/released seat group the database capacity and the live seat map converge so the next customer sees correct availability.
+
+**4. Technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Message | `LevelCapacityUpdate { orderType, amount, hasSeats, seats, isIncrease, capacityAction, groupId, orderId }` (`Core/ETP.Core/Queue/Messages/LevelCapacityUpdate.cs`); `GroupId = {eventLongId}_{galleryId}_{blockId}_{levelId}`, `OrderId` = booking `PublicId` |
+| 2 | Consumer | Booking `LevelCapacityUpdateService` → `LevelCapacityUpdateTaskManager` (SQS receive; deletes on success) |
+| 3 | DB | `ICapacityManager.UpdateLevelCapacityAsync` — durable `Capacities` row |
+| 4 | Redis | `capacity` hash: decrement `level_live:{groupId}`, `HDEL level_locked:{groupId}/{orderId}`, recompute `level_live_seats:{groupId}` (all seats − purchased − locked < 12 min) |
+
+**5–6. Components / contracts.** Booking service; SQS OrderSuccess; Redis `capacity` hash; table `Capacities`. No HTTP API.
+
+**7. Data and side effects.** `Capacities` update; Redis fields above; message deleted on success.
+
+**8. Code references.** `rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Workers/{BackgroundServices/LevelCapacityUpdateService.cs,TaskManagers/LevelCapacityUpdateTaskManager.cs}`; publishers `…/Domain/Managers/{UserBookingOrderManager,CapacityManager}.cs`.
+
+**9. Handover notes.** GroupId parsing splits on `_` — ids must stay numeric (an id containing `_` breaks the parse).
+
+### F5.2 Event live capacity (EventCapacity queue)
+
+> **Bangla name:** ইভেন্ট লাইভ ক্যাপাসিটি (EventCapacity কিউ)
+
+**1. Name and purpose.** Keep the event-level live counter (`event_live:{eventId}`) in Redis in step with capacity changes, so "N tickets left for this event" stays accurate.
+
+**2. Trigger and actor.** SQS `AWS:Queue:EventCapacity`; publisher: Booking `CapacityManager` (admin capacity adjustments).
+
+**3–4. Business/technical flow.** Message `EventLiveCapacityUpdate { eventId, amount, isIncrease, groupId, orderId }` → Booking `EventLiveCapacityUpdateService` → task manager increments/decrements the Redis STRING `event_live:{groupId}` serially (one message at a time, in order).
+
+**5–7. Components / data.** Booking service; SQS; Redis STRING `event_live:{eventId}`; no DB writes.
+
+**8. Code references.** `…/Workers/BackgroundServices/EventLiveCapacityUpdateService.cs`, `…/TaskManagers/EventLiveCapacityUpdateTaskManager.cs`.
+
+**9. Handover notes.** This key is **read** by `GET /booking/api/v1/capacity/event-live-capacity?eventId=` (F2.4); the Scheduler writes a *different* key (`event_{eventId}`, F5.4) — do not confuse the two.
+
+### F5.3 Locked-capacity refresh
+
+> **Bangla name:** লক করা ক্যাপাসিটি রিফ্রেশ
+
+**1. Name and purpose.** Release seats locked by customers who never paid, so abandoned checkouts don't block seats.
+
+**2. Trigger and actor.** Booking timer worker `RefreshLockedCapacityService` — every **30 minutes** (5 min after an error).
+
+**3–4. Business/technical flow.** When an order locks seats, the lock's key is also added to a Redis SET `refresh`. The worker (RedLock `locked_order_refresher_{0..4}`, 15 min) does `SMEMBERS refresh`; per key takes `refresh_level_locks_{key}` (30 s), `HDEL`s lock-hash entries older than **12 minutes** from `level_locked:{groupId}`, recomputes `level_live_seats`, and `SREM`s the key. A stuck checkout therefore frees its seats within ≈ 12 + 30 minutes.
+
+**5–7. Components / data.** Booking service; Redis SET `refresh`, hashes `level_locked:*`; DB capacity recompute.
+
+**8. Code references.** `…/Workers/{BackgroundServices/RefreshLockedCapacityService.cs,TaskManagers/RefreshLockedCapacityTaskManager.cs}`, `…/Domain/Managers/CapacityManager.cs`.
+
+**9. Handover notes.** The 12-minute expiry is hard-coded (compare `SystemSettings.SeatLockTimeout`, F1.30 `[UNCONFIRMED]`).
+
+### F5.4 Scheduler capacity reconcile
+
+> **Bangla name:** শিডিউলার ক্যাপাসিটি রিকনসাইল
+
+**1. Name and purpose.** Periodically roll the per-level live counters up into a per-event total, repairing drift between Redis and reality.
+
+**2. Trigger and actor.** Scheduler timer worker `CapacityUpdateService` — every **15 minutes** (RedLock `event_live_capacity_refresher`, 15 min).
+
+**3–4. Business/technical flow.** Reads the whole Redis hash `capacity`; for every field with 5 `_`-separated parts (`level_live:{eventId}_…`), groups by `parts[1]` (event id), sums the live values and writes the STRING `event_{eventId}` — but only if that key already exists (self-healing, not creating).
+
+**5–7. Components / data.** Scheduler service; Redis hash `capacity` + STRINGs `event_{eventId}`; no HTTP, no DB.
+
+**8. Code references.** `rvl-gobcb-backend/Services/Scheduler/ETP.Scheduler.Service/Workers/{BackgroundServices/CapacityUpdateService.cs,TaskManagers/CapacityUpdateTaskManager.cs}`.
+
+**9. Handover notes.** Same `_`-split fragility as F5.1; and the written key family (`event_…`) differs from F5.2's (`event_live:…`) — both are consumed by different readers.
+
+### F5.5 Pending/failed payment revalidation
+
+> **Bangla name:** পেন্ডিং/ফেইল্ড পেমেন্ট পুনঃযাচাই
+
+**1. Name and purpose.** Customers who close the browser mid-payment leave orders `Pending`/`Failed`. This job re-checks recent ones with DgePay (the customer may actually have paid) and cancels the rest.
+
+**2. Trigger and actor.** Scheduler timer worker `PendingOrFailedBookingStatusUpdateService` — every **2 minutes** (RedLock `pending_cancel_booking_status_updater`, 2 min).
+
+**3–4. Business/technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Scheduler → Booking `PUT /booking/api/v1/user-booking-order/update-status` | **[HTTP, no token]** (internal endpoint) — body `UpdateBookingStatusRequest { limit, cutoffTime }` (cutoff = now − 12 min; `limit` unused) |
+| 2 | Booking controller | Runs **two parallel background tasks**: `CancelBookingAsync(cutoff)` — cancels stale Pending/Failed orders — and `RevaildateRecentPendingBookingsAsync(cutoff)` (typo in code) — re-checks recent pending orders against DgePay `check_transaction_status` and completes genuinely-paid ones; returns `true` |
+
+**5–7. Components / data.** Scheduler; Booking; DgePay; `UserBookingOrders` status updates; freed capacity flows through F5.1 messages published by the manager.
+
+**8. Code references.** `…/Scheduler.Service/Workers/BackgroundServices/PendingOrFailedBookingStatusUpdateService.cs`; `…/Booking.Service/Api/UserBookingOrderController.cs` (`update-status`), `…/Managers/UserBookingOrderManager.cs` (`CancelBookingAsync`, `RevaildateRecentPendingBookingsAsync`).
+
+**9. Handover notes.** If DgePay is unreachable, the cancel task still runs — a paid-but-unconfirmed order can be cancelled and later surface in the discrepancy report (F1.22). The re-check window is the 12-minute cutoff.
+
+### F5.6 Booking status → Generated
+
+> **Bangla name:** বুকিং স্ট্যাটাস → Generated
+
+**1. Name and purpose.** Flip orders (and reservations) from `Requested` to `Generated` once every ticket of the order is actually generated (signed), closing the loop started in F2.6/F2.8.
+
+**2. Trigger and actor.** Booking timer worker `BookingStatusUpdateService` — every **2 minutes** (RedLock `booking_status_updater`); sibling `ReservationStatusUpdateService` — every **30 minutes** (RedLock `reservation_status_updater`) for reservations.
+
+**3–4. Business/technical flow.** Pulls up to 500 `Requested` bookings → **[HTTP, no token]** `POST /ticketing/api/v1/booking-order-ticket/ticket-counts` (body: order ids, `onlyGenerated=true`, `createdBy="user"`) → where `GeneratedCount == NumberOfSeats` → `UpdateRequestedBookingToGeneratedAsync(ids)` (status `Requested → Generated`). The reservation worker does the same for reservations.
+
+**5–7. Components / data.** Booking + Ticketing services; `UserBookingOrders`/`SeatReservations` status writes.
+
+**8. Code references.** `…/Workers/BackgroundServices/{BookingStatusUpdateService,ReservationStatusUpdateService}.cs` + task managers.
+
+**9. Handover notes.** `Requested` means "generation asked"; until this worker confirms, My Tickets keeps polling (F2.7's `check-generated-status`).
+
+### F5.7 Initiate user ticket generation
+
+> **Bangla name:** ইউজার টিকিট জেনারেশন শুরু (সেফটি-নেট)
+
+**1. Name and purpose.** The safety net that starts ticket generation for **paid** orders whose event's ticket-availability time has arrived — covers orders paid before the window opened or whose inline initiation (F2.6 step 6) failed.
+
+**2. Trigger and actor.** Booking timer worker `InitiateUserTicketGenerationService` — every **15 minutes** (10-min start delay); per event RedLock `user_ticket_generator_{eventId}` (12 min).
+
+**3–4. Business/technical flow.** For every active+published event with `TicketAvailabilityStartDateTime <= UtcNow`: pull up to 200 `Paid` bookings → per booking **[HTTP, no token]** `GET /ticketing/api/v1/booking-order-ticket/initiate-user-ticket?orderId={publicId}` → Ticketing `InitiateUserTicket`: requires status `Paid`/`Requested`, takes RedLock `create_user_ticket_{orderId}` (30 s), creates the Ticket rows (`TicketNumber = {TicketNumberPrefix}{unique code}`), generates blank PDFs to `{BlankBase}/user/{userId}/{publicId}/{TicketNumber}.pdf`, marks them `Requested`, publishes **[SQS: TicketSigning]** per ticket, and flips the order to `Requested`.
+
+**5–7. Components / data.** Booking + Ticketing; SQS TicketSigning; S3 ticket bucket; tables `Tickets` (insert), `UserBookingOrders` (→ Requested).
+
+**8. Code references.** `…/Workers/BackgroundServices/InitiateUserTicketGenerationService.cs`; `…/Ticketing.Domain/Managers/TicketManager.cs` (`InitiateUserTicket`, `InitiateBulkTicketForNewlyPaidOrder`, `TicketGenerateRequest`).
+
+**9. Handover notes.** `TicketGenerateRequest` also runs per-request from the portal's PATCH `generate-request` (F2.8) — the same lock + idempotency protects against double generation.
+
+### F5.8 Ticket signing via TSP (TicketSigning queue)
+
+> **Bangla name:** TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)
+
+**1. Name and purpose.** The heart of ticket integrity: take each blank ticket PDF, send it to the government TSP gateway to be digitally signed (PAdES) with a VDS QR, store the signed PDF, and make it visible to the customer and the gate cache.
+
+**2. Trigger and actor.** SQS `AWS:Queue:TicketSigning`; publisher: Ticketing `TicketManager` (user tickets after F5.7/F2.8; reserved tickets after F1.12).
+
+**3. Business flow.** A ticket becomes provably genuine: the signed PDF's QR can be verified offline by the checker app (F4.3), and My Tickets starts serving the download (F2.9).
+
+**4. Technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Message | `SignedTicketGeneration { fileName, unsignedTicketUrl, gateId, data (Dictionary<string, QRCodeField>), qrPosition [x,y,size], orderId (= ticket id) }`. QR `data` for user tickets: `Platform (online/user-ticket), Name, Phone, Date (BST +6), Time, Ticket ID, Event ID, Gallery, Block, Level, Entry Gate, Mini Gate [, Seat]`; reserved tickets replace Name/Phone with `Platform (offline/…)` + `Complimentary`. `qrPosition` by layout `TicketSize`: Default/Vertical `[900,650,650]`, A4 `[1650,915,650]`, Horizontal `[2494,1055,650]` |
+| 2 | Consumer | Ticketing `TicketGenerationService` → `TicketGenerationTaskManager` (SQS 5 msgs / 10 s wait / 60 s visibility); **idempotent**: if `IsTicketSigned(orderId)` the message is deleted without work |
+| 3 | TSP auth | `TspAuthProvider` **[HTTP, mTLS + static identity]**: `GET {TSP:AuthUrl}` with client cert `Cert/tspgw_client.pfx`; token cached in Redis `tsp_token` for 1 min (server cert validation disabled — see notes) |
+| 4 | Sign | `TspSignedTicketProvider` **[HTTP + mTLS + bearer]**: `POST {TSP:SignUrl}` with `TicketSigningPayload` (below) → `TspResponse.data.signedData[0]` (base64 PDF) |
+| 5 | Store | `GenerateSignedTicketAsync`: reserved types get ticket info **drawn onto** the PDF (`DrawTicketInfo`, PdfSharpCore); upload to `{SignedBase}/user/{CreatedBy}/{orderPublicId}/{TicketNumber}.pdf` (or `…/reserved/{CreatedBy}/…/{TicketNumber}-{type}.pdf`); `Status=Generated`, `SignedTicketUrl` saved |
+| 6 | OneID tail | For user tickets with `bookingOrder.OneIdUserId`: auto-sync the signed PDF to OneID (flow in F2.10); errors swallowed |
+| 7 | Gate cache tail | Redis hash `TicketCheckerLevelGateMap` field `{eventLongId}_{gateId}` → if the gate's ticket hash `ticket_checker_tickets:event_…_gate_…` exists, add `{TicketNumber}: 0` so gate devices see the new ticket on next sync (F4.5) |
+
+`TicketSigningPayload` (`Domain/TspClient/Models/TicketSigningPayload.cs`, snake_case): `{ blevel, customNotification, digitalIdentityId (TSP:DigitalIdentityId), documents: [ { data (base64 PDF), fileName, vdsData: { qrCodeData, qrCodePage: 1, qrCodeSize, qrCodeXPosition, qrCodeYPosition }, vsigEnabled: false, … } ], packaging: "ENVELOPED", sealDocument: false, signAlgorithm: "SHA256WithRSA", signatureSubType: "PAdES_BASELINE_B", signatureType: "PADES", userId (TSP:UserId) }`.
+
+**5–6. Components / contracts.** Ticketing service; SQS TicketSigning; TSP gateway (mTLS); Redis (`tsp_token`, gate maps); S3 ticket bucket; table `Tickets`.
+
+**7. Data and side effects.** `Tickets.Status`/`SignedTicketUrl` updates; signed PDFs in S3; optional OneID sync (`OneIdSync`/`OneIdSyncedAt`); gate-cache Redis additions; message deleted on success only.
+
+**8. Code references.** `rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service/Workers/{BackgroundServices/TicketGenerationService.cs,TaskManagers/TicketGenerationTaskManager.cs}`; `…/Domain/Managers/TicketManager.cs` (`GenerateSignedTicketAsync`, `GetBlankPdf`); `…/Domain/TspClient/{TspAuthProvider,TspSignedTicketProvider}.cs`; blank PDF drawing `…/Domain/BlankPdf.cs` (PdfSharpCore, fonts Inter/Oswald).
+
+**9. Handover notes.** ① The TSP client cert (`Cert/tspgw_client.pfx`) ships with the container — its expiry is operationally critical `[UNCONFIRMED: current expiry]`. ② Server-certificate validation is disabled on TSP calls. ③ QR "Date" uses a hard-coded +6 h BST offset. ④ OneID sync's `vdsQrData` is a `TODO` stub (`null`).
+
+### F5.9 Reserved ticket merge/zip (TicketProcessing queue)
+
+> **Bangla name:** রিজার্ভড টিকিট মার্জ/জিপ (TicketProcessing কিউ)
+
+**1. Name and purpose.** Merge a reservation's signed ticket PDFs into combined PDFs (for printing), or zip them individually (for distribution) — the heavy lifting behind F1.12's merge/zip buttons.
+
+**2. Trigger and actor.** SQS `AWS:Queue:TicketProcessing`; publisher: Ticketing `TicketManager.RequestMergeTicketsAsync`/`RequestZipTicketsAsync` (sets reservation `MergeStatus.Requested`/`ZipStatus.Requested`).
+
+**3–4. Business/technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Message | `TicketProcessingRequest { reservationId, groupId, orderId, processingType: "Merge"|"Zip" }` |
+| 2 | Consumer | **Utility** service `TicketProcessingService` (1-min cycle, 1 message at a time); RedLock `ticket_processing_service_{reservationId}` (1 h) |
+| 3 | Skip-if-done | **[HTTP, no token]** Booking `GET merge-status/{publicId}` / `zip-status/{publicId}` — if already done, delete and stop |
+| 4 | Merge | **[HTTP, no token]** `PATCH update-merge-status/{publicId}?status=Merging` → `TicketingClient.GetTicketUrlsAsync(reservationId)` → PdfSharpCore merge in chunks of `AWS:Ticket:MergeSize` → upload `{MergeBase}/{reservationId}/{ReservationNumber}_Merged_PDF_{i}.pdf` → status `Merged` |
+| 5 | Zip | analogous: `{ReservationNumber}_Individual_Zipped_{i}.zip` (temp dir + `ZipFile.CreateFromDirectory`, `CompressionLevel.Optimal`); statuses `Zipping`→`Zipped` |
+| 6 | Failure | status `Failed`, message **left on the queue** (retried; eventually dead-lettered `[UNCONFIRMED: DLQ config]`) |
+
+**5–7. Components / data.** Utility + Booking + Ticketing services; SQS; S3 ticket bucket; `SeatReservations.MergeStatus/ZipStatus`; idempotent via S3 `IsObjectExistAsync`.
+
+**8. Code references.** `rvl-gobcb-backend/Services/Utility/ETP.Utility.Service/Workers/…/TicketProcessingTaskManager.cs`; `…/Utility.Domain/Managers/UtilityService.cs`; publishers in `…/Ticketing.Domain/Managers/TicketManager.cs`.
+
+**9. Handover notes.** ① `AWS:Ticket:MergeBuffer` exists in options but is referenced nowhere (dead config). ② The worker `GC.Collect`s every ~50 items — memory pressure with big PDF batches was clearly a concern.
+
+### F5.10 VAT challan with NBR (VatChallanProcessing queue)
+
+> **Bangla name:** NBR-এর সাথে VAT চালান (VatChallanProcessing কিউ)
+
+**1. Name and purpose.** After a paid order, record the VAT with Bangladesh's NBR e-challan system and attach the downloaded challan to the booking (fields `VatInvoiceId/Info/DownloadUrl`, `SmartChallanNumber`).
+
+**2. Trigger and actor.** SQS `AWS:Queue:VatChallanProcessing`; publisher: Booking `UserBookingOrderManager` on payment success.
+
+**3–4. Business/technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Message | `VatChallanProcessing { groupId, orderId, bookingPublicId, userId, eventLongId, eventId, eventName?, orderNumber, paymentTransactionId, totalCharge, pricePerSeat, numberOfSeats, vat, discount, promoDiscount, isVatInclusive, createdAt, retryCount, lastErrorMessage? }` |
+| 2 | Consumer | Booking `VatChallanProcessingService` — every **45 seconds**; RedLock `vat_challan_processor_{0..9}` (5 min, wait 10 s); SQS 5 msgs / 300 s visibility; **max 3 retries** (exponential backoff, `retryCount` in the message) |
+| 3 | NBR calls | `NBROpenApiManager` **[HTTP, static key]** (`PaymentSettings:NBROpenApi:BaseUrl`): `POST /vschallan/v3/integration/vendor_authenticate` → `POST …/record_vat` → `GET/POST …/download_schallan`; NBR token expiry raises `UnauthorizedAccessException` (403 path) |
+| 4 | Store | Challan number + invoice id/info/download URL written to the `UserBookingOrders` row |
+| 5 | Failure | `lastErrorMessage` kept on the message and retried up to 3 times; then left for the DLQ `[UNCONFIRMED]` |
+
+**5–7. Components / data.** Booking service; SQS; NBR OpenAPI (external); `UserBookingOrders` VAT fields.
+
+**8. Code references.** `…/Workers/{BackgroundServices/VatChallanProcessingService.cs,TaskManagers/VatChallanProcessingTaskManager.cs}`; `…/Domain/Managers/NBROpenApiManager.cs`; models `…/Domain/Models/NBR/NBR*.cs`.
+
+**9. Handover notes.** NBR vendor credentials are secret config (`PaymentSettings:NBROpenApi:*`); the retry cap means a failing NBR gives up after ~3 attempts — the discrepancy report (F1.22) is the place to find those.
+
+### F5.11 Push delivery to FCM (FirebaseNotification queue)
+
+> **Bangla name:** FCM-এ পুশ ডেলিভারি (FirebaseNotification কিউ)
+
+**1. Name and purpose.** Deliver push notifications to phones: the PushNotification service enqueues (F6.23), this worker sends each batch through Firebase Cloud Messaging.
+
+**2. Trigger and actor.** SQS `AWS:Queue:FirebaseNotification`; publisher: PushNotification `NotificationManager` (batches of 200 tokens, `GroupId=requestId`, `OrderId="{requestId}-batch-N"`).
+
+**3–4. Business/technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Message | `FirebaseNotificationRequest { title, body, data, deviceTokens[], createdAt, groupId, orderId }` |
+| 2 | Consumer | Scheduler `FirebaseNotificationService` — 1-min outer cycle; SQS 5 msgs / 10 s wait / 60 s visibility |
+| 3 | Send | `FirebasePushNotificationService.SendNotificationToMultipleAsync` — FirebaseAdmin `SendEachForMulticastAsync`; credential = service-account JSON assembled from config section `FirebasePushNotificationConfig` (keys `Type, ProjectId, PrivateKeyId, PrivateKey, ClientEmail, ClientId, ClientX509CertUrl, AuthUri, TokenUri, AuthProviderX509CertUrl, UniverseDomain`) |
+| 4 | Delete | Message **always deleted in `finally`** — success or failure (no retry!) |
+
+**5–7. Components / data.** Scheduler; SQS; Firebase FCM (external); no DB.
+
+**8. Code references.** `rvl-gobcb-backend/Core/ETP.Core/PushNotification/FirebasePushNotificationService.cs`; `…/Scheduler.Service/Workers/{BackgroundServices/FirebaseNotificationService.cs,TaskManagers/FirebaseNotificationTaskManager.cs}`; `Core/ETP.Core/Options/FirebaseOptions.cs`.
+
+**9. Handover notes.** ① Because failures are deleted, a bad token or FCM outage silently drops that batch — the `bulk-status/{requestId}` endpoint (F6.23) is a stub, so there is no delivery tracking. ② `FirebaseBulkNotificationRequest` (with `BatchNumber/TotalBatches`) exists but nothing fills or consumes it (dead code).
+
+### F5.12 Ticket-generated notification
+
+> **Bangla name:** টিকিট-জেনারেটেড নোটিফিকেশন
+
+**1. Name and purpose.** Tell customers their tickets are ready (SMS through the external Notification API), closing the purchase experience.
+
+**2. Trigger and actor.** Scheduler timer worker `SendNotificationAfterGeneratedTicketService` — every **3 minutes** (RedLock `notification_for_ticket_generated`, 3 min).
+
+**3–4. Business/technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Fetch batch | **[HTTP, no token]** Booking `GET /booking/api/v1/user-booking-order/not-notified-list?limit=100` |
+| 2 | Enrich | per booking: **[HTTP, no token]** Event `GET /event/api/v1/events/{id}` (`IEventClient`), Ticketing `GetGeneratedTicketByOrderId`, Admin `GetEventLevelInfoAsync` |
+| 3 | Send | **[HTTP, static key]** Notification API `POST {Notification:Endpoint}/notification/request` — body `TicketGeneratedNotification` (snake_case): `{ notification_type: "ticket_generated", user_id, notification_data: { order_id, ticket_id, program_event, event_venue, seating_gallery, seating_block, seating_level, entry_gate, mini_gate } }` |
+| 4 | Mark | **[HTTP, no token]** Booking `PUT …/update-notification-status` (body: list of order ids) |
+
+**5–7. Components / data.** Scheduler; Booking, Event, Admin, Ticketing services; Notification API (external — SMS fan-out `[UNCONFIRMED: does it also send push?]`); `UserBookingOrders` notified flag.
+
+**8. Code references.** `…/Scheduler.Service/Workers/BackgroundServices/SendNotificationAfterGeneratedTicketService.cs`; client `Core/ETP.Core/ServiceClient/NotificationClient/NotificationClient.cs`; models `Core/ETP.Core/Models/Notification.cs`.
+
+**9. Handover notes.** The message names describe an SMS; the user app's "ticket generated" push (F3.10) presumably also originates here or in the Notification API — the repos do not show the FCM send for this path `[UNCONFIRMED]`.
+
+### F5.13 Device-token cleanup
+
+> **Bangla name:** ডিভাইস-টোকেন ক্লিনআপ
+
+**1. Name and purpose.** Daily removal of stale FCM device tokens (uninstalled apps) so pushes don't target dead tokens.
+
+**2. Trigger and actor.** Scheduler timer worker `DeviceTokenCleanupService` — daily at **02:00 UTC** (RedLock `device_token_cleanup`, 2 h).
+
+**3–4. Business/technical flow.** Worker → `EventClient.CleanupOldDeviceTokensAsync(30)` — `DELETE api/v1/device-token/cleanup?retentionDays=30` (Polly 5 retries). The only implementation of that route is the **PushNotification** service (`{ message, deletedCount, cutoffDate, retentionDays }`, deletes `UserDeviceTokens` older than cutoff) — **but** the Scheduler's `IEventClient` base address is `Services:Admin`. The call only works if that URL routes `/api/v1/device-token/*` to PushNotification (a gateway) — not verifiable from the repos `[UNCONFIRMED]` (Open queries).
+
+**5–7. Components / data.** Scheduler; PushNotification service (implementation); `UserDeviceTokens` deletes.
+
+**8. Code references.** `…/Scheduler.Service/Workers/BackgroundServices/DeviceTokenCleanupService.cs`; `Core/ETP.Core/ServiceClient/EventClient/EventClient.cs`; implementation `…/PushNotification.Service/Api/DeviceTokenController.cs`.
+
+**9. Handover notes.** This is one of the clearest "ask BS23" items: either `Services:Admin` is a routing gateway, or this cleanup never actually fires in production.
+
+### F5.14 Checked-ticket sync (Redis → database)
+
+> **Bangla name:** চেক করা টিকিট সিঙ্ক (Redis → ডেটাবেস)
+
+**1. Name and purpose.** Persist the gate scans accumulated in Redis (by F4.5) into the `CheckedTickets` table, making them available to the admin reports (F1.19).
+
+**2. Trigger and actor.** Admin timer worker `CheckedTicketService` — every **30 minutes** (RedLock `checked_ticket`, 20 min).
+
+**3–4. Business/technical flow.**
+
+| # | Step | What happens |
+|---|---|---|
+| 1 | Flag | Sets Redis bool `ticketCheckerDbSync = true` — the checker `sync-tickets` endpoint refuses calls while draining (F4.5) |
+| 2 | Drain | For each (event, gate, checker): reads STRING `ticket_checker_checked_tickets:{eventLongId}_{gateId}_{userId}` (serialized `ConcurrentDictionary<string, TicketInfo { value, isManual, entryTime }>`) |
+| 3 | Write | Maps to `CheckedTicket { eventLongId, eventId, ticketCheckerGateId, gateName, checkerId, checkerName, ticketNumber, entryCount, isManualEntry, entryTime }` rows, bulk insert |
+| 4 | Cleanup | Deletes the drained Redis keys; resets `ticketCheckerDbSync = false` |
+
+**5–7. Components / data.** Admin service; Redis; table `CheckedTickets`.
+
+**8. Code references.** `…/Admin.Service/Workers/{BackgroundServices/CheckedTicketService.cs,TaskManagers/CheckedTicketServiceTaskManager.cs}`.
+
+**9. Handover notes.** During the drain window (~seconds to minutes) gate devices get sync errors and retry — normal, but worth knowing on match day.
+
+### F5.15 Gate download-status cleanup
+
+> **Bangla name:** গেট ডাউনলোড-স্ট্যাটাস ক্লিনআপ
+
+**1. Name and purpose.** Automatically turn **off** each checker's offline-download permission once their event is over (data-hygiene for `IsDownloadEnable`).
+
+**2. Trigger and actor.** Admin timer worker `GateCheckerDownloadStatusCleanupService` — every **15 minutes** (code comment says "2 mins"; the code says 15) — RedLock `ticket_checker_status_reset` (5 min).
+
+**3–4. Business/technical flow.** `DisableDownloadAccessForPastEventsAsync()`: finds events whose `EndDateTime < UtcNow − 30 min` and rewrites their `TicketCheckerGateUsers` with `IsDownloadEnable = false`.
+
+**5–8. Components / data / code.** Admin service; `TicketCheckerGateUsers` updates. `…/Workers/BackgroundServices/GateCheckerDownloadStatusCleanupService.cs`, `…/Managers/TicketCheckerGateManager.cs` (`DisableDownloadAccessForPastEventsAsync`).
+
+**9. Handover notes.** The comment/code schedule mismatch suggests the interval was tuned at some point — trust the code (15 min).
+
+### F5.16 Promo-code status update
+
+> **Bangla name:** প্রোমো-কোড স্ট্যাটাস আপডেট
+
+**1. Name and purpose.** Auto-activate / expire / limit-reach promo codes by their dates and usage, without human touch.
+
+**2. Trigger and actor.** Admin timer worker `PromoCodeStatusUpdateService` — every **2 minutes** (RedLock `promo_code_status_updater`, 2 min).
+
+**3–4. Business/technical flow.** `PromoCodeManager.UpdatePromoCodeStatusesAsync`: recomputes each code's status from `StartDateTime/EndDateTime/TotalUsageLimit` — `Active(1)`, `Expired(2)`, `Upcoming(3)`, `LimitReached(4)` — and where changed sets `Status`, `IsActive = (status == Active)`, `IsPublished = (status == Active)`, `UpdatedAt`, bulk update.
+
+**5–8. Components / data / code.** Admin service; `PromoCodes` updates. `…/Workers/BackgroundServices/PromoCodeStatusUpdateService.cs`, `…/Managers/PromoCodeManager.cs`.
+
+**9. Handover notes.** Because `IsPublished` is flipped too, an expired code disappears from public pickers automatically.
+
+### F5.17 System-discount status update
+
+> **Bangla name:** সিস্টেম-ডিসকাউন্ট স্ট্যাটাস আপডেট
+
+**1. Name and purpose.** Same auto status machine as F5.16 for system discounts (early-bird windows etc.).
+
+**2. Trigger and actor.** Admin timer worker `SystemDiscountStatusUpdateService` — every **2 minutes** (RedLock `system_discount_status_updater`, 2 min).
+
+**3–4. Business/technical flow.** `DiscountManager.UpdateSystemDiscountStatusesAsync`: statuses `Active/Expired/Upcoming/LimitReached` from `StartDateTime/EndDateTime`; same `IsActive/IsPublished/UpdatedAt` writes.
+
+**5–8. Components / data / code.** Admin service; `Discounts` updates. `…/Workers/BackgroundServices/SystemDiscountStatusUpdateService.cs`, `…/Managers/DiscountManager.cs`.
+
+**9. Handover notes.** The active window is what the public discount endpoint (F1.16) serves; between TTLs of that cache and this worker's 2-minute cycle a discount can be up to ~2 min late to expire.
+
 <!-- 🔄 CONTINUE -->
