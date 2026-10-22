@@ -1083,5 +1083,474 @@ Endpoint: `GET ""` paged, `GET list`, `GET {id}`, `PUT {id}`, `DELETE {id}`, `PU
 
 **9. Handover notes.** ① Public discount endpoint ইচ্ছাকৃতভাবে `[AllowAnonymous]` (checkout page-এ কোনোক্রমে লগইনের আগে দরকার) — শুধু discount metadata দেয়। ② Promo code ও system discount একসাথে প্রযোজ্য হলে নিয়ম Booking-এর দাম হিসাবের ভেতরে (F2.6) — কোনোটি বদলানোর আগে পরীক্ষা করুন।
 
+### F1.17 Ticket-checker (gate staff) account
+
+> **Bangla name:** টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট
+
+**1. Name and purpose.** Gate staff-দের TicketChecker-pool account তৈরি ও ব্যবস্থাপনা — নাম+ফোন দিয়ে তৈরি, নাম বদল, set/force password, disable/enable, delete।
+
+**2. Trigger and actor.** Admin portal → `/ticket-checker`। Role: `admin`, `event_manager`, `ticket_manager`, `ticket_operator` (`TicketCheckerController`)।
+
+**3. Business flow.** Staff নাম ও ফোন দিয়ে checker যোগ করেন; account-এ অস্থায়ী password আসে (পরে "set password"); checker app-এ সাইন-ইন করেন (F6.12); admin শিফটের মধ্যে account disable করলে app-এ `user_disabled_for_this_gate` দেখায় (F4.5)।
+
+**4. Technical flow.** Portal → Admin `POST /admin/api/v1/ticket-checker` **[HTTP + user token]** → `TicketCheckerCreateUser {name, phone}` → Cognito TicketChecker pool (`Integration/Services/…UserProvider`)। ফেরত আসে `TicketCheckerUserResponse`।
+
+**5. Components.** Admin portal (`ticket-checker.service.ts`); Admin service; Cognito TicketChecker pool।
+
+**6. API contracts.** Base `/admin/api/v1/ticket-checker`: `GET ""` / `{id}` → `TicketCheckerUserResponse { userId, name, email, phone, role, currentStatus, isActive, isPhoneNumberVerified }`; `POST` `{ "name": "Gate Checker 12", "phone": "+8801712345678" }`; `PUT {id}` `TicketCheckerUpdateUser {userId, name}`; `PUT change-password` `TicketCheckerChangePassword {accessToken, oldPassword, newPassword}`; `DELETE {id}`; `POST disable/{id}|enable/{id}`; `POST set-password` `TicketCheckerSetPasswordRequest {password, userId}`। আরও `GET search?name=`, `GET search-by-userid?sub=` (gate assignment-এ, F1.18)। Error: standard envelope।
+
+**7. Data and side effects.** Cognito user CRUD; ETP টেবিল নেই (gate-user সম্পর্ক F1.18-এর `TicketCheckerGateUsers`-এ)।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/ticket-checker/services/ticket-checker.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TicketCheckerController.cs`, `…/Integration/Services/TicketCheckerUserProvider.cs`।
+
+**9. Handover notes.** `change-password` body-তে checker-এর নিজের access token নেয় — কে ডাকে যাচাই করুন (এখন admin portal admin token পাঠায়; checker app-এ password-change screen নেই)।
+
+### F1.18 Gate assignment ও download control
+
+> **Bangla name:** গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ
+
+**1. Name and purpose.** Ticket checker-দের event-এর entry gate-এ যুক্ত করা (multi-assign, force-assign/unassign) এবং প্রত্যেক checker-এর offline download অনুমতি (`IsDownloadEnable`) নিয়ন্ত্রণ।
+
+**2. Trigger and actor.** Admin portal → `/ticket-checker` → assign-gate dialog (`components/event-assign-gate/`)। Role: admin pool; `TicketCheckerGateController` ভিন্ন action-এ `admin` ও `ticket-checker` উভয় scheme নেয়।
+
+**3. Business flow.**
+1. Staff event বেছে নেন; screen-এ event-এর gate ও প্রতিটিতে কোন checker আছে দেখায়।
+2. Checker-দের gate-এ assign করেন (বা **force-assign/unassign** bulk তালিকা); `event-info` (F4.1) সাথে সাথে আপডেট হয়।
+3. Checker-এর download অনুমতি toggle করতে পারেন ও gate থেকে সরাতে পারেন।
+4. Event শেষ হলে worker স্বয়ংক্রিয়ভাবে download access বন্ধ করে (F5.15)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `POST /admin/api/v1/ticket-checker-gate` | **[HTTP + user token]** | `AssignTicketCheckerGate` (নিচে) |
+| 2 | Portal → Admin `POST …/force-assign` / `force-unassign` | **[HTTP + user token]** | `List<AssignTicketCheckerGate>` bulk |
+| 3 | Admin DB | **[Shared table]** | `TicketCheckerGates` + `TicketCheckerGateUsers`; TicketChecker service mirror দিয়ে পড়ে (F4.1) |
+| 4 | `PUT …/update-download-status/{userId}/{gateId}/{status}` | **[HTTP + user token]** | `IsDownloadEnable` ওল্টায় |
+| 5 | Redis | — | `TicketCheckerLevelGateMap` hash (level→gate) `TicketCheckerGateManager` রাখে; Ticketing signed টিকিট gate cache-এ দেওয়ার সময় ব্যবহার করে (F5.8-এর শেষ ধাপ) |
+
+**5. Components.** Admin portal; Admin service; `TicketCheckerGates`, `TicketCheckerGateUsers` টেবিল; Redis map; checker app (ভোক্তা)।
+
+**6. API contracts.**
+
+```json
+// POST /admin/api/v1/ticket-checker-gate   (AssignTicketCheckerGate)
+{
+  "eventId": 1042,
+  "entryGateName": "Gate 3 — North",
+  "entryGateId": "3,4",
+  "ticketCheckerUsers": [ { "userId": "a1b2c3d4-…", "name": "Gate Checker 12", "isEnabled": true } ]
+}
+```
+
+আরও: `GET {eventId}` (event-এর gate user), `GET user/{userId}`, `DELETE remove-user/{id}`, `GET event-info` (policy `ticket-checker` — checker app-এর নিজের call, sample F4.1-এ)। Error: standard envelope।
+
+**7. Data and side effects.** Gate/gate-user row; Redis map হালনাগাদ; queue নেই।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/ticket-checker/services/ticket-checker-gate.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TicketCheckerGateController.cs`, `…/Managers/TicketCheckerGateManager.cs`।
+
+**9. Handover notes.** `EntryGateId` কমা-দিয়ে-লেখা id string (TicketChecker storage entity-র সাথে মেলে) — cast নয়, parse করুন।
+
+### F1.19 Gate (ticket-checker) report
+
+> **Bangla name:** গেট রিপোর্ট (চেকার)
+
+**1. Name and purpose.** Event-প্রতি scan report: gate/checker-প্রতি entry সংখ্যা, duplicate entry (একই টিকিট বারবার scan), manual entry, আর audit-এর জন্য Excel export।
+
+**2. Trigger and actor.** Admin portal → `/report/checker`, `/report/ticket-duplicate`। Role: `admin`, `event_manager`, `ticket_manager`, `ticket_operator` (`TicketCheckerGateController`)।
+
+**3. Business flow.**
+1. Staff event বেছে gate → checker অনুযায়ী entry/manual/duplicate সংখ্যার গাছ দেখেন।
+2. Duplicate-entry report বারবার scan হওয়া টিকিটের তালিকা দেয় (details drill-down-সহ)।
+3. Manual-entry report টাইপ করা নম্বরে ঢোকানো টিকিট দেয়।
+4. "Export" checked-ticket তালিকা Excel-এ নামায়।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `GET /admin/api/v1/ticket-checker-gate/report/{eventId}` | **[HTTP + user token]** | `TicketCheckerGateReportData` গাছ |
+| 2 | Portal → Admin `GET …/export/{eventId}` | **[HTTP + user token]** | Excel stream (row = `CheckedTicketExportData`) |
+| 3 | Portal → Admin `POST …/duplicate-tickets/{eventLongId}` / `manual-entry-tickets/{eventLongId}`; `GET reports/duplicate-entries[/details]` | **[HTTP + user token]** | aggregate |
+| 4 | Data source | **[Shared table]** | `CheckedTickets` টেবিল — worker F5.14 checker-দের Redis counter থেকে ভরে |
+
+**5. Components.** Admin portal (`report.service.ts`); Admin service; `CheckedTickets` টেবিল; ClosedXML।
+
+**6. API contracts.** `TicketCheckerGateReportData { eventId, ticketCheckerGateId (string), eventName, ticketCheckerGateName, ticketCheckerName, entryCount, manualEntryCount, duplicateEntryCount }` (গাছের node-এ `children`)। Export row: `CheckedTicketExportData { ticketNumber, ticketCheckerGateName, ticketCheckerName, entryCount, ticketType }`। Error: standard envelope।
+
+**7. Data and side effects.** শুধু পাঠ।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/reports/services/report.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TicketCheckerGateController.cs`।
+
+**9. Handover notes.** Report লাইভ স্ক্যানের চেয়ে ~৩০ মিনিট পেছনে (F5.14 drain cycle); ইভেন্ট চলাকালে লাইভ অবস্থা জানতে checker app-এর counter দেখুন।
+
+### F1.20 Raffle draw
+
+> **Bangla name:** র‍্যাফল ড্র
+
+**1. Name and purpose.** কোনো event-এর বৈধ টিকিট নম্বর থেকে রাজ্য পুরস্কারের বিজয়ী রেকর্ড করা এবং পুরস্কার হস্তান্তরে টিকিটের holder-এর তথ্য খোঁজা।
+
+**2. Trigger and actor.** Admin portal → event screen-এর raffle draw winner dialog। Role: `admin`, `event_manager` (`RaffleDrawController`)।
+
+**3. Business flow.** Staff বাইরে একটি বিজয়ী টিকিট টানেন (বা নম্বর বাছেন), খুঁজে দেখেন (`details`), বিজয়ী হিসেবে রেকর্ড করেন; তালিকায় event-এর বিজয়ীরা থাকে, মুছে ফেলাও যায়।
+
+**4. Technical flow.** Portal → Admin `POST /admin/api/v1/raffle-draw` **[HTTP + user token]** → `RaffleDraw` row (denormalized টিকিট + order তথ্য); `GET details/{eventId}/{ticketNumber}` `Tickets` mirror থেকে holder-এর নাম/পরিচয় বের করে (shared table)।
+
+**5. Components.** Admin portal (`raffle-draw-winner.service.ts`); Admin service; `RaffleDraws`, `Tickets` (mirror) টেবিল।
+
+**6. API contracts.** `RaffleDraw { ticketNumber, ticketType, userId, ticketHolderName, ticketHolderIdentification, eventLongId, eventPublicId, bookingOrderId, bookingOrderPublicId, bookingOrderDateTime, orderNumber }`; endpoint `GET ?eventId=`, `GET details/{eventId}/{ticketNumber}`, `POST`, `DELETE {id}`। Error: standard envelope।
+
+**7. Data and side effects.** শুধু `RaffleDraws` row।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/events/services/raffle-draw-winner.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/RaffleDrawController.cs`।
+
+**9. Handover notes.** ড্র নিজে (র‍্যান্ডম বাছাই) server-এ নেই — এই feature শুধু ফলাফল রেকর্ড করে।
+
+### F1.21 Dashboard
+
+> **Bangla name:** ড্যাশবোর্ড
+
+**1. Name and purpose.** Program dashboard: tile (মোট event, অমীমাংসিত issue) ও বিক্রয় চার্ট (টিকিট বিক্রয় সারসংক্ষেপ, শেষ সপ্তাহ/মাসের আসন বিক্রি, আসন্ন event)।
+
+**2. Trigger and actor.** Admin portal → `/` (dashboard)। Role: `admin`, `ticket_operator` + `[AuthorizeProgram]` (Admin-এর `DashboardController`) — program attribute active একমাত্র এই controller-এ।
+
+**3. Business flow.** Staff একনজরে দেখেন: program-এ কত event, কতটি upcoming/running/past, মোট বিক্রি ও পরিমাণ, সাত দিনের বিক্রয় চার্ট।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `GET /admin/api/v1/dashboard/get-tile-data?programId=` | **[HTTP + user token]** | `TileData { totalEvents, unResolveIssue }` |
+| 2 | Portal → Admin `GET /admin/api/v1/dashboard/get-event-by-category` | **[HTTP + user token]** | `EventsByCategory { totalUpcoming, totalPast, totalRunning }` |
+| 3 | Portal → Booking `GET /booking/api/v1/dashboard/get-ticket-sales-summary?programId=` | **[HTTP + user token]** | `TicketSalesSummary { numberOfTotalTicketSale, amountOfTotalTicketSale }` |
+| 4 | Portal → Booking `GET …/get-upcomming-seven-events` / `get-last-week-seats-sale-amount` / `get-last-Month-seats-sale-amount` | **[HTTP + user token]** | `DashboardChartData { labels[], datasets[{ label, data[] }] }` |
+
+**5. Components.** Admin portal (`dashboard.service.ts`, chart.js); Admin + Booking service; `Events`, `UserIssues` (Admin), `UserBookingOrders` (Booking) টেবিল।
+
+**6. API contracts.** উপরের shape; sample:
+
+```json
+// GET /booking/api/v1/dashboard/get-last-week-seats-sale-amount
+{ "labels": ["Mon 29","Tue 30","Wed 01","Thu 02","Fri 03","Sat 04","Sun 05"],
+  "datasets": [ { "label": "Seats sold", "data": [120, 340, 510, 80, 950, 1210, 430 ] } ] }
+```
+
+Error: standard envelope; Admin dashboard endpoint-এ `X-Program-Id` না থাকলে 400 (F1.1)।
+
+**7. Data and side effects.** শুধু-পাঠ aggregate।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/dashboard/services/dashboard.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/DashboardController.cs`, `…/Booking.Service/Api/BookingReportController.cs`।
+
+**9. Handover notes.** Tile/চার্ট **দুই service** থেকে আসে (Admin + Booking) — program scoping ভিন্নভাবে (header বনাম query param, §F1.1)।
+
+### F1.22 Booking, sales, revenue ও payment-discrepancy report
+
+> **Bangla name:** বুকিং, বিক্রয়, রাজস্ব ও পেমেন্ট-ডিসক্রিপ্যান্সি রিপোর্ট
+
+**1. Name and purpose.** Reports menu: event-প্রতি booking order, booking metrics, event-wise/summary বিক্রি ও রাজস্ব, day-wise revenue, payment discrepancy (gateway বনাম ledger) — Excel export-সহ।
+
+**2. Trigger and actor.** Admin portal → `/report/*` page। Role: admin pool; Booking-এর `ReportController`-এ **কোনো `[Authorize]` নেই** (F6.18)।
+
+**3. Business flow.** Staff program/event/তারিখ দিয়ে ফিল্টার করে দেখেন বা export করেন: booking order তালিকা, event-প্রতি capacity/বিক্রি metrics, রাজস্ব (VAT-সহ/ছাড়া), DgePay transaction ও রেকর্ড করা payment-এর অসঙ্গতি।
+
+**4. Technical flow.** Portal → Booking `GET /booking/api/v1/report/admin/…` **[HTTP + user token]** → `ReportController` (`export-booking-orders`-এ ClosedXML Excel) — `UserBookingOrders`, `Capacities`, `SeatReservations` পড়ে; portal picker-এ Admin `events/search`-ও ব্যবহার করে।
+
+**5. Components.** Admin portal (`report.service.ts`, `booking-orders.service.ts`); Booking service; ClosedXML; `UserBookingOrders`, `Capacities`, `SeatReservations` টেবিল।
+
+**6. API contracts.** Endpoint (`/booking/api/v1/report/admin/`): `export-booking-orders?eventId&programId` (Excel), `revenue-report-list?startDate&endDate&eventId&programId`, `booking-metrics?eventId`, `event-revenue-summary?programId`, `event-sales-summary?programId`, `event-sales-details?id&programId`, `event-revenue-sales-details`, `payment-discrepancy?programId&eventId`। Shape:
+
+```json
+// booking-metrics
+{ "totalCapacity": 25000, "totalOnlineGeneratedTicket": 18200, "totalSoldTickets": 17900,
+  "totalReservedTickets": 400, "availableTickets": 6700,
+  "totalOrders": 9500, "totalPaidOrders": 9100, "totalPaidOrdersInPercentage": 95.8,
+  "totalRequestedOrders": 120, "totalRequestedOrdersInPercentage": 1.3,
+  "totalGeneratedOrders": 80, "totalGeneratedOrdersInPercentage": 0.8,
+  "totalCancelledOrders": 280, "totalCancelledOrderInPercentage": 2.9,
+  "totalSuccessfulOrders": 9080, "totalSuccessfulOrdersInPercentage": 95.6 }
+
+// revenue-report-list (item)
+{ "eventName": "2nd ODI — BAN vs SL", "eventDateTime": "08 Jul 2026 14:00", "date": "05 Jul 2026",
+  "ticketsSold": 17900, "ticketRevenueWithoutVatCharge": 26850000.0,
+  "vat": 4027500.0, "serviceCharge": 358000.0, "totalRevenue": 31235500.0 }
+```
+
+`event-sales-summary`/`event-revenue-summary` item: `{ eventName, totalCapacity, onlineCapacity, onlineCapacityPercentage, onlineSold, onlineSoldPercentage, remainingOnlineSeats[, onlineRevenue, vat] }`; details variant-এ reserved/FOC/partner-sale ভাগ যোগ। Error: standard envelope।
+
+**7. Data and side effects.** শুধু-পাঠ; Excel in-memory তৈরি।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/reports/services/{report,booking-orders}.service.ts`; `rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/ReportController.cs`, `…/Domain/Models/Report/…`।
+
+**9. Handover notes.** "FOC" (free of charge) ও partner-sale ভাগ reservation type (F1.11) থেকে আসে; discrepancy logic gateway record ও order row মেলায় — এর সঠিক matching নিয়ম data-নির্ভর `[UNCONFIRMED]`।
+
+### F1.23 Reconciliation search
+
+> **Bangla name:** রিকনসিলিয়েশন সার্চ
+
+**1. Name and purpose.** Customer support-এর এক অর্ডার খোঁজা — order number / transaction id / ticket number / phone দিয়ে; পেমেন্ট অভিযোগ ("টাকা দিয়েছি টিকিট পাইনি") নিষ্পত্তির প্রবেশদ্বার।
+
+**2. Trigger and actor.** Admin portal → `/issues/reconciliation`। Role: admin pool (`[Authorize(Policy = admin)]`)।
+
+**3. Business flow.** Staff search type বেছে value লেখেন; মিলে যাওয়া order status, payment তথ্য ও user-সহ দেখেন; সেখান থেকে issue console বা order-এর টিকিট খোলেন।
+
+**4. Technical flow.** Portal → Booking `GET /booking/api/v1/user-booking-order/admin/reconciliation/{searchType}/{searchText}` **[HTTP + user token]** → ফেরে `UserBooking` (পূর্ণ shape F2.7-এ); phone দিয়ে খুঁজলে Serverless API (`user/get-bulk-users`) user বের করে, ticket-number দিয়ে খুঁজলে `Tickets` mirror।
+
+**5. Components.** Admin portal (`reconciliation.service.ts`, `booking-orders.service.ts`); Booking service; Serverless API (user lookup)।
+
+**6. API contracts.** `searchType` enum: `OrderNumber | TransactionId | TicketNumber | PhoneNo`। Response: `UserBooking` (sample F2.7-এ)। Error: standard envelope (না পেলে 404-স্টাইল বার্তা)।
+
+**7. Data and side effects.** শুধু-পাঠ।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/issues/services/reconciliation.service.ts`; `rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs` (`admin/reconciliation/…`)।
+
+**9. Handover notes.** "paid but not generated" জাতীয় অভিযোগের দ্রুততম হাতিয়ার; F2.8-এর generate-request-এর সাথে মিলিয়ে ব্যবহার করুন।
+
+### F1.24 User issue ও support chat (admin পাশ)
+
+> **Bangla name:** ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন পাশ)
+
+**1. Name and purpose.** Program/অবস্থা অনুযায়ী customer issue-এর তালিকা, রিয়েল-টাইম chat-এ উত্তর, status/feedback হালনাগাদ, এবং এক জায়গায় customer-এর order + টিকিট দেখা।
+
+**2. Trigger and actor.** Admin portal → `/issues/list`, `/issues/:id/details`। Role: Admin proxy-তে `admin`, `customer_support`; UserIssue service-তে policy `admin` (customer call-এ `user`)।
+
+**3. Business flow.**
+1. Support Issues খোলেন: paged, filter-যোগ্য তালিকা (status, program, order/issue/txn/phone দিয়ে সার্চ)।
+2. Issue খুললে chat thread (attachment-সহ), customer-এর order সারসংক্ষেপ ও টিকিট দেখায়।
+3. Support রিয়েল-টাইমে উত্তর দেন (typing indicator, read receipt), feedback দেন ও issue resolve করেন।
+4. Resolve করলে external Notification API-র মাধ্যমে customer-কে SMS যেতে পারে (`SendIssueResolvedNotification`)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `GET /admin/api/v1/user-issue` | **[HTTP + user token]** | paged issue (Admin `UserIssueClient` দিয়ে proxy/enrich করে) |
+| 2 | Portal → Admin `PUT /admin/api/v1/user-issue/{id}` | **[HTTP + user token]** | `UpdateUserIssue { feedback, status }` |
+| 3 | Chat REST | **[HTTP + user token]** | `POST /admin/api/v1/user-issue-chat/send` (multipart), `GET {id}/messages|recent|last|unread-count`, `mark-read?receiverType=ADMIN`, attachment download |
+| 4 | Chat রিয়েল-টাইম | **[SignalR]** | Admin portal **UserIssue hub**-এ যুক্ত হয় `{userissuehub}/userissue/chathub?access_token=…` (শুধু WebSocket) — customer-রা যে hub ব্যবহার করে (F2.12) সেটিই |
+| 5 | Attachment | — | S3 media bucket `chat-attachments/{issueId}/{guid}{ext}`, `ICloudFrontMediaManager` দিয়ে |
+| 6 | Resolve হলে | **[HTTP, static key]** | Admin → Notification API `POST /notification/request` (`IssueResolvedNotification`) |
+
+**5. Components.** Admin portal (`issue.service.ts`, `chat.service.ts`, @microsoft/signalr); Admin service (proxy + নিজের `/admin/chathub` — legacy, note দ্রষ্টব্য); UserIssue service (মালিক); S3; Notification API (external); SignalR public ingress `chat.gobcbticket.com.bd`।
+
+**6. API contracts.** মূল shape (UserIssue service): `ReportedUserIssue { id, user (CognitoUser), issueNumber, orderNumber, transactionId, orderStatus, orderDate, publicOrderId, description, feedback, status ("Open"/"Resolved"), createdAt/…, resolvedAt/… }`, `ReportedUserIssueDetails` যোগ করে `eventName, paymentInfo, tickets[]`; chat message: `ReportedUserIssueChatMessage { id, reportedIssueId, message, senderType ("USER"/"ADMIN"), senderId, senderName, isRead, attachmentFileName/Path/ContentType/Size, createdAt }`। Hub method: `SendMessage`, `JoinUserIssueChat`, `LeaveUserIssueChat`, `SendTypingIndicator`, `StopTyping`; client event: `NewMessage`, `MessagesRead`, `UserJoined`, `UserLeft`, `UserTyping`, `UserStoppedTyping`, `MessageError`। Error: standard envelope।
+
+**7. Data and side effects.** `ReportedIssues` / `ReportedIssueChatMessages` row (মালিক UserIssue); S3 attachment; resolve-তে SMS।
+
+**8. Code references.**
+
+| কী | কোথায় |
+|---|---|
+| Portal service | `rvl-gobcb-admin-portal/src/app/features/issues/services/{issue,chat,reconciliation}.service.ts` |
+| Admin proxy | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/{UserIssueController,UserIssueChatController}.cs` |
+| মালিক service | `rvl-gobcb-backend/Services/UserIssue/ETP.UserIssue.Service/Api/{ReportIssueController,ReportIssueChatController}.cs`, `Hubs/UserIssueChatHub.cs` |
+| Notification | `rvl-gobcb-backend/Core/ETP.Core/ServiceClient/NotificationClient/NotificationClient.cs` |
+
+**9. Handover notes.** ① Admin service-এর নিজের hub `/admin/chathub` (একই hub class) — portal UserIssue hub ব্যবহার করে, তাই Admin hub **legacy** মনে হয় `[UNCONFIRMED]`। ② UserIssue-এর **chat REST controller-এ `[Authorize]` নেই** (F6.18) — hub authorized, history/send endpoint network placement-এর উপর নির্ভরশীল। ③ Admin proxy-র `user-detail/{orderId}` `[AllowAnonymous]`।
+
+### F1.25 Admin user
+
+> **Bangla name:** অ্যাডমিন ইউজার ব্যবস্থাপনা
+
+**1. Name and purpose.** Staff account তৈরি ও ব্যবস্থাপনা: নাম/ফোন/email, **role** (`admin`, `event_manager`, `ticket_manager`, `ticket_operator`, `customer_support`), program scope, enable/disable, set/force password, delete।
+
+**2. Trigger and actor.** Admin portal → `/users`। Role: শুধু `admin` (`AdminUsersController`)।
+
+**3. Business flow.**
+1. Admin নাম, ফোন, email, role ও (ঐচ্ছিক) program id দিয়ে staff account বানান।
+2. Account-এ অস্থায়ী Cognito password আসে — নতুন staff প্রথম লগইনে বদলান (F6.1) বা admin "set password" দেন।
+3. Disable/enable account রেখে লগইন আটকায়; "forgot password" (`forget-password?phoneNo=` + `set-forget-password`) SMS দিয়ে reset করে।
+4. Role ও program বদল cache refresh-এর পরে কার্যকর (client-এ ৫৫ মিনিট পর্যন্ত, F6.4)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `POST /admin/api/v1/admin-users` | **[HTTP + user token]** | `AdminCreateUser { name, phone, email, role, programIds }` |
+| 2 | Admin `Integration/Services/AdminUserProvider` | — | Cognito Admin-pool user তৈরি; `custom:role` ও `custom:program_ids` attribute লেখে |
+| 3 | Portal → Admin `PUT {id}` / `disable/{id}` / `enable/{id}` / `set-password` | **[HTTP + user token]** | `AdminUpdateUser { userId, name, role, programIds }` প্রভৃতি — আবার Cognito |
+| 4 | Forgot password | **[HTTP, no token]** (`[AllowAnonymous]`) | `GET forget-password?phoneNo=` (SMS OTP) → `POST set-forget-password { userId, password }` |
+
+**5. Components.** Admin portal (`user.service.ts`); Admin service; Cognito Admin pool; Serverless API (SMS)।
+
+**6. API contracts.**
+
+```json
+// POST /admin/api/v1/admin-users
+{ "name": "Nazmul Hasan", "phone": "+8801700000010", "email": "nazmul@bcb.gov.bd",
+  "role": "event_manager", "programIds": "7,8" }
+
+// GET /admin/api/v1/admin-users   (item: AdminUserResponse)
+{ "userId": "e5f6…-cognito-sub", "name": "Nazmul Hasan", "email": "nazmul@bcb.gov.bd",
+  "phone": "+8801700000010", "role": "event_manager", "programIds": "7,8",
+  "currentStatus": "Enabled", "isActive": true, "isPhoneNumberVerified": true }
+```
+
+আরও `GET {id}`, `DELETE {id}`, `POST disable/{id}`, `POST enable/{id}`, `POST set-password { userId }`, `GET forget-password?phoneNo=`, `POST set-forget-password { userId, password }`। Error: standard envelope।
+
+**7. Data and side effects.** শুধু Cognito user record (staff-দের ETP টেবিল নেই)।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/users/services/user.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/AdminUsersController.cs`, `…/Integration/Services/AdminUserProvider.cs`।
+
+**9. Handover notes.** ① Role-এর অর্থ F6.15-এ; program id F6.16-এ। ② Registration UI নেই — account তৈরি কেবল admin-এর হাতে, ইচ্ছাকৃত।
+
+### F1.26 Agent (বিক্রেতা) user
+
+> **Bangla name:** এজেন্ট (বিক্রেতা) ইউজার
+
+**1. Name and purpose.** Offline বিক্রেতাদের **Agent-pool** account ব্যবস্থাপনা (নাম, ফোন, কোম্পানি/শাখা) — যারা offline-sold টিকিট রেকর্ড করে (F6.13)।
+
+**2. Trigger and actor.** Admin portal → `/agent-user`। Role: **নেই** — `AgentController`-এ (`api/v1/agent-users`) **কোনো `[Authorize]` নেই** (F6.18)।
+
+**3. Business flow.** Staff কোম্পানি তথ্যসহ agent বানান, password সেট করেন, disable/enable বা delete করেন; agent-রা তখন (Agent pool) লগইন করে টিকিট offline বিক্রি হিসেবে চিহ্নিত করেন।
+
+**4. Technical flow.** Portal → Admin `POST /admin/api/v1/agent-users` **[HTTP — token যায় কিন্তু enforce হয় না]** → `AgentCreateUser { name, phone, email?, companyName, companyBranch, branchLocation }` → Cognito Agent pool। Response `AgentUserResponse`-এ `currentStatus/isActive/isPhoneNumberVerified` ও কোম্পানি field।
+
+**5. Components.** Admin portal (`agent-user.service.ts`); Admin service; Cognito Agent pool।
+
+**6. API contracts.** Base `/admin/api/v1/agent-users`: `GET ""`, `GET {id}`, `POST`, `PUT {id}` (`AgentUpdateUser { userId, name }`), `DELETE {id}`, `POST disable/{id}|enable/{id}`, `POST set-password` (`AgentUserSetPasswordRequest { password, userId }`)। Error: standard envelope।
+
+**7. Data and side effects.** শুধু Cognito Agent-pool record।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/agent-user/services/agent-user.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/AgentUserController.cs`, `…/Integration/Services/AgentUserProvider.cs`।
+
+**9. Handover notes.** এই controller-এ `[Authorize]`-এর অভাব handover-এর সবচেয়ে নিরাপত্তা-সংবেদনশীল আবিষ্কারগুলোর একটি — service-এ পৌঁছাতে পারলে যে কেউ Agent account বানিয়ে password সেট করতে পারে (F6.18, Open queries)।
+
+### F1.27 Activity log viewer
+
+> **Bangla name:** অ্যাক্টিভিটি লগ ভিউয়ার
+
+**1. Name and purpose.** Service-গুলোর প্রতিটি entity পরিবর্তনের audit trail ব্রাউজ করা (কে কী বদলাল, পুরোনো বনাম নতুন মান) — service/entity/event অনুযায়ী, paged।
+
+**2. Trigger and actor.** Admin portal → `/activity-log` (global) ও event details-এর Activity tab। Role: `admin`, `event_manager` (`ActivityLogController`)।
+
+**3. Business flow.** Staff service নাম, entity নাম (বা বাদ দিয়ে), entity id দিয়ে ফিল্টার করেন; তালিকায় action (Added/Modified/Deleted), পুরোনো/নতুন JSON, user, IP ও সময় দেখেন।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `GET /admin/api/v1/activity-log` | **[HTTP + user token]** | Query: `serviceName, entityNames, entityNamesToExclude, entityId, pageOffset, pageSize` |
+| 2 | Admin `ActivityLogsManager` | **[Shared table]** | **প্রতিটি** service-এর `ActivityLogInterceptor`-এর (F6.24) লেখা shared `ActivityLogs` টেবিল পড়ে |
+| 3 | অন্য service-গুলো | — | নিজেদের অংশ `POST batch` (`ActivityLogsBatchRequest`) দিয়ে পড়ে, `ETP.Admin.Client` library ব্যবহার করে |
+| 4 | Event tab | **[HTTP + user token]** | `GET event/{eventId}` |
+
+**5. Components.** Admin portal (`activity-log.service.ts`); Admin service; shared `ActivityLogs` টেবিল (LoggingDbContext, schema `etp`)।
+
+**6. API contracts.** Entry shape (`ActivityLog`): `{ serviceName, entityName, entityId, action ("Added"/"Modified"/"Deleted"), oldValues, newValues (বদলানো property-র JSON; file part "[Image File]" মাস্কড), entityContext, transactionId, timestamp, userId, userName, ipAddress }`; paged envelope `{ items, totalCount }`। Batch request: `{ requests: [ { serviceName, entityName, entityId?, pageOffset, pageSize } ] }`। Error: standard envelope।
+
+**7. Data and side effects.** এখানে শুধু-পাঠ; লেখা হয় F6.24-এ।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/global-activity-log/services/activity-log.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/ActivityLogController.cs`; লেখক পক্ষ `rvl-gobcb-backend/Core/ETP.Core.EntityFramework/Interceptors/ActivityLogInterceptor.cs`।
+
+**9. Handover notes.** ① Insert গুলো save-এর **পরে** log হয় (DB id পাওয়ার জন্য); update শুধু বদলানো property log করে। ② Actor চিনে `username` claim; background worker লেখে `System`।
+
+### F1.28 Media configuration (banner, gallery, যোগাযোগ, রেজিস্ট্রেশন)
+
+> **Bangla name:** মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)
+
+**1. Name and purpose.** Public site-এর image ব্যবস্থাপনা: hero banner, sponsor strip, graffiti/advertisement banner, gallery page-এর দুই segment, contact-us ও registration page-এর ছবি — ক্রম, publish ও duplicate-সহ।
+
+**2. Trigger and actor.** Admin portal → `/media-configuration` sub-page। Role: `admin`, `event_manager` (`LandingPageImageController`)।
+
+**3. Business flow.** Staff **type**-প্রতি image upload করেন, title/bdescription/action URL ও display order দেন, publish/unpublish করেন; gallery-র দুই segment একাধিক image + segment title নেয়; দুটি image-এর ক্রম অদল-বদলের action আছে।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `POST /admin/api/v1/landing-page-image` | **[HTTP + user token]** | multipart `CreateOrUpdateLandingPageImage` (image + ঐচ্ছিক thumbnail) |
+| 2 | Admin manager | — | media bucket-এ upload; `LandingPageImage` row-তে `Type`, `DisplayOrder`, publish flag |
+| 3 | Public read | **[HTTP, no token]** | Event service `GET /event/api/v1/landing-page-image/public` (Redis key `landing_page_image_published`) |
+| 4 | Gallery segment | **[HTTP + user token]** | `POST add-gallery-image` — `GalleryPageSegmentImages { firstSegmentTitle, firstSegmentImageFiles[], secondSegmentTitle, secondSegmentImageFiles[] }` |
+
+**5. Components.** Admin portal (`media-configuration.service.ts`); Admin service; Event service; S3 media bucket; `LandingPageImage` টেবিল।
+
+**6. API contracts.** `LandingPageImageType` মান (wire string): `Hero, Sponsors, Graffiti, Advertisement, Gallery_Page_Segment_1, Gallery_Page_Segment_2, Contact_Us, Registration, Notice, Terms_Condition, Privacy_Policy, FAQ`। Public item (`LandingPageImagePublic`): `{ title?, description?, actionUrl?, imageUrl, thumbnailUrl?, type, displayOrder, startDateTime?, endDateTime? }`। Endpoint: `GET ""`, `GET {id}`, `POST`, `PUT {id}`, `DELETE {id}`, `PUT publish/{id}|unpublish/{id}|duplicate/{id}`, `PUT display-order/{type}/{displayOrder1}/{displayOrder2}`, `POST add-gallery-image`। Error: standard envelope।
+
+**7. Data and side effects.** `LandingPageImage` row; S3-এ file; public cache TTL বিলম্ব।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/media-configuration/services/media-configuration.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/LandingPageImageController.cs`।
+
+**9. Handover notes.** ① Admin service `GET /admin/api/v1/gallery`-ও দেয় (`GallerySettings` config section থেকে স্থির তালিকা) — কিছু screen ব্যবহার করে। ② Enum-এ `Terms_Condition/Privacy_Policy/FAQ/Notice` image type আছে — legal page CMS-নির্ভর হওয়ার পরিকল্পনার প্রমাণ; portal এখন সেগুলো static asset থেকে দেখায় (F2.3 note) `[UNCONFIRMED]`।
+
+### F1.29 Content editor (শর্তাবলি, FAQ, প্রাইভেসি, নোটিশ)
+
+> **Bangla name:** কনটেন্ট এডিটর (শর্তাবলি, FAQ, প্রাইভেসি, নোটিশ)
+
+**1. Name and purpose.** Customer-মুখী content-এর admin screen: terms & conditions, FAQ, privacy policy, notice ও ticket-pricing page।
+
+**2. Trigger and actor.** Admin portal → `/content-editor/*`। Role: portal menu অনুযায়ী screen পৌঁছানো যায়; backend হলো ticket-pricing controller (F1.14) ও general-notice controller (F1.31)।
+
+**3. Business flow.** Staff ticket-pricing matrix (F1.14) সম্পাদনা করেন ও notice publish করেন (F1.31); T&C/FAQ/privacy screen UI-তে আছে।
+
+**4. Technical flow.** Ticket pricing → F1.14; notice → F1.31। **T&C/FAQ/privacy editor screen-এর জন্য কোনো API call পাওয়া যায়নি** — কোনো service-এ এমন controller নেই।
+
+**5. Components.** Admin portal (`content-editor/` component); Admin service (শুধু pricing + notice)।
+
+**6. API contracts.** শুধু F1.14 ও F1.31-এর।
+
+**7. Data and side effects.** F1.14/F1.31-এর মতো।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/content-editor/components/…`, `services/content-editor.service.ts`।
+
+**9. Handover notes.** Customer-দের দেখা legal টেক্সট static client asset-এ (portal i18n; app string) — এদের admin screen কার্যকরহীন shell মনে হয় `[UNCONFIRMED]` — BS23 নিশ্চিত করুন CMS-নির্ভর legal page পরিকল্পিত ছিল কিনা (F1.28-এর image-type enum ইঙ্গিত দেয়)।
+
+### F1.30 Header/footer ও social-media settings
+
+> **Bangla name:** হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস
+
+**1. Name and purpose.** Public header/footer সম্পাদনা (brand logo, "powered by" logo, title, ফোন, email, ঠিকানা) ও social link; সাথে read-only system settings।
+
+**2. Trigger and actor.** Admin portal → `/settings/footer-settings`। Role: `admin` (`SocialMediaSettingsController`); `HeaderFooterController`-এ **কোনো `[Authorize]` নেই** (F6.18)।
+
+**3. Business flow.** Staff brand/powered-by image upload করেন, contact field ও social URL পূরণ করেন; save করলে public site-এর header/footer-এ যায়।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `PUT /admin/api/v1/header-footer` | **[HTTP + user token]** | multipart `UpdateHeaderFooter` (brand/powered-by file + JSON field) |
+| 2 | Portal → Admin `GET /admin/api/v1/header-footer` | **[HTTP, no token]** (controller-এ auth নেই) | বর্তমান মান |
+| 3 | Public read | **[HTTP, no token]** | Event service `GET /event/api/v1/header-footer` (তালিকা) |
+| 4 | Social | **[HTTP + user token]** | `GET|PUT /admin/api/v1/social-media-settings` |
+
+**5. Components.** Admin portal (`footer-settings.service.ts`); Admin service; Event service; S3 media bucket; `HeaderFooter`, `SocialMediaSettings` টেবিল।
+
+**6. API contracts.** `HeaderFooter { brandImageUrl?, poweredByImageUrl?, facebookUrl?, instagramUrl?, linkedInUrl?, twitterUrl?, title, phoneNumber?, email?, officeAddress? }`; `SocialMediaSettings { facebookUrl?, instagramUrl?, linkedInUrl?, twitterUrl? }`; `SystemSettings { id, allowUserSignInWithUserPassword, seatLockTimeout }` (read-only `GET /admin/api/v1/system-settings`, role `admin`)। Error: standard envelope।
+
+**7. Data and side effects.** Settings row; image upload; public cache refresh।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/program-settings/services/footer-settings.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/{HeaderFooterController,SocialMediaSettingsController,SystemSettingsController}.cs`।
+
+**9. Handover notes.** `SystemSettings.SeatLockTimeout` setting হিসেবে আছে, অথচ Booking-এর lock মেয়াদ ১২ মিনিট hard-coded (F5.3) — setting আসলেই এটি চালায় কিনা `[UNCONFIRMED]`।
+
+### F1.31 General notice
+
+> **Bangla name:** সাধারণ নোটিশ
+
+**1. Name and purpose.** Program-scoped notice (মেয়াদসহ) publish করা, যা public portal হোম page-এ দেখায়।
+
+**2. Trigger and actor.** Admin portal → `/settings/notice`। Role: `admin`, `event_manager` (`GeneralNoticeController`)।
+
+**3. Business flow.** Staff notice-র টেক্সট লেখেন, শুরু/শেষ date-time দেন ও publish করেন; portal home published notice আনে (`GeneralNoticePublic { description }`) — Redis-এ cached (`general_notice_published`)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Admin `POST /admin/api/v1/general-notice` | **[HTTP + user token]** | `CreateOrUpdateGeneralNotice { programId, description, startDateTime, endDateTime, isPublished }` → `GeneralNotices` row |
+| 2 | Public read | **[HTTP, no token]** | `GET /admin/api/v1/general-notice/public` `[AllowAnonymous]`; Redis key family `general_notice_published` |
+
+**5. Components.** Admin portal (`notice.service.ts`); Admin service; `GeneralNotices` টেবিল; Redis।
+
+**6. API contracts.** `GeneralNotice { id, programId, description, startDateTime, endDateTime, isPublished, isDeleted, isActive, createdAt/By, updatedAt/By }`; endpoint `GET ""`, `GET public`, `GET {id}`, `POST`, `PUT {id}`, `DELETE {id}`। Error: standard envelope।
+
+**7. Data and side effects.** `GeneralNotices` row; public cache TTL।
+
+**8. Code references.** `rvl-gobcb-admin-portal/src/app/features/program-settings/services/notice.service.ts`; `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/GeneralNoticeController.cs`; portal পাঠক `rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/event-api.service.ts`।
+
+**9. Handover notes.** Notice টেক্সট একটিমাত্র description field (rich text/বাংলা variant নেই) — portal যেমন আছে তেমনই দেখায়।
+
+<!-- Part 1 BN সম্পূর্ণ; Part 2 পরবর্তী -->
 <!-- 🔄 CONTINUE-BN -->
 
