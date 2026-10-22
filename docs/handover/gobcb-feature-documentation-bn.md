@@ -1551,6 +1551,345 @@ Error: standard envelope; Admin dashboard endpoint-এ `X-Program-Id` না থ
 
 **9. Handover notes.** Notice টেক্সট একটিমাত্র description field (rich text/বাংলা variant নেই) — portal যেমন আছে তেমনই দেখায়।
 
-<!-- Part 1 BN সম্পূর্ণ; Part 2 পরবর্তী -->
+## 2. User Web Portal
+
+Angular user portal-এ (`rvl-gobcb-user-portal/ETP-Web`) customer-দের শুরু করা feature, User Cognito pool (বা OneID SSO)। Portal দ্বিভাষিক (`/:lang/en|bn` route, F2.13) এবং auth/session (F6.10) ছাড়া stateless। Registration ও login cross-cutting (F6.6–F6.10)।
+
+### F2.1 Home page-এর কনটেন্ট
+
+> **Bangla name:** হোম পেজের কনটেন্ট
+
+**1. Name and purpose.** Landing page: hero banner, আসন্ন event, notice, footer/social link ও program তালিকা — সব admin portal-এ পরিচালিত (F1.28, F1.30, F1.31)।
+
+**2. Trigger and actor.** User portal `/:lang/` (`HomeEventsPageComponent`)। Actor: anonymous visitor (লগইন লাগে না)।
+
+**3. Business flow.**
+1. Visitor site খুললে published landing image (banner) দেখেন — page segment অনুযায়ী (home, gallery page, contact page…)।
+2. আসন্ন event কার্ড হয়ে আসে (cover image, নাম, venue, শুরুর দাম, তারিখ)।
+3. General notice থাকলে banner/section দেখায়।
+4. Header/footer link (social media, যোগাযোগ) settings থেকে আসে।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Event `GET /event/api/v1/landing-page-image/public` | **[HTTP, no token]** | published landing image |
+| 2 | Portal → Event `GET /event/api/v1/events/list?numberOfEvents=N` | **[HTTP, no token]** | আসন্ন event (Redis-cached) |
+| 3 | Portal → Admin `GET /admin/api/v1/general-notice/public` | **[HTTP, no token]** | published notice |
+| 4 | Portal → Event `GET /event/api/v1/header-footer` | **[HTTP, no token]** | footer/header কনটেন্ট |
+| 5 | Portal → Event `GET /event/api/v1/events/programs` | **[HTTP, no token]** | menu-র জন্য active program |
+
+**5. Components.** User portal (`event-api`, `common-api`, `footer-api`, `image-api` service); Event service (public mirror + Redis cache); Admin service (notice, gallery)।
+
+**6. API contracts.** চারটিই anonymous GET; shape: `LandingPageImagePublic`, `EventDetails.Event` তালিকা (sample F2.2-এ), `GeneralNoticePublic`, `HeaderFooter`। Error: standard envelope।
+
+```json
+// GET /event/api/v1/events/list?numberOfEvents=6   (item shape)
+{
+  "eventId": "b8e6a9d2-3f1c-4e7a-9d5f-6c2b1a8e0d34",
+  "name": "2nd ODI — Bangladesh vs Sri Lanka",
+  "bannerImage": "https://<cloudfront>/<key>.jpg",
+  "startingPrice": 500.0,
+  "eventStartDateTime": "2026-07-08T14:00:00Z",
+  "eventEndDateTime": null,
+  "ticketSellingStartDateTime": "2026-06-20T10:00:00Z",
+  "ticketSellingStopDateTime": "2026-07-08T12:00:00Z",
+  "venue": { "id": 2, "name": "Sher-e-Bangla National Cricket Stadium" },
+  "eventSegments": [ { "name": "Match day", "team1": "…", "team2": "…" } ]
+}
+```
+
+**7. Data and side effects.** শুধু-পাঠ; Event service-এ Redis cache (ছোট TTL; নতুন banner cache শেষ হলে আসে)।
+
+**8. Code references.** `rvl-gobcb-user-portal/ETP-Web/src/app/modules/featured/events/pages/home-events-page/home-events-page.component.ts`; `…/modules/core/services/api/{event-api,common-api,footer-api,image-api}.service.ts`; `rvl-gobcb-backend/Services/Event/ETP.Event.Service/Api/{LandingPageImageController,EventsController,HeaderFooterController}.cs`, `…/Admin.Service/Api/GeneralNoticeController.cs`।
+
+**9. Handover notes.** Portal ইচ্ছাকৃতভাবে catalog data **Event** service থেকে (public, cacheable) পড়ে, Admin থেকে নয় — Admin staff-মুখী থাকে।
+
+### F2.2 Event browse ও event details
+
+> **Bangla name:** ইভেন্ট ব্রাউজ ও বিস্তারিত
+
+**1. Name and purpose.** সব published event-এর তালিকা (program দিয়ে ছাঁকাইযোগ্য) ও এক event-এর বিস্তারিত page — venue, segment, দাম ও কেনার প্রবেশপথসহ।
+
+**2. Trigger and actor.** Portal `/:lang/events` (`AllEventListPageComponent`) ও `/:lang/events/:id` (`EventDetailPageComponent`)। Actor: anonymous visitor; কিনতে লগইন লাগে।
+
+**3. Business flow.**
+1. Events page published event-এর তালিকা দেখায় (কার্ড), program filter-সহ।
+2. Event খুললে cover image, নাম, সময়, venue, segment (টিম), selling window ও শুরুর দাম দেখায়।
+3. Page event-এর **venue details গাছ** (gallery → block → level — দাম, color, gate-সহ) লোড করে, যা seat-selection dialog (F2.4) চালায়।
+4. "Buy" এগিয়ে নেয় seat selection ও booking-এ (F2.4, F2.6)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Event `GET /event/api/v1/events/list` (ঐচ্ছিক `?programId=`) | **[HTTP, no token]** | published event (Redis-cached) |
+| 2 | Portal → Event `GET /event/api/v1/events/{eventId}` | **[HTTP, no token]** | পূর্ণ `Event` model (নিচে) |
+| 3 | Portal → Event `GET /event/api/v1/events/venue-details/{eventId}` | **[HTTP, no token]** | `EventVenueDetailsTree` (F2.4) |
+| 4 | Event service DB | **[Shared table]** | Admin-এর `Events`/`EventSegments`/venue টেবিল ও Booking-এর `Capacities` mirror পড়ে; `AvailabilityStatus`, `MinimumPrice` হিসাব করে |
+
+**5. Components.** User portal; Event service (Redis cache); shared table; Admin (data-র মালিক, F1.7-এর মাধ্যমে)।
+
+**6. API contracts.** `GET /event/api/v1/events/{eventId}` — anonymous। Response = Event service-এর `Event` model (`Services/Event/ETP.Event.Domain/Models/Event.cs`):
+
+```json
+{
+  "id": 1042,
+  "eventId": "b8e6a9d2-3f1c-4e7a-9d5f-6c2b1a8e0d34",
+  "eventName": "2nd ODI — Bangladesh vs Sri Lanka",
+  "programId": 7,
+  "venueId": 2,
+  "programName": "Bangladesh Tour of Sri Lanka 2026",
+  "programLogo": "https://<cloudfront>/logo.png",
+  "programShortName": "BAN in SL 2026",
+  "bannerImage": "https://<cloudfront>/<key>.jpg",
+  "eventStartDateTime": "2026-07-08T14:00:00Z",
+  "eventEndDateTime": null,
+  "ticketSellingStartDateTime": "2026-06-20T10:00:00Z",
+  "ticketSellingStopDateTime": "2026-07-08T12:00:00Z",
+  "ticketAvailabilityStartDateTime": "2026-06-25T10:00:00Z",
+  "minimumPrice": 500.0,
+  "availabilityStatus": "Available",
+  "vat": 15.0,
+  "isVatPercentage": true,
+  "serviceCharge": 20.0,
+  "isServiceChargePercentage": false,
+  "allowableMaximumSeatPerOrder": 4,
+  "allowableMaximumOrderPerUser": 2,
+  "isVatInclusive": false,
+  "isPublished": true,
+  "isActive": true,
+  "venue": { "…": "venue object" },
+  "segments": [ { "…": "টিম-সহ segment" } ]
+}
+```
+
+অন্যান্য endpoint: `GET /event/api/v1/events/published/list`, `GET list?numberOfEvents&programId`, `GET client-filtered-list/{status}/{count}?programId=`, `GET events/programs`। Error: standard envelope; অজানা id → envelope-এ 404-স্টাইল।
+
+**7. Data and side effects.** শুধু-পাঠ + Redis cache ভরাট।
+
+**8. Code references.** `…/events/pages/all-event-list-page/…`, `…/event-detail-page/…`; `…/modules/core/services/api/event-api.service.ts`; `rvl-gobcb-backend/Services/Event/ETP.Event.Service/Api/EventsController.cs`; `…/ETP.Event.Domain/Managers/EventManager.cs`।
+
+**9. Handover notes.** ① Event service-এ **class-level `[Authorize]` নেই** — published event data ইচ্ছাকৃতভাবে public; customer-ব্যক্তিগত কিছু এখানে নেই। ② একই controller-এর `for-ticketing` ও `EventLongId/{id}` internal helper — portal ব্যবহার করে না।
+
+### F2.3 Information page (pricing, gallery, যোগাযোগ, নীতিমালা)
+
+> **Bangla name:** তথ্য-পেজ (টিকিট মূল্য, গ্যালারি, যোগাযোগ, নীতিমালা)
+
+**1. Name and purpose.** Static/আধা-static page: program/event-ভিত্তিক টিকিট pricing, ফটো gallery, যোগাযোগ page, শর্তাবলি, প্রাইভেসি policy, FAQ, ICC code page।
+
+**2. Trigger and actor.** Portal route `/:lang/ticket-pricing`, `/:lang/gallery`, `/:lang/contact`, `/:lang/terms`, `/:lang/policy`, `/:lang/faq`, `/:lang/icc-anti-racism-code`, `/:lang/icc-anti-discrimination-code`, `/:lang/message-sent`। Actor: anonymous।
+
+**3. Business flow.**
+1. **Ticket pricing** program-ভিত্তিক gallery/level ও দামের ম্যাট্রিক্স দেখায় — admin portal-ে পরিচালিত (F1.14)।
+2. **Gallery** Media Configuration-এর gallery-page image দেখায় (F1.28)।
+3. **Contact** header/footer settings থেকে যোগাযোগের তথ্য (F1.30); contact form "message sent" নিশ্চিতকরণ দেখায়।
+4. Terms/privacy/FAQ/ICC page-এ স্থির legal টেক্সট।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Event `GET /event/api/v1/ticket-pricing/list` | **[HTTP, no token]** | published pricing ম্যাট্রিক্স (Redis-cached) |
+| 2 | Portal → Event `GET /event/api/v1/ticket-pricing/program-pricing?programId&eventId` | **[HTTP, no token]** | program/event ভাঙানো রূপ |
+| 3 | Portal → Event `GET /event/api/v1/landing-page-image/public` | **[HTTP, no token]** | gallery-page image (segment type `Gallery_Page_Segment_*` দিয়ে ছাঁকাই) |
+| 4 | Portal → Event `GET /event/api/v1/header-footer` | **[HTTP, no token]** | যোগাযোগের তথ্য |
+| 5 | terms/policy/faq | — | portal bundle-এর static content (note দ্রষ্টব্য) |
+
+**5. Components.** User portal; Event service; Admin service (মালিক — F1.14/F1.28/F1.30)।
+
+**6. API contracts.**
+
+```json
+// GET /event/api/v1/ticket-pricing/list   (item shape: TicketPricingProgram)
+{
+  "id": 3,
+  "ticketPricingId": 1,
+  "programName": "Bangladesh Tour of Sri Lanka 2026",
+  "venueName": "Sher-e-Bangla National Cricket Stadium",
+  "isPublished": true,
+  "attributes": [
+    { "id": 11, "ticketPricingProgramId": 3, "attributeName": "Grandstand", "attributePrice": 500 },
+    { "id": 12, "ticketPricingProgramId": 3, "attributeName": "Premium", "attributePrice": 1500 }
+  ]
+}
+```
+
+`program-pricing` → `ProgramPricingResponse` (`{ programId, programName, programStartDate, events: [{ eventId, eventName, venueId, venueName, galleryName, ticketType, price }] }`)। সব anonymous GET; standard error।
+
+**7. Data and side effects.** শুধু-পাঠ।
+
+**8. Code references.** `…/events/pages/…` (ticket-pricing, gallery, contact, terms, policy, faq component); `…/modules/core/services/api/{event-api,common-api,footer-api}.service.ts`; `rvl-gobcb-backend/Services/Event/ETP.Event.Service/Api/{TicketPricingController,LandingPageImageController,HeaderFooterController}.cs`।
+
+**9. Handover notes.** ① Admin portal-এর Content Editor-এ Terms/FAQ/Privacy page আছে, কিন্তু তার service শুধু ticket-pricing ও general-notice endpoint ডাকে — legal টেক্সট client-এ (portal i18n asset / app string) `[UNCONFIRMED: legal টেক্সটের প্রকৃত উৎস]`। ② User app একই pricing endpoint পড়ে (F3.3)।
+
+### F2.4 Seat selection
+
+> **Bangla name:** আসন নির্বাচন
+
+**1. Name and purpose.** Gallery → block → level বেছে (seat-mapped level-এ নির্দিষ্ট আসন) লাইভ availability-সহ কেনা — per-order/per-user সীমার ভেতরে।
+
+**2. Trigger and actor.** Portal event detail-এর buy dialog / `stadium-seat` map। Actor: customer (আসন-স্তরের availability call-এ User pool token লাগে)।
+
+**3. Business flow.**
+1. Customer venue গাছ খোলেন: gallery (যেমন Grandstand) → block → level — আসনপ্রতি দাম ও color-সহ।
+2. Seat-mapped level-এ stadium map আলাদা আসন দেখায়; লাইভ availability backend থেকে (সবুজ/খালি, নেওয়া/লক)।
+3. Customer `allowableMaximumSeatPerOrder` পর্যন্ত আসন (বা non-mapped level-এ সংখ্যা) বাছেন।
+4. এগোলে booking dialog (F2.6) খোলে — দাম, VAT ও ছাড়ের হিসাবসহ।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Event `GET /event/api/v1/events/venue-details/{eventId}` | **[HTTP, no token]** | `EventVenueDetailsTree` (গঠন + দাম; Redis-cached ~১৫ দিন) |
+| 2 | Portal → Admin `GET /admin/api/v1/eventsVenueDetails/get-level/{eventId}/{levelId}` | **[HTTP + user token]** | বাছাই করা level-এর `UserLevelWithGates` (দাম, gate নাম, sellable flag) |
+| 3 | Portal → Booking `GET /booking/api/v1/capacity/level-user-portal-seats?…` | **[HTTP + user token]** | level-এর লাইভ আসন তালিকা/অবস্থা (Redis-backed) |
+| 4 | Portal → Booking `GET /booking/api/v1/capacity/level-live-capacity?eventId&galleryId&blockId&levelId` | **[HTTP, no token]** (class-এ auth নেই) | বাকি সংখ্যা |
+| 5 | Booking Redis | — | F2.6/F5.1/F5.3-এর রাখা লাইভ counter পড়ে (`level_live*`, §0.8) |
+
+**5. Components.** User portal; Event + Admin + Booking service; Redis live counter; shared `Capacities`, `SeatReservations`, venue টেবিল।
+
+**6. API contracts.** `UserLevelWithGates` (Event service; Admin-এর `get-level`-ও একই model):
+
+```json
+// GET /event/api/v1/events/get-level/{eventId}/{levelId}
+{
+  "venueId": 2,
+  "venueName": "Sher-e-Bangla National Cricket Stadium",
+  "galleryId": 12, "gallery": "Grandstand", "isGalleryActive": true, "isGallerySellable": true,
+  "blockId": 7, "block": "Block B", "isBlockActive": true, "isBlockSellable": true,
+  "levelId": 45, "level": "Level 1", "isLevelActive": true, "isLevelSellable": true,
+  "pricePerSeat": 500.0,
+  "entryGate": "Gate 3 — North", "entryGateId": 3,
+  "miniGate": "M2",
+  "ticketColor": "#1E7B4F"
+}
+```
+
+Capacity endpoint সরল সংখ্যা/আসন তালিকা দেয়: `level-live-capacity` → `int`; `level-user-portal-seats` → `AvailableSeatsCapacity { total: string, available: string }` (কমা-দিয়ে-লেখা আসন তালিকা)। Error: standard envelope; token মেয়াদোত্তীর্ণ হলে 401 ও পুনরায় লগইন (F6.10)।
+
+**7. Data and side effects.** এই ধাপে শুধু-পাঠ; আসন **lock** হয় শুধু F2.6-এ (Redis locked-capacity key)।
+
+**8. Code references.** `…/events/pages/event-detail-page/…`, `…/tickets/pages/stadium-seat-page/…`, resolver `venue-details.resolver.service.ts`; `…/modules/core/services/api/{event-api,booking-api}.service.ts`; `…/Event.Service/Api/EventsController.cs` (`venue-details`, `get-level`), `…/Admin.Service/Api/EventsVenueDetailsController.cs`, `…/Booking.Service/Api/CapacityController.cs`।
+
+**9. Handover notes.** ① এখানে দুই সত্যের মিলন: গাছ (গঠন, ১৫ দিন পর্যন্ত cached) ও লাইভ counter (সেকেন্ড) — দাম বদল (F1.9) cache TTL পর্যন্ত দেরিতে দেখাতে পারে। ② `CapacityController`-এ **`[Authorize]` নেই**; network placement-এ internal/public ধরা হয়েছে (F6.18)।
+
+### F2.5 Promo code apply
+
+> **Bangla name:** প্রোমো কোড প্রয়োগ
+
+**1. Name and purpose.** Checkout-এর **আগে** বাছাই করা event/gallery-র সাথে promo code যাচাই করে ছাড় দেখানো, যাতে customer buy dialog-এ শুধরে যাওয়া মোট দেখেন।
+
+**2. Trigger and actor.** Portal buy dialog-এর promo-code field। Actor: customer, User pool (policy `user`)।
+
+**3. Business flow.** Customer কোড লিখে apply চাপেন; portal সফল/ব্যর্থতা ও ছাড়ের ধরন + মান দেখায়; booking (F2.6) পরে একই কোড পাঠায় ও Booking আবার server-side যাচাই করে।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal → Booking `POST /booking/api/v1/user-booking-order/apply-promo-code` | **[HTTP + user token]** | `ApplyPromoCodeRequest { promoCode, programId, eventId, galleryId }` |
+| 2 | Booking manager | **[Shared table]** | `PromoCodes`/`PromoCodeAssigns` mirror-এ যাচাই: active window (F5.16), ব্যবহারের সীমা, assignment মিল → `ApplyPromoCodeResponse` |
+
+**5. Components.** Portal (`booking-api.service.ts`); Booking service; promo টেবিল (মালিক Admin)।
+
+**6. API contracts.**
+
+```json
+// POST /booking/api/v1/user-booking-order/apply-promo-code
+{ "promoCode": "BCBWELCOME", "programId": 7,
+  "eventId": "b8e6a9d2-3f1c-4e7a-9d5f-6c2b1a8e0d34", "galleryId": 12 }
+
+// 200   (ApplyPromoCodeResponse)
+{ "isSuccess": true, "discountType": "Percentage", "discountValue": 10.0, "discountAppliedTo": "BasePrice" }
+```
+
+মূল error: `400` envelope `"Invalid promo code. Please enter a valid code."` (`UserBookingOrderManager`-এ `ArgumentException`)।
+
+**7. Data and side effects.** শুধু-পাঠ (ব্যবহারের হিসাব হয় F2.6-এ booking-এর সময়)।
+
+**8. Code references.** `rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/booking-api.service.ts`; `rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs` (`apply-promo-code`), `…/Managers/UserBookingOrderManager.cs`।
+
+**9. Handover notes.** System discount (কোড ছাড়া) আলাদাভাবে `GET /admin/api/v1/discount/program/{programId}/{eventId}/{galleryId}` (F1.16) থেকে আসে ও স্বয়ংক্রিয়ভাবে দেখায় — promo code ও system discount একসাথে থাকতে পারে; চূড়ান্ত হিসাব Booking-এর, F2.6-এ।
+
+### F2.6 Booking order ও online payment (DgePay)
+
+> **Bangla name:** বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)
+
+**1. Name and purpose.** লগইন করা customer বাছাই করা আসন/সংখ্যাকে order বানান, DgePay-র hosted checkout-এ যান, পরিশোধ করে ফেরেন; backend স্বাধীনভাবে payment যাচাই করে টিকিট তৈরি শুরু করে।
+
+**2. Trigger and actor.** Portal buy dialog → `complete-payment-modal.component.ts`। Actor: customer, User pool (policy `user`)।
+
+**3. Business flow.**
+1. Seat selection (F2.4) থেকে customer নিশ্চিত করেন: আসন বা সংখ্যা, টিকিট-প্রতি holder-এর তথ্য (নাম/ফোন), ঐচ্ছিক promo code (F2.5); dialog দাম, VAT, ছাড় ও মোট দেখায়।
+2. নিশ্চিত করলে portal browser-কে backend-এর ফেরত দেওয়া DgePay checkout URL-এ নিয়ে যায়।
+3. Customer DgePay-তে পরিশোধ করেন; DgePay browser-কে portal-এর payment-result page-এ ফেরায়।
+4. Backend DgePay-র সাথে transaction পুনঃযাচাই করে (`check_transaction_status`) ও order **Paid** করে।
+5. টিকিট PDF অ্যাসিনক্রোনাসভাবে তৈরি হয় (F5.7/F5.8); customer My Tickets-এ status দেখেন (F2.7)।
+
+**4. Technical flow.**
+
+| # | From → To | Hop | কী ঘটে |
+|---|---|---|---|
+| 1 | Portal `booking-api.service.ts` → Booking `POST /booking/api/v1/user-booking-order` | **[HTTP + user token]** | JSON `UserBookingOrder`; Booking per-user RedLock-এ (`user_booking:{userId}`) লাইভ capacity যাচাই করে, promo/system discount প্রয়োগ করে, VAT হিসাব করে, `UserBookingOrders` row (Pending) তৈরি করে |
+| 2 | Booking → DgePay `POST {BaseUrl}/payment_gateway/initiate_payment` | **[HTTP, static key]** (`PaymentSettings:DgePay`; AES/RSA-signed request, token Redis-cached) | gateway checkout URL ফেরায় |
+| 3 | Booking → customer | — | `201` + `publicId` + `checkoutUrl`; portal `window.location.href = checkoutUrl` |
+| 4 | Browser ← DgePay redirect → Booking `GET /booking/api/v1/user-booking-order/dgepay/payment-status?data=…` | **[HTTP, no token]** (ইচ্ছাকৃতভাবে anonymous) | Booking DgePay `check_transaction_status` ডাকে, status ম্যাপ করে ("3"/"Success" → **Paid**), order হালনাগাদ |
+| 5 | সফল হলে Booking → SQS | **[SQS: OrderSuccess]** `LevelCapacityUpdate` (GroupId `{eventLongId}_{galleryId}_{blockId}_{levelId}`) ও **[SQS: VatChallanProcessing]** `VatChallanProcessing` | ভোক্তা: F5.1 (capacity) ও F5.10 (VAT challan) |
+| 6 | Booking → Ticketing `GET /ticketing/api/v1/booking-order-ticket/initiate?orderId={publicId}` | **[HTTP, no token]** (internal endpoint) | blank PDF তৈরি → signing pipeline (F5.8) |
+| 7 | Booking worker | **[Worker: 15 min]** | `InitiateUserTicketGenerationService` event-এর `TicketAvailabilityStartDateTime` পেরোনো paid order-ও ধরে (F5.7) — ধাপ ৬-এর safety net |
+
+**5. Components.** User portal; Booking service; DgePay; SQS `OrderSuccess` + `VatChallanProcessing`; Redis (লাইভ capacity, lock, DgePay token cache); Aurora টেবিল `UserBookingOrders`, `Capacities`, `SeatReservations`, `BookedUserRecords`, `PromoCodes`/`Discounts` mirror; Ticketing (downstream)।
+
+**6. API contracts.**
+
+**`POST /booking/api/v1/user-booking-order`** — auth: User pool (policy `user`)। Request = `UserBookingOrder` (`Services/Booking/ETP.Booking.Domain/Models/UserBookingOrder.cs`):
+
+```json
+{
+  "eventId": "b8e6a9d2-3f1c-4e7a-9d5f-6c2b1a8e0d34",
+  "galleryId": 12,
+  "blockId": 7,
+  "levelId": 45,
+  "numberOfSeats": 2,
+  "hasSeats": true,
+  "seats": "A1,A2",
+  "pricePerSeat": 1500.0,
+  "promoCode": "BCBWELCOME",
+  "totalCharge": 3000.0,
+  "vat": 450.0,
+  "bookedUserDetails": [
+    { "userName": "Rahim Uddin", "phoneNumber": "+8801712345678" }
+  ]
+}
+```
+
+`201` — `UserBookingOrderResponse` (`{ publicId, checkoutUrl }`):
+
+```json
+{
+  "publicId": "7c9f2e64-51ab-4d3e-b1f0-9a8d6e5c4b21",
+  "checkoutUrl": "https://<dgepay>/payment_gateway/checkout?txn=DPX88312"
+}
+```
+
+**`GET /booking/api/v1/user-booking-order/dgepay/payment-status?data={encrypted}`** — anonymous; DgePay-র সাথে যাচাই করে, order হালনাগাদ করে, portal-এর payment-result page-এ `302` redirect দেয় (redirect টার্গেট backend-side secret-এ configured)।
+
+মূল error: `401` (POST-এ User token নেই/মেয়াদোত্তীর্ণ), `400` envelope — আসন নেওয়া/capacity/promo-অবৈধ জাতীয় business ব্যর্থতা।
+
+**7. Data and side effects.** `UserBookingOrders` insert + status হালনাগাদ (payment transaction id, `OneIdUserId`); Redis আসন lock; ধাপ ৫-এর SQS message; DgePay-পক্ষের payment; এখানে email/push নেই (তৈরি হওয়ার পরে — F5.12)।
+
+**8. Code references.**
+
+| কী | কোথায় |
+|---|---|
+| Portal caller | `rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/booking-api.service.ts`; `complete-payment-modal.component.ts` |
+| Controller | `rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs` |
+| Manager | `…/ETP.Booking.Domain/Managers/UserBookingOrderManager.cs` (payment-success path-এ SQS publish) |
+| DgePay client | `…/ETP.Booking.Domain/Managers/DgePayPaymentManager.cs` |
+| Worker | `…/ETP.Booking.Service/Workers/BackgroundServices/{LevelCapacityUpdateService,VatChallanProcessingService,InitiateUserTicketGenerationService}.cs` |
+
+**9. Handover notes.** ① Test endpoint `GET …/payment-status-bypass?rawData=` DgePay যাচাই এড়িয়ে সরাসরি টিকিট তৈরি শুরু করে — production-এ পৌঁছাচ্ছে না তা নিশ্চিত করুন `[UNCONFIRMED]`। ② DgePay-র পাশে পূর্ণ **SSLCommerz** endpoint (`payment-success|fail|cancel|ipn`, `payment-methods`) আছে; architecture doc শুধু DgePay-র নাম নেয় — কোন gateway live নিশ্চিত করুন `[UNCONFIRMED]` (program-প্রতি gateway নির্বাচন আছে, F1.3)। ③ Payment-এর সত্য হলো server-side status check, redirect নয়। ④ Per-user lock মানে customer-প্রতি একবারে একটি order-চেষ্টা; lock আটকে গেলে মেয়াদ শেষ না হওয়া পর্যন্ত পরের চেষ্টা দেরি করে।
+
 <!-- 🔄 CONTINUE-BN -->
 
