@@ -6,7 +6,9 @@
 
 ## 1. Name and purpose
 
-**Header/footer and social media.** One record controls the public site's header and footer: the title, a brand image, a "powered by" image and the social-media links (Facebook, Instagram, Twitter/X, LinkedIn). A second, older record (`SocialMediaSettings`) holds only the four links and has its own screen in the unlinked `/settings` module.
+**Header/footer and social media.** One record controls the public site's header and footer: the title, a brand image, a "powered by" image, the social-media links (Facebook, Instagram, Twitter/X, LinkedIn) and the **contact block — `phoneNumber`, `email` and `officeAddress`**. A second, older record (`SocialMediaSettings`) holds only the four links and has its own screen in the unlinked `/settings` module.
+
+The contact block is the site's public phone number, email address and postal address. It is stored on `HeaderFooters`, returned by the Event service and shown in the customer footer ([P-01](../20-user-portal/P-01-home-content.md)).
 
 ## 2. Trigger and actor
 
@@ -15,12 +17,12 @@
 
 ## 3. Business flow
 
-Open the section, change the title, replace the images, edit the four links, **Update**. Customers see the result in the portal header and footer ([P-01](../20-user-portal/P-01-home-content.md), [U-02](../30-user-app/U-02-home-browse-events.md)).
+Open the section, change the title, replace the images, edit the four links, fill in the **phone number, email and office address**, then **Update**. Customers see the result in the portal header and footer ([P-01](../20-user-portal/P-01-home-content.md), [U-02](../30-user-app/U-02-home-browse-events.md)).
 
 ## 4. Technical flow
 
-1. **[HTTP + user token]** `GET /admin/api/v1/header-footer` (list, normally one record); `PUT /admin/api/v1/header-footer` (`multipart/form-data`, `UpdateHeaderFooter {title, facebookUrl, instagramUrl, twitterUrl, linkedInUrl, brandImageUrl (file), poweredByImageUrl (file)}`).
-2. `HeaderFooterManager.UpdateHeaderFooterAsync`: title required ("Title is required and cannot be empty."); each non-empty social link must be an `http(s)` URL on `facebook.com`, `instagram.com`, `x.com`, `twitter.com` or `linkedin.com` (a subdomain allowed), else "Invalid {Platform} URL format."; update the row; upload the brand and powered-by images to S3 `header-footer/{id}/...` and store their URLs ([X-20](../60-cross-cutting/X-20-file-storage.md)). Note the field names `brandImageUrl` and `poweredByImageUrl` carry **files** in the request.
+1. **[HTTP + user token]** `GET /admin/api/v1/header-footer` (list, normally one record); `PUT /admin/api/v1/header-footer` (`multipart/form-data`, `UpdateHeaderFooter {title, facebookUrl, instagramUrl, twitterUrl, linkedInUrl, brandImageUrl (file), poweredByImageUrl (file), phoneNumber, email, officeAddress}`).
+2. `HeaderFooterManager.UpdateHeaderFooterAsync`: title required ("Title is required and cannot be empty."); each non-empty social link must be an `http(s)` URL on `facebook.com`, `instagram.com`, `x.com`, `twitter.com` or `linkedin.com` (a subdomain allowed), else "Invalid {Platform} URL format."; update the row; upload the brand and powered-by images to S3 `header-footer/{id}/...` and store their URLs ([X-20](../60-cross-cutting/X-20-file-storage.md)). Note the field names `brandImageUrl` and `poweredByImageUrl` carry **files** in the request. The DTO is mapped to the entity with Mapster (`updateHeaderFooter.Adapt<Storage.Models.Settings.HeaderFooter>()`), so `phoneNumber`, `email` and `officeAddress` are persisted by name — **none of the three is validated**, unlike the title and the social URLs.
 3. **Social media settings:** `GET /admin/api/v1/social-media-settings`, `PUT /admin/api/v1/social-media-settings` (JSON `{facebookUrl, instagramUrl, linkedInUrl, twitterUrl}`), same URL validation; no cache.
 4. **Customer reads:** the user portal reads the header and footer data (`HeaderFooterData`) and social settings through its `common` store ([P-01](../20-user-portal/P-01-home-content.md)).
 
@@ -48,13 +50,16 @@ Primary sample, `PUT /admin/api/v1/header-footer` multipart (names from `UpdateH
 title=GoBCB
 facebookUrl=https://facebook.com/gobcb
 instagramUrl=https://instagram.com/gobcb
+phoneNumber=+8801700000000
+email=info@gobcb.com
+officeAddress=Bangabandhu National Stadium, Dhaka
 brandImageUrl=<file>
 poweredByImageUrl=<file>
 ```
 
 ## 7. Data and side effects
 
-One header/footer row, S3 images, activity log entries ([X-24](../60-cross-cutting/X-24-activity-logging.md)).
+One header/footer row (including `PhoneNumber`, `Email`, `OfficeAddress`), S3 images, activity log entries ([X-24](../60-cross-cutting/X-24-activity-logging.md)).
 
 ## 8. Code references
 
@@ -71,7 +76,8 @@ One header/footer row, S3 images, activity log entries ([X-24](../60-cross-cutti
 2. **Two sources for the same links.** Header/footer carries the four URLs and `SocialMediaSettings` carries the same four; which one each customer client reads should be checked before relying on either `[UNCONFIRMED: Q-34]`.
 3. **Replacing an image deletes using the *new* file name.** In `UploadBrandImageAsync`, when a brand image already exists the code calls `DeleteContentAsync("header-footer", id, storageFilename)` with the newly generated name, not the old file's name, so the old object stays in S3 and orphan files accumulate.
 4. **No cache** here, unlike banners ([A-28](A-28-media-configuration.md)); every customer page load reads the table.
-5. The `/settings` module is not in any menu ([A-02](A-02-programs.md) note 3).
+5. **The contact fields are unvalidated.** `CheckValidation` (`:65-75`) requires the title and validates the four social URLs, but **nothing checks `phoneNumber`, `email` or `officeAddress`** — a malformed address or an unparseable string is stored and published to every customer. They are mapped by name through Mapster, so they do persist; they simply have no rules.
+6. The `/settings` module is not in any menu ([A-02](A-02-programs.md) note 3).
 
 ## 10. Component relationships
 

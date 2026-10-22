@@ -6,7 +6,9 @@
 
 ## 1. Name and purpose
 
-**Ticket-pricing page.** A public information page that tells customers the ticket prices of a program and venue as plain text lines (attribute name and price, for example "Gallery A: 500"). It is **content**, separate from the real prices of events ([A-09](A-09-event-level-pricing.md)); the admin keeps it in sync by hand. The portal and app display the published entries.
+**Ticket-pricing page.** A content screen that tells customers the ticket prices of a program and venue as plain text lines (attribute name and price, for example "Gallery A: 500"). It is **content**, separate from the real prices of events ([A-09](A-09-event-level-pricing.md)); the admin keeps it in sync by hand.
+
+**The screen is not connected to the customer-facing pricing page.** The Event service does expose this content at `/event/api/v1/ticket-pricing/list`, but the portal and the app read `program-pricing` instead — the live per-level prices from the event tables. **Nothing an editor publishes here is displayed to a customer today.** See §4 note 4 and §9 note 1.
 
 ## 2. Trigger and actor
 
@@ -14,14 +16,18 @@ Staff who can open **Site Settings → Content Editor** (global menu, `/content-
 
 ## 3. Business flow
 
-List the entries, create one (program name, venue name, a list of attribute name and price pairs), edit it, **publish** or **unpublish**, delete. Only published entries are visible to customers.
+List the entries, create one (program name, venue name, a list of attribute name and price pairs), edit it, **publish** or **unpublish**, delete. Only published entries would be visible to customers — and because of §4 note 4, none are.
 
 ## 4. Technical flow
 
 1. **[HTTP + user token]** `GET /admin/api/v1/ticket-pricing?...` (paged), `GET .../ticket-pricing/list`, `GET .../{id}`.
 2. Create `POST .../ticket-pricing` (JSON `CreateOrUpdateTicketPricing {programName, venueName, isPublished, attributes[{attributeName, attributePrice}]}`), update `PUT .../{id}` (the attribute list is cleared and rewritten), publish `PUT .../publish/{id}`, unpublish `PUT .../unpublish/{id}`, delete `DELETE .../{id}`, delete one attribute `DELETE .../attribute/{attributeId}`.
 3. After every change `RefreshTicketPricingCacheAsync` reads all rows, keeps the **published** ones, and writes the list to the Redis key `ticket_pricing_all` for **30 days** ([X-25](../60-cross-cutting/X-25-redis.md)).
-4. **Customer read:** the Event service answers **only from the Redis key `ticket_pricing_all`** (`EventTicketPriceManager.GetAllTicketPricingAsync`); if the key is missing it logs "Ticket pricing data not found in cache. Please ensure Admin service has populated the cache." and returns an **empty list** ([P-03](../20-user-portal/P-03-info-pages.md), [U-03](../30-user-app/U-03-info-pages.md)).
+4. **Customer read — and this is the important part: the live customer pricing page does NOT use this content.** The Event service exposes **two** pricing endpoints:
+   - `GET /event/api/v1/ticket-pricing/list` → `EventTicketPriceManager.GetAllTicketPricingAsync` reads **only from the Redis key `ticket_pricing_all`** — i.e. this screen's content. If the key is missing it logs "Ticket pricing data not found in cache. Please ensure Admin service has populated the cache." and returns an **empty list**.
+   - `GET /event/api/v1/ticket-pricing/program-pricing` → `ProgramPricingManager.GetProgramPricingAsync` builds a **live** list from the real event, venue, gallery, ticket-type and price tables.
+
+   The user portal and the app render **`program-pricing`**, not `list`. In the portal, `EventApiService.getTicketPricingList()` (`event-api.service.ts:65-70`, hitting `/list`) has **no caller at all**, while `getProgramPricing()` (`:72-77`) is called from `event.effects.ts:40` and read by `ticket-pricing.component.ts:46` and `event-overview.component.ts:171`. **So the content staff edit on this screen is invisible to customers**, and the Redis-cached list built in step 3 is never displayed ([P-03](../20-user-portal/P-03-info-pages.md), [U-03](../30-user-app/U-03-info-pages.md)).
 
 ## 5. Components
 
@@ -69,11 +75,13 @@ Rows, the 30-day Redis list; activity log ([X-24](../60-cross-cutting/X-24-activ
 
 ## 9. Handover notes
 
-1. **No authorization**: anyone who can reach the endpoint can publish, change or delete the public price page.
-2. **Names, not ids.** The entry stores program and venue as free text; it is not linked to the program or the real prices, so it can disagree with them.
-3. **The customer page depends on the cache alone.** After a Redis flush, a failover or the 30-day expiry, the page is empty until an admin saves any ticket-pricing entry again (that rewrites the whole list); nothing rebuilds it at start-up. A manual database edit is not visible either.
-4. **`attributePrice` is a whole number** (`long`), so decimal prices cannot be shown.
-5. **Stale unpublish.** Unpublish removes the entry from the cached list at once, but any customer page already loaded keeps showing it until it reloads.
+1. **Nothing an editor writes here reaches a customer.** The whole screen is a dead end: the customer pricing page reads `program-pricing` (live prices from the event tables), not `ticket_pricing_all` (§4 note 4). Editing, publishing and unpublishing this content changes **no customer-visible page**. Confirm with the business whether this screen is meant to exist, or whether the portal is simply wired to the wrong endpoint — this needs an answer before go-live.
+2. **No authorization**: anyone who can reach the endpoint can publish, change or delete the public price page.
+3. **Names, not ids.** The entry stores program and venue as free text; it is not linked to the program or the real prices, so it can disagree with them.
+4. **The cached list would be fragile even if it were displayed.** `/list` answers **only** from the Redis key `ticket_pricing_all`. After a Redis flush, a failover or the 30-day expiry it returns an empty list until an admin saves any ticket-pricing entry again; nothing rebuilds it at start-up, and a manual database edit is not visible either.
+5. **`attributePrice` is a whole number** (`long`), so decimal prices cannot be shown.
+6. **Stale unpublish.** Unpublish removes the entry from the cached list at once, but any client already holding the old list keeps showing it until it reloads.
+7. **The customer-facing pricing is `attributePrice`-free**, because `program-pricing` reads the real per-level prices ([A-09](A-09-event-level-pricing.md)) — so the two features can display entirely different numbers, and there is no check that they agree.
 
 ## 10. Component relationships
 

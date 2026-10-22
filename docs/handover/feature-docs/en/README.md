@@ -189,8 +189,43 @@ The first segment is the service prefix (see [path-prefix routing](00-platform-p
   - [X-25 Redis: cache, live capacity and locks](60-cross-cutting/X-25-redis.md)
   - [X-26 Configuration and secrets](60-cross-cutting/X-26-configuration.md)
 <!-- TOC:END -->
-- [90 · Appendix A: inactive, legacy or unreferenced code](90-appendix-a-legacy.md)
+- [90 · Appendix A: legacy, unused and dormant code](90-appendix-a-legacy.md)
 - [91 · Appendix B: endpoint index](91-appendix-b-endpoint-index.md)
-- [92 · Appendix C: coverage checklist](92-appendix-c-coverage.md)
-- [93 · Appendix D: local test environment reference](93-appendix-d-local-test-reference.md)
-- [99 · Open queries for BS23](99-open-queries.md)
+- [92 · Appendix C: coverage](92-appendix-c-coverage.md)
+- [93 · Appendix D: local test reference](93-appendix-d-local-test-reference.md)
+- [99 · Open queries](99-open-queries.md)
+
+## Where to start
+
+| If you are… | Read, in this order |
+|---|---|
+| **New to the platform** | [00 · Platform primer](00-platform-primer.md) → [01 · System map](01-system-map.md) → one feature from each section |
+| **A .NET developer meeting microservices for the first time** | [00 · Platform primer](00-platform-primer.md) — the explainer boxes cover path-prefix routing, the shared database, queues and RedLock. Then [X-19](60-cross-cutting/X-19-service-to-service.md) and [X-25](60-cross-cutting/X-25-redis.md) |
+| **Reviewing a security risk** | [01 §8](01-system-map.md#8-where-the-risk-is), then [X-18](60-cross-cutting/X-18-endpoints-without-auth.md), then [99 §5](99-open-queries.md#5-defects--code-that-appears-wrong) |
+| **Picking up the backend** | [02 · Traceability matrix](02-traceability-matrix.md) §2, then [50 · System-initiated](50-system-initiated/README.md) |
+| **Picking up a client** | [02](02-traceability-matrix.md) §2 for your client section, then [93 · Local test reference](93-appendix-d-local-test-reference.md) |
+| **Changing a table, queue or Redis key** | [03 · Component reverse index](03-component-reverse-index.md) — it lists every reader |
+| **Asked a question the code cannot answer** | [99 · Open queries](99-open-queries.md) — 75 items, each marked external, deployment, ambiguity or defect |
+| **Setting up locally** | [`docs/local-dev.md`](../../../local-dev.md), then [93](93-appendix-d-local-test-reference.md) for what cannot work and why |
+| **Deciding what to delete** | [90 · Appendix A](90-appendix-a-legacy.md) |
+
+## The numbers
+
+| | |
+|---|---|
+| Feature files | **103** (31 admin, 13 portal, 10 app, 6 checker, 17 system, 26 cross-cutting) |
+| Backend services | 9 real + 2 stubs |
+| HTTP endpoints indexed | 354 routes across 58 controllers |
+| Background workers | 17 |
+| SQS queues | 6 |
+| Open queries | **75** (Q-01 … Q-77; Q-21 and Q-24 unused) |
+| Findings rated "defect" | 23 — the ones to fix first |
+
+## Corrections to earlier drafts
+
+Two statements in earlier drafts were wrong and have been corrected against the code:
+
+| Claim | Correction |
+|---|---|
+| "The user portal does not call `getAllGeneralNotices` — it has no caller." | It **is** called and the rows **are** fetched and filtered; `notices` is simply never bound in the template (`// Fetch notices but do not start the marquee`). See [P-01](20-user-portal/P-01-home-content.md) note 2 and [A-31](10-admin-portal/A-31-general-notices.md) note 2. |
+| "The customer pricing page reads the ticket-pricing content an admin edits." | It reads `program-pricing` (live event prices). `getTicketPricingList()` has no caller, so nothing published in [A-14](10-admin-portal/A-14-ticket-pricing-content.md) is ever shown. |

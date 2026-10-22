@@ -63,11 +63,12 @@ Primary sample, `POST /admin/api/v1/general-notice` (names from `CreateOrUpdateG
 
 ## 9. Handover notes
 
-1. **The management screen is not in the menu**, so staff may not know it exists; the customer portal still reads this table.
-2. **Public list is cached without a program filter**; the response contains notices of every program, and the customer client filters, if at all.
-3. **The text is HTML** and is not sanitised on save; only `<p>` is rewritten on read, so scripts or other tags in the text depend on the client's rendering `[UNCONFIRMED: Q-33]`.
-4. **Ended notices stay in the cached list** until the next change but are filtered out on every read, so they disappear on time without a cache refresh. Not-yet-started notices are returned too; the client decides whether to show them.
-5. **Delete is `DeleteByIdAsync`** of the repository; soft or hard is not checked here.
+1. **The management screen is not in the menu**, so staff may not know it exists.
+2. **The user portal fetches these notices but never renders them.** `EventApiService.getAllGeneralNotices` **is** called from `home-events-page.component.ts:43`, the rows **are** date-filtered in memory and assigned to the component's `notices` array — but **`notices` is never bound in `home-events-page.component.html`**, and the code comment at `:40` says so outright: `// Fetch notices but do not start the marquee`. So each home-page load issues a request whose result is discarded, and the scrolling line customers actually see is the content editor's `Notice` type ([A-29](A-29-content-editor.md)). Whether the user app renders them is not visible. **This is the single most likely reason staff would report "I published a notice and nothing happened."** `[UNCONFIRMED: Q-35]`
+3. **Public list is cached without a program filter**; the response contains notices of every program, and the customer client filters — here it filters by `startDateTime`/`endDateTime` only, never by program.
+4. **The text is HTML** and is not sanitised on save; only `<p>` is rewritten on read, so scripts or other tags in the text depend on the client's rendering `[UNCONFIRMED: Q-33]`.
+5. **Ended notices stay in the cached list** until the next change but are filtered out on every read, so they disappear on time without a cache refresh. Not-yet-started notices are returned too; the client decides whether to show them.
+6. **Delete is `DeleteByIdAsync`** of the repository; soft or hard is not checked here.
 
 ## 10. Component relationships
 

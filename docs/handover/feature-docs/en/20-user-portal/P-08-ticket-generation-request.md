@@ -16,7 +16,7 @@ Signed-in customer on `/{lang}/tickets/ticket-details/{publicId}` (`TicketPrevie
 
 1. Before the availability date the button is inactive. From the availability date on, **Request tickets** opens a confirmation pop-up ("Once generated, the ticket details cannot be changed"; the pop-up text is hard-coded in English, not translated).
 2. After confirmation the order status becomes `Requested`; a pop-up says generation is in progress; the page shows the "in progress" state and re-checks every 30 seconds.
-3. When every ticket is signed the order becomes `Generated` ([S-06](../50-system-initiated/S-06-booking-to-generated.md)); the page reloads the tickets and shows the **Download**, **Share** and, for more than one ticket, **Download all** buttons.
+3. When every ticket is signed the order becomes `Generated` ([S-06](../50-system-initiated/S-06-booking-status-generated.md)); the page reloads the tickets and shows the **Download**, **Share** and, for more than one ticket, **Download all** buttons.
 
 ## 4. Technical flow
 
@@ -30,7 +30,7 @@ Signed-in customer on `/{lang}/tickets/ticket-details/{publicId}` (`TicketPrevie
    5. for each ticket publishes **[SQS: TicketSigning]** a `SignedTicketGeneration` message (`UnsignedTicketUrl`, `QRPosition` by layout size, `GateId` = the level's entry gate, `Data` = name, phone, date and time (UTC+6), ticket id, event id, gallery, block, level, entry gate, mini gate, seat); the signing worker is [S-08](../50-system-initiated/S-08-ticket-signing.md);
    6. **[HTTP, no token → Booking]** `PATCH .../user-booking-order/generate-ticket-request/{publicId}` sets the order status `Requested`, and returns the order with its tickets.
 4. The browser updates the ticket statuses and the order status from the response and opens the "generation" pop-up. From now on `ngOnInit`'s timer (every 30 s) calls **[HTTP + user token]** `GET /booking/api/v1/user-booking-order/check-generated-status?id=` while the status is `Requested`; when it returns `true` the portal reloads the tickets (`details`).
-5. Background: [S-08](../50-system-initiated/S-08-ticket-signing.md) signs and stores each ticket (`SignedTicketUrl`); [S-06](../50-system-initiated/S-06-booking-to-generated.md) marks the order `Generated` when all its tickets are signed; [S-12](../50-system-initiated/S-12-ticket-generated-notification.md) sends the push message.
+5. Background: [S-08](../50-system-initiated/S-08-ticket-signing.md) signs and stores each ticket (`SignedTicketUrl`); [S-06](../50-system-initiated/S-06-booking-status-generated.md) marks the order `Generated` when all its tickets are signed; [S-12](../50-system-initiated/S-12-ticket-generated-notification.md) sends the push message.
 
 ## 5. Components
 
@@ -38,7 +38,7 @@ Signed-in customer on `/{lang}/tickets/ticket-details/{publicId}` (`TicketPrevie
 |---|---|
 | Client | `tickets/components/{ticket-preview,request-tickets-modal,ticket-generation-modal,in-progress-ticket-modal}`, `booking-api.service.ts:50-54, 93-98` |
 | Services | Ticketing (`BookingOrderTicketController.GenerateTicketRequest`, `TicketManager`); Booking (`generate-ticket-request`, `check-generated-status`); Event (event, layout, level info) |
-| Queues / workers | SQS `TicketSigning` → [S-08](../50-system-initiated/S-08-ticket-signing.md); [S-06](../50-system-initiated/S-06-booking-to-generated.md) |
+| Queues / workers | SQS `TicketSigning` → [S-08](../50-system-initiated/S-08-ticket-signing.md); [S-06](../50-system-initiated/S-06-booking-status-generated.md) |
 | Tables | `Tickets`, `TicketLayoutConfigs`, `UserBookingOrders` |
 | Storage | ticket bucket `{BlankBase}/user/...` (blank), `{SignedBase}` (signed) |
 | External | TSP (through the worker) |
@@ -102,7 +102,7 @@ sequenceDiagram
   U->>B: GET check-generated-status every 30 s (HTTP + user token)
 ```
 
-**Depends on:** [P-06](P-06-booking-payment.md), [P-09](P-09-ticket-details-downloads.md) (holder data), [A-13](../10-admin-portal/A-13-ticket-layouts.md), [A-07](../10-admin-portal/A-07-events.md) (availability date). **Affects:** [S-06](../50-system-initiated/S-06-booking-to-generated.md), [S-08](../50-system-initiated/S-08-ticket-signing.md), [S-12](../50-system-initiated/S-12-ticket-generated-notification.md), [P-09](P-09-ticket-details-downloads.md).
+**Depends on:** [P-06](P-06-booking-payment.md), [P-09](P-09-ticket-details-downloads.md) (holder data), [A-13](../10-admin-portal/A-13-ticket-layouts.md), [A-07](../10-admin-portal/A-07-events.md) (availability date). **Affects:** [S-06](../50-system-initiated/S-06-booking-status-generated.md), [S-08](../50-system-initiated/S-08-ticket-signing.md), [S-12](../50-system-initiated/S-12-ticket-generated-notification.md), [P-09](P-09-ticket-details-downloads.md).
 
 ## 11. Developer test guide
 

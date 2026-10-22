@@ -105,6 +105,6 @@ sequenceDiagram
 | Test data and accounts | `pwsh ./scripts/Seed-EtpData.ps1`; a `Paid` order of an event whose `TicketAvailabilityStartDateTime` is past |
 | Browser | User portal: my bookings → generate tickets; Network shows `PATCH .../generate-request/{id}` |
 | Emulator | Not locally (known sign-in gap) |
-| Postman | `postman/services/etp-ticketing.postman_collection.json`: "GET /api/v1/booking-order-ticket/initiate-user-ticket?orderId=" (no token needed) |
+| Postman | `postman/services/etp-ticketing.postman_collection.json`: "GET /api/v1/booking-order-ticket/initiate-user-ticket" (no token needed) |
 | Visual Studio debug | Booking: `InitiateUserTicketGenerationTaskManager.ExecuteAsync` (first run after 10 min); Ticketing: `TicketManager.InitiateUserTicket`, `TicketGenerateRequest` |
 | Verify | SQL: rows in the Ticketing tickets table for the order, `Status = Requested`; `aws --endpoint-url http://localhost:4566 s3 ls s3://etp-local/blank/ --recursive`; SQS `TicketSigning` message count |

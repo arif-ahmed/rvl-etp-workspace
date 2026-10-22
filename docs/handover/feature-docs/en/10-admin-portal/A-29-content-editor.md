@@ -64,7 +64,7 @@ isPublished=true
 ## 9. Handover notes
 
 1. **Content is plain text in a column named for images**: no versioning, no preview, no approval; an edit is live at once for Terms and Privacy (always published).
-2. **Two "notice" features exist.** This tab's **Notice** uses `LandingPageImages` type `Notice`; the separate **General notices** use their own table and API and live in the unlinked `/settings` module ([A-31](A-31-general-notices.md)). Customers may see either depending on the client.
+2. **Two "notice" features exist, and only this one is visible to customers.** This tab's **Notice** uses `LandingPageImages` type `Notice`. The separate **General notices** screen uses its own table and API and lives in the unlinked `/settings` module ([A-31](A-31-general-notices.md)). **The user portal fetches the general notices, filters them and then never renders them** — `notices` is not bound in `home-events-page.component.html`, and the code comment says `// Fetch notices but do not start the marquee`. So the marquee customers see comes from **this** tab. Confirm with the business which screen they actually intend to use, because editing the other one produces no visible change `[UNCONFIRMED: Q-35]`.
 3. **HTML or markdown is not sanitised here**; the description is stored as sent, so how it is rendered (escaped or as HTML) is decided by the customer clients `[UNCONFIRMED: Q-33]`.
 4. **The single-item rule is only checked on create**; an edit that changes the type is not re-checked.
 5. **Cached public list** has no expiry; manual database edits are invisible until the next change ([A-28](A-28-media-configuration.md) note 4).

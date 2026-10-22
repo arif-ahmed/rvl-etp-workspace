@@ -99,6 +99,6 @@ sequenceDiagram
 | Test data and accounts | An order with `Status = Generated` (SQL update or seeded data) |
 | Browser | None |
 | Emulator | — |
-| Postman | `postman/services/etp-booking.postman_collection.json`: "GET /api/v1/user-booking-order/not-notified-list?limit=5" |
+| Postman | `postman/services/etp-booking.postman_collection.json`: "GET /api/v1/user-booking-order/not-notified-list" |
 | Visual Studio debug | Scheduler: `SendNotificationAfterGeneratedTicketServiceTaskManager.ExecuteAsync` |
 | Verify | SQL: `IsTicketStatusNotified` of the order; Scheduler log "Successfully updated notification status for N bookings" |
