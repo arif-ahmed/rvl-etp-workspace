@@ -26,6 +26,7 @@ How to run the Angular user (customer) portal (`rvl-gobcb-user-portal/ETP-Web`, 
 | Amplify talks to real `cognito-idp.<region>.amazonaws.com` (no endpoint setting) | Script adds `endpoint` to `awsConfig.ts` in the copy, pointing at the dev-server proxy |
 | Floci sends no CORS headers; its HTTPS proxy uses a self-signed certificate | Browser only talks to `localhost:4201`; the dev server proxies to Floci and to the backend services |
 | The portal expects **one gateway host** for all APIs (`/booking`, `/event`, `/ticketing`, `/admin`, `/userissue` under one base) | All `services.*` hosts are `/p`; the proxy splits by path to the five local services |
+| Hosted-UI SSO code hardcodes `https://<domain>` and Floci has no hosted UI | Script patches `cognito.service.ts` in the copy to plain `<domain>`; the proxy hosts a fake OneID at `/p/oneid` (section 5) |
 | The portal signs in with SRP; `floci/seed-users.ps1` only enables password auth on the app client | Script enables `ALLOW_USER_SRP_AUTH` on the Floci client |
 
 All other Angular source is an unmodified copy.
@@ -38,7 +39,8 @@ browser :4201 ── ng serve (portal-local/user-portal)
                    ├─ /p/ticketing   -> Ticketing    :5108
                    ├─ /p/admin       -> Admin        :5101   (general notices, discounts)
                    ├─ /p/userissue   -> UserIssue    :5110   (incl. websocket chat hub)
-                   └─ /p/identity    -> 503 (no local implementation, see section 5)
+                   ├─ /p/oneid       -> fake OneID (authorize/token/logout, section 5)
+                   └─ /p/identity    -> stub for user/my-profile, 503 for the rest
 ```
 
 ## 2. Prerequisites
@@ -99,9 +101,29 @@ Press **Next**. You land on the home page with **My Tickets** and **Logout** in 
 | Works locally | Does not work locally |
 |---|---|
 | Home page, programs, event lists (real seeded data) | **Register / sign-up, OTP, forgot password**: they call the "identity" API (`/user/register-cached`, `/otp/*`), which has no source in any repo. The proxy answers 503 |
-| Password login through Cognito (Floci), logout | **User profile** (`/user/my-profile`) returns 503, so the profile name/avatar is empty. Login itself still succeeds |
-| My Tickets (orders from the Booking service) | **Login with OneID (SSO)**: needs the external OneID provider and Cognito hosted-UI domain |
-| Event details, ticket booking screens (backend permitting) | Payment return, biometric capture (Innovatrics SDK), Google Analytics |
+| Password login through Cognito (Floci), logout | **Real OneID**: needs OneID's registered client and a Cognito hosted-UI domain with OneID as identity provider; those exist only in the deployed AWS account. Floci has no hosted UI |
+| **Login with OneID Wallet (fake)**, see below | Payment return, biometric capture (Innovatrics SDK), Google Analytics |
+| My Tickets (orders from the Booking service) | |
+| Profile: `GET /user/my-profile` is a **local stub** built from the token (name "Local User", role `user`) | |
+| Event details, ticket booking screens (backend permitting) | |
+
+### Login with OneID (fake)
+
+`/en/auth/login?sso_init=oneid` does nothing when opened directly: it only acts inside the popup (window named `OneID Login`) that the
+**Login with OneID Wallet** button opens. Click the button instead. The dev-server proxy (`proxy.conf.js`) plays OneID:
+
+```
+button -> popup /en/auth/login?sso_init=oneid   (portal creates the PKCE verifier)
+       -> /p/oneid/oauth2/authorize             fake: auto-approves, redirects back with a one-time code
+       -> popup /en/auth/login?code=...         portal exchanges the code
+       -> /p/oneid/oauth2/token                 fake: checks the PKCE challenge, returns REAL Floci tokens for 1700000011
+       -> popup closes, main page reads the tokens, loads the profile (stub), you are signed in
+```
+
+There is no username/password screen: the fake always signs in as the seeded customer `1700000011`. The tokens are genuine Floci tokens, so
+the backend accepts them. To test a different user, change `SSO_USER` in the generated `proxy.conf.js` (and the script's template).
+The script also patches the copy's `cognito.service.ts` because the portal hardcodes `https://` on the Cognito domain.
+Allow popups for `localhost:4201` in your browser, or the portal shows "Popup was blocked".
 
 ## 6. Debug
 
@@ -125,6 +147,8 @@ Press **Next**. You land on the home page with **My Tickets** and **Logout** in 
 |---|---|
 | Login: `USER_SRP_AUTH flow not enabled for this client` | Floci client was re-seeded. Re-run `Setup-UserPortal.ps1` (it re-enables SRP) |
 | Login: "Incorrect username or password" | Wrong user, or Floci was reset. Re-run the script; use `1700000011` (the Admin-pool users `…01` to `…05` are not in this pool) |
+| SSO: "Popup was blocked" | Allow popups for localhost:4201 |
+| SSO: "Authentication failed" | Floci rejected the seeded user (pool reset?). Re-run the script; check `1700000011` exists in the User pool |
 | Login: "User does not exist" | `seed-users.ps1` not run for the User pool |
 | Script: `Cannot reach Floci` | `docker compose -f floci/docker-compose.yml up -d` |
 | Script: `Pool 'etp-user' not found` / `Client 'etp-local' not found` | `pwsh ./floci/seed-users.ps1` |
