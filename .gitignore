@@ -436,3 +436,6 @@ floci/certs/
 
 # Generated local admin portal copy (scripts/Setup-AdminPortal.ps1)
 portal-local/
+
+# Generated local mobile app copies (scripts/Setup-MobileApps.ps1)
+mobile-local/
