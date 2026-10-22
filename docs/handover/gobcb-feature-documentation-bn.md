@@ -2552,5 +2552,345 @@ Response: পূর্ণ counter map (sample F4.2-এ)। মূল error: stan
 
 **9. Handover notes.** এই screen আর F4.4-এর পার্থক্য চোখে পড়ে না: F4.4 প্রবেশকারীকে ঢাকায় (প্রবেশ রেকর্ড করে), এই screen শুধু সত্যতা যাচাই করে।
 
+## 5. System-initiated (worker ও queue)
+
+কাউকে সরাসরি শুরু করতে হয় না এমন কাজ: SQS queue consumer ও timer-চালিত background worker। আগে §0.8-এর explainer পড়ুন। এই worker-দের ডাকা endpoint-গুলোতে **`[Authorize]` নেই** — নিরাপত্তা শুধু network placement (F6.18)।
+
+### F5.1 Level capacity update (OrderSuccess queue)
+
+> **Bangla name:** লেভেল ক্যাপাসিটি আপডেট (OrderSuccess কিউ)
+
+**1. Name and purpose.** প্রতিটি order event-এর পরে (payment সফল, cancel, admin capacity বদল) আসনের পরিবর্তন level-এর durable capacity ও Redis লাইভ counter-এ প্রয়োগ করা ও আসনের lock ছাড়া।
+
+**2. Trigger and actor.** SQS queue `AWS:Queue:OrderSuccess`; publisher: Booking (`UserBookingOrderManager` payment সফল/cancel-এ; `CapacityManager` admin বদলে)। মানুষ জড়িত নয়।
+
+**3. Business flow.** প্রতিটি booked/released আসন-দলের জন্য database capacity ও লাইভ আসন-ম্যাপ মিলে যায়, পরের customer সঠিক availability দেখেন।
+
+**4. Technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Message | `LevelCapacityUpdate { orderType, amount, hasSeats, seats, isIncrease, capacityAction, groupId, orderId }` (`Core/ETP.Core/Queue/Messages/LevelCapacityUpdate.cs`); `GroupId = {eventLongId}_{galleryId}_{blockId}_{levelId}`, `OrderId` = booking `PublicId` |
+| 2 | Consumer | Booking `LevelCapacityUpdateService` → `LevelCapacityUpdateTaskManager` (SQS receive; সফল হলে delete) |
+| 3 | DB | `ICapacityManager.UpdateLevelCapacityAsync` — durable `Capacities` row |
+| 4 | Redis | `capacity` hash: `level_live:{groupId}` কমায়, `HDEL level_locked:{groupId}/{orderId}`, `level_live_seats:{groupId}` পুনঃগণনা (সব আসন − কেনা − ১২ মিনিটের কম lock) |
+
+**5–6. Components / contracts.** Booking service; SQS OrderSuccess; Redis `capacity` hash; `Capacities` টেবিল। HTTP API নেই।
+
+**7. Data and side effects.** `Capacities` হালনাগাদ; উপরের Redis field; সফল হলে message delete।
+
+**8. Code references.** `rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Workers/{BackgroundServices/LevelCapacityUpdateService.cs,TaskManagers/LevelCapacityUpdateTaskManager.cs}`; publisher `…/Domain/Managers/{UserBookingOrderManager,CapacityManager}.cs`।
+
+**9. Handover notes.** GroupId parse-এ `_` ধরে ভাঙা হয় — id-তে সংখ্যাই থাকতে হবে (`_` থাকলে ভাঙা ভুল হয়)।
+
+### F5.2 Event live capacity (EventCapacity queue)
+
+> **Bangla name:** ইভেন্ট লাইভ ক্যাপাসিটি (EventCapacity কিউ)
+
+**1. Name and purpose.** Redis-এর event-স্তরের লাইভ counter (`event_live:{eventId}`) capacity বদলের সাথে মিলিয়ে রাখা, যাতে "এই event-এ N টিকিট বাকি" সঠিক থাকে।
+
+**2. Trigger and actor.** SQS `AWS:Queue:EventCapacity`; publisher: Booking `CapacityManager` (admin capacity adjustment)।
+
+**3–4. Business/technical flow.** Message `EventLiveCapacityUpdate { eventId, amount, isIncrease, groupId, orderId }` → Booking `EventLiveCapacityUpdateService` → task manager ধারাবাহিকভাবে (একবারে এক message, ক্রম ঠিক রেখে) Redis STRING `event_live:{groupId}` বাড়ায়/কমায়।
+
+**5–7. Components / data.** Booking service; SQS; Redis STRING `event_live:{eventId}`; DB লেখা নেই।
+
+**8. Code references.** `…/Workers/BackgroundServices/EventLiveCapacityUpdateService.cs`, `…/TaskManagers/EventLiveCapacityUpdateTaskManager.cs`।
+
+**9. Handover notes.** এই key পড়ে `GET /booking/api/v1/capacity/event-live-capacity?eventId=` (F2.4); Scheduler *ভিন্ন* key লেখে (`event_{eventId}`, F5.4) — গুলিয়ে ফেলবেন না।
+
+### F5.3 Locked-capacity refresh
+
+> **Bangla name:** লক করা ক্যাপাসিটি রিফ্রেশ
+
+**1. Name and purpose.** যারা পরিশোধ করেননি তাদের লক করা আসন ছাড়া, যাতে পরিত্যক্ত checkout আসন আটকে না রাখে।
+
+**2. Trigger and actor.** Booking timer worker `RefreshLockedCapacityService` — প্রতি **৩০ মিনিটে** (error-এর পরে ৫ মিনিট)।
+
+**3–4. Business/technical flow.** Order আসন lock করলে তার key Redis SET `refresh`-এও যোগ হয়। Worker (RedLock `locked_order_refresher_{0..4}`, ১৫ মিনিট) `SMEMBERS refresh` করে; key-প্রতি `refresh_level_locks_{key}` (৩০ s) নিয়ে `level_locked:{groupId}` থেকে **১২ মিনিটের** বেশি পুরোনো entry `HDEL` করে, `level_live_seats` পুনঃগণনা করে ও key `SREM` করে। আটকে যাওয়া checkout তাই ≈ ১২ + ৩০ মিনিটে আসন ছাড়ে।
+
+**5–7. Components / data.** Booking service; Redis SET `refresh`, hash `level_locked:*`; DB capacity পুনঃগণনা।
+
+**8. Code references.** `…/Workers/{BackgroundServices/RefreshLockedCapacityService.cs,TaskManagers/RefreshLockedCapacityTaskManager.cs}`, `…/Managers/CapacityManager.cs`।
+
+**9. Handover notes.** ১২ মিনিটের মেয়াদ hard-coded (`SystemSettings.SeatLockTimeout`-এর সাথে তুলনা করুন, F1.30 `[UNCONFIRMED]`)।
+
+### F5.4 Scheduler capacity reconcile
+
+> **Bangla name:** শিডিউলার ক্যাপাসিটি রিকনসাইল
+
+**1. Name and purpose.** মাঝেমধ্যে level-প্রতি লাইভ counter গুটিয়ে event-মোট বানানো — Redis ও বাস্তবের বিচ্যুতি মেরামত।
+
+**2. Trigger and actor.** Scheduler timer worker `CapacityUpdateService` — প্রতি **১৫ মিনিটে** (RedLock `event_live_capacity_refresher`, ১৫ মিনিট)।
+
+**3–4. Business/technical flow.** পুরো Redis hash `capacity` পড়ে; ৫-অংশের `_`-বিভাজিত প্রতিটি field-এর (`level_live:{eventId}_…`) জন্য `parts[1]` (event id) ধরে গুছিয়ে লাইভ মান যোগ করে STRING `event_{eventId}` লেখে — কিন্তু key আগে থেকে থাকলেই (নতুন বানায় না, শুধু self-heal করে)।
+
+**5–7. Components / data.** Scheduler service; Redis hash `capacity` + STRING `event_{eventId}`; HTTP নেই, DB নেই।
+
+**8. Code references.** `rvl-gobcb-backend/Services/Scheduler/ETP.Scheduler.Service/Workers/{BackgroundServices/CapacityUpdateService.cs,TaskManagers/CapacityUpdateTaskManager.cs}`।
+
+**9. Handover notes.** F5.1-এর মতোই `_`-ভাঙার ভঙ্গুরতা; আর লেখা key family (`event_…`) F5.2-এর (`event_live:…`) থেকে আলাদা — দুটোর পাঠক আলাদা।
+
+### F5.5 Pending/failed payment পুনঃযাচাই
+
+> **Bangla name:** পেন্ডিং/ফেইল্ড পেমেন্ট পুনঃযাচাই
+
+**1. Name and purpose.** Payment-এর মাঝে browser বন্ধ করা customer-দের order `Pending`/`Failed` থেকে যায়। এই job সাম্প্রতিকগুলো DgePay-র সাথে পুনঃযাচাই করে (আসলে পরিশোধ হয়ে থাকতে পারে) ও বাকিগুলো cancel করে।
+
+**2. Trigger and actor.** Scheduler timer worker `PendingOrFailedBookingStatusUpdateService` — প্রতি **২ মিনিটে** (RedLock `pending_cancel_booking_status_updater`, ২ মিনিট)।
+
+**3–4. Business/technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Scheduler → Booking `PUT /booking/api/v1/user-booking-order/update-status` | **[HTTP, no token]** (internal endpoint) — body `UpdateBookingStatusRequest { limit, cutoffTime }` (cutoff = এখন − ১২ মিনিট; `limit` অব্যবহৃত) |
+| 2 | Booking controller | **দুটি সমান্তরাল background task** চালায়: `CancelBookingAsync(cutoff)` — পুরোনো Pending/Failed order cancel; এবং `RevaildateRecentPendingBookingsAsync(cutoff)` (কোডেই বানান-ভুল) — সাম্প্রতিক pending order DgePay `check_transaction_status` দিয়ে পুনঃযাচাই করে সত্যিই পরিশোধিতগুলো সম্পূর্ণ করে; `true` ফেরায় |
+
+**5–7. Components / data.** Scheduler; Booking; DgePay; `UserBookingOrders` status হালনাগাদ; মুক্ত capacity manager-এর F5.1 message দিয়ে যায়।
+
+**8. Code references.** `…/Scheduler.Service/Workers/BackgroundServices/PendingOrFailedBookingStatusUpdateService.cs`; `…/Booking.Service/Api/UserBookingOrderController.cs` (`update-status`), `…/Managers/UserBookingOrderManager.cs` (`CancelBookingAsync`, `RevaildateRecentPendingBookingsAsync`)।
+
+**9. Handover notes.** DgePay পৌঁছানো না গেলেও cancel task চলে — পরিশোধিত-কিন্তু-অনিশ্চিত order cancel হয়ে পরে discrepancy report-এ (F1.22) উঠতে পারে। পুনঃযাচাই window = ১২ মিনিটের cutoff।
+
+### F5.6 Booking status → Generated
+
+> **Bangla name:** বুকিং স্ট্যাটাস → Generated
+
+**1. Name and purpose.** Order-এর (ও reservation-এর) প্রতিটি টিকিট সত্যিই তৈরি (signed) হয়ে গেলে `Requested` থেকে `Generated`-এ ওল্টানো — F2.6/F2.8-এ শুরু হওয়া চক্র পূর্ণ করে।
+
+**2. Trigger and actor.** Booking timer worker `BookingStatusUpdateService` — প্রতি **২ মিনিটে** (RedLock `booking_status_updater`); ভাই `ReservationStatusUpdateService` — প্রতি **৩০ মিনিটে** (RedLock `reservation_status_updater`) reservation-এর জন্য।
+
+**3–4. Business/technical flow.** ≤৫০০টি `Requested` booking নিয়ে → **[HTTP, no token]** `POST /ticketing/api/v1/booking-order-ticket/ticket-counts` (body: order id, `onlyGenerated=true`, `createdBy="user"`) → যেখানে `GeneratedCount == NumberOfSeats` সেগুলো `UpdateRequestedBookingToGeneratedAsync(ids)` (status `Requested → Generated`)। Reservation worker একই কাজ reservation-এ করে।
+
+**5–7. Components / data.** Booking + Ticketing service; `UserBookingOrders`/`SeatReservations` status লেখা।
+
+**8. Code references.** `…/Workers/BackgroundServices/{BookingStatusUpdateService,ReservationStatusUpdateService}.cs` + task manager।
+
+**9. Handover notes.** `Requested` মানে "তৈরির অনুরোধ হয়েছে"; এই worker নিশ্চিত করার আগে My Tickets poll করে (F2.7-এর `check-generated-status`)।
+
+### F5.7 User ticket generation শুরু (সেফটি-নেট)
+
+> **Bangla name:** ইউজার টিকিট জেনারেশন শুরু (সেফটি-নেট)
+
+**1. Name and purpose.** Event-এর ticket-availability সময় এসে যাওয়া **paid** order-দের তৈরি শুরু করার safety net — window খোলার আগে পরিশোধিত বা inline শুরু (F2.6 ধাপ ৬) ব্যর্থ হওয়া order ধরে।
+
+**2. Trigger and actor.** Booking timer worker `InitiateUserTicketGenerationService` — প্রতি **১৫ মিনিটে** (১০ মিনিট start delay); event-প্রতি RedLock `user_ticket_generator_{eventId}` (১২ মিনিট)।
+
+**3–4. Business/technical flow.** `TicketAvailabilityStartDateTime <= UtcNow` এমন প্রতিটি active+published event-এর জন্য: ≤২০০টি `Paid` booking নিয়ে প্রতিটির জন্য **[HTTP, no token]** `GET /ticketing/api/v1/booking-order-ticket/initiate-user-ticket?orderId={publicId}` → Ticketing `InitiateUserTicket`: status `Paid`/`Requested` চায়, RedLock `create_user_ticket_{orderId}` (৩০ s) নেয়, Ticket row বানায় (`TicketNumber = {TicketNumberPrefix}{unique code}`), blank PDF `{BlankBase}/user/{userId}/{publicId}/{TicketNumber}.pdf`-তে তোলে, `Requested` চিহ্নিত করে, প্রতি টিকিটে **[SQS: TicketSigning]** publish করে ও order `Requested` করে।
+
+**5–7. Components / data.** Booking + Ticketing; SQS TicketSigning; S3 ticket bucket; `Tickets` (insert), `UserBookingOrders` (→ Requested)।
+
+**8. Code references.** `…/Workers/BackgroundServices/InitiateUserTicketGenerationService.cs`; `…/Ticketing.Domain/Managers/TicketManager.cs` (`InitiateUserTicket`, `InitiateBulkTicketForNewlyPaidOrder`, `TicketGenerateRequest`)।
+
+**9. Handover notes.** `TicketGenerateRequest` portal-এর PATCH `generate-request` (F2.8) থেকেও প্রতি-request চলে — একই lock + idempotency দ্বৈত তৈরি আটকায়।
+
+### F5.8 TSP-তে টিকিট signing (TicketSigning queue)
+
+> **Bangla name:** TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)
+
+**1. Name and purpose.** টিকিটের সত্যতার হৃদয়: প্রতিটি blank টিকিট PDF সরকারি TSP gateway-তে পাঠিয়ে ডিজিটালি sign (PAdES) করানো VDS QR-সহ, signed PDF সংরক্ষণ, আর customer ও gate cache-তে দৃশ্যমান করা।
+
+**2. Trigger and actor.** SQS `AWS:Queue:TicketSigning`; publisher: Ticketing `TicketManager` (F5.7/F2.8-এর পরে user টিকিট; F1.12-এর পরে reserved টিকিট)।
+
+**3. Business flow.** টিকিট প্রমাণিতভাবে সত্য হয়: signed PDF-এর QR checker app offline-এ যাচাই করতে পারে (F4.3), আর My Tickets download দিতে শুরু করে (F2.9)।
+
+**4. Technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Message | `SignedTicketGeneration { fileName, unsignedTicketUrl, gateId, data (Dictionary<string, QRCodeField>), qrPosition [x,y,size], orderId (= ticket id) }`। User টিকিটের QR `data`: `Platform (online/user-ticket), Name, Phone, Date (BST +6), Time, Ticket ID, Event ID, Gallery, Block, Level, Entry Gate, Mini Gate [, Seat]`; reserved টিকিটে Name/Phone-এর বদলে `Platform (offline/…)` + `Complimentary`। `qrPosition` layout-এর `TicketSize` অনুযায়ী: Default/Vertical `[900,650,650]`, A4 `[1650,915,650]`, Horizontal `[2494,1055,650]` |
+| 2 | Consumer | Ticketing `TicketGenerationService` → `TicketGenerationTaskManager` (SQS ৫ message / ১০ s wait / ৬০ s visibility); **idempotent**: `IsTicketSigned(orderId)` হলে কাজ ছাড়াই message delete |
+| 3 | TSP auth | `TspAuthProvider` **[HTTP, mTLS + static identity]**: `GET {TSP:AuthUrl}` client cert `Cert/tspgw_client.pfx`-সহ; token Redis `tsp_token`-এ ১ মিনিট (server cert validation disabled — note দ্রষ্টব্য) |
+| 4 | Sign | `TspSignedTicketProvider` **[HTTP + mTLS + bearer]**: `POST {TSP:SignUrl}` `TicketSigningPayload` (নিচে) → `TspResponse.data.signedData[0]` (base64 PDF) |
+| 5 | সংরক্ষণ | `GenerateSignedTicketAsync`: reserved type-এ টিকিটের তথ্য PDF-এ **আঁকা** হয় (`DrawTicketInfo`, PdfSharpCore); upload `{SignedBase}/user/{CreatedBy}/{orderPublicId}/{TicketNumber}.pdf` (বা `…/reserved/{CreatedBy}/…/{TicketNumber}-{type}.pdf`); `Status=Generated`, `SignedTicketUrl` সংরক্ষণ |
+| 6 | OneID tail | `bookingOrder.OneIdUserId` থাকা user টিকিটে: signed PDF OneID-তে auto-sync (flow F2.10); error গিলে ফেলা হয় |
+| 7 | Gate cache tail | Redis hash `TicketCheckerLevelGateMap`-এর field `{eventLongId}_{gateId}` → gate-এর `ticket_checker_tickets:event_…_gate_…` key থাকলে `{TicketNumber}: 0` যোগ, পরের sync-এ gate device নতুন টিকিট পায় (F4.5) |
+
+`TicketSigningPayload` (`Domain/TspClient/Models/TicketSigningPayload.cs`, snake_case): `{ blevel, customNotification, digitalIdentityId (TSP:DigitalIdentityId), documents: [ { data (base64 PDF), fileName, vdsData: { qrCodeData, qrCodePage: 1, qrCodeSize, qrCodeXPosition, qrCodeYPosition }, vsigEnabled: false, … } ], packaging: "ENVELOPED", sealDocument: false, signAlgorithm: "SHA256WithRSA", signatureSubType: "PAdES_BASELINE_B", signatureType: "PADES", userId (TSP:UserId) }`।
+
+**5–6. Components / contracts.** Ticketing service; SQS TicketSigning; TSP gateway (mTLS); Redis (`tsp_token`, gate map); S3 ticket bucket; `Tickets` টেবিল।
+
+**7. Data and side effects.** `Tickets.Status`/`SignedTicketUrl` হালনাগাদ; S3-এ signed PDF; ঐচ্ছিক OneID sync (`OneIdSync`/`OneIdSyncedAt`); gate-cache Redis সংযোজন; message শুধু সফলতায় delete।
+
+**8. Code references.** `rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service/Workers/{BackgroundServices/TicketGenerationService.cs,TaskManagers/TicketGenerationTaskManager.cs}`; `…/Managers/TicketManager.cs` (`GenerateSignedTicketAsync`, `GetBlankPdf`); `…/TspClient/{TspAuthProvider,TspSignedTicketProvider}.cs`; blank PDF আঁকা `…/Domain/BlankPdf.cs` (PdfSharpCore, font Inter/Oswald)।
+
+**9. Handover notes.** ① TSP client cert (`Cert/tspgw_client.pfx`) container-এর সাথে যায় — মেয়াদ operationally গুরুত্বপূর্ণ `[UNCONFIRMED: বর্তমান মেয়াদ]`। ② TSP call-এ server-certificate validation বন্ধ। ③ QR-এর "Date" hard-coded +৬ ঘণ্টা BST offset-এ। ④ OneID sync-এর `vdsQrData` একটি `TODO` stub (`null`)।
+
+### F5.9 Reserved টিকিট merge/zip (TicketProcessing queue)
+
+> **Bangla name:** রিজার্ভড টিকিট মার্জ/জিপ (TicketProcessing কিউ)
+
+**1. Name and purpose.** Reservation-এর signed টিকিট PDF একত্রিত করা (ছাপার জন্য) বা আলাদাভাবে zip করা (বিতরণের জন্য) — F1.12-এর merge/zip বোতামের ভারী কাজ।
+
+**2. Trigger and actor.** SQS `AWS:Queue:TicketProcessing`; publisher: Ticketing `TicketManager.RequestMergeTicketsAsync`/`RequestZipTicketsAsync` (reservation-এ `MergeStatus.Requested`/`ZipStatus.Requested` সেট করে)।
+
+**3–4. Business/technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Message | `TicketProcessingRequest { reservationId, groupId, orderId, processingType: "Merge"|"Zip" }` |
+| 2 | Consumer | **Utility** service-এর `TicketProcessingService` (১-মিনিট cycle, একবারে ১ message); RedLock `ticket_processing_service_{reservationId}` (১ ঘণ্টা) |
+| 3 | Skip-if-done | **[HTTP, no token]** Booking `GET merge-status/{publicId}` / `zip-status/{publicId}` — হয়ে গেলে delete করে থামে |
+| 4 | Merge | **[HTTP, no token]** `PATCH update-merge-status/{publicId}?status=Merging` → `TicketingClient.GetTicketUrlsAsync(reservationId)` → `AWS:Ticket:MergeSize`-এর চাঙ্কে PdfSharpCore merge → `{MergeBase}/{reservationId}/{ReservationNumber}_Merged_PDF_{i}.pdf` upload → status `Merged` |
+| 5 | Zip | একইভাবে: `{ReservationNumber}_Individual_Zipped_{i}.zip` (temp dir + `ZipFile.CreateFromDirectory`, `CompressionLevel.Optimal`); status `Zipping`→`Zipped` |
+| 6 | ব্যর্থতা | status `Failed`, message queue-তে **থেকে যায়** (retry; শেষে dead-letter `[UNCONFIRMED: DLQ config]`) |
+
+**5–7. Components / data.** Utility + Booking + Ticketing; SQS; S3 ticket bucket; `SeatReservations.MergeStatus/ZipStatus`; S3 `IsObjectExistAsync` দিয়ে idempotent।
+
+**8. Code references.** `rvl-gobcb-backend/Services/Utility/ETP.Utility.Service/Workers/…/TicketProcessingTaskManager.cs`; `…/Utility.Domain/Managers/UtilityService.cs`; publisher `…/Ticketing.Domain/Managers/TicketManager.cs`।
+
+**9. Handover notes.** ① `AWS:Ticket:MergeBuffer` option-এ আছে কিন্তু কোথাও ব্যবহৃত নয় (dead config)। ② Worker প্রতি ~৫০ item-এ `GC.Collect` করে — বড় PDF batch-এ memory pressure-এর দুশ্চিন্তা স্পষ্ট।
+
+### F5.10 NBR-এ VAT challan (VatChallanProcessing queue)
+
+> **Bangla name:** NBR-এর সাথে VAT চালান (VatChallanProcessing কিউ)
+
+**1. Name and purpose.** Paid order-এর পরে বাংলাদেশের NBR e-challan সিস্টেমে VAT record করা ও challan download করে booking-এর সাথে জোড়া (`VatInvoiceId/Info/DownloadUrl`, `SmartChallanNumber` field)।
+
+**2. Trigger and actor.** SQS `AWS:Queue:VatChallanProcessing`; publisher: Booking `UserBookingOrderManager` (payment সফল হলে)।
+
+**3–4. Business/technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Message | `VatChallanProcessing { groupId, orderId, bookingPublicId, userId, eventLongId, eventId, eventName?, orderNumber, paymentTransactionId, totalCharge, pricePerSeat, numberOfSeats, vat, discount, promoDiscount, isVatInclusive, createdAt, retryCount, lastErrorMessage? }` |
+| 2 | Consumer | Booking `VatChallanProcessingService` — প্রতি **৪৫ সেকেন্ডে**; RedLock `vat_challan_processor_{0..9}` (৫ মিনিট, wait ১০ s); SQS ৫ message / ৩০০ s visibility; **সর্বোচ্চ ৩ retry** (exponential backoff, message-এ `retryCount`) |
+| 3 | NBR call | `NBROpenApiManager` **[HTTP, static key]** (`PaymentSettings:NBROpenApi:BaseUrl`): `POST /vschallan/v3/integration/vendor_authenticate` → `POST …/record_vat` → `GET/POST …/download_schallan`; NBR token মেয়াদ শেষে `UnauthorizedAccessException` (403 path) |
+| 4 | সংরক্ষণ | challan নম্বর + invoice id/info/download URL `UserBookingOrders` row-তে |
+| 5 | ব্যর্থতা | message-এ `lastErrorMessage` রেখে ৩ বার পর্যন্ত retry; তারপর DLQ-র জন্য থেকে যায় `[UNCONFIRMED]` |
+
+**5–7. Components / data.** Booking service; SQS; NBR OpenAPI (external); `UserBookingOrders`-এর VAT field।
+
+**8. Code references.** `…/Workers/{BackgroundServices/VatChallanProcessingService.cs,TaskManagers/VatChallanProcessingTaskManager.cs}`; `…/Managers/NBROpenApiManager.cs`; model `…/Domain/Models/NBR/NBR*.cs`।
+
+**9. Handover notes.** NBR vendor credential secret config (`PaymentSettings:NBROpenApi:*`); retry সীমা মানে ব্যর্থ NBR ~৩ চেষ্টার পরে হাল ছাড়ে — সেগুলো discrepancy report-এ (F1.22) খুঁজুন।
+
+### F5.11 FCM-এ push delivery (FirebaseNotification queue)
+
+> **Bangla name:** FCM-এ পুশ ডেলিভারি (FirebaseNotification কিউ)
+
+**1. Name and purpose.** Push notification ফোনে পৌঁছানো: PushNotification service queue-তে দেয় (F6.23), এই worker প্রতিটি batch Firebase Cloud Messaging দিয়ে পাঠায়।
+
+**2. Trigger and actor.** SQS `AWS:Queue:FirebaseNotification`; publisher: PushNotification `NotificationManager` (২০০ token-এর batch, `GroupId=requestId`, `OrderId="{requestId}-batch-N"`)।
+
+**3–4. Business/technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Message | `FirebaseNotificationRequest { title, body, data, deviceTokens[], createdAt, groupId, orderId }` |
+| 2 | Consumer | Scheduler `FirebaseNotificationService` — ১-মিনিট outer cycle; SQS ৫ message / ১০ s wait / ৬০ s visibility |
+| 3 | Send | `FirebasePushNotificationService.SendNotificationToMultipleAsync` — FirebaseAdmin `SendEachForMulticastAsync`; credential = config section `FirebasePushNotificationConfig` থেকে গড়া service-account JSON (key `Type, ProjectId, PrivateKeyId, PrivateKey, ClientEmail, ClientId, ClientX509CertUrl, AuthUri, TokenUri, AuthProviderX509CertUrl, UniverseDomain`) |
+| 4 | Delete | Message **সবসময় `finally`-তে delete** — সফল বা ব্যর্থ (retry নেই!) |
+
+**5–7. Components / data.** Scheduler; SQS; Firebase FCM (external); DB নেই।
+
+**8. Code references.** `rvl-gobcb-backend/Core/ETP.Core/PushNotification/FirebasePushNotificationService.cs`; `…/Scheduler.Service/Workers/{BackgroundServices/FirebaseNotificationService.cs,TaskManagers/FirebaseNotificationTaskManager.cs}`; `Core/ETP.Core/Options/FirebaseOptions.cs`।
+
+**9. Handover notes.** ① ব্যর্থতা delete হয়ে যায় বলে খারাপ token বা FCM outage-এ batch নীরবে হারায় — `bulk-status/{requestId}` endpoint (F6.23) stub, delivery tracking নেই। ② `FirebaseBulkNotificationRequest` (`BatchNumber/TotalBatches`-সহ) আছে কিন্তু কেউ পূরণ/ব্যবহার করে না (dead code)।
+
+### F5.12 Ticket-generated notification
+
+> **Bangla name:** টিকিট-জেনারেটেড নোটিফিকেশন
+
+**1. Name and purpose.** Customer-দের জানানো টিকিট প্রস্তুত (external Notification API দিয়ে SMS) — কেনার অভিজ্ঞতার সমাপ্তি।
+
+**2. Trigger and actor.** Scheduler timer worker `SendNotificationAfterGeneratedTicketService` — প্রতি **৩ মিনিটে** (RedLock `notification_for_ticket_generated`, ৩ মিনিট)।
+
+**3–4. Business/technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Batch আনা | **[HTTP, no token]** Booking `GET /booking/api/v1/user-booking-order/not-notified-list?limit=100` |
+| 2 | সমৃদ্ধকরণ | booking-প্রতি: **[HTTP, no token]** Event `GET /event/api/v1/events/{id}` (`IEventClient`), Ticketing `GetGeneratedTicketByOrderId`, Admin `GetEventLevelInfoAsync` |
+| 3 | পাঠানো | **[HTTP, static key]** Notification API `POST {Notification:Endpoint}/notification/request` — body `TicketGeneratedNotification` (snake_case): `{ notification_type: "ticket_generated", user_id, notification_data: { order_id, ticket_id, program_event, event_venue, seating_gallery, seating_block, seating_level, entry_gate, mini_gate } }` |
+| 4 | চিহ্নিতকরণ | **[HTTP, no token]** Booking `PUT …/update-notification-status` (body: order id-র তালিকা) |
+
+**5–7. Components / data.** Scheduler; Booking, Event, Admin, Ticketing service; Notification API (external — SMS fan-out `[UNCONFIRMED: push-ও পাঠায় কিনা?]`); `UserBookingOrders`-এ notified চিহ্ন।
+
+**8. Code references.** `…/Scheduler.Service/Workers/BackgroundServices/SendNotificationAfterGeneratedTicketService.cs`; client `Core/ETP.Core/ServiceClient/NotificationClient/NotificationClient.cs`; model `Core/ETP.Core/Models/Notification.cs`।
+
+**9. Handover notes.** Message-গুলো SMS বর্ণনা করে; user app-এর "ticket generated" push (F3.10) সম্ভবত এখানে বা Notification API-তে উৎপন্ন — FCM send-এর পথ repo-তে দেখা যায় না `[UNCONFIRMED]`।
+
+### F5.13 Device-token cleanup
+
+> **Bangla name:** ডিভাইস-টোকেন ক্লিনআপ
+
+**1. Name and purpose.** পুরোনো FCM device token (uninstall হওয়া app) দৈনিক অপসারণ, যাতে push মৃত token-এ না যায়।
+
+**2. Trigger and actor.** Scheduler timer worker `DeviceTokenCleanupService` — প্রতিদিন **02:00 UTC**-তে (RedLock `device_token_cleanup`, ২ ঘণ্টা)।
+
+**3–4. Business/technical flow.** Worker → `EventClient.CleanupOldDeviceTokensAsync(30)` — `DELETE api/v1/device-token/cleanup?retentionDays=30` (Polly ৫ retry)। ওই route-এর একমাত্র implementation **PushNotification** service-এ (`{ message, deletedCount, cutoffDate, retentionDays }`, cutoff-এর আগের `UserDeviceTokens` মুছে) — **কিন্তু** Scheduler-এর `IEventClient` base address `Services:Admin`। `Services:Admin` যদি `/api/v1/device-token/*`-কে PushNotification-এ route করা কোনো gateway না হয়, call কাজ করবে না — repo থেকে যাচাইযোগ্য নয় `[UNCONFIRMED]` (Open queries)।
+
+**5–7. Components / data.** Scheduler; PushNotification service (implementation); `UserDeviceTokens` delete।
+
+**8. Code references.** `…/Scheduler.Service/Workers/BackgroundServices/DeviceTokenCleanupService.cs`; `Core/ETP.Core/ServiceClient/EventClient/EventClient.cs`; implementation `…/PushNotification.Service/Api/DeviceTokenController.cs`।
+
+**9. Handover notes.** এটি সবচেয়ে স্পষ্ট "BS23-কে জিজ্ঞাসা করুন" item-এর একটি: হয় `Services:Admin` routing gateway, নয়তো এই cleanup production-এ আসলে চলেই না।
+
+### F5.14 Checked-ticket sync (Redis → database)
+
+> **Bangla name:** চেক করা টিকিট সিঙ্ক (Redis → ডেটাবেস)
+
+**1. Name and purpose.** Redis-এ জমা gate scan (F4.5) `CheckedTickets` টেবিলে লেখা — admin report-এর (F1.19) data।
+
+**2. Trigger and actor.** Admin timer worker `CheckedTicketService` — প্রতি **৩০ মিনিটে** (RedLock `checked_ticket`, ২০ মিনিট)।
+
+**3–4. Business/technical flow.**
+
+| # | ধাপ | কী ঘটে |
+|---|---|---|
+| 1 | Flag | Redis bool `ticketCheckerDbSync = true` সেট করে — drain চলাকালে checker-এর `sync-tickets` refuse করে (F4.5) |
+| 2 | Drain | প্রতিটি (event, gate, checker)-এর জন্য: STRING `ticket_checker_checked_tickets:{eventLongId}_{gateId}_{userId}` পড়ে (serialized `ConcurrentDictionary<string, TicketInfo { value, isManual, entryTime }>`) |
+| 3 | লেখা | `CheckedTicket { eventLongId, eventId, ticketCheckerGateId, gateName, checkerId, checkerName, ticketNumber, entryCount, isManualEntry, entryTime }` row-তে রূপান্তর করে bulk insert |
+| 4 | পরিষ্কার | drain হওয়া Redis key মুছে; `ticketCheckerDbSync = false` |
+
+**5–7. Components / data.** Admin service; Redis; `CheckedTickets` টেবিল।
+
+**8. Code references.** `…/Admin.Service/Workers/{BackgroundServices/CheckedTicketService.cs,TaskManagers/CheckedTicketServiceTaskManager.cs}`।
+
+**9. Handover notes.** Drain window-এ (কয়েক সেকেন্ড–মিনিট) gate device sync error পেয়ে retry করে — স্বাভাবিক, কিন্তু ম্যাচডেতে জেনে রাখা ভালো।
+
+### F5.15 Gate download-status cleanup
+
+> **Bangla name:** গেট ডাউনলোড-স্ট্যাটাস ক্লিনআপ
+
+**1. Name and purpose.** Event শেষ হলে checker-দের offline-download অনুমতি স্বয়ংক্রিয়ভাবে বন্ধ (`IsDownloadEnable`-এর data hygiene)।
+
+**2. Trigger and actor.** Admin timer worker `GateCheckerDownloadStatusCleanupService` — প্রতি **১৫ মিনিটে** (কোডের মন্তব্য "2 mins" বলে; কোড বলে ১৫) — RedLock `ticket_checker_status_reset` (৫ মিনিট)।
+
+**3–4. Business/technical flow.** `DisableDownloadAccessForPastEventsAsync()`: `EndDateTime < UtcNow − ৩০ মিনিট` এমন event খুঁজে তাদের `TicketCheckerGateUsers`-এ `IsDownloadEnable = false` লেখে।
+
+**5–8. Components / data / code.** Admin service; `TicketCheckerGateUsers` হালনাগাদ। `…/Workers/BackgroundServices/GateCheckerDownloadStatusCleanupService.cs`, `…/Managers/TicketCheckerGateManager.cs`।
+
+**9. Handover notes.** মন্তব্য/কোডের schedule-মিল নেই — কোডেই বিশ্বাস করুন (১৫ মিনিট)।
+
+### F5.16 Promo-code status update
+
+> **Bangla name:** প্রোমো-কোড স্ট্যাটাস আপডেট
+
+**1. Name and purpose.** তারিখ ও ব্যবহারের সীমা অনুযায়ী promo code স্বয়ংক্রিয় activate/expire/limit-এ-পৌঁছানো — মানুষের ছোঁয়া ছাড়াই।
+
+**2. Trigger and actor.** Admin timer worker `PromoCodeStatusUpdateService` — প্রতি **২ মিনিটে** (RedLock `promo_code_status_updater`, ২ মিনিট)।
+
+**3–4. Business/technical flow.** `PromoCodeManager.UpdatePromoCodeStatusesAsync`: প্রতিটি code-এর status `StartDateTime/EndDateTime/TotalUsageLimit` থেকে পুনঃগণনা — `Active(1)`, `Expired(2)`, `Upcoming(3)`, `LimitReached(4)` — বদলালে `Status`, `IsActive = (status == Active)`, `IsPublished = (status == Active)`, `UpdatedAt` সেট করে bulk update।
+
+**5–8. Components / data / code.** Admin service; `PromoCodes` হালনাগাদ। `…/Workers/BackgroundServices/PromoCodeStatusUpdateService.cs`, `…/Managers/PromoCodeManager.cs`।
+
+**9. Handover notes.** `IsPublished`-ও ওল্টায় বলে expire হওয়া code public picker থেকে নিজেই সরে যায়।
+
+### F5.17 System-discount status update
+
+> **Bangla name:** সিস্টেম-ডিসকাউন্ট স্ট্যাটাস আপডেট
+
+**1. Name and purpose.** F5.16-এর মতোই system discount-এর (early-bird window ইত্যাদি) স্বয়ংক্রিয় status যন্ত্র।
+
+**2. Trigger and actor.** Admin timer worker `SystemDiscountStatusUpdateService` — প্রতি **২ মিনিটে** (RedLock `system_discount_status_updater`, ২ মিনিট)।
+
+**3–4. Business/technical flow.** `DiscountManager.UpdateSystemDiscountStatusesAsync`: `StartDateTime/EndDateTime` থেকে status `Active/Expired/Upcoming/LimitReached`; একই `IsActive/IsPublished/UpdatedAt` লেখা।
+
+**5–8. Components / data / code.** Admin service; `Discounts` হালনাগাদ। `…/Workers/BackgroundServices/SystemDiscountStatusUpdateService.cs`, `…/Managers/DiscountManager.cs`।
+
+**9. Handover notes.** Active window-ই public discount endpoint (F1.16) দেয়; ওই cache-এর TTL ও এই worker-এর ২-মিনিট cycle-র কারণে discount expire হতে ~২ মিনিট দেরি হতে পারে।
+
 <!-- 🔄 CONTINUE-BN -->
 
