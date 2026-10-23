@@ -1,0 +1,110 @@
+# A-14 · Ticket-pricing content page
+
+> **Bangla name:** টিকিট-প্রাইসিং কনটেন্ট পেজ
+>
+> [← 10 · Admin portal](README.md) · [Contents](../README.md) · [Open queries](../99-open-queries.md)
+
+## 1. Name and purpose
+
+**Ticket-pricing page.** A content screen that tells customers the ticket prices of a program and venue as plain text lines (attribute name and price, for example "Gallery A: 500"). It is **content**, separate from the real prices of events ([A-09](A-09-event-level-pricing.md)); the admin keeps it in sync by hand.
+
+**The screen is not connected to the customer-facing pricing page.** The Event service does expose this content at `/event/api/v1/ticket-pricing/list`, but the portal and the app read `program-pricing` instead — the live per-level prices from the event tables. **Nothing an editor publishes here is displayed to a customer today.** See §4 note 4 and §9 note 1.
+
+## 2. Trigger and actor
+
+Staff who can open **Site Settings → Content Editor** (global menu, `/content-editor/ticket-pricing`). The **server** has no `[Authorize]` on `TicketPricingController` ([X-18](../60-cross-cutting/X-18-endpoints-without-auth.md)).
+
+## 3. Business flow
+
+List the entries, create one (program name, venue name, a list of attribute name and price pairs), edit it, **publish** or **unpublish**, delete. Only published entries would be visible to customers — and because of §4 note 4, none are.
+
+## 4. Technical flow
+
+1. **[HTTP + user token]** `GET /admin/api/v1/ticket-pricing?...` (paged), `GET .../ticket-pricing/list`, `GET .../{id}`.
+2. Create `POST .../ticket-pricing` (JSON `CreateOrUpdateTicketPricing {programName, venueName, isPublished, attributes[{attributeName, attributePrice}]}`), update `PUT .../{id}` (the attribute list is cleared and rewritten), publish `PUT .../publish/{id}`, unpublish `PUT .../unpublish/{id}`, delete `DELETE .../{id}`, delete one attribute `DELETE .../attribute/{attributeId}`.
+3. After every change `RefreshTicketPricingCacheAsync` reads all rows, keeps the **published** ones, and writes the list to the Redis key `ticket_pricing_all` for **30 days** ([X-25](../60-cross-cutting/X-25-redis.md)).
+4. **Customer read — and this is the important part: the live customer pricing page does NOT use this content.** The Event service exposes **two** pricing endpoints:
+   - `GET /event/api/v1/ticket-pricing/list` → `EventTicketPriceManager.GetAllTicketPricingAsync` reads **only from the Redis key `ticket_pricing_all`** — i.e. this screen's content. If the key is missing it logs "Ticket pricing data not found in cache. Please ensure Admin service has populated the cache." and returns an **empty list**.
+   - `GET /event/api/v1/ticket-pricing/program-pricing` → `ProgramPricingManager.GetProgramPricingAsync` builds a **live** list from the real event, venue, gallery, ticket-type and price tables.
+
+   The user portal and the app render **`program-pricing`**, not `list`. In the portal, `EventApiService.getTicketPricingList()` (`event-api.service.ts:65-70`, hitting `/list`) has **no caller at all**, while `getProgramPricing()` (`:72-77`) is called from `event.effects.ts:40` and read by `ticket-pricing.component.ts:46` and `event-overview.component.ts:171`. **So the content staff edit on this screen is invisible to customers**, and the Redis-cached list built in step 3 is never displayed ([P-03](../20-user-portal/P-03-info-pages.md), [U-03](../30-user-app/U-03-info-pages.md)).
+
+## 5. Components
+
+| Kind | Component |
+|---|---|
+| Client | `features/content-editor` components `TicketPricingListComponent`, `CreateTicketPricingComponent`, `services/content-editor.service.ts:26-53` |
+| Services | Admin (`TicketPricingController`, `TicketPricingManager`); Event (`TicketPricingController`, `EventTicketPriceManager`, read from Redis) |
+| Tables | `TicketPricings`, `TicketPricingAttributes` |
+| Redis | `ticket_pricing_all` (30 days) |
+
+## 6. API contracts
+
+| Method | Path | Auth | Request | Response |
+|---|---|---|---|---|
+| GET | `/admin/api/v1/ticket-pricing`, `/list`, `/{id}` | **none** | paging | `TicketPricingProgram` |
+| POST | `/admin/api/v1/ticket-pricing` | **none** | `CreateOrUpdateTicketPricing` | `TicketPricingProgram` |
+| PUT | `/admin/api/v1/ticket-pricing/{id}`, `publish/{id}`, `unpublish/{id}` | **none** | body / path | `TicketPricingProgram` |
+| DELETE | `/admin/api/v1/ticket-pricing/{id}`, `attribute/{attributeId}` | **none** | path | result |
+
+Primary sample, `POST /admin/api/v1/ticket-pricing` (property names from `CreateOrUpdateTicketPricing`; values illustrative; `attributePrice` is an integer):
+
+```json
+{
+  "programName": "Premier League 2026",
+  "venueName": "Sher-e-Bangla National Cricket Stadium",
+  "isPublished": true,
+  "attributes": [ { "attributeName": "Gallery A", "attributePrice": 500 }, { "attributeName": "VIP", "attributePrice": 3000 } ]
+}
+```
+
+Errors: `Id must be greater than zero.`, `No ticket pricing found for id {id}.` (400).
+
+## 7. Data and side effects
+
+Rows, the 30-day Redis list; activity log ([X-24](../60-cross-cutting/X-24-activity-logging.md)).
+
+## 8. Code references
+
+| What | Where |
+|---|---|
+| Controller | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TicketPricingController.cs:14-170` |
+| Manager | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/TicketPricingManager.cs:97-330` |
+| DTO | `rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Models/TicketPricing/CreateOrUpdateTicketPricing.cs` |
+| Portal | `rvl-gobcb-admin-portal/src/app/features/content-editor/services/content-editor.service.ts:26-53` |
+
+## 9. Handover notes
+
+1. **Nothing an editor writes here reaches a customer.** The whole screen is a dead end: the customer pricing page reads `program-pricing` (live prices from the event tables), not `ticket_pricing_all` (§4 note 4). Editing, publishing and unpublishing this content changes **no customer-visible page**. Confirm with the business whether this screen is meant to exist, or whether the portal is simply wired to the wrong endpoint — this needs an answer before go-live.
+2. **No authorization**: anyone who can reach the endpoint can publish, change or delete the public price page.
+3. **Names, not ids.** The entry stores program and venue as free text; it is not linked to the program or the real prices, so it can disagree with them.
+4. **The cached list would be fragile even if it were displayed.** `/list` answers **only** from the Redis key `ticket_pricing_all`. After a Redis flush, a failover or the 30-day expiry it returns an empty list until an admin saves any ticket-pricing entry again; nothing rebuilds it at start-up, and a manual database edit is not visible either.
+5. **`attributePrice` is a whole number** (`long`), so decimal prices cannot be shown.
+6. **Stale unpublish.** Unpublish removes the entry from the cached list at once, but any client already holding the old list keeps showing it until it reloads.
+7. **The customer-facing pricing is `attributePrice`-free**, because `program-pricing` reads the real per-level prices ([A-09](A-09-event-level-pricing.md)) — so the two features can display entirely different numbers, and there is no check that they agree.
+
+## 10. Component relationships
+
+```mermaid
+flowchart LR
+  AP["Admin portal: Content Editor"] -->|"HTTP + token (no server auth)"| AD["Admin API"]
+  AD --> DB[("TicketPricings")]
+  AD -->|"published list, 30 days"| R[("Redis ticket_pricing_all")]
+  EV["Event service"] -->|"read"| R
+  P["User portal / app"] --> EV
+```
+
+**Depends on:** nothing. **Affects:** [P-03](../20-user-portal/P-03-info-pages.md), [U-03](../30-user-app/U-03-info-pages.md).
+
+## 11. Developer test guide
+
+**Local testability: Full.**
+
+| Item | Detail |
+|---|---|
+| Test data and accounts | Admin `…01` (global menu) |
+| Browser | `http://localhost:4200/content-editor/ticket-pricing` → create, publish; user portal pricing page |
+| Emulator | — |
+| Postman | `postman/services/etp-admin.postman_collection.json`: "GET /api/v1/ticket-pricing", "POST /api/v1/ticket-pricing" |
+| Visual Studio debug | `TicketPricingManager.RefreshTicketPricingCacheAsync` |
+| Verify | `redis-cli GET ticket_pricing_all`; SQL on `TicketPricings` |
