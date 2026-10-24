@@ -53,12 +53,16 @@ FONT_NAME = "Calibri"
 WORKSPACE = Path(__file__).resolve().parents[1]
 DOCS_ROOT = WORKSPACE / "docs" / "handover" / "feature-docs"
 DEFAULT_OUT = WORKSPACE / "docs" / "handover" / "feature-matrix" / "GoBCB-Feature-Matrix.xlsx"
+DEFAULT_CROSSCHECK = WORKSPACE / "docs" / "handover" / "feature-matrix" / "closure-crosscheck.json"
 
 FM_SHEET = "Feature Matrix"
 OQ_SHEET = "Open Queries"
+CC_SHEET = "Closure Cross-Check"
 
 FM_STATUS = ["Not reviewed", "Confirmed", "Correction needed", "Missing detail", "Not a feature"]
 OQ_STATUS = ["Open", "Answered - accepted", "Answered - disputed", "N/A"]
+CC_STATUS = ["Open", "In progress", "Resolved", "N/A"]
+CC_VERDICTS = ["Gap", "Discrepancy", "Question", "Obtain deliverable", "Future scope", "Confirmed"]
 QUERY_KINDS = ["External", "Deployment", "Ambiguity", "Defect"]
 
 AREAS = [
@@ -418,7 +422,7 @@ def collect(lang):
 
 def read_previous_review(path):
     """Pull user-entered review data out of an existing workbook."""
-    prev = {"fm": {}, "oq": {}, "gap": []}
+    prev = {"fm": {}, "oq": {}, "cc": {}, "gap": []}
     if not path.exists():
         return prev
     wb = load_workbook(path, data_only=False)
@@ -438,6 +442,14 @@ def read_previous_review(path):
                 vals = [c.value for c in row[5:9]]  # G..J
                 if any(v not in (None, "") for v in vals):
                     prev["oq"][qid.strip()] = vals
+    if CC_SHEET in wb.sheetnames:
+        ws = wb[CC_SHEET]
+        for row in ws.iter_rows(min_row=5, min_col=2, max_col=11):
+            ref = row[0].value  # column B
+            if isinstance(ref, str) and ref.startswith("CC-"):
+                status, notes = row[8].value, row[9].value  # J, K
+                if status or notes:
+                    prev["cc"][ref.strip()] = (status or "Open", notes or "")
     if "Gap Log" in wb.sheetnames:
         ws = wb["Gap Log"]
         for row in ws.iter_rows(min_row=5, min_col=2, max_col=8):
@@ -624,6 +636,59 @@ def build_queries(wb, queries, prev):
     cf.add(f"H5:H{last}", CellIsRule(operator="equal", formula=['"Answered - disputed"'],
                                      fill=PatternFill(bgColor=CF_NEG_FILL), font=Font(color=ACCENT_NEGATIVE)))
     cf.add(f"C5:C{last}", CellIsRule(operator="equal", formula=['"Defect"'],
+                                     fill=PatternFill(bgColor=CF_WARN_FILL), font=Font(color=ACCENT_WARNING)))
+    return 5, last
+
+
+def build_crosscheck(wb, cc_rows, prev):
+    ws = wb.create_sheet(CC_SHEET)
+    ws.sheet_properties.tabColor = ACCENT_NEGATIVE
+    headers = ["Ref", "Topic", "BS-23 report says", "Our documentation says",
+               "Verdict", "Related IDs", "Action", "Owner", "Status", "Notes / BS-23 response"]
+    widths = [8, 24, 48, 48, 16, 16, 44, 13, 12, 32]
+    verdicts = [r["verdict"] for r in cc_rows]
+    vsum = ", ".join(f"{v}: {verdicts.count(v)}" for v in CC_VERDICTS if v in verdicts)
+    subtitle = (f"{len(cc_rows)} findings ({vsum}). Source: closure-crosscheck.json — edit that file "
+                f"and regenerate; the Status and Notes columns entered here are preserved.")
+    title_row(ws, "Closure Cross-Check — BS-23 closure report V1.2 vs our feature docs",
+              subtitle, 1 + len(headers))
+    style_headers(ws, 4, headers)
+    set_widths(ws, widths)
+    body_font = Font(name=FONT_NAME, size=11, color=NEUTRAL_900)
+    row = 5
+    for r in cc_rows:
+        status, notes = prev["cc"].get(r["ref"], (r.get("status", "Open"), ""))
+        vals = [r["ref"], r["topic"], r["pdf_says"], r["docs_say"], r["verdict"],
+                r["related"], r["action"], r["owner"], status, notes]
+        fill = PatternFill("solid", fgColor=NEUTRAL_0 if (row - 5) % 2 == 0 else NEUTRAL_100)
+        for i, v in enumerate(vals):
+            c = ws.cell(row=row, column=2 + i, value=v)
+            c.fill = fill
+            c.font = body_font
+            c.alignment = Alignment(horizontal="center" if i in (0, 4, 8) else "left",
+                                    vertical="top" if i in (1, 2, 3, 6, 9) else "center",
+                                    wrap_text=True)
+        ws.row_dimensions[row].height = est_height(vals, widths)
+        row += 1
+    last = row - 1
+    ws.auto_filter.ref = f"B4:{get_column_letter(1 + len(headers))}{last}"
+    ws.freeze_panes = "D5"
+    dv = DataValidation(type="list", formula1=f'"{",".join(CC_STATUS)}"', allow_blank=True)
+    ws.add_data_validation(dv)
+    dv.add(f"J5:J{last}")
+    cf = ws.conditional_formatting
+    for verdict, fill, color in [
+        ("Gap", CF_NEG_FILL, ACCENT_NEGATIVE),
+        ("Discrepancy", CF_WARN_FILL, ACCENT_WARNING),
+        ("Question", CF_WARN_FILL, ACCENT_WARNING),
+        ("Obtain deliverable", CF_WARN_FILL, ACCENT_WARNING),
+        ("Confirmed", CF_POS_FILL, ACCENT_POSITIVE),
+    ]:
+        cf.add(f"F5:F{last}", CellIsRule(operator="equal", formula=[f'"{verdict}"'],
+                                         fill=PatternFill(bgColor=fill), font=Font(color=color)))
+    cf.add(f"J5:J{last}", CellIsRule(operator="equal", formula=['"Resolved"'],
+                                     fill=PatternFill(bgColor=CF_POS_FILL), font=Font(color=ACCENT_POSITIVE)))
+    cf.add(f"J5:J{last}", CellIsRule(operator="equal", formula=['"In progress"'],
                                      fill=PatternFill(bgColor=CF_WARN_FILL), font=Font(color=ACCENT_WARNING)))
     return 5, last
 
@@ -978,6 +1043,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--lang", default="en", help="language tree under feature-docs (default: en)")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    ap.add_argument("--crosscheck", type=Path, default=DEFAULT_CROSSCHECK,
+                    help="closure-report cross-check json (sheet is skipped if the file is missing)")
     ap.add_argument("--no-preserve", action="store_true",
                     help="do not merge review entries from an existing workbook")
     args = ap.parse_args()
@@ -1025,20 +1092,36 @@ def main():
         f["service"] = trace["services"][f["id"]][0]
         f["endpoint"] = trace["endpoints"].get(f["id"], ("—", ""))[0]
 
-    prev = {"fm": {}, "oq": {}, "gap": []} if args.no_preserve else read_previous_review(args.out)
+    prev = {"fm": {}, "oq": {}, "cc": {}, "gap": []} if args.no_preserve else read_previous_review(args.out)
+
+    cc_rows = []
+    if args.crosscheck.exists():
+        cc_doc = json.loads(args.crosscheck.read_text(encoding="utf-8"))
+        cc_rows = cc_doc.get("rows", [])
+        refs = [r["ref"] for r in cc_rows]
+        if len(set(refs)) != len(refs):
+            sys.exit("error: duplicate refs in closure-crosscheck.json")
+        bad = [r["ref"] for r in cc_rows
+               if r.get("verdict") not in CC_VERDICTS or not all(k in r for k in
+                   ("ref", "topic", "pdf_says", "docs_say", "related", "action", "owner"))]
+        if bad:
+            sys.exit(f"error: malformed cross-check rows (bad verdict or missing field): {bad}")
 
     wb = Workbook()
     build_cover(wb, baseline, numbers, datetime.date.today().isoformat())
     fm_first, fm_last = build_matrix(wb, features, queries, prev)
     oq_first, oq_last = build_queries(wb, queries, prev)
+    cc_first = cc_last = None
+    if cc_rows:
+        cc_first, cc_last = build_crosscheck(wb, cc_rows, prev)
     trace_last = build_traceability(wb, features, trace)
     gap_last = build_gap_log(wb, prev)
     area_total_row, q_total_row = build_summary(wb, features, queries, fm_last, oq_last)
     review_last = build_review(wb, fm_last, oq_last, area_total_row, q_total_row)
 
-    # sheet order: Cover, Summary, Feature Matrix, Open Queries, Traceability, Gap Log, Review
-    order = ["Cover & Legend", "Summary", FM_SHEET, OQ_SHEET, "Traceability", "Gap Log", "Review"]
-    wb._sheets = [wb[name] for name in order]
+    # sheet order: Cover, Summary, Feature Matrix, Open Queries, Closure Cross-Check, Traceability, Gap Log, Review
+    order = ["Cover & Legend", "Summary", FM_SHEET, OQ_SHEET, CC_SHEET, "Traceability", "Gap Log", "Review"]
+    wb._sheets = [wb[name] for name in order if name in wb.sheetnames]
 
     wb.properties.creator = "Z.ai"
     args.out.parent.mkdir(parents=True, exist_ok=True)
@@ -1057,7 +1140,7 @@ def main():
             testability["Not locally"] += 1
         else:
             testability["Mixed / other"] += 1
-    merged = {"fm": len(prev["fm"]), "oq": len(prev["oq"]), "gap": len(prev["gap"])}
+    merged = {"fm": len(prev["fm"]), "oq": len(prev["oq"]), "cc": len(prev["cc"]), "gap": len(prev["gap"])}
     print(json.dumps({
         "wrote": str(args.out),
         "features": len(features),
@@ -1068,8 +1151,10 @@ def main():
         "features_with_queries": sum(1 for f in features if f["unconfirmed"]),
         "defect_features": sum(1 for f in features
                                if any(queries[q]["kind"] == "Defect" for q in f["unconfirmed"])),
+        "crosscheck_rows": len(cc_rows),
         "preserved_review_entries": merged,
         "rows": {"fm": [fm_first, fm_last], "oq": [oq_first, oq_last],
+                 "cc": [cc_first, cc_last],
                  "trace_last": trace_last, "gap_last": gap_last,
                  "summary_area_total_row": area_total_row, "summary_q_total_row": q_total_row},
     }, indent=2))

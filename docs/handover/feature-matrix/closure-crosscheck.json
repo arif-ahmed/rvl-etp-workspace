@@ -1,0 +1,284 @@
+{
+  "source": {
+    "document": "BS23_GOBCB_eTicketing_Project_Closure_and_Handover_Report_V1.2.pdf",
+    "reviewed_on": "2026-10-24",
+    "note": "One row per finding from RVL's review of the BS-23 closure report against docs/handover/feature-docs. Edit this file and re-run scripts/generate_feature_matrix.py; Status and Notes columns entered in the workbook are preserved."
+  },
+  "rows": [
+    {
+      "ref": "CC-01",
+      "topic": "Agent application never handed over",
+      "pdf_says": "p18 test scope describes a working Agent Application: SMS-based credential login, offline ticket scanning & sale marking, resale prevention with error 'The following tickets are already sold: Ticket IDs', max 4 tickets per scan session, customer mobile capture.",
+      "docs_say": "X-13 / A-26 manage Agent-pool accounts and POST /ticketing/api/v1/offline-sold-ticket exists, but no agent client is in the five handed-over repos and nothing reads OfflineSoldTickets back (Q-07 suspected exactly this).",
+      "verdict": "Gap",
+      "related": "X-13, A-26, Q-07",
+      "action": "Request the agent-app source repository (incl. its SMS login flow) from BS-23, then document it as a new feature doc and matrix row.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-02",
+      "topic": "Real-time entry monitoring in checker app",
+      "pdf_says": "p7 (in scope) and p18 (test scope): ticket checkers get live entry counts per gate and event for crowd control.",
+      "docs_say": "C-01..C-06 contain no entry-count screen; counts appear only in the admin gate reports (A-19) after the S-14 sync.",
+      "verdict": "Question",
+      "related": "C-01, C-03, A-19, S-14",
+      "action": "Confirm whether the shipped checker app shows live entry counts; if yes, add the missing C-feature doc.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-03",
+      "topic": "Defect status tension",
+      "pdf_says": "p23-24: 663/663 test cases passed, 54 critical + 95 high defects all resolved before UAT sign-off, 87 medium/low still open in AWS DevOps with agreed timelines.",
+      "docs_say": "Our independent code review logged 23 defect-rated findings (99-open-queries section 5), including the fully unauthenticated issue-chat REST API (Q-46).",
+      "verdict": "Discrepancy",
+      "related": "Q-46, Q-33, Q-44",
+      "action": "Share our defect list with BS-23; request their full defect log including the 87 open medium/low items; reconcile classifications.",
+      "owner": "RVL + BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-04",
+      "topic": "Language switching vs Q-44",
+      "pdf_says": "p17: UAT confirmed proper Bengali/English language switching with consistent UI rendering across the portal.",
+      "docs_say": "Q-44 (defect): the switch is client-side only; database content is never translated - the largest single gap for a Bangla-first launch.",
+      "verdict": "Discrepancy",
+      "related": "P-13, Q-44",
+      "action": "Ask what UAT covered (portal chrome vs content); scope the translation work.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-05",
+      "topic": "Content editor versioning claim",
+      "pdf_says": "p6: Content Management manages T&C, Privacy, FAQs and Notices with a rich text editor with version control and publishing workflow.",
+      "docs_say": "A-29: plain text stored in image-named columns; no versioning, no preview, no approval - an edit is live at once; HTML stored unsanitised (Q-33).",
+      "verdict": "Discrepancy",
+      "related": "A-29, Q-33",
+      "action": "Confirm no newer build adds versioning; otherwise treat the PDF wording as embellishment.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-06",
+      "topic": "Partner-sale balance tracking in reports",
+      "pdf_says": "p8 (AMC items): improved ticket pricing & reporting accuracy including partner sale data and balance tracking.",
+      "docs_say": "A-22 documents booking, sales, revenue and payment-discrepancy reports; no partner-sale balance report exists anywhere in the docs.",
+      "verdict": "Question",
+      "related": "A-22, A-11, A-12",
+      "action": "Ask which screen/report shows partner-sale balances; extend A-22 if one exists.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-07",
+      "topic": "Refund processing",
+      "pdf_says": "p15/p19: test objectives and E2E scope cover refund processing; inventory 'incremented correctly upon cancellations or refunds'.",
+      "docs_say": "No refund path exists in the five repos; the only mention is an example chat message in A-24 ('Refunded by the payment gateway').",
+      "verdict": "Question",
+      "related": "P-06, A-24",
+      "action": "Confirm refunds are gateway-side manual operations rather than a platform feature; note the answer in P-06.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-08",
+      "topic": "DynamoDB usage",
+      "pdf_says": "p12-14: Amazon DynamoDB is a data-layer component for ticket scan logs and real-time event tracking.",
+      "docs_say": "Checked tickets live in Redis and sync via S-14; the architecture doc says the DynamoDB SDK is referenced in ETP.Core.Storage but actual use is not verified.",
+      "verdict": "Question",
+      "related": "S-14, X-25",
+      "action": "Ask whether any deployed component (e.g. the agent app) uses DynamoDB; record the answer in the architecture doc.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-09",
+      "topic": "SNS usage",
+      "pdf_says": "p12/13: Amazon SNS distributes notifications and operational alerts.",
+      "docs_say": "No SNS usage in the five repos; email = SES (X-21), SMS = external notification service (X-22), push = FCM (X-23).",
+      "verdict": "Question",
+      "related": "X-21, X-22, X-23",
+      "action": "Confirm whether SNS exists in the deployment (e.g. operational alerts) or is PDF boilerplate.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-10",
+      "topic": "VS Challan responsibility",
+      "pdf_says": "p7: VAT disbursement is fully managed by the payment gateway and the platform does not handle any VAT split logic internally.",
+      "docs_say": "S-10: the platform posts a VAT challan to NBR (VatChallanProcessing queue) for every DgePay-confirmed paid order.",
+      "verdict": "Discrepancy",
+      "related": "S-10, P-06, Q-06",
+      "action": "Reconcile who submits and pays what (platform challan vs gateway disbursement) before go-live accounting.",
+      "owner": "BS-23 + RVL",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-11",
+      "topic": "Aurora vs RDS, single vs per-service DB",
+      "pdf_says": "p12: Aurora PostgreSQL with read/write replicas. p21: 'AWS RDS PostgreSQL instances'. The report contradicts itself.",
+      "docs_say": "Q-02 (open): every DbContext uses schema etp but each service has its own connection string - one database or one per service is unsettled.",
+      "verdict": "Question",
+      "related": "Q-02",
+      "action": "Resolve from the infrastructure/credentials pack (CC-20) and close Q-02.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-12",
+      "topic": "Ethiopian (+251) dial code item",
+      "pdf_says": "p8 (out of scope): 'Ethiopian (+251) dial code implemented across registration, login'.",
+      "docs_say": "The platform is Bangladeshi (+880); the seeded fake OneID user is +8801700000011.",
+      "verdict": "Discrepancy",
+      "related": "X-06, X-07",
+      "action": "Almost certainly copied from another client's scope; confirm no +251 handling exists anywhere.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-13",
+      "topic": "Out-of-scope order/seat caps vs existing settings",
+      "pdf_says": "p9 (out of scope): Order Per Event and Maximum Seat Per Event configuration as future work.",
+      "docs_say": "A-03 program settings already carry purchase limits and A-08 overrides them per event (per-user order cap included).",
+      "verdict": "Question",
+      "related": "A-03, A-08, P-06",
+      "action": "Clarify what is actually new beyond today's limits (e.g. per-event totals vs per-user caps).",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-14",
+      "topic": "DITF features listed under GOBCB",
+      "pdf_says": "p9 out-of-scope Ticket Counter App items (batch monitoring, direct printing, POS layout, ticket-operator role); the embedded reviewer comment states these are 'new features for DITF', not GOBCB.",
+      "docs_say": "Not applicable to GOBCB; recorded so nobody chases them as gaps later.",
+      "verdict": "Confirmed",
+      "related": "-",
+      "action": "None - record only.",
+      "owner": "RVL",
+      "status": "Resolved"
+    },
+    {
+      "ref": "CC-15",
+      "topic": "Scheduler service description",
+      "pdf_says": "p13: Scheduler 'manages time-based tasks such as event reminders, ticket expiry, and scheduled reporting jobs'.",
+      "docs_say": "Its 17 workers do capacity updates/reconcile, payment revalidation, ticket generation/signing/merge, VAT challan, FCM delivery, cleanups and promo/discount status (S-01..S-17) - none of the listed examples.",
+      "verdict": "Discrepancy",
+      "related": "S-01..S-17",
+      "action": "Treat the PDF wording as boilerplate; no code change expected.",
+      "owner": "RVL",
+      "status": "Resolved"
+    },
+    {
+      "ref": "CC-16",
+      "topic": "Push Notification service description",
+      "pdf_says": "p13: Push Notification Service (Firebase) 'sends email and SMS notifications for ticket confirmations via SNS'.",
+      "docs_say": "PushNotification only delivers FCM push; email is SES via Ticketing; SMS goes through the external notification service.",
+      "verdict": "Discrepancy",
+      "related": "X-21, X-22, X-23",
+      "action": "Note the inaccuracy; no action on code.",
+      "owner": "RVL",
+      "status": "Resolved"
+    },
+    {
+      "ref": "CC-17",
+      "topic": "Deliverable: BS-23 feature list",
+      "pdf_says": "p10: 'Complete system feature list' transferred via shared drive.",
+      "docs_say": "Our matrix documents 103 features from code; a formal diff needs their list.",
+      "verdict": "Obtain deliverable",
+      "related": "All",
+      "action": "Request the feature-list document and diff it against the Feature Matrix sheet.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-18",
+      "topic": "Deliverable: QA artefacts and results",
+      "pdf_says": "p10/p23: test plan, 663 test cases, execution & defect reports, performance report (P95 < 1.9 s at 600 users, QR validation 100%), UAT sign-off, release notes, deployment guide - on TestRail / AWS DevOps / shared drive.",
+      "docs_say": "None of these artefacts are in the workspace.",
+      "verdict": "Obtain deliverable",
+      "related": "-",
+      "action": "Obtain and archive; record the performance baseline for ops reference.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-19",
+      "topic": "Deliverable: user manuals and Figma design",
+      "pdf_says": "p10-11: administrator manuals (PDF/video) for venue, program, event creation, ticket generation and reporting; Figma design link for the whole system.",
+      "docs_say": "Not present in the workspace.",
+      "verdict": "Obtain deliverable",
+      "related": "-",
+      "action": "Obtain links/files and store them with the handover documentation.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-20",
+      "topic": "Deliverable: server details & credentials",
+      "pdf_says": "p11: full AWS infrastructure details - RDS connection strings, S3 buckets, payment-gateway API keys, FCM credentials, SMTP configuration and third-party secrets.",
+      "docs_say": "Would directly resolve several Deployment-kind open queries (Q-02, Q-04, Q-08, Q-16, Q-19...).",
+      "verdict": "Obtain deliverable",
+      "related": "Q-02, Q-04, Q-16, Q-19",
+      "action": "Obtain via a secure channel and store in the secrets vault - never in this repository.",
+      "owner": "BS-23 + RVL",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-21",
+      "topic": "Source-code completeness",
+      "pdf_says": "p10: source-code deliverable covers frontend (Angular), backend (.NET) and infrastructure-as-code assets on the shared drive.",
+      "docs_say": "Five repos were received; the agent app (CC-01) is missing, so the source deliverable is incomplete relative to what was tested. Any IaC/pipeline repos are also not in the workspace.",
+      "verdict": "Gap",
+      "related": "Q-07, CC-01",
+      "action": "Confirm the definitive repository list (incl. IaC/pipelines) and obtain the missing agent app.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-22",
+      "topic": "Internal team upskilling",
+      "pdf_says": "p10: internal team upskilling on frameworks, business logic, testing, debugging, deployment and operations is a delivered item.",
+      "docs_say": "No knowledge-transfer sessions are scheduled or recorded post-closure.",
+      "verdict": "Obtain deliverable",
+      "related": "-",
+      "action": "Agree knowledge-transfer sessions and topics with BS-23 while AMC terms still apply.",
+      "owner": "RVL + BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-23",
+      "topic": "Report document hygiene",
+      "pdf_says": "Cover page says 'Version 1.0' while the revision table says 1.2 (03-08-2026); about 17 internal reviewer comments remain embedded; the signing-off page (p27) is blank.",
+      "docs_say": "-",
+      "verdict": "Question",
+      "related": "-",
+      "action": "Request the cleaned, actually-signed final PDF for the records.",
+      "owner": "BS-23",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-24",
+      "topic": "Future-scope backlog (out-of-scope list)",
+      "pdf_says": "p8-9 formally excludes: booking-verification binding removal, verified/non-verified badges removal, one-time phone login, encrypted QR (+ checker scanning), VDS/QR configuration in program settings, ticket-holder-name field config, category-wise quantity input, batch report, pass-checker report, per-event order/seat caps, OneID pass scan.",
+      "docs_say": "None of these are implemented in the five repos (offline-sold exists backend-only).",
+      "verdict": "Future scope",
+      "related": "A-03, A-08, C-03, P-06",
+      "action": "Keep as product-backlog input; revisit after the verification sessions.",
+      "owner": "RVL",
+      "status": "Open"
+    },
+    {
+      "ref": "CC-25",
+      "topic": "Functional scope baseline matches our docs",
+      "pdf_says": "p5-8 / p15-18: all in-scope functional areas - programs, events, venues, layouts, pricing, promos, discounts, reservations, ticket generation, gates, reports, reconciliation, issues chat, RBAC, media, content, OneID, DgePay, VDS, checker offline flows and status messages, dashboard.",
+      "docs_say": "All map to our 103 feature docs; the 9-microservice list and Route 53 -> API Gateway -> NLB -> EKS topology match our architecture doc exactly.",
+      "verdict": "Confirmed",
+      "related": "A-*, P-*, U-*, C-*, S-*, X-*",
+      "action": "None - baseline agreement for the BS-23 walkthrough.",
+      "owner": "RVL",
+      "status": "Resolved"
+    }
+  ]
+}

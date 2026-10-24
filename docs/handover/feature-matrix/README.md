@@ -12,6 +12,7 @@ verification review.
 | Summary | PM / HoE | features per area, open queries per kind, verification progress (live formulas) |
 | Feature Matrix | all | one row per feature (103): area, module, plain-language purpose, actor, services, endpoints, dependencies, open queries, defect risk, testability, doc link + **BS-23 status & comments** |
 | Open Queries | BS-23 session | all 75 queries (Q-01…Q-77, Q-21/Q-24 unused) with kind, evidence, cited features + **response columns** |
+| Closure Cross-Check | BS-23 session | 25 findings from RVL's review of the BS-23 closure report (`../BS23_GOBCB_eTicketing_Project_Closure_and_Handover_Report_V1.2.pdf`): gaps, discrepancies, questions, deliverables to obtain — with verdicts, actions, owners and **status + notes columns** |
 | Traceability | DEV / OPS | feature → service, primary endpoint, queues, Redis keys, local state, external systems |
 | Gap Log | BS-23 session | anything the documentation missed — add rows freely |
 | Review | integrity | live self-checks (row counts, totals) — all rows should read PASS |
@@ -22,8 +23,12 @@ verification review.
   workbook is a generated view; do not hand-edit the generated columns (A–P on
   Feature Matrix, B–F on Open Queries, everything on Traceability).
 - Only the review columns are yours: **BS-23 status + comments** (Feature
-  Matrix), **response / status / answered-by / date** (Open Queries), and the
-  whole **Gap Log**.
+  Matrix), **response / status / answered-by / date** (Open Queries), **status +
+  notes** (Closure Cross-Check), and the whole **Gap Log**.
+- The Closure Cross-Check sheet is generated from
+  [`closure-crosscheck.json`](closure-crosscheck.json) — edit that file to change
+  the findings, then regenerate; status and notes entered in the workbook are
+  preserved.
 
 ## Regenerating after the docs change
 
