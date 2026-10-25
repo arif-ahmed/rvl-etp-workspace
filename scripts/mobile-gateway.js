@@ -27,8 +27,15 @@ http.createServer((req, res) => {
 
   if (prefix === 'health') return send(res, 200, { status: 'ok', routes: ROUTES });
 
-  // The "identity" API (sign-up, OTP, profile) has no source in any repo, so there is nothing to forward to.
-  if (prefix === 'identity') return send(res, 503, { status_message: 'identity_api_not_available_locally' });
+  // The "identity" API (sign-up, OTP, profile) has no source in any repo: forward to mock-identity (node mock-identity/server.js).
+  if (prefix === 'identity') {
+    const up = http.request(
+      { host: 'localhost', port: Number(process.env.MOCK_IDENTITY_PORT || 5120), path: req.url.replace(/^\/identity/, '') || '/', method: req.method, headers: { ...req.headers, host: 'localhost' } },
+      r => { res.writeHead(r.statusCode, r.headers); r.pipe(res); },
+    );
+    up.on('error', e => send(res, 502, { status_message: 'mock_identity_unreachable', detail: e.code || String(e) }));
+    return req.pipe(up);
+  }
 
   const port = ROUTES[prefix];
   if (!port) return send(res, 404, { error: 'no_route', prefix });

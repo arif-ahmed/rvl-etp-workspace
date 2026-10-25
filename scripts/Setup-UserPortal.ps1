@@ -156,24 +156,6 @@ async function oneid(req, res) {
   return send(res, 404, { error: 'not_found' });
 }
 
-// "Identity" API stand-in: only GET user/my-profile, built from the caller's token. Sign-up/OTP stay unavailable (503).
-function identity(req, res) {
-  const url = new URL(req.url, 'http://localhost');
-  if (req.method === 'GET' && url.pathname.endsWith('/user/my-profile')) {
-    const t = jwtPayload((req.headers.authorization || '').replace(/^Bearer\s+/i, ''));
-    const phone = t.username || t['cognito:username'] || t.phone_number || '';
-    const id = t.sub || 'local-user';
-    const none = { verification_id: '', verification_type: '' };
-    return send(res, 200, { user_data: {
-      user_id: id, temp_user_id: id, name: 'Local User', phone, email: 'user@etp.local',
-      address: '', dob: '', role: 'user', verified: true, isProfileCompleted: 'true', registration_datetime: '2026-01-01T00:00:00Z',
-      nonsensitive_data: { ekyc: { verified: 'true', data: '' }, verification: none },
-      sensitive_data: { ekyc: { verified: 'true', data: '' }, payment: { verified: 'true', id: '' }, verification: none },
-    } });
-  }
-  return send(res, 503, { status_message: 'identity_api_not_available_locally' });
-}
-
 const route = (p, target) => ({ target, pathRewrite: { ['^' + p]: '' }, changeOrigin: true });
 const svc = (name, port, extra) => ({ ['/p/' + name]: { target: 'http://localhost:' + port, pathRewrite: { '^/p': '' }, changeOrigin: true, ...extra } });
 const local = fn => ({ target: 'http://x', bypass: (req, res) => { Promise.resolve(fn(req, res)).catch(e => send(res, 500, { error: String(e) })); return true; } });
@@ -182,7 +164,7 @@ module.exports = {
   ...svc('admin', 5101), ...svc('booking', 5102), ...svc('event', 5103),
   ...svc('ticketing', 5108), ...svc('userissue', 5110, { ws: true }),
   '/p/oneid': local(oneid),
-  '/p/identity': local(identity),
+  '/p/identity': route('/p/identity', 'http://localhost:5120'),   // mock-identity (node mock-identity/server.js)
 };
 '@
 Write-Text (Join-Path $dst 'proxy.conf.js') ($proxy -replace '__CLIENT_ID__', $clientId)
