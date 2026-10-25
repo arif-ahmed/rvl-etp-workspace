@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-16 · অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=8faa95ce">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item is-active" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">60 · ক্রস-কাটিং</a><span class="sep">›</span><span>X-16</span></div>
+<h1><span class="id-chip">X-16</span> অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</p>
+<p><a href="index.html">← 60 · ক্রস-কাটিং</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>প্রোগ্রাম স্কোপ।</strong> <code>admin</code> ছাড়া কর্মীরা কেবল তাদের <code>custom:program_ids</code>-এ নিয়োজিত প্রোগ্রামগুলোর (সিরিজ/টুর্নামেন্ট) উপরই কাজ করা
+উচিত। কোডে <code>X-Program-Id</code> হেডার ব্যবহার করে দুটি আলাদা পদ্ধতি আছে:</p>
+<ol>
+<li>একটি <strong>ডেটা ফিল্টার</strong>: Admin সার্ভিসে একটি EF Core global query filter, যা প্রোগ্রাম-মালিকানাধীন রো-কে হেডারের প্রোগ্রামে সীমাবদ্ধ করে;</li>
+<li>একটি <strong>অ্যাক্সেস চেক</strong>: <code>[AuthorizeProgram]</code>, যা হেডারকে ব্যবহারকারীর <code>program_id</code> claim-এর সঙ্গে তুলনা করে, কেবল dashboard-এ ব্যবহৃত।</li>
+</ol>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>মান</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>অ্যাক্টর</td>
+<td>অ্যাডমিন পোর্টাল ব্যবহারকারী, প্রোগ্রাম বেছে নেওয়ার পর (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">A-01</span>)</td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td>অ্যাডমিন পোর্টালের <code>ProgramIdInterceptor</code> প্রতিটি request-এ <code>X-Program-Id</code> পাঠায় (<a href="X-04-admin-session.html">X-04</a>)</td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>শুধু Admin</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<p>একজন কর্মী একটি প্রোগ্রাম বাছেন; এরপর থেকে তালিকাগুলোতে (events, promo codes, discounts, notices, ticket layouts, …) কেবল ঐ প্রোগ্রামের
+ডেটা দেখা যায়। "back to global menu" বেছে নিলে প্রোগ্রাম 0 হয়, যা global মেনু দেখায় (<a href="X-17-authz-client-side.html">X-17</a>)।</p>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>ধাপ</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>ProgramIdMiddleware</code></td>
+<td><code>X-Program-Id</code> পার্স করে; <code>HttpContext.Items["ProgramId"]</code>-এ রাখে (অনুপস্থিত, সংখ্যা নয় বা ≤ 0 হলে 0)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>ProgramIdAccessor</code></td>
+<td>Scoped service যা <code>Items["ProgramId"]</code> পড়ে</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>AdminDbContext</code> query filter</td>
+<td><code>IHasProgramId</code> ইমপ্লিমেন্ট করা প্রতিটি entity-এর জন্য: <code>ProgramId &lt;= 0 OR entity.ProgramId == ProgramId</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>[AuthorizeProgram]</code> (শুধু dashboard)</td>
+<td>রোল <code>admin</code> → পাস। রোল <code>user</code> → পাস ("portal user … not defined yet")। অন্যথায়: হেডার অনুপস্থিত/অবৈধ/নেতিবাচক → <strong>400</strong> "Missing or invalid X-Program-Id header."; হেডার ব্যবহারকারীর <code>program_id</code> claim-এ না থাকলে → <strong>403</strong> "User does not have permission for program with Id {id}."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>যেসব entity ফিল্টার হয়</strong> (<code>IHasProgramId</code>): <code>Event</code>, <code>EventVenueDetails</code>, <code>ProgramTeam</code>, <code>ProgramVenue</code>, <code>ProgramVenueDetails</code>,
+<code>ProgramSettings</code>, <code>PromoCode</code>, <code>PromoCodeAssign</code>, <code>Discount</code>, <code>DiscountAssign</code>, <code>GeneralNotice</code>, <code>TicketCheckerGate</code>,
+<code>TicketAttributes</code>, <code>TicketLayoutConfig</code>, <code>UserIssue</code>, <code>UserIssueChatMessage</code>।</p>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td>অ্যাডমিন পোর্টাল <code>ProgramService</code> (<code>localStorage.globalProgramId</code>), <code>ProgramIdInterceptor</code></td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Admin: <code>ProgramIdMiddleware</code>, <code>ProgramIdAccessor</code>, <code>AdminDbContext</code>, <code>AuthorizeProgramAttribute</code>, <code>DashboardController</code></td>
+</tr>
+<tr>
+<td>Claim</td>
+<td><code>program_id</code>, <code>custom:program_ids</code> থেকে (<a href="X-15-authz-roles.html">X-15</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>মান</th>
+<th>প্রভাব</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>X-Program-Id</code></td>
+<td>integer; <code>0</code> বা অনুপস্থিত = কোনো প্রোগ্রাম নয়</td>
+<td>প্রতিটি request-এ Admin সার্ভিসের ডেটা ফিল্টার; <code>GET /admin/api/v1/dashboard/*</code>-এ অ্যাক্সেস চেক</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-json">// 403 from [AuthorizeProgram] (plain text body, not ProblemDetails)
+User does not have permission for program with Id 2.
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>কোনোটি নয়; ফিল্টার কেবল query সরু করে।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Middleware</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Middleware/ProgramIdMiddleware.cs</code></td>
+</tr>
+<tr>
+<td>Accessor</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Storage/Repositories/ProgramIdAccessor.cs</code></td>
+</tr>
+<tr>
+<td>Global query filter</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Storage/DbContexts/AdminDbContext.cs:595-617</code></td>
+</tr>
+<tr>
+<td>অ্যাক্সেস চেক</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Attributes/AuthorizeProgramAttribute.cs</code></td>
+</tr>
+<tr>
+<td>ব্যবহার</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/DashboardController.cs:18</code>; <code>EventsController.cs:19</code>-এ comment করা</td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট সাইড</td>
+<td><code>rvl-gobcb-admin-portal/src/app/interceptors/program-id.interceptor.ts</code>, <code>src/app/core/services/program.service.ts</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>ডেটা ফিল্টার কোনো অ্যাক্সেস কন্ট্রোল নয়।</strong> এটি হেডারকে বিশ্বাস করে। প্রোগ্রাম ১-এ সীমাবদ্ধ একজন ব্যবহারকারী <code>X-Program-Id: 2</code> পাঠালে
+   প্রোগ্রাম ২-এর রো দেখতে পান; <code>0</code> (বা কোনো হেডার না পাঠালে) পাঠালে ফিল্টার পুরোপুরি সরে যায়। কেবল dashboard ব্যবহারকারীর প্রোগ্রামের
+   বিপরীতে হেডার যাচাই করে।</li>
+<li><strong>403 শাখা কাজ থামায় না।</strong> <code>AuthorizeProgramAttribute</code> 403 রেসপন্স লেখে কিন্তু <code>context.Result</code> সেট করে না; একটি <code>IAsyncAuthorizationFilter</code>-এর
+   ক্ষেত্রে MVC তারপরও এগিয়ে action চালায়, যা ইতিমধ্যে শুরু হয়ে গেছে এমন রেসপন্সে লিখতে গিয়ে ব্যর্থ হয়। dashboard-এর (read-only) ক্ষেত্রে প্রভাব
+   একটি error log, কিন্তু এভাবে লেখার endpoint-এর জন্য এই attribute ব্যবহার করবেন না।</li>
+<li><strong>Middleware ও ফিল্টার কেবল Admin সার্ভিসে</strong> আছে। Booking, Ticketing ও UserIssue হেডারটি পেয়ে উপেক্ষা করে; তাদের admin endpoint-গুলো
+   বদলে query parameter হিসেবে <code>programId</code> নেয় (যেমন reports, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">A-22</span>)।</li>
+<li><strong><code>user</code> রোল <code>[AuthorizeProgram]</code> পাস করে</strong>, কিন্তু dashboard-এর ক্লাস attribute-এ Admin pool সহ <code>admin</code> বা <code>ticket_operator</code> লাগে, তাই গ্রাহকরা
+   এতে পৌঁছাতে পারে না।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  P["Admin portal<br/>ProgramService"] -->|"X-Program-Id"| MW["ProgramIdMiddleware"]
+  MW --> ACC["ProgramIdAccessor"] --> DB["AdminDbContext<br/>global query filter"]
+  P -->|"X-Program-Id"| AP["[AuthorizeProgram]<br/>dashboard only"]
+  CL["program_id claims<br/>(X-15)"] --> AP
+</div>
+<p><strong>নির্ভর করে:</strong> <span class="link-na" title="এখনো সাইটে যোগ হয়নি">A-01</span>, <a href="X-15-authz-roles.html">X-15</a>।
+<strong>প্রভাব ফেলে:</strong> প্রতিটি প্রোগ্রাম-স্কোপড <code>A-xx</code> তালিকা; <span class="link-na" title="এখনো সাইটে যোগ হয়নি">A-21</span>।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে পরীক্ষা: সম্পূর্ণ।</strong></p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td><code>+8801700000004</code> ticket_operator, প্রোগ্রাম <code>1</code>; <code>+8801700000002</code> event_manager, <code>1,2</code>; seeded প্রোগ্রাম ১ (Bangladesh vs India Series) ও ২ (BPL) (<code>docs/local-dev.md</code> §৭)</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>1700000004</code> হিসেবে লগইন করে প্রোগ্রাম ১ বেছে নিন, Dashboard খুলুন: DevTools-এ <code>X-Program-Id: 1</code> এবং 200 দেখা যায়</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>প্রযোজ্য নয়</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code> ফোল্ডার "Dashboard": "Login as ticket_operator" চালান (<code>postman/etp-login-all-pools.postman_collection.json</code>), request-এর bearer token <code>{{access_token_ticket_operator}}</code> করুন (service collection-এ default <code>{{access_token_admin}}</code>) এবং হেডার <code>X-Program-Id: 2</code> পাঠান → 403 text; <code>X-Program-Id: 1</code> → 200; কোনো হেডার না দিলে → 400। তারপর ফোল্ডার "Events"-এর "GET /api/v1/events" <code>X-Program-Id: 0</code> ও <code>2</code> দিয়ে চালিয়ে ফিল্টার কীভাবে ফলাফল বদলায় দেখুন</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>ETP.Admin.Service</code>-এ attach করুন; <code>AuthorizeProgramAttribute.OnAuthorizationAsync</code> ও <code>ProgramIdMiddleware.InvokeAsync</code>-তে breakpoint</td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>রো সংখ্যা তুলনা: <code>select "ProgramId", count(*) from etp."Events" group by 1;</code> বনাম প্রতি হেডার মানের জন্য API-র ফলাফল</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-15-authz-roles.html"><span class="pager-label">পূর্ববর্তী</span><span>X-15 · অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+  <a class="pager-next" href="X-17-authz-client-side.html"><span class="pager-label">পরবর্তী</span><span>X-17 · ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

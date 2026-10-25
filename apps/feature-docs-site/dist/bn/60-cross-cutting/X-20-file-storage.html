@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-20 · ফাইল স্টোরেজ (S3, CloudFront) · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=8faa95ce">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item is-active" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">60 · ক্রস-কাটিং</a><span class="sep">›</span><span>X-20</span></div>
+<h1><span class="id-chip">X-20</span> ফাইল স্টোরেজ (S3, CloudFront)</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> ফাইল স্টোরেজ (S3, CloudFront)</p>
+<p><a href="index.html">← 60 · ক্রস-কাটিং</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>ফাইল স্টোরেজ।</strong> প্ল্যাটফর্ম যা কিছু ফাইল হিসেবে রাখে, সবই Amazon S3-তে থাকে: আপলোড করা ছবি (ইভেন্ট কভার, ব্যানার, লোগো, ভেন্যু ম্যাপ), টিকিটের PDF লেআউট, এবং তৈরি টিকিট (ফাঁকা, সাইন করা, মার্জ করা, জিপ করা)। রিজার্ভ টিকিট একটি CloudFront <strong>signed cookie</strong> দিয়ে সুরক্ষিত। ধারণার পটভূমি: <span class="link-na" title="এখনো সাইটে যোগ হয়নি">শেয়ার করা ডেটাবেস</span> (ফাইল একমাত্র জিনিস যা <em>ডেটাবেসে নেই</em>) এবং আর্কিটেকচার ডকুমেন্টের স্টোরেজ অংশ।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<ul>
+<li>অ্যাডমিন পোর্টালের ব্যবহারকারীরা ছবি বা টিকিট লেআউট আপলোড করেন (<strong>admin</strong> pool)।</li>
+<li>Ticketing-এর ম্যানেজার ও ওয়ার্কাররা তৈরি টিকিট লেখেন (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-09</span>)।</li>
+<li>অ্যাডমিন পোর্টালের ব্যবহারকারীরা রিজার্ভ টিকিট ডাউনলোড করেন, যার জন্য নিচে বর্ণিত signed token ও cookie দরকার।</li>
+</ul>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<p>একজন অ্যাডমিন একটি ছবি বা টিকিট টেমপ্লেট আপলোড করেন; প্ল্যাটফর্ম তা সংরক্ষণ করে এবং তার পাথ সংশ্লিষ্ট ডেটাবেস রো-এ সেভ করে। কম্প্লিমেন্টারি বা পার্টনার (রিজার্ভ) টিকিটের ক্ষেত্রে অ্যাডমিন টিকিটগুলো তৈরি করেন, তারপর মার্জ করা PDF বা একটি zip হিসেবে ডাউনলোড করেন; ব্রাউজার আগে একটি স্বল্পমেয়াদি cookie পায় যা সুরক্ষিত ফাইলগুলো পড়তে দেয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">A-12</span>)।</p>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<p>দুটি S3 বাকেট <code>AWS:*</code> সেটিংসের মাধ্যমে কনফিগার করা:</p>
+<table>
+<thead>
+<tr>
+<th>সেটিং</th>
+<th>কী কাজে</th>
+<th>ম্যানেজার (ইন্টারফেস)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AWS:Bucket:Name</code></td>
+<td>মিডিয়া: ছবি ও চ্যাট অ্যাটাচমেন্ট</td>
+<td><code>AwsSimpleStorageMediaManager</code> (<code>ICloudFrontMediaManager</code>)</td>
+</tr>
+<tr>
+<td><code>AWS:Ticket:Bucket:Name</code></td>
+<td>টিকিট লেআউট ও তৈরি টিকিট</td>
+<td><code>AwsSimpleStorageTicketMediaManager</code> (<code>ITicketMediaManager</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>লোকালে দুটি সেটিংই Floci-তে একটিমাত্র বাকেট <code>etp-local</code>-এর দিকে ইঙ্গুত করে (<code>scripts/user-secrets.example.json</code>, তৈরি করে <code>floci/seed.ps1</code>)।</p>
+<p><strong>Key কাঠামো।</strong> <code>UploadContentAsync(directory, parentId, name, ...)</code> অবজেক্ট key-কে <code>{directory}/{parentId}/{name}</code> হিসেবে গড়ে, অথবা <code>parentId</code> খালি থাকলে <code>{directory}/{name}</code>, এবং সেই key ফেরত দেয়। এরপর ম্যানেজারগুলো মালিক রো-তে একটি <strong>পূর্ণ URL</strong>, <code>{AWS:Bucket:BaseUrl}/{key}</code>, সংরক্ষণ করে (যেমন <code>ProgramManager.UploadImageAsync</code>); টিকিট-লেআউট ও টিকিট কোড এই URL-গুলো ফোল্ডারের নামে ভেঙে key ফিরিয়ে আনে, তারপর অবজেক্ট মুছে ফেলে।</p>
+<p><strong>মিডিয়া ফোল্ডার</strong> (<code>AWS:Bucket</code>):</p>
+<table>
+<thead>
+<tr>
+<th>ফোল্ডার</th>
+<th>কে লেখে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eventcover/{eventId}</code></td>
+<td><code>EventManager</code></td>
+</tr>
+<tr>
+<td><code>eventsegmentcover/...</code></td>
+<td>event segment cover upload</td>
+</tr>
+<tr>
+<td><code>header-footer/{id}</code></td>
+<td><code>HeaderFooterManager</code></td>
+</tr>
+<tr>
+<td><code>landing-page/{type}</code></td>
+<td><code>LandingPageImageManager</code></td>
+</tr>
+<tr>
+<td><code>program/{programId}</code></td>
+<td><code>ProgramManager</code></td>
+</tr>
+<tr>
+<td><code>teams-logo/{id}</code>, <code>teams-flag/{id}</code></td>
+<td><code>ProgramTeamManager</code></td>
+</tr>
+<tr>
+<td><code>venueimage/...</code></td>
+<td><code>VenueManager</code> (SVG ম্যাপ ও গ্যালারি ছবি)</td>
+</tr>
+<tr>
+<td><code>chat-attachments/{userIssueId}</code></td>
+<td><code>UserIssueChatManager</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>টিকিট-বাকেটের পাথ</strong> (<code>AWS:Ticket:*</code>; দ্বিগুণ <code>//</code> ভাঙা হয়ে <code>/</code> হয়):</p>
+<table>
+<thead>
+<tr>
+<th>পাথ</th>
+<th>বিষয়বস্তু</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ticekt-layout/{layoutId}/{layoutType}/...</code></td>
+<td>আপলোড করা PDF লেআউট (স্পেলিং <code>ticekt</code> কোডেই আছে)</td>
+</tr>
+<tr>
+<td><code>ticekt-layout-preview/{layoutId}/{layoutType}/...</code></td>
+<td>লেআউটের প্রিভিউ রেন্ডার</td>
+</tr>
+<tr>
+<td><code>back-page-ticekt-layout/{layoutId}/...</code></td>
+<td>ব্যাক-পেজ লেআউট</td>
+</tr>
+<tr>
+<td><code>{BlankBase}/user/{userId}/{orderPublicId}</code> এবং <code>{BlankBase}/reserved/{orderPublicId}</code></td>
+<td>সাইন করা নয় এমন টিকিট</td>
+</tr>
+<tr>
+<td><code>{SignedBase}/user/{createdBy}/{orderPublicId}</code> এবং <code>{SignedBase}/reserved/{createdBy}/{orderPublicId}</code></td>
+<td>TSP সাইনিংয়ের পরের টিকিট</td>
+</tr>
+<tr>
+<td><code>{MergeBase}/{reservationId}/{prefix}_{i}.pdf</code> এবং <code>.zip</code></td>
+<td>মার্জ ও জিপ করা রিজার্ভ টিকিট, <code>MergeSize</code> অনুযায়ী চাংকে বিভক্ত</td>
+</tr>
+<tr>
+<td><code>{TemplateBase}/{fileName}.pdf</code></td>
+<td>টিকিট তৈরি করার সময় পঠিত টেমপ্লেট</td>
+</tr>
+</tbody>
+</table>
+<p><strong>রিজার্ভ টিকিটে signed অ্যাক্সেস</strong> (Ticketing <code>/ticketing/api/v1/booking-order-ticket/</code>-এর কল):</p>
+<ol>
+<li><code>POST generate-signed-token</code> <strong class="hop-tag">[HTTP + user token]</strong>, admin পলিসি। <code>TicketManager.GenerateSignedTokenAsync</code> কলারের bearer token-এর একটি HMAC-SHA512 হিসাব করে এবং তা <strong>৬০ সেকেন্ডের জন্য একটিমাত্র গ্লোবাল Redis key <code>signedToken</code>-এ</strong> সংরক্ষণ করে।</li>
+<li><code>GET signed-cookie</code> <strong class="hop-tag">[HTTP + user token]</strong>, admin পলিসি। <code>TicketingCookieManager.GetCloudFrontSignedCookie</code> S3 থেকে একটি JSON অবজেক্ট পড়ে (<code>CloudfrontTicketValidator:BucketName</code> / <code>ObjectKey</code>), যেখানে <code>KeyPairId</code>, <code>ResourceUrl</code>, <code>Expiration</code> ও <code>PrivateKey</code> (base64 PEM) থাকে। এটি একটি পলিসি তৈরি করে (<code>AWS:EpochTime</code> &lt; এখন + <code>Expiration</code>), সেটিকে RSA <strong>SHA1</strong> দিয়ে সই করে এবং টেক্সট <code>CloudFront-Policy=...; CloudFront-Signature=...; CloudFront-Key-Pair-Id=...</code> ফেরত দেয়।</li>
+<li>অ্যাডমিন পোর্টাল (<code>event.service.ts</code>, <code>setSignedCookie</code>) সেই টেক্সট ভেঙে প্রতিটি <code>CloudFront-*</code> অংশ <code>environment.cloudFront.mainDomain</code>-এর জন্য <code>document.cookie</code> দিয়ে লেখে; পরবর্তী ফাইল রিকোয়েস্টগুলো CloudFront-এ এই cookie বহন করে।</li>
+</ol>
+<p><strong>শেয়ার করা টিকিট।</strong> একটি শেয়ার করা টিকিট লিংক <code>AWS:Ticket:ShareExpiryMinutes</code> সময়ের জন্য <code>sharedTicket:{ticketNumber}_{signature}</code> key-তে একটি presigned S3 URL Redis-এ সংরক্ষণ করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">P-09</span>)।</p>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>কোড</td>
+<td><code>Core/ETP.Core.BlobStorage/*</code> (<code>AwsSimpleStorageMediaManager</code>, <code>AwsSimpleStorageTicketMediaManager</code>, <code>S3CloudFrontStroge</code>, <code>TicketingCookieManager</code>)</td>
+</tr>
+<tr>
+<td>যেসব সার্ভিস ব্যবহার করে</td>
+<td>Admin, Booking, Ticketing (প্রত্যেকেই নিজ <code>DependencyConfig.cs</code>-এ ম্যানেজারগুলো রেজিস্টার করে)</td>
+</tr>
+<tr>
+<td>AWS</td>
+<td>S3 বাকেট, CloudFront distribution ও key pair</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td><code>signedToken</code>, <code>sharedTicket:*</code> (<a href="X-25-redis.html">X-25</a>)</td>
+</tr>
+<tr>
+<td>কনফিগ</td>
+<td><code>AWS:Region</code>, <code>AWS:AccessKey</code>, <code>AWS:SecretAccessKey</code>, <code>AWS:Bucket:*</code>, <code>AWS:Ticket:*</code>, <code>CloudfrontTicketValidator:*</code> (<a href="X-26-configuration.html">X-26</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Response</th>
+<th>নোট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/ticketing/api/v1/booking-order-ticket/generate-signed-token</code></td>
+<td><code>admin</code> পলিসি</td>
+<td><code>string</code> (হ্যাশ)</td>
+<td>একটিমাত্র <code>signedToken</code> key বদলে দেয়</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ticketing/api/v1/booking-order-ticket/signed-cookie</code></td>
+<td><code>admin</code> পলিসি</td>
+<td><code>string</code> (cookie টেক্সট)</td>
+<td>পোর্টাল চারপাশের কোট খুলে <code>;</code> দিয়ে ভাঙে</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ticketing/api/v1/booking-order-ticket/reserved-urls?reservationId=</code></td>
+<td>কোডে কিছু নেই</td>
+<td>URL-এর তালিকা</td>
+<td>পোর্টালে কোনো কলার পাওয়া যায়নি (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">A-12</span>)</td>
+</tr>
+</tbody>
+</table>
+<p>ছবি আপলোড হয় সংশ্লিষ্ট ফিচারের নিজস্ব multipart এন্ডপয়েন্টের অংশ হিসেবে (যেমন event create/update), আলাদা স্টোরেজ এন্ডপয়েন্ট নয়।</p>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<ul>
+<li>§4-এ তালিকাভুক্ত S3 অবজেক্ট; মালিক রো পূর্ণ URL <code>{AWS:Bucket:BaseUrl}/{key}</code> সংরক্ষণ করে (যেমন ইভেন্টের <code>EventCoverImage</code> বা প্রোগ্রামের <code>Logo</code>)।</li>
+<li>ছবি বদলানোর সময় আগে পুরোনো অবজেক্ট মুছে ফেলা হয় (<code>DeleteContentAsync</code>), দেখুন <code>EventManager</code> ও <code>TicketLayoutConfigsManager</code>।</li>
+<li>Redis key <code>signedToken</code> ও <code>sharedTicket:*</code>।</li>
+</ul>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>মিডিয়া ম্যানেজার</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core.BlobStorage/AWSS3/AwsSimpleStorageMediaManager.cs</code></td>
+</tr>
+<tr>
+<td>cookie সাইনিং</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core.BlobStorage/AWSS3/TicketingCookieManager.cs</code></td>
+</tr>
+<tr>
+<td>cookie কনফিগ পড়া</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core.BlobStorage/AWSS3/S3CloudFrontStroge.cs</code></td>
+</tr>
+<tr>
+<td>এন্ডপয়েন্ট</td>
+<td><code>rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service/Api/BookingOrderTicketController.cs:488</code> (<code>generate-signed-token</code>), <code>:521</code> (<code>signed-cookie</code>)</td>
+</tr>
+<tr>
+<td>signed token</td>
+<td><code>rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Domain/Managers/TicketManager.cs:1995</code></td>
+</tr>
+<tr>
+<td>শেয়ার-লিংক ক্যাশ</td>
+<td><code>rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Domain/Managers/TicketManager.cs:1904</code></td>
+</tr>
+<tr>
+<td>রেজিস্ট্রেশন</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Configurations/DependencyConfig.cs:209-228</code></td>
+</tr>
+<tr>
+<td>পোর্টালের cookie কোড</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/events/services/event.service.ts:230-250</code></td>
+</tr>
+<tr>
+<td>অপশন ক্লাস</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/Options/AwsOptions.cs</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong><code>generate-signed-token</code> একটিমাত্র গ্লোবাল Redis key ব্যবহার করে।</strong> ৬০ সেকেন্ডের মধ্যে দুজন অ্যাডমিন এটি কল করলে তারা একে অপরকে বদলে দেয়। ব্যাকএন্ডে <code>signedToken</code> কোথাও পড়া হয় না; এই মানটি কে ব্যবহার করে তা এই রিপোজিটরিতে নেই <span class="badge-unconfirmed">[UNCONFIRMED: Q-06]</span>।</li>
+<li><strong>cookie সাইনিং key হলো একটি S3 অবজেক্ট।</strong> CloudFront key pair রোটেট করা মানে সেই JSON অবজেক্টটি এডিট করা, কোনো কনফিগারেশন মান বদলানো নয়। অবজেক্টটিতে প্রাইভেট key আছে, তাই ওই বাকেটে প্রবেশাধিকার সংবেদনশীল।</li>
+<li><strong><code>ticekt</code> একটি টাইপো যা এখন ডেটার অংশ।</strong> বিদ্যমান অবজেক্ট ও ডেটাবেসের মানে তা আছে; key মাইগ্রেট না করে এটি "সংশোধন" করবেন না।</li>
+<li>ডেটাবেস <strong>পূর্ণ URL</strong> সংরক্ষণ করে, যা <code>AWS:Bucket:BaseUrl</code> থেকে তৈরি; তাই বাকেট বা CDN ডোমেইন বদলালে ওই URL-গুলোর ডেটা মাইগ্রেশন দরকার (অথবা পুরোনো base URL জীবিত রাখতে হবে)।</li>
+<li><code>ICloudFrontMediaManager.CdnBaseUrl</code> ঘোষণা করা আছে কিন্তু <code>AwsSimpleStorageMediaManager</code>-এ কখনো সেট করা হয় না; পাবলিক URL প্রতিটি ম্যানেজার <code>AWS:Bucket:BaseUrl</code> থেকে নিজে তৈরি করে, এবং সেই সেটিং আসলে কোথায় (S3 নাকি CloudFront ডোমেইন) ইঙ্গুত করে — সেটি একটি ডিপ্লয়মেন্ট মান <span class="badge-unconfirmed">[UNCONFIRMED: Q-06]</span>।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  AP["Admin portal"] -->|"HTTP + token, multipart"| AD["Admin service"]
+  AD -->|"S3 PutObject"| B1[("S3 media bucket")]
+  AP -->|"HTTP + token"| TK["Ticketing"]
+  TK -->|"S3 Put/Get"| B2[("S3 ticket bucket")]
+  TK -->|"reads key JSON"| B3[("S3 cookie config object")]
+  TK -->|"signedToken 60 s"| R[("Redis")]
+  AP -->|"CloudFront-* cookie"| CF["CloudFront"] --> B2
+</div>
+<p><strong>নির্ভর করে:</strong> কনফিগারেশন (<a href="X-26-configuration.html">X-26</a>), অ্যাডমিন লগইন (<a href="X-01-admin-login.html">X-01</a>)। <strong>প্রভাব ফেলে:</strong> event, program, team, venue, ticket-layout ও reserved-ticket ফিচার, টিকিট ডাউনলোড।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালে পরীক্ষাযোগ্যতা: আংশিক।</strong> আপলোড ও তৈরি টিকিট Floci S3-এ (বাকেট <code>etp-local</code>) কাজ করে। signed cookie লোকালে কাজ করতে পারে না: <code>CloudfrontTicketValidator</code> হলো <code>local-dummy</code>, তাই <code>GET signed-cookie</code> "Failed to get file" দিয়ে ব্যর্থ হয়।</p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>অ্যাডমিন লগইন (<a href="X-01-admin-login.html">X-01</a>); <code>pwsh ./scripts/Seed-EtpData.ps1</code></td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td>অ্যাডমিন পোর্টাল <code>http://localhost:4200</code>, একটি event cover আপলোড করুন; DevTools Network-এ <code>/admin/api/v1/...</code>-এর multipart রিকোয়েস্ট দেখা যাবে</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>-এর multipart upload রিকোয়েস্ট; <code>signed-cookie</code>-এর জন্য <code>etp-ticketing</code> কালেকশন (লোকালে উপরের ব্যর্থতা আশা করুন)</td>
+</tr>
+<tr>
+<td>Visual Studio ডিবাগ</td>
+<td><code>AwsSimpleStorageMediaManager.UploadContentAsync</code>-এ ব্রেকপয়েন্ট; cookie-এর জন্য <code>TicketingCookieManager.GetCloudFrontSignedCookie</code></td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td><code>aws --endpoint-url http://localhost:4566 s3 ls s3://etp-local --recursive</code> <code>eventcover/&lt;id&gt;/...</code>-এর মতো key দেখায়</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-19-service-to-service.html"><span class="pager-label">পূর্ববর্তী</span><span>X-19 · সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+  <a class="pager-next" href="X-21-email-ses.html"><span class="pager-label">পরবর্তী</span><span>X-21 · ইমেইল (SES)</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

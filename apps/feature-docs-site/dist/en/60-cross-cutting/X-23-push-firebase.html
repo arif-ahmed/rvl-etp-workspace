@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-23 · Push notifications (PushNotification service, Firebase) · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=8faa95ce">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item is-active" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">60 · Cross-cutting</a><span class="sep">›</span><span>X-23</span></div>
+<h1><span class="id-chip">X-23</span> Push notifications (PushNotification service, Firebase)</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</p>
+<p><a href="index.html">← 60 · Cross-cutting</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Push notifications to the mobile app.</strong> The <strong>PushNotification service</strong> stores each user's device tokens (FCM tokens) and turns a "send" request into batches of at most 200 tokens on the <code>FirebaseNotification</code> queue. A worker in the <strong>Scheduler</strong> service reads the queue and sends the batches through Firebase Cloud Messaging. The only caller that sends push in the current code is the admin event publish. Concepts: <span class="link-na" title="Not included in the site yet">queue-driven processing</span>, <span class="link-na" title="Not included in the site yet">background workers</span>.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<ul>
+<li><strong>Register, replace, delete a token:</strong> the user app, on start-up and token refresh (<span class="link-na" title="Not included in the site yet">U-09</span>).</li>
+<li><strong>Send to all:</strong> Admin service when an admin publishes an event (<span class="link-na" title="Not included in the site yet">A-07</span>).</li>
+<li><strong>Clean up old tokens:</strong> Scheduler worker (<span class="link-na" title="Not included in the site yet">S-13</span>).</li>
+<li><strong>Deliver:</strong> Scheduler <code>FirebaseNotificationService</code> (<span class="link-na" title="Not included in the site yet">S-11</span>).</li>
+</ul>
+<h2 id="3-business-flow">3. Business flow</h2>
+<p>When an event is published, every user who has the app installed sees "New Event Available!" with the event name. Users who never opened the app after installing, or who revoked notification permission, have no token and receive nothing.</p>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<p><strong>Token registration</strong> (user app → <code>TicketBanglaApiClient</code>): <code>POST/PUT/DELETE pushnotification/api/v1/device-token</code> with <code>{userId, fcmToken, osType}</code> (PUT: <code>{userId, oldToken, newToken, osType}</code>). <code>osType</code> must be <code>android</code>, <code>ios</code> or <code>web</code> (case-insensitive), otherwise 400.</p>
+<p><strong>Event publish → push</strong></p>
+<ol>
+<li>Admin <code>EventManager</code> (publish path, <code>EventManager.cs:~722</code>) builds <code>PushNotificationRequest { Title = "New Event Available!", Body = "'&lt;name&gt;' is now available for booking. Get your tickets now!", Data = { eventId, eventName, type = "event_published" } }</code>.</li>
+<li><code>IPushNotificationClient.SendNotificationToAllAsync</code> → <code>POST pushnotification/api/v1/push-notification/send-to-all</code> <strong class="hop-tag">[HTTP + user token]</strong> (Admin forwards the admin token; PushNotification ignores it, see §9).</li>
+<li><code>NotificationManager.SendNotificationToAllUsersAsync</code> reads active tokens in pages of 200 and publishes one <code>FirebaseNotificationRequest</code> per page <strong class="hop-tag">[SQS: FirebaseNotification]</strong> with <code>GroupId = requestId</code> and <code>OrderId = "{requestId}-batch-{n}"</code>. The HTTP reply is <code>202 Accepted</code> with the <code>requestId</code>.</li>
+<li>Scheduler <code>FirebaseNotificationService</code> <strong class="hop-tag">[Worker]</strong> waits 1 minute after start, then loops; <code>FirebaseNotificationTaskManager</code> long-polls the queue (5 messages, 10 s wait, visibility 60 s), calls <code>FirebasePushNotificationService.SendNotificationToMultipleAsync</code> (<code>SendEachForMulticastAsync</code>) and <strong>always deletes the message</strong>, whether or not the send worked.</li>
+<li>If the <code>send-to-all</code> call fails, <code>EventManager</code> logs the error and the publish still succeeds.</li>
+</ol>
+<p>The same service also offers <code>send-to-users</code> (list of user ids) and <code>send-to-user/{userId}</code>; nothing in the five repositories calls them (§9 note 5).</p>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Services</td>
+<td>PushNotification (API, DB), Admin (caller), Scheduler (worker)</td>
+</tr>
+<tr>
+<td>Queue</td>
+<td><code>FirebaseNotification</code> (<a href="X-19-service-to-service.html">X-19</a>)</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>UserDeviceTokens</code> via <code>IUserDeviceTokenRepository</code> in the PushNotification DbContext (schema <code>etp</code>)</td>
+</tr>
+<tr>
+<td>External</td>
+<td>Firebase Cloud Messaging</td>
+</tr>
+<tr>
+<td>Config</td>
+<td><code>FirebasePushNotificationConfig:*</code> (service-account JSON fields), <code>AWS:Queue:FirebaseNotification</code>, <code>Services:PushNotification</code> (<a href="X-26-configuration.html">X-26</a>)</td>
+</tr>
+<tr>
+<td>Code</td>
+<td><code>Services/PushNotification/*</code>, <code>Core/ETP.Core/PushNotification/FirebasePushNotificationService.cs</code>, <code>Core/ETP.Core/ServiceClient/PushNotificationClient/*</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<p>Base path <code>/pushnotification/api/v1/</code>. <strong>None of these endpoints has authorization</strong> (§9).</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Request</th>
+<th>Response</th>
+<th>Errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>device-token</code></td>
+<td><code>DeviceTokenRequest {userId, fcmToken, osType}</code></td>
+<td><code>200 {message, tokenId}</code></td>
+<td>400 invalid <code>osType</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>device-token</code></td>
+<td><code>UpdateDeviceTokenRequest {userId, oldToken, newToken, osType}</code></td>
+<td><code>200 {message}</code></td>
+<td>400, 404 token not found</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>device-token</code></td>
+<td>body <code>{userId, fcmToken}</code></td>
+<td><code>200 {message}</code></td>
+<td>404</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>device-token/{userId}</code></td>
+<td>—</td>
+<td>list of token rows</td>
+<td>—</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>device-token/cleanup?retentionDays=30</code></td>
+<td>—</td>
+<td><code>200 {message, deletedCount, cutoffDate, retentionDays}</code></td>
+<td>400 if <code>retentionDays &lt;= 0</code>, 500</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>push-notification/send-to-all</code></td>
+<td><code>PushNotificationRequest {title, body, data}</code></td>
+<td><code>202 {message, requestId}</code></td>
+<td>500</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>push-notification/send-to-users</code></td>
+<td><code>PushNotificationRequest</code> with <code>userIds</code></td>
+<td><code>202 {message, requestId}</code></td>
+<td>400 no <code>userIds</code>, 500</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>push-notification/send-to-user/{userId}</code></td>
+<td><code>PushNotificationRequest</code></td>
+<td><code>202 {message, requestId}</code></td>
+<td>500</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>push-notification/bulk-status/{requestId}</code></td>
+<td>—</td>
+<td>constant <code>{requestId, status:"processing", message}</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Primary sample (what the Admin service sends on publish; values illustrative, property names from <code>PushNotificationRequest.cs</code>):</p>
+<pre><code class="language-json">{
+  &quot;title&quot;: &quot;New Event Available!&quot;,
+  &quot;body&quot;: &quot;'&lt;event name&gt;' is now available for booking. Get your tickets now!&quot;,
+  &quot;data&quot;: { &quot;eventId&quot;: &quot;&lt;event id&gt;&quot;, &quot;eventName&quot;: &quot;&lt;event name&gt;&quot;, &quot;type&quot;: &quot;event_published&quot; }
+}
+</code></pre>
+<p>Queue message (<code>FirebaseNotificationRequest</code>): <code>title</code>, <code>body</code>, <code>data</code>, <code>deviceTokens</code> (≤ 200), <code>createdAt</code>, <code>groupId</code>, <code>orderId</code>.</p>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<ul>
+<li>Table of device tokens (add/update/delete/cleanup); no record of sent notifications, and <code>bulk-status</code> always answers "processing".</li>
+<li>SQS messages on <code>FirebaseNotification</code>; FCM delivery.</li>
+</ul>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Controllers</td>
+<td><code>rvl-gobcb-backend/Services/PushNotification/ETP.PushNotification.Service/Api/DeviceTokenController.cs</code>, <code>.../NotificationController.cs</code></td>
+</tr>
+<tr>
+<td>Batching and publish</td>
+<td><code>rvl-gobcb-backend/Services/PushNotification/ETP.PushNotification.Domain/Managers/NotificationManager.cs</code></td>
+</tr>
+<tr>
+<td>Auth commented out</td>
+<td><code>rvl-gobcb-backend/Services/PushNotification/ETP.PushNotification.Service/Program.cs:75-76</code></td>
+</tr>
+<tr>
+<td>Publish trigger</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/EventManager.cs:722-745</code></td>
+</tr>
+<tr>
+<td>Client</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/ServiceClient/PushNotificationClient/PushNotificationClient.cs:23, 42, 61</code></td>
+</tr>
+<tr>
+<td>Worker</td>
+<td><code>rvl-gobcb-backend/Services/Scheduler/ETP.Scheduler.Service/Workers/BackgroundServices/FirebaseNotificationService.cs</code>, <code>.../TaskManagers/FirebaseNotificationTaskManager.cs</code></td>
+</tr>
+<tr>
+<td>FCM sender</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/PushNotification/FirebasePushNotificationService.cs</code></td>
+</tr>
+<tr>
+<td>App token calls</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_service/firebase_api_service/firebase_api_service_impl.dart:21, 38, 48</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>No authentication on the whole service.</strong> <code>UseAuthentication()</code> and <code>UseAuthorization()</code> are commented out in <code>Program.cs</code>, and the controllers carry no <code>[Authorize]</code>. Anyone who can reach <code>/pushnotification/...</code> can add or delete tokens, read the tokens of any <code>userId</code> (<code>GET device-token/{userId}</code>), trigger <code>send-to-all</code>, and run <code>cleanup</code>. The architecture document records the same facts (§9 items 3 and 6); whether the ingress exposes it is open <span class="badge-unconfirmed">[UNCONFIRMED: Q-04]</span>.</li>
+<li><strong>The user id in a token registration is taken from the body</strong>, not from a token, so a client can register a token under another user's id.</li>
+<li><strong>Delivery is fire-and-forget.</strong> The worker deletes each message even when Firebase failed or returned partial failures (<code>SendEachForMulticastAsync</code> counts as success when at least one token succeeded). Invalid tokens are not removed on failure; they are only removed by the age-based cleanup (<span class="link-na" title="Not included in the site yet">S-13</span>).</li>
+<li><strong>No distributed lock is needed</strong> here: the queue is the coordination point (contrast the lock-based workers, <span class="link-na" title="Not included in the site yet">explainer</span>).</li>
+<li><code>send-to-users</code>, <code>send-to-user</code> and the Admin client's matching methods exist, but this review found no caller of them in the five repositories; the only live sender is event publish <span class="badge-unconfirmed">[UNCONFIRMED: Q-08]</span>. Order and ticket pushes are not sent (customers get the <code>ticket_generated</code> message through the external service, <a href="X-22-sms-notification.html">X-22</a>).</li>
+<li><code>FirebaseBulkNotificationRequest</code> and <code>FirebaseOptions.ServerKey</code> are unused (<span class="link-na" title="Not included in the site yet">Appendix A</span>).</li>
+<li>The Scheduler's daily token cleanup appears not to reach <code>device-token/cleanup</code>; it calls <code>Services:Admin</code> without the <code>pushnotification/</code> prefix (<span class="link-na" title="Not included in the site yet">S-13</span>, <span class="badge-unconfirmed">[UNCONFIRMED: Q-16]</span>). Until that is confirmed, assume stale tokens are not removed.</li>
+<li>Locally Firebase is dummy: Scheduler logs Firebase warnings and the app registers no real token (<code>docs/local-dev.md</code>, <code>docs/mobile-local.md</code> §8 "Known gaps").</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  APP["User app"] -->|"HTTP, no auth: device-token"| PN["PushNotification"]
+  PN --> DB[("device tokens, schema etp")]
+  AP["Admin portal publish"] --> AD["Admin"] -->|"HTTP + token: send-to-all"| PN
+  PN -->|"SQS: FirebaseNotification"| Q[["queue"]] --> SCH["Scheduler worker"]
+  SCH -->|"FCM multicast"| FCM["Firebase"] --> APP
+  SCH -->|"HTTP, no token: cleanup"| PN
+</div>
+<p><strong>Depends on:</strong> event publish (<span class="link-na" title="Not included in the site yet">A-07</span>), app token registration (<span class="link-na" title="Not included in the site yet">U-09</span>). <strong>Affects:</strong> push receipt in the app (<span class="link-na" title="Not included in the site yet">U-10</span>).</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Partial.</strong> Token registration, <code>send-to-all</code> and the queue path work locally (PushNotification on port 5105, Floci SQS). Delivery cannot: Firebase is dummy, so no push arrives.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>No login needed for these endpoints; seeded user phone …11 (<a href="X-07-user-password-login.html">X-07</a>) for a realistic <code>userId</code></td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:5105/pushnotification/swagger</code> to call <code>device-token</code> and <code>send-to-all</code> (<code>docs/local-dev.md</code> §4)</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>User app: sign-in is not possible locally (known gap), so the token call is not reached <code>[see docs/mobile-local.md]</code></td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-pushnotification.postman_collection.json</code> requests such as <code>POST /api/v1/device-token</code> and <code>POST /api/v1/push-notification/send-to-all</code> (set <code>base_url</code> with the <code>/pushnotification</code> prefix, see Appendix D)</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>Breakpoints in <code>NotificationManager.SendNotificationToAllUsersAsync</code> and <code>FirebaseNotificationTaskManager.ExecuteAsync</code> (the worker starts after its 1-minute delay)</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td><code>aws --endpoint-url http://localhost:4566 sqs get-queue-attributes --queue-url &lt;FirebaseNotification url&gt; --attribute-names ApproximateNumberOfMessages</code>; SQL: select from the device-token table in the PushNotification database; Aspire logs of Scheduler show "Processing Firebase notification"</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-22-sms-notification.html"><span class="pager-label">Previous</span><span>X-22 · SMS and the external notification service</span></a>
+  <a class="pager-next" href="X-24-activity-logging.html"><span class="pager-label">Next</span><span>X-24 · Activity logging (audit trail)</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

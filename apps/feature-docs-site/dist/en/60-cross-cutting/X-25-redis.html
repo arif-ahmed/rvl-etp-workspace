@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-25 · Redis: cache, live capacity and locks · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=8faa95ce">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item is-active" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">60 · Cross-cutting</a><span class="sep">›</span><span>X-25</span></div>
+<h1><span class="id-chip">X-25</span> Redis: cache, live capacity and locks</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> Redis: ক্যাশ, লাইভ ক্যাপাসিটি ও লক</p>
+<p><a href="index.html">← 60 · Cross-cutting</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Redis.</strong> One Redis instance carries four different jobs: (1) a <strong>read cache</strong> for hot data, (2) <strong>live capacity and seat counters</strong> that decide whether a booking can proceed, (3) <strong>distributed locks</strong> (RedLock) so only one instance runs a worker or touches a level at a time, and (4) small operational state (ticket counters, checked-ticket sets, the signed token, the DgePay token). Concepts: <span class="link-na" title="Not included in the site yet">Redis live capacity</span>, <span class="link-na" title="Not included in the site yet">distributed locks</span>.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Any request or worker in Admin, Booking, Event, Ticketing, TicketChecker, Scheduler, UserIssue and Utility. There is no user-facing Redis feature; the effects show up as faster reads, capacity numbers, and "only one worker at a time".</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<p>When customers book seats, the available count is read and decremented in Redis first and reconciled to the database by workers (<span class="link-na" title="Not included in the site yet">S-01</span> to <span class="link-na" title="Not included in the site yet">S-04</span>). If Redis is flushed, the live counters are wrong until the reconcile workers rebuild them.</p>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<p><strong>Three access paths, all against the same server</strong> (<code>Cache:Redis:ConnectionString</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Registered by</th>
+<th>Used for</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ICacheManager</code> (<code>DistributedCacheManager</code> over <code>IDistributedCache</code>)</td>
+<td><code>AddCaching</code></td>
+<td>read-through cache, for example Cognito user attributes in cache <code>User</code></td>
+<td><code>InstanceName</code> prefix (<code>Cache:Redis:InstanceName</code>); <strong>default absolute expiry 2 minutes</strong> (<code>CacheConfig.DefaultExpireTime</code>)</td>
+</tr>
+<tr>
+<td><code>IRedisService</code> (StackExchange.Redis <code>IDatabase</code>, JSON values)</td>
+<td><code>AddRedisCaching</code></td>
+<td>strings, sets, hashes, counters; no prefix, database <code>Cache:Redis:DefaultDatabase</code></td>
+<td>all capacity, seat and checker keys</td>
+</tr>
+<tr>
+<td><code>IDistributedLockFactory</code> (RedLock.net)</td>
+<td><code>AddDistributedLock</code></td>
+<td>locks</td>
+<td>endpoint from <code>DistributedLock:Redis:EndPoint</code>, <code>:Port</code>, <code>:Database</code>; a single endpoint, so it is a plain Redis lock, not multi-node RedLock</td>
+</tr>
+</tbody>
+</table>
+<p>Both <code>AddCaching</code> and <code>AddRedisCaching</code> also persist ASP.NET <strong>Data Protection keys</strong> into Redis (<code>DataProtection-Keys</code>, <code>DataProtection-Keys-redis</code>).</p>
+<p><strong>Registration per service:</strong> Admin, Booking, Ticketing and UserIssue register all three; Event registers cache and <code>IRedisService</code>; Scheduler, TicketChecker and Utility register <code>IRedisService</code> and locks; PushNotification registers cache only; Platform and UserAuth only the cache.</p>
+<p><strong>Key families</strong> (<code>CachePrefix</code> in <code>Core/ETP.Core/Constant/AppConstant.cs</code>; key shapes taken from the call sites):</p>
+<table>
+<thead>
+<tr>
+<th>Prefix and shape</th>
+<th>Content</th>
+<th>Used by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>level_live:{event}_{gallery}_{block}_{level}</code></td>
+<td>live available capacity per level (also hash <code>capacity</code> with field <code>level_live:{groupId}</code>)</td>
+<td>Booking, Event</td>
+</tr>
+<tr>
+<td><code>event_live:{eventId}</code></td>
+<td>live capacity per event</td>
+<td>Booking, Event</td>
+</tr>
+<tr>
+<td><code>level_locked:{event}_{gallery}_{block}_{level}</code></td>
+<td>hash of orders holding locked capacity (field = order id)</td>
+<td>Booking</td>
+</tr>
+<tr>
+<td><code>level_live_seats:{event}_{gallery}_{block}_{level}</code></td>
+<td>live seat state</td>
+<td>Booking</td>
+</tr>
+<tr>
+<td><code>event_database:*</code>, <code>level_database:*</code>, <code>level_database_seats:*</code>, <code>level_database_purchased_seats:*</code></td>
+<td>database-side counters used to reconcile</td>
+<td>Booking</td>
+</tr>
+<tr>
+<td><code>event_total_online_ticket:{eventId}</code></td>
+<td>online ticket total</td>
+<td>Booking, Event</td>
+</tr>
+<tr>
+<td><code>event_details:{id}</code>, <code>admin_event_details:{id}</code>, <code>event_venue_details:{id}</code>, <code>event_settings_details</code>, <code>program_settings_details</code>, <code>ticket_attributes_details</code>, <code>ticket_pricing_all</code>, <code>admin_level_info</code>, <code>landing_page_image_published</code>, <code>general_notice_published</code></td>
+<td>cached read models</td>
+<td>Admin, Event, Ticketing, Booking</td>
+</tr>
+<tr>
+<td><code>booking_details:{publicId}</code></td>
+<td>order details</td>
+<td>Booking</td>
+</tr>
+<tr>
+<td><code>dgepay_auth_token</code></td>
+<td>DgePay token</td>
+<td>Booking (<span class="link-na" title="Not included in the site yet">P-06</span>)</td>
+</tr>
+<tr>
+<td><code>ticket_checker_tickets:event_{e}_gate_{g}</code>, <code>ticket_checker_checked_tickets:{e}_{g}_{user}</code>, <code>TicketCheckerLevelGateMap</code> (hash, field <code>{event}_{gate or level}</code>)</td>
+<td>offline ticket lists, checked tickets, level-to-gate map</td>
+<td>TicketChecker, Ticketing, Admin (<span class="link-na" title="Not included in the site yet">C-02</span>, <span class="link-na" title="Not included in the site yet">C-05</span>, <span class="link-na" title="Not included in the site yet">S-14</span>)</td>
+</tr>
+<tr>
+<td><code>event_ticket_counter:{eventId}</code></td>
+<td>consecutive ticket number counter, reset to <code>0</code> on event publish</td>
+<td>Admin, Ticketing</td>
+</tr>
+<tr>
+<td><code>signedToken</code></td>
+<td>single global admin download token, 60 s</td>
+<td>Ticketing (<a href="X-20-file-storage.html">X-20</a>)</td>
+</tr>
+<tr>
+<td><code>sharedTicket:{ticketNumber}_{signature}</code></td>
+<td>presigned share URL</td>
+<td>Ticketing (<a href="X-20-file-storage.html">X-20</a>)</td>
+</tr>
+</tbody>
+</table>
+<p><code>mergeTicket</code>, <code>zipTicket</code> and <code>program_details</code> are declared in <code>CachePrefix</code> but no code reads or writes them (merge state is held in S3 file names instead).</p>
+<p><strong>Lock resources</strong> (<code>CreateLockAsync(resource, expiry[, wait, retry])</code>; acquired with <code>await using</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Resource name</th>
+<th>Where</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user_booking:{userId}</code> (60 s)</td>
+<td>Booking <code>UserBookingOrderManager</code></td>
+<td>one booking attempt per user at a time</td>
+</tr>
+<tr>
+<td><code>level_booking_{event}_{gallery}_{block}_{level}</code></td>
+<td>Booking <code>UserBookingOrderManager</code>, <code>SeatReservationManager</code>, <code>EventCapacityAdjustmentManager</code></td>
+<td>serialise capacity changes of one level</td>
+</tr>
+<tr>
+<td><code>database_update_{event}_{gallery}_{block}_{level}</code> and <code>{event}_{gallery}_{block}_{level}_database_update</code></td>
+<td>Booking <code>CapacityManager</code></td>
+<td>capacity reconcile</td>
+</tr>
+<tr>
+<td><code>level_capacity_updater_{n}</code>, <code>event_capacity_updater_{n}</code>, <code>locked_order_refresher_{n}</code>, <code>vat_challan_processor_{n}</code></td>
+<td>Booking workers (<code>n</code> = random slot)</td>
+<td>queue consumers: up to several instances in parallel</td>
+</tr>
+<tr>
+<td><code>booking_status_updater</code>, <code>reservation_status_updater</code>, <code>refresh_level_locks_{key}</code>, <code>user_ticket_generator_{eventId}</code></td>
+<td>Booking task managers</td>
+<td>singleton periodic jobs</td>
+</tr>
+<tr>
+<td><code>event_live_capacity_refresher</code>, <code>pending_cancel_booking_status_updater</code>, <code>notification_for_ticket_generated</code>, <code>device_token_cleanup</code></td>
+<td>Scheduler</td>
+<td>singleton periodic jobs</td>
+</tr>
+<tr>
+<td><code>checked_ticket</code>, <code>ticket_checker_status_reset</code>, <code>promo_code_status_updater</code>, <code>system_discount_status_updater</code></td>
+<td>Admin workers</td>
+<td>singleton periodic jobs</td>
+</tr>
+<tr>
+<td><code>ticket_checker_gate_{gateId}</code></td>
+<td>TicketChecker <code>TicketsManager</code></td>
+<td>one sync per gate</td>
+</tr>
+<tr>
+<td><code>create_user_ticket_{publicId}</code> / <code>{orderId}</code> and <code>signed_ticket_generator_{0..9}</code></td>
+<td>Ticketing</td>
+<td>ticket creation and signing slots</td>
+</tr>
+<tr>
+<td><code>ticket_processing_service_{reservationId}</code> (1 h)</td>
+<td>Utility</td>
+<td>merge/zip of one reservation</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Code</td>
+<td><code>Core/ETP.Core/Caching/RedisService.cs</code>, <code>Core/ETP.Core/Configuration/CacheConfig.cs</code>, <code>RedisConfig.cs</code>, <code>DistributedLockConfig.cs</code>, <code>Core/ETP.Core/Constant/AppConstant.cs</code> (<code>CachePrefix</code>)</td>
+</tr>
+<tr>
+<td>AWS</td>
+<td>ElastiCache Redis (architecture document, data section)</td>
+</tr>
+<tr>
+<td>Config</td>
+<td><code>Cache:Redis:ConnectionString</code>, <code>Cache:Redis:InstanceName</code>, <code>Cache:Redis:DefaultDatabase</code>, <code>DistributedLock:Redis:EndPoint</code>, <code>:Port</code>, <code>:Database</code> (<a href="X-26-configuration.html">X-26</a>); locally <code>localhost:6379</code>, instance <code>etp-local:</code>, database 0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<p>None. Redis has no endpoint of its own; the features above use it internally.</p>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>State lives only in Redis and is <strong>not</strong> in the database for: live capacity (until reconciled), <code>event_ticket_counter</code>, checker sets, <code>signedToken</code>, locks. The cached read models are copies of database rows and are removed explicitly when the owner changes them (for example event publish removes <code>event_details</code>, <code>admin_event_details</code>, <code>event_venue_details</code>, then resets <code>event_ticket_counter</code>).</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raw Redis wrapper</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/Caching/RedisService.cs</code></td>
+</tr>
+<tr>
+<td>Cache manager and expiry</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/Configuration/CacheConfig.cs:13-45</code></td>
+</tr>
+<tr>
+<td>Redis multiplexer</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/Configuration/RedisConfig.cs</code></td>
+</tr>
+<tr>
+<td>Lock factory</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/Configuration/DistributedLockConfig.cs</code></td>
+</tr>
+<tr>
+<td>Key prefixes</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/Constant/AppConstant.cs:63-101</code></td>
+</tr>
+<tr>
+<td>Lock use</td>
+<td>see the table above; e.g. <code>Services/Booking/ETP.Booking.Domain/Managers/UserBookingOrderManager.cs:68, 117-123</code></td>
+</tr>
+<tr>
+<td>Cache invalidation example</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/EventManager.cs:715-722</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>Redis is a hard dependency and a source of truth for capacity.</strong> A flush or failover loses live counters, locked-order hashes and the checker lists. Recovery relies on the reconcile workers; they are not instant (<span class="link-na" title="Not included in the site yet">S-03</span>, <span class="link-na" title="Not included in the site yet">S-04</span>). The architecture document describes the ElastiCache setup and persistence settings, which this review cannot see in code <span class="badge-unconfirmed">[UNCONFIRMED: Q-02]</span>.</li>
+<li><strong>The lock endpoint is a single node</strong>, so the lock offers no protection if that node fails over mid-operation.</li>
+<li><strong>Locks and a booking:</strong> <code>UserBookingOrderManager.CreateAsync</code> takes <code>user_booking:{userId}</code> for up to 60 s (no waiting), then waits up to 15 s (retrying every 1 s) for the per-level lock <code>level_booking_...</code>, which expires after 60 s. Contention is per level, so a popular level serialises its bookings.</li>
+<li><strong>Two different expiry defaults</strong>: <code>ICacheManager</code> 2 minutes (<code>CacheConfig</code>), while <code>RedisConfig.DefaultExpireTime</code> (2 hours) is declared but not applied by <code>RedisService</code>, which sets expiry only when a caller passes one.</li>
+<li><strong>Key names are code constants and string templates</strong>, spread over managers; there is no central key registry beyond <code>CachePrefix</code>. Search for the prefix to find all users.</li>
+<li>The <code>DataProtection</code> keys sit in the same Redis; flushing Redis therefore also resets the data-protection key ring.</li>
+<li>Queue-consumer workers lock a random slot name (<code>..._{n}</code>) rather than one name, so several consumers can run at once by design. Slot ranges in code: <code>level_capacity_updater</code> 0-49, <code>event_capacity_updater</code> 0-19, <code>vat_challan_processor</code> 0-9, <code>signed_ticket_generator</code> 0-9, <code>locked_order_refresher</code> 0-4.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  BK["Booking"] -->|"counters, hashes, locks"| R[("Redis")]
+  EV["Event"] -->|"cache + live capacity read"| R
+  AD["Admin"] -->|"cache, counters, locks"| R
+  TK["Ticketing"] -->|"cache, counters, locks, signedToken"| R
+  TC["TicketChecker"] -->|"checked-ticket sets, gate locks"| R
+  SCH["Scheduler / Utility workers"] -->|"locks"| R
+  R -.->|"reconciled by workers"| DB[("etp tables")]
+</div>
+<p><strong>Depends on:</strong> configuration (<a href="X-26-configuration.html">X-26</a>). <strong>Affects:</strong> booking and seat selection (<span class="link-na" title="Not included in the site yet">P-04</span>, <span class="link-na" title="Not included in the site yet">P-06</span>), capacity (<span class="link-na" title="Not included in the site yet">A-10</span>), the checker app, every worker in section 50.</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Full.</strong> Redis runs as a Docker container on <code>localhost:6379</code> (<code>docs/local-dev.md</code>); services crash on start-up if it is down.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td><code>pwsh ./scripts/Seed-EtpData.ps1</code>; admin login (<a href="X-01-admin-login.html">X-01</a>)</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td>Open an event on the user portal (<code>http://localhost:4201</code>) and Redis keys such as <code>level_live:*</code> appear after the first capacity read</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-booking.postman_collection.json</code>: capacity and seat requests; an Admin capacity adjustment changes <code>event_total_online_ticket:{id}</code></td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>Breakpoints in <code>RedisService.HashGetAsync</code> / <code>StringSetAsync</code> and in a lock site, e.g. <code>UserBookingOrderManager</code> line 68</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td><code>redis-cli -h localhost -p 6379 --scan --pattern 'level_*'</code>; <code>redis-cli HGETALL capacity</code>; <code>redis-cli --scan --pattern 'etp-local:*'</code> for <code>ICacheManager</code> entries (prefix = <code>InstanceName</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-24-activity-logging.html"><span class="pager-label">Previous</span><span>X-24 · Activity logging (audit trail)</span></a>
+  <a class="pager-next" href="X-26-configuration.html"><span class="pager-label">Next</span><span>X-26 · Configuration and secrets</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

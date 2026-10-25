@@ -1,0 +1,488 @@
+/* GoBCB feature-docs site — hand-authored static asset.
+   Light/dark via data-theme on <html>. Palette: neutral slate + indigo accent.
+   Fonts are self-hosted in vendor/fonts (Plus Jakarta Sans + Anek Bangla). */
+
+:root {
+  --font-sans: "Plus Jakarta Sans", "Anek Bangla", "Segoe UI", "Nirmala UI",
+    "Noto Sans Bengali", system-ui, sans-serif;
+  --font-mono: "Cascadia Code", "Consolas", "JetBrains Mono", ui-monospace, monospace;
+}
+
+html[data-theme="light"] {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef0f7;
+  --text: #252b3b;
+  --text-muted: #64748b;
+  --border: #e3e7f0;
+  --border-strong: #c8d0e2;
+  --accent: #4f46e5;
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(79, 70, 229, 0.10);
+  --code-bg: #eef0f8;
+  --code-text: #3d4468;
+  --amber-bg: #fdf3df;
+  --amber-text: #92510a;
+  --amber-border: #e8c98e;
+  --shadow: 0 1px 3px rgba(30, 35, 70, 0.08);
+  --mermaid-bg: #fbfcfe;
+}
+
+html[data-theme="dark"] {
+  --bg: #0f1220;
+  --surface: #171b2e;
+  --surface-2: #1d2238;
+  --text: #e3e8f7;
+  --text-muted: #97a1c0;
+  --border: #262c47;
+  --border-strong: #37406a;
+  --accent: #8b93f8;
+  --accent-contrast: #11132a;
+  --accent-soft: rgba(139, 147, 248, 0.14);
+  --code-bg: #131729;
+  --code-text: #c3caef;
+  --amber-bg: #2e2413;
+  --amber-text: #f2c063;
+  --amber-border: #57431f;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --mermaid-bg: #141830;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15.5px;
+  line-height: 1.65;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+h1, h2, h3 { letter-spacing: -0.01em; }
+
+/* ---------- top bar ---------- */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 52px;
+  padding: 0 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text);
+}
+.brand:hover { text-decoration: none; }
+
+.brand-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, var(--accent), transparent);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  flex: none;
+}
+
+.brand small { font-weight: 500; color: var(--text-muted); }
+
+.topbar-spacer { flex: 1; }
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+html[data-theme="light"] .icon-moon { display: block; }
+html[data-theme="light"] .icon-sun { display: none; }
+html[data-theme="dark"] .icon-moon { display: none; }
+html[data-theme="dark"] .icon-sun { display: block; }
+
+#menuToggle { display: none; }
+
+/* ---------- layout ---------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.sidebar {
+  position: sticky;
+  top: 52px;
+  align-self: start;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+  padding: 18px 12px 32px 16px;
+  border-right: 1px solid var(--border);
+  scrollbar-width: thin;
+}
+
+.content {
+  padding: 28px 40px 64px;
+  min-width: 0;
+  max-width: 980px;
+}
+
+/* ---------- sidebar nav ---------- */
+
+.side-section {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  color: var(--text);
+}
+.side-section:hover { background: var(--surface-2); text-decoration: none; }
+.side-section.is-active { background: var(--accent-soft); color: var(--accent); }
+
+.side-group {
+  margin: 16px 10px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+html[lang="bn"] .side-group { text-transform: none; letter-spacing: 0.02em; }
+
+.side-item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  color: var(--text);
+  font-size: 14px;
+}
+.side-item:hover { background: var(--surface-2); text-decoration: none; }
+.side-item.is-active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.id-chip {
+  flex: none;
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+.side-item.is-active .id-chip,
+.card .id-chip { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+/* ---------- content typography ---------- */
+
+.content h1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+  font-size: 1.7em;
+  line-height: 1.3;
+}
+
+.crumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.crumb a { color: var(--text-muted); }
+.crumb a:hover { color: var(--accent); }
+.crumb .sep { opacity: 0.6; }
+
+/* first blockquote = Bangla name + doc breadcrumbs, rendered as a meta card */
+.content > blockquote:first-of-type {
+  margin: 14px 0 26px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+.content > blockquote:first-of-type p { margin: 4px 0; }
+
+.content h2 {
+  margin: 40px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.28em;
+}
+.content h3 { margin: 26px 0 10px; font-size: 1.08em; }
+
+.content p { margin: 10px 0; overflow-wrap: anywhere; }
+
+.content h2, .content h3 { position: relative; }
+.hlink {
+  position: absolute;
+  left: -0.9em;
+  color: var(--text-muted);
+  opacity: 0;
+  font-weight: 400;
+  text-decoration: none;
+}
+h2:hover .hlink, h3:hover .hlink { opacity: 1; }
+
+/* ---------- tables (the dominant construct) ---------- */
+
+.content table {
+  display: block;
+  width: 100%;
+  margin: 14px 0 20px;
+  border-collapse: collapse;
+  font-size: 14px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.content th, .content td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  vertical-align: top;
+  text-align: left;
+}
+
+.content th {
+  background: var(--surface-2);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.content tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface) 60%, var(--bg)); }
+.content tbody tr:hover { background: var(--accent-soft); }
+
+.content td code, .content th code { overflow-wrap: anywhere; }
+
+/* hop tags like [HTTP + user token] in the technical-flow table */
+.hop-tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* ---------- code ---------- */
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1.5px 6px;
+  border-radius: 6px;
+}
+
+pre {
+  margin: 14px 0 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--code-bg);
+  overflow-x: auto;
+}
+
+pre code { background: none; padding: 0; font-size: 13px; line-height: 1.6; }
+
+/* ---------- mermaid ---------- */
+
+.mermaid {
+  margin: 18px 0 22px;
+  padding: 18px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--mermaid-bg);
+  text-align: center;
+  overflow-x: auto;
+}
+.mermaid svg { max-width: 100%; }
+
+/* ---------- badges & muted links ---------- */
+
+.badge-unconfirmed {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--amber-border);
+  border-radius: 6px;
+  background: var(--amber-bg);
+  color: var(--amber-text);
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  white-space: nowrap;
+}
+
+.link-na {
+  color: var(--text-muted);
+  border-bottom: 1px dashed var(--border-strong);
+  cursor: help;
+}
+
+/* ---------- card grids ---------- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+.card:hover { border-color: var(--accent); text-decoration: none; }
+.card .card-title { display: flex; gap: 8px; align-items: center; font-weight: 700; }
+.card .card-desc { color: var(--text-muted); font-size: 14px; }
+.card .card-desc p { margin: 0; }
+
+/* ---------- prev / next ---------- */
+
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.pager a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+}
+.pager a:hover { border-color: var(--accent); text-decoration: none; }
+.pager .pager-label { font-size: 12px; color: var(--text-muted); }
+.pager .pager-next { text-align: right; }
+.pager .empty { border-style: dashed; visibility: hidden; }
+
+/* ---------- language router ---------- */
+
+.router-wrap { max-width: 720px; margin: 10vh auto; padding: 0 20px; text-align: center; }
+.router-wrap h1 { font-size: 1.6em; }
+.router-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+.router-card {
+  padding: 28px 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-size: 1.25em;
+  font-weight: 700;
+}
+.router-card:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+.router-card small { display: block; margin-top: 6px; font-size: 13px; font-weight: 400; color: var(--text-muted); }
+.router-note { margin-top: 26px; color: var(--text-muted); font-size: 13.5px; }
+
+/* ---------- misc ---------- */
+
+.scope-note {
+  margin: 14px 0;
+  padding: 10px 16px;
+  border: 1px dashed var(--amber-border);
+  border-radius: 10px;
+  background: var(--amber-bg);
+  color: var(--amber-text);
+  font-size: 14px;
+}
+
+html[lang="bn"] body { line-height: 1.85; }
+
+/* source bn docs number their lists ১. ২. …; the build converts them to real <ol>
+   and this restores Bengali numerals as markers */
+html[lang="bn"] .content ol { list-style-type: bengali; }
+
+::selection { background: var(--accent-soft); }
+
+@media print {
+  .topbar, .sidebar, .pager, .hlink { display: none !important; }
+  .layout { display: block; }
+  .content { max-width: none; padding: 0; }
+}
+
+@media (max-width: 960px) {
+  .layout { display: block; }
+  .sidebar {
+    position: fixed;
+    z-index: 40;
+    top: 0;
+    left: 0;
+    width: min(84vw, 320px);
+    height: 100vh;
+    background: var(--surface);
+    transform: translateX(-102%);
+    transition: transform 0.18s ease;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
+  }
+  body.sidebar-open .sidebar { transform: none; }
+  body.sidebar-open::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 35;
+    background: rgba(0, 0, 0, 0.35);
+  }
+  #menuToggle { display: inline-flex; }
+  .content { padding: 20px 16px 48px; }
+  .brand small { display: none; }
+}

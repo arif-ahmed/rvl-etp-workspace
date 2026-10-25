@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-01 · Admin login (phone OTP + password) · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=8faa95ce">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item is-active" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">60 · Cross-cutting</a><span class="sep">›</span><span>X-01</span></div>
+<h1><span class="id-chip">X-01</span> Admin login (phone OTP + password)</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</p>
+<p><a href="index.html">← 60 · Cross-cutting</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Admin login.</strong> Lets BCB and BS23 staff (roles <code>admin</code>, <code>event_manager</code>, <code>ticket_manager</code>, <code>ticket_operator</code>,
+<code>customer_support</code>) sign in to the admin portal. The screen asks for three things in turn: the 10-digit phone number, a
+6-digit SMS code, and the Cognito password. A successful login gives the browser Cognito tokens from the <strong>Admin</strong> user pool,
+which every admin API call then carries.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Actor</td>
+<td>Staff member with an account in the Admin Cognito pool (created by <a href="X-05-admin-provisioning.html">X-05</a>)</td>
+</tr>
+<tr>
+<td>Client and screen</td>
+<td>Admin portal, route <code>/auth/login</code> (<code>LoginComponent</code>)</td>
+</tr>
+<tr>
+<td>Cognito pool</td>
+<td>Admin (<code>environment.aws.userPoolId</code> / <code>userPoolWebClientId</code>)</td>
+</tr>
+<tr>
+<td>Role / program scope</td>
+<td>None needed to log in; the role decides the landing page afterwards</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>The staff member types the phone number without <code>+880</code>.</li>
+<li>The portal asks the "Serverless" API to send a 6-digit code by SMS. If the number is unknown, the message is "User not found."</li>
+<li>The staff member types the code; the portal asks the Serverless API to verify it. A resend is allowed after 2 minutes.</li>
+<li>After a valid code, the password field appears. The portal signs in to Cognito with <code>+880&lt;phone&gt;</code> and the password.</li>
+<li>The portal reads the role (<code>custom:role</code>) and opens the landing page: <code>/program-management</code> for <code>admin</code>, <code>event_manager</code>
+   (alone or with <code>ticket_manager</code>); <code>/home</code> for the others.</li>
+<li>For the roles <code>admin</code>, <code>ticket_manager</code> and <code>ticket_operator</code> the portal also asks Ticketing for CloudFront signed cookies,
+   so reserved-ticket files can be downloaded later (<span class="link-na" title="Not included in the site yet">A-12</span>).</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>From → To</th>
+<th>Hop</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Admin portal → Serverless API <code>POST {serverless.baseUrl}/admin/login-2fa-send-otp</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong></td>
+<td>Body <code>{ otp_type: "sms", destination: "+880…" }</code>, header <code>Authorization: &lt;environment.serverless.authorization&gt;</code>. Success when <code>status_message == "otp_generated_and_enqueued_successfully"</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Admin portal → Serverless API <code>POST …/admin/login-2fa-verify-otp</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong></td>
+<td>Body adds <code>otp</code>. Success when <code>status_message == "sms_otp_verified_successfully"</code>; <code>invalid_otp</code> otherwise</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Admin portal → Cognito (Admin pool)</td>
+<td>Amplify <code>Auth.signIn(phone, password)</code></td>
+<td>SRP sign-in (Amplify's default flow; locally the setup script enables <code>ALLOW_USER_SRP_AUTH</code>). Returns tokens, or a challenge</td>
+</tr>
+<tr>
+<td>3a</td>
+<td></td>
+<td>challenge <code>NEW_PASSWORD_REQUIRED</code></td>
+<td>The portal answers with <code>Auth.completeNewPassword(response, &lt;same password&gt;)</code>, so the temporary password becomes permanent</td>
+</tr>
+<tr>
+<td>3b</td>
+<td></td>
+<td>challenge <code>SMS_MFA</code></td>
+<td>Returned to the caller as a value, not handled (see notes)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Admin portal → Cognito</td>
+<td><code>Auth.currentSession()</code>, <code>Auth.currentUserInfo()</code></td>
+<td>Access token cached for 55 minutes; user attributes (including <code>custom:role</code>) cached for 55 minutes</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Admin portal → Ticketing <code>GET /ticketing/api/v1/booking-order-ticket/signed-cookie</code></td>
+<td><strong class="hop-tag">[HTTP + user token]</strong></td>
+<td>Only for roles <code>admin</code>, <code>ticket_manager</code>, <code>ticket_operator</code>; the response's <code>CloudFront-*</code> cookies are written with <code>document.cookie</code></td>
+</tr>
+</tbody>
+</table>
+<p>No backend service is involved in steps 1–4. The services see the user only on the next API call, when they validate the
+Admin-pool access token (<a href="X-14-authz-pool-policies.html">X-14</a>).</p>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td>Admin portal: <code>LoginComponent</code>, <code>CognitoService</code>, <code>EventService.setSignedCookie()</code></td>
+</tr>
+<tr>
+<td>External</td>
+<td>"Serverless" API (<code>environment.serverless.baseUrl</code>), source not in any repo <span class="badge-unconfirmed">[UNCONFIRMED: Q-03]</span></td>
+</tr>
+<tr>
+<td>AWS</td>
+<td>Cognito Admin user pool</td>
+</tr>
+<tr>
+<td>Service</td>
+<td>Ticketing (signed cookie only)</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>Browser: Amplify token storage (local storage), <code>sessionStorage.lastKnownUserRole</code>, <code>localStorage.globalProgramId</code>, CloudFront cookies</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>Main errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>{serverless}/admin/login-2fa-send-otp</code></td>
+<td>header <code>Authorization: &lt;static key&gt;</code></td>
+<td><code>{ otp_type, destination }</code></td>
+<td><code>{ status_message }</code></td>
+<td><code>status_message: "user_not_found"</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>{serverless}/admin/login-2fa-verify-otp</code></td>
+<td>same</td>
+<td><code>{ otp_type, destination, otp }</code></td>
+<td><code>{ status_message, user_id? }</code></td>
+<td><code>status_message: "invalid_otp"</code></td>
+</tr>
+<tr>
+<td>—</td>
+<td>Cognito <code>InitiateAuth</code> / <code>RespondToAuthChallenge</code> (Amplify)</td>
+<td>none (public client)</td>
+<td>phone + password</td>
+<td>Cognito tokens</td>
+<td><code>NotAuthorizedException</code>, <code>UserNotFoundException</code>, … (mapped to text in <code>getCognitoErrorMessage</code>)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ticketing/api/v1/booking-order-ticket/signed-cookie</code></td>
+<td><code>Policy = admin</code></td>
+<td>none</td>
+<td>CloudFront cookie values</td>
+<td>401</td>
+</tr>
+</tbody>
+</table>
+<p>The Serverless request and response shapes are what the portal sends and reads; the API itself is not in the repositories.</p>
+<pre><code class="language-json">// POST {serverless}/admin/login-2fa-send-otp
+{ &quot;otp_type&quot;: &quot;sms&quot;, &quot;destination&quot;: &quot;+8801700000001&quot; }
+
+// 200
+{ &quot;status_message&quot;: &quot;otp_generated_and_enqueued_successfully&quot; }
+</code></pre>
+<pre><code class="language-json">// POST {serverless}/admin/login-2fa-verify-otp
+{ &quot;otp_type&quot;: &quot;sms&quot;, &quot;destination&quot;: &quot;+8801700000001&quot;, &quot;otp&quot;: &quot;123456&quot; }
+
+// 200
+{ &quot;status_message&quot;: &quot;sms_otp_verified_successfully&quot; }
+</code></pre>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<ul>
+<li>Nothing is written by the GoBCB backend during login.</li>
+<li>The Serverless API sends an SMS (outside the repos).</li>
+<li>The browser stores Amplify's tokens, <code>sessionStorage.lastKnownUserRole</code> (used by role-change detection, <a href="X-17-authz-client-side.html">X-17</a>),
+  and for three roles the CloudFront cookies.</li>
+</ul>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Login screen logic (3 steps, landing route, signed cookie)</td>
+<td><code>rvl-gobcb-admin-portal/src/app/modules/auth/login/login.component.ts:124-249</code></td>
+</tr>
+<tr>
+<td>Serverless OTP calls</td>
+<td><code>rvl-gobcb-admin-portal/src/app/core/services/cognito.service.ts:444-472</code></td>
+</tr>
+<tr>
+<td>Cognito sign-in and challenges</td>
+<td><code>rvl-gobcb-admin-portal/src/app/core/services/cognito.service.ts:213-246</code></td>
+</tr>
+<tr>
+<td>Token and user-info cache (55 min)</td>
+<td><code>rvl-gobcb-admin-portal/src/app/core/services/cognito.service.ts:261-302</code>, <code>:353-377</code></td>
+</tr>
+<tr>
+<td>Amplify configuration</td>
+<td><code>rvl-gobcb-admin-portal/src/app/core/config/aws-exports.ts</code></td>
+</tr>
+<tr>
+<td>Signed cookie request</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/events/services/event.service.ts:234</code></td>
+</tr>
+<tr>
+<td>Interceptors that skip the OTP URLs</td>
+<td><code>rvl-gobcb-admin-portal/src/app/core/interceptors/auth.interceptor.ts:19-29</code>, <code>src/app/interceptors/program-id.interceptor.ts:15</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>The SMS code is checked only by the browser.</strong> Step 3 sends just phone and password to Cognito; nothing from the OTP
+   step reaches Cognito or the services. Anyone who knows a staff password can get Admin-pool tokens by calling Cognito
+   directly (as the Postman request "Login as admin" does locally). Whether the Admin pool itself enforces MFA is not visible
+   in the repos <span class="badge-unconfirmed">[UNCONFIRMED: Q-03]</span>.</li>
+<li><strong>The Serverless key is in the browser bundle.</strong> <code>environment.serverless.authorization</code> is part of the generated
+   <code>environment.ts</code>, so every visitor of the admin portal can read it.</li>
+<li><strong><code>NEW_PASSWORD_REQUIRED</code> silently re-uses the typed password.</strong> Accounts created by the Admin service already get a
+   permanent password (<a href="X-05-admin-provisioning.html">X-05</a>), so this branch matters only for accounts created another way.</li>
+<li><strong><code>SMS_MFA</code> is not handled.</strong> <code>signIn</code> resolves with <code>{ challengeName: 'SMS_MFA', … }</code>; <code>onLogin</code> treats that as success and
+   then fails to read the role because the user is not signed in. <code>confirmMFA(user, code)</code> exists but no screen calls it.</li>
+<li><strong>Signed-cookie roles use an exact match.</strong> <code>allowedRoles.includes(role)</code> compares the whole <code>custom:role</code> string, so a user
+   whose attribute holds two roles (for example <code>event_manager,ticket_manager</code>) gets no cookie at login. The top bar has a
+   "refresh cookie" action (<code>RefreshCookie()</code> in <code>app.topbar.component.ts</code>).</li>
+<li><strong>Role cache.</strong> The role shown and used by the menu is cached for 55 minutes in the browser; a role change by an admin
+   takes up to that long to be noticed (<a href="X-17-authz-client-side.html">X-17</a>). The backend has its own cache (<a href="X-15-authz-roles.html">X-15</a>).</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  P["Admin portal<br/>/auth/login"] -->|"HTTP, static key<br/>send / verify OTP"| SL["Serverless API<br/>(external)"]
+  P -->|"Amplify SRP sign-in"| CG["Cognito<br/>Admin pool"]
+  P -->|"HTTP + user token<br/>signed-cookie"| TK["Ticketing"]
+  TK -->|"CloudFront key pair"| CF["CloudFront cookies"]
+</div>
+<p><strong>Depends on:</strong> <a href="X-05-admin-provisioning.html">X-05</a> (account exists), Serverless API, Cognito Admin pool.
+<strong>Affects:</strong> every <code>A-xx</code> feature (token), <a href="X-04-admin-session.html">X-04</a> (session), <a href="X-17-authz-client-side.html">X-17</a> (menu by role),
+<span class="link-na" title="Not included in the site yet">A-12</span> (signed cookie).</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Partial.</strong> The OTP step runs against a local stub (any phone, code <code>123456</code>); Cognito is Floci. Real SMS,
+real MFA and CloudFront cookies cannot be tested locally.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>Admin-pool users from <code>floci/seed-users.ps1</code>: <code>+8801700000001</code> admin, <code>…02</code> event_manager, <code>…03</code> ticket_manager, <code>…04</code> ticket_operator, <code>…05</code> customer_support. Password <code>Passw0rd!23</code> (<code>docs/local-dev.md</code> Step 3)</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td>Start the backend (<code>dotnet run --project aspire/Etp.AppHost</code>) and the portal copy (<code>pwsh ./scripts/Setup-AdminPortal.ps1 -Start</code>). Open <code>http://localhost:4200/auth/login</code>; phone <code>1700000001</code>, OTP <code>123456</code>, password <code>Passw0rd!23</code> (<code>docs/admin-portal-local.md</code> §5). In DevTools → Network, filter <code>p/</code>: you see <code>/p/serverless/admin/login-2fa-send-otp</code>, <code>…verify-otp</code>, then calls to <code>/p/cognito</code> and finally the first <code>/p/admin/...</code> call with <code>Authorization: Bearer …</code></td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>Not applicable (admin portal is web only)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>Collection <code>postman/etp-login-all-pools.postman_collection.json</code>, folder "Admin pool", request "Login as admin" (USER_PASSWORD_AUTH against Floci, environment <code>postman/etp-local-services.postman_environment.json</code>). It stores the token for the service collections. Negative cases: <code>postman/etp-cognito-auth.postman_collection.json</code> folder "02 - Cognito negative auth"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>Nothing to debug on the server for the login itself. To see the token arrive, attach to <code>ETP.Admin.Service</code> (<code>docs/local-dev.md</code> §6.1) and set a breakpoint in <code>OnTokenValidated</code> of the <code>admin</code> scheme, <code>rvl-gobcb-backend/Core/ETP.Core/Configuration/DefaultAuthenticationConfig.cs:101</code></td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>The landing page matches the role table in §3. <code>sessionStorage.lastKnownUserRole</code> holds the role. A protected call such as <code>GET /admin/api/v1/events</code> returns 200 (<code>pwsh ./scripts/Test-EtpLocal.ps1</code> checks 401 without and 200 with a token)</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <span class="empty"></span>
+  <a class="pager-next" href="X-02-admin-forgot-password.html"><span class="pager-label">Next</span><span>X-02 · Admin forgot password</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

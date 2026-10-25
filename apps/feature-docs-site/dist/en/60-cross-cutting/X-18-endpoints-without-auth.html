@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-18 · Endpoints without authorization · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=8faa95ce">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item is-active" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">60 · Cross-cutting</a><span class="sep">›</span><span>X-18</span></div>
+<h1><span class="id-chip">X-18</span> Endpoints without authorization</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> অথরাইজেশন ছাড়া endpoint</p>
+<p><a href="index.html">← 60 · Cross-cutting</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Endpoints without authorization.</strong> <code>BaseController</code> has its <code>[Authorize]</code> commented out, so a controller action is anonymous
+unless the controller or the action has an <code>[Authorize]</code> attribute. <strong>137 of the 354 endpoints</strong> in the backend have none, or have
+<code>[AllowAnonymous]</code>. Some are public on purpose (event lists for visitors, payment callbacks), some are internal calls between
+services and workers (which cannot carry a user token, <a href="X-19-service-to-service.html">X-19</a>), and some are admin-portal operations
+that look like they were meant to be protected. This file lists all of them by category so you can decide what to fix.</p>
+<p>Whether API Gateway, the NLB or the ingress blocks any of these from the internet is not visible in the repos
+(architecture Q1b) <span class="badge-unconfirmed">[UNCONFIRMED: Q-04]</span>.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Any HTTP client that can reach the service.</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<p>Not a user feature. The categories below say who is meant to call each endpoint.</p>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>// [Authorize]</code> commented out in the base class</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core.Web/BaseController.cs:14</code></td>
+</tr>
+<tr>
+<td>Controllers with no <code>[Authorize]</code> at all</td>
+<td>Admin: <code>AgentController</code>, <code>CurrencyController</code>, <code>EventSettingsController</code>, <code>HeaderFooterController</code>, <code>PortalUsersController</code>, <code>TicketPricingController</code>, <code>TokenIssuerController</code>, <code>UserIssueChatController</code>. Booking: <code>BookingReportController</code>, <code>CapacityController</code>, <code>EventCapacityAdjustmentController</code>, <code>ReportController</code>, and most actions of <code>SeatReservationController</code> and <code>UserBookingOrderController</code>. Event: all. PushNotification: all. Ticketing: several actions of <code>BookingOrderTicketController</code>. TicketChecker: <code>TestingController</code>. UserIssue: <code>ReportIssueChatController</code></td>
+</tr>
+<tr>
+<td><code>UseAuthentication</code>/<code>UseAuthorization</code> commented out in <code>Program.cs</code></td>
+<td>Platform, PushNotification, UserAuth</td>
+</tr>
+<tr>
+<td><code>[AllowAnonymous]</code> on purpose</td>
+<td>listed in category A and B below</td>
+</tr>
+</tbody>
+</table>
+<h3 id="category-a-public-by-design-visitors-portals-app">Category A — public by design (visitors, portals, app)</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Used by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /event/api/v1/*</code> (9 <code>events/*</code>, <code>header-footer</code>, <code>landing-page-image/public</code>, <code>events/programs</code>, <code>events/programs/programId/{id}</code>, <code>ticket-pricing/list</code>, <code>ticket-pricing/program-pricing</code>)</td>
+<td>User portal, user app, other services (<span class="link-na" title="Not included in the site yet">P-01</span>, <span class="link-na" title="Not included in the site yet">P-02</span>, <span class="link-na" title="Not included in the site yet">P-03</span>)</td>
+</tr>
+<tr>
+<td><code>GET /admin/api/v1/landing-page-image/public</code>, <code>GET /admin/api/v1/general-notice/public</code>, <code>GET /admin/api/v1/header-footer</code></td>
+<td>Portals/app (<span class="link-na" title="Not included in the site yet">P-01</span>)</td>
+</tr>
+<tr>
+<td><code>GET /admin/api/v1/discount/program/{programId}/{eventId}/{galleryId}</code></td>
+<td>Portal/app seat selection (<span class="link-na" title="Not included in the site yet">P-04</span>)</td>
+</tr>
+<tr>
+<td><code>GET /admin/api/v1/ticket-pricing</code>, <code>/list</code>, <code>/{id}</code></td>
+<td>Content pages (<span class="link-na" title="Not included in the site yet">A-14</span>)</td>
+</tr>
+<tr>
+<td><code>GET /booking/api/v1/capacity/level-user-portal-seats</code></td>
+<td>Seat map (<span class="link-na" title="Not included in the site yet">P-04</span>)</td>
+</tr>
+<tr>
+<td><code>GET /ticketing/api/v1/booking-order-ticket/shared</code></td>
+<td>Shared ticket link, protected by a signature parameter (<span class="link-na" title="Not included in the site yet">P-09</span>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="category-b-payment-gateway-callbacks">Category B — payment-gateway callbacks</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /booking/api/v1/user-booking-order/dgepay/payment-status</code></td>
+<td>DgePay redirect after payment (<span class="link-na" title="Not included in the site yet">P-06</span>)</td>
+</tr>
+<tr>
+<td><code>POST /booking/api/v1/user-booking-order/sslcommerz/payment-success</code>, <code>-fail</code>, <code>-cancel</code>, <code>-ipn</code></td>
+<td>SSLCommerz callbacks (Appendix A)</td>
+</tr>
+<tr>
+<td><code>GET /booking/api/v1/user-booking-order/payment-status-bypass</code></td>
+<td>Takes an order's public id in <code>rawData</code>, <strong>does not ask the gateway</strong> (the status check is commented out and the status is hard-coded <code>Paid</code>, payment info text "BY PASS TRANSACTION - TEST"), marks the order paid, publishes <code>OrderSuccess</code> and asks Ticketing to create tickets; see <span class="link-na" title="Not included in the site yet">P-06</span> and <span class="link-na" title="Not included in the site yet">S-01</span>. <strong>Critical if reachable.</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="category-c-internal-calls-from-other-services-or-workers">Category C — internal calls from other services or workers</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint group</th>
+<th>Caller (typed client)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Booking <code>capacity/*</code> GETs and <code>POST capacity</code>; <code>event-capacity-adjustment/by-event</code>, <code>count/{eventId}</code>; <code>seat-reservation/by-event</code>, <code>count</code>, <code>remainingReserveCount</code>, <code>reservations-count</code>, <code>update-*-status</code>, <code>merge-status</code>, <code>zip-status</code>, <code>update-reservation-ticket-preview</code>, <code>event-id</code>; <code>user-booking-order/public-id/{id}</code>, <code>generate-ticket-request/{publicId}</code>, <code>update-status</code>, <code>not-notified-list</code>, <code>update-notification-status</code>, <code>promo-code/{code}</code>, <code>booked-user-record/{id}</code></td>
+<td><code>Core/ETP.Core/ServiceClient/BookingClient/BookingClient.cs</code> (Admin, Ticketing, Scheduler, Utility)</td>
+</tr>
+<tr>
+<td>Ticketing <code>booking-order-ticket/initiate</code>, <code>initiate-user-ticket</code>, <code>generate-request/{publicId}</code>, <code>ticket-counts</code>, <code>by-gallery-block-level</code>, <code>ticket-numbers</code>, <code>GET booking-order-ticket?id=</code>, <code>booking-order-id</code>, <code>reserved-urls</code></td>
+<td><code>Core/ETP.Core/ServiceClient/TicketingClient/TicketingClient.cs</code> (Booking, Admin, Utility); <code>generate-request</code> also from portal/app (<span class="link-na" title="Not included in the site yet">P-08</span>)</td>
+</tr>
+<tr>
+<td>Admin <code>portal-users/{phoneNo}</code></td>
+<td><code>Core/ETP.Core/ServiceClient/AdminClient/AdminClient.cs</code></td>
+</tr>
+<tr>
+<td>PushNotification: all endpoints except <code>bulk-status</code> (8)</td>
+<td><code>PushNotificationClient</code> (Admin, Scheduler) and the user app (device tokens, <span class="link-na" title="Not included in the site yet">U-09</span>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="category-d-admin-portal-operations-without-authorization-review">Category D — admin-portal operations without authorization (review)</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Screen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Admin <code>agent-users/*</code> (8)</td>
+<td><span class="link-na" title="Not included in the site yet">A-26</span></td>
+</tr>
+<tr>
+<td>Admin <code>admin-users/forget-password</code>, <code>admin-users/set-forget-password</code></td>
+<td><a href="X-02-admin-forgot-password.html">X-02</a></td>
+</tr>
+<tr>
+<td>Admin <code>ticket-pricing</code> POST/PUT/DELETE/publish/unpublish, <code>attribute/{id}</code> DELETE</td>
+<td><span class="link-na" title="Not included in the site yet">A-14</span></td>
+</tr>
+<tr>
+<td>Admin <code>header-footer</code> PUT</td>
+<td><span class="link-na" title="Not included in the site yet">A-30</span></td>
+</tr>
+<tr>
+<td>Admin <code>event-settings/{eventId}</code> GET/PUT</td>
+<td><span class="link-na" title="Not included in the site yet">A-08</span></td>
+</tr>
+<tr>
+<td>Booking <code>dashboard/*</code> (4)</td>
+<td><span class="link-na" title="Not included in the site yet">A-21</span></td>
+</tr>
+<tr>
+<td>Booking <code>report/admin/*</code> (8)</td>
+<td><span class="link-na" title="Not included in the site yet">A-22</span></td>
+</tr>
+<tr>
+<td>Booking <code>POST seat-reservation</code>, <code>GET seat-reservation/by-event-level</code></td>
+<td><span class="link-na" title="Not included in the site yet">A-11</span></td>
+</tr>
+<tr>
+<td>Booking <code>POST event-capacity-adjustment</code>, <code>GET by-event-level</code></td>
+<td><span class="link-na" title="Not included in the site yet">A-10</span></td>
+</tr>
+<tr>
+<td>UserIssue <code>user-issue-chat/*</code> (8)</td>
+<td><span class="link-na" title="Not included in the site yet">A-24</span>, <span class="link-na" title="Not included in the site yet">P-12</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="category-e-legacy-test-or-unreferenced-appendix-a">Category E — legacy, test or unreferenced (Appendix A)</h3>
+<p>Admin <code>currency</code>, <code>token</code>, <code>user-issue-chat/*</code> (8, Admin copy), <code>user-issue/user-detail/{orderId}</code>; TicketChecker
+<code>testing/re-initiate-data</code>, <code>testing/sync-data</code>; root <code>GET /event</code>, <code>/platform</code>, <code>/ticketChecker</code>, <code>/ticketing</code>; PushNotification
+<code>push-notification/bulk-status/{requestId}</code>. See <span class="link-na" title="Not included in the site yet">Appendix A</span>.</p>
+<h2 id="5-components">5. Components</h2>
+<p>All services; the per-endpoint auth value is in <span class="link-na" title="Not included in the site yet">Appendix B</span>.</p>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<p>Unchanged; this file only classifies.</p>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>Several category-D endpoints write data (agent accounts, passwords, content, event settings, seat reservations, capacity).
+<code>testing/re-initiate-data</code> in TicketChecker regenerates test data (<span class="link-na" title="Not included in the site yet">Appendix A</span>).</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commented-out base attribute</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core.Web/BaseController.cs:14-15</code></td>
+</tr>
+<tr>
+<td>Commented-out pipeline (example)</td>
+<td><code>rvl-gobcb-backend/Services/PushNotification/ETP.PushNotification.Service/Program.cs</code></td>
+</tr>
+<tr>
+<td>Typed clients that call internal endpoints</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/ServiceClient/{BookingClient,TicketingClient,AdminClient,PushNotificationClient}/</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>Decide per category.</strong> A: keep anonymous. B: keep anonymous but validate the gateway's signature/data server-side (the DgePay
+   callback re-checks the transaction, <span class="link-na" title="Not included in the site yet">P-06</span>); remove <code>payment-status-bypass</code> from
+   production. C: protect with a service identity or network policy; today the only protection is that the paths are not meant
+   to be published (architecture §2.3 B). D: add <code>[Authorize]</code> with the roles the portal menu implies. E: remove.</li>
+<li><strong>Adding <code>[Authorize]</code> to C endpoints breaks workers</strong>: workers send no token. Introduce a service credential first (the
+   unused <code>service</code> scheme is a starting point, <a href="X-14-authz-pool-policies.html">X-14</a>).</li>
+<li>Re-run the endpoint extractor used for <span class="link-na" title="Not included in the site yet">Appendix B</span> after every change to keep this list true.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  NET["Internet / any caller"] -->|"no token"| A["A: public reads"]
+  GW["Payment gateways"] -->|"no token"| B["B: callbacks"]
+  SVC["Services and workers"] -->|"no token"| C["C: internal"]
+  NET -.->|"if reachable"| D["D: admin operations"]
+  NET -.->|"if reachable"| E["E: legacy/test"]
+</div>
+<p><strong>Depends on:</strong> network exposure (architecture Q1b). <strong>Affects:</strong> security of <span class="link-na" title="Not included in the site yet">A-08</span>,
+<span class="link-na" title="Not included in the site yet">A-10</span>, <span class="link-na" title="Not included in the site yet">A-11</span>, <span class="link-na" title="Not included in the site yet">A-14</span>,
+<span class="link-na" title="Not included in the site yet">A-21</span>, <span class="link-na" title="Not included in the site yet">A-22</span>, <span class="link-na" title="Not included in the site yet">A-26</span>, <a href="X-02-admin-forgot-password.html">X-02</a>.</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Full.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>None needed (that is the point)</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:5102/booking/swagger</code> → call <code>GET /booking/api/v1/report/admin/booking-metrics</code> without Authorize: 200</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>Not applicable</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>Any request of the categories above with auth type "No Auth", e.g. <code>postman/services/etp-booking.postman_collection.json</code> "GET /api/v1/report/admin/booking-metrics" (add the <code>/booking</code> prefix, <span class="link-na" title="Not included in the site yet">Appendix D</span>)</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>Not needed</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>Recount with the method described in <span class="link-na" title="Not included in the site yet">Appendix B</span> (expect 137 at the evidence baseline)</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-17-authz-client-side.html"><span class="pager-label">Previous</span><span>X-17 · Client-side authorization (menus and guards)</span></a>
+  <a class="pager-next" href="X-19-service-to-service.html"><span class="pager-label">Next</span><span>X-19 · Service-to-service communication</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

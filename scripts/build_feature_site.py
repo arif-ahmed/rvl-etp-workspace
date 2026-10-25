@@ -6,9 +6,14 @@ Default scope is the cross-cutting section only (first look). Widen later with:
     python scripts/build_feature_site.py --sections all
     python scripts/build_feature_site.py --sections 10-admin-portal,60-cross-cutting
 
-Output is plain static HTML under site/ (works over file://, no server needed).
-Hand-authored assets live in site/assets/ and are never touched here; the build
-only writes HTML files and, if missing, downloads mermaid.min.js.
+Layout:
+    apps/feature-docs-site/assets/  hand-authored + vendored assets (source, committed)
+    apps/feature-docs-site/dist/   generated output (committed; deploy this to any
+                                    static host — on Vercel set Root Directory to
+                                    apps/feature-docs-site/dist)
+
+The build wipes dist/ and copies assets/ into it, so dist/ is fully self-contained
+and works over file:// with no server or internet (fonts and mermaid are vendored).
 """
 
 import argparse
@@ -16,6 +21,7 @@ import hashlib
 import html
 import posixpath
 import re
+import shutil
 import sys
 import urllib.request
 from pathlib import Path
@@ -25,9 +31,15 @@ from markdown.extensions.toc import slugify_unicode
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCS_DEFAULT = ROOT / "docs" / "handover" / "feature-docs"
-OUT_DEFAULT = ROOT / "site"
+OUT_DEFAULT = ROOT / "apps" / "feature-docs-site" / "dist"
+ASSETS_DEFAULT = ROOT / "apps" / "feature-docs-site" / "assets"
 MERMAID_URL = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
 MERMAID_CDN_TAG = '<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>'
+FONTS_CSS_URL = ("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700"
+                 "&family=Anek+Bangla:wght@400;500;600;700&display=swap")
+FONTS_LINK_TPL = '<link rel="stylesheet" href="{to_root}assets/vendor/fonts/fonts.css?v={v}">'
+WOFF2_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
 
 UI = {
     "en": {
@@ -195,7 +207,8 @@ def asset_version(assets: Path, name: str) -> str:
     return hashlib.md5(data).hexdigest()[:8]
 
 
-def page(lang, title, crumb, content, sidebar, to_root, mermaid_tag, lang_toggle=True):
+def page(lang, title, crumb, content, sidebar, to_root, mermaid_tag, lang_toggle=True,
+         fonts_link=""):
     brand_href = f"{to_root}{lang}/index.html" if lang else f"{to_root}en/"
     lang_btn = ""
     if lang_toggle and lang:
@@ -209,6 +222,7 @@ def page(lang, title, crumb, content, sidebar, to_root, mermaid_tag, lang_toggle
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)} · GoBCB Feature Docs</title>
 {THEME_BOOT}
+{fonts_link}
 <link rel="stylesheet" href="{to_root}assets/site.css?v={css_v}">
 </head>
 <body>
@@ -275,7 +289,7 @@ def crumb_html(items):
 
 def ensure_mermaid(assets: Path) -> str:
     """Prefer the vendored mermaid; download once if absent, fall back to CDN."""
-    vendor = assets / "mermaid.min.js"
+    vendor = assets / "vendor" / "mermaid.min.js"
     if not vendor.exists() or vendor.stat().st_size < 100_000:
         try:
             print("downloading mermaid.min.js …")
@@ -284,7 +298,35 @@ def ensure_mermaid(assets: Path) -> str:
         except Exception as e:  # noqa: BLE001 - offline fallback
             print(f"  download failed ({e}); falling back to CDN tag", file=sys.stderr)
             return MERMAID_CDN_TAG
-    return '<script src="{to_root}assets/mermaid.min.js"></script>'
+    return '<script src="{to_root}assets/vendor/mermaid.min.js"></script>'
+
+
+def ensure_fonts(assets: Path) -> str:
+    """Vendor the Google Fonts CSS + woff2 files once; return the <link> template.
+
+    Self-hosting keeps the site fully offline. Returns "" when fonts are absent
+    and cannot be downloaded; the CSS stack then falls back to system fonts.
+    """
+    fonts_dir = assets / "vendor" / "fonts"
+    css_path = fonts_dir / "fonts.css"
+    if not css_path.exists():
+        try:
+            print("vendoring Google Fonts (Plus Jakarta Sans, Anek Bangla) …")
+            req = urllib.request.Request(FONTS_CSS_URL, headers={"User-Agent": WOFF2_UA})
+            css = urllib.request.urlopen(req, timeout=60).read().decode("utf-8")
+            files_dir = fonts_dir / "files"
+            files_dir.mkdir(parents=True, exist_ok=True)
+            urls = re.findall(r"url\((https://[^)]+)\)", css)
+            for i, url in enumerate(urls, 1):
+                name = f"f{i:02d}.woff2"
+                with urllib.request.urlopen(url, timeout=60) as r:
+                    (files_dir / name).write_bytes(r.read())
+                css = css.replace(url, f"files/{name}")
+            css_path.write_text(css, encoding="utf-8")
+        except Exception as e:  # noqa: BLE001 - offline fallback
+            print(f"  font vendoring failed ({e}); using system fonts", file=sys.stderr)
+            return ""
+    return FONTS_LINK_TPL
 
 
 def discover_sections(docs: Path, wanted):
@@ -299,13 +341,21 @@ def discover_sections(docs: Path, wanted):
     return sections
 
 
-def build(docs: Path, out: Path, wanted):
-    global css_v, js_v
-    assets = out / "assets"
-    assets.mkdir(parents=True, exist_ok=True)
+def build(docs: Path, out: Path, assets: Path, wanted):
+    global css_v, js_v, fonts_tag_tpl
+    if not assets.is_dir():
+        sys.exit(f"assets dir not found: {assets}")
     mermaid_tag_tpl = ensure_mermaid(assets)
+    fonts_tag_tpl = ensure_fonts(assets)
     css_v = asset_version(assets, "site.css")
     js_v = asset_version(assets, "site.js")
+    fonts_v = asset_version(assets, "vendor/fonts/fonts.css") if fonts_tag_tpl else ""
+
+    # dist/ is fully generated: wipe it so narrowed scopes never leave stale
+    # pages behind, then make it self-contained by copying assets/ in
+    shutil.rmtree(out, ignore_errors=True)
+    (out / "assets").parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(assets, out / "assets", dirs_exist_ok=True)
 
     section_dirs = discover_sections(docs, wanted)
 
@@ -346,7 +396,8 @@ def build(docs: Path, out: Path, wanted):
         (out / lang / "index.html").parent.mkdir(parents=True, exist_ok=True)
         (out / lang / "index.html").write_text(
             page(lang, ui["contents"], "", content, side, "../",
-                 mermaid_tag_tpl.format(to_root="../"), lang_toggle=False),
+                 mermaid_tag_tpl.format(to_root="../"), lang_toggle=False,
+                 fonts_link=fonts_tag_tpl.format(to_root="../", v=fonts_v)),
             encoding="utf-8")
         n_pages += 1
 
@@ -368,7 +419,8 @@ def build(docs: Path, out: Path, wanted):
             side = sidebar_html(parsed[lang], ui, in_section=True, active=f"sec:{dirname}")
             (sec_dir_out / "index.html").write_text(
                 page(lang, f"{num} · {short}", crumb_html([(ui["contents"], "../index.html"), (f"{num} · {short}", None)]),
-                     content, side, to_root, mermaid_tag_tpl.format(to_root=to_root)),
+                     content, side, to_root, mermaid_tag_tpl.format(to_root=to_root),
+                     fonts_link=fonts_tag_tpl.format(to_root=to_root, v=fonts_v)),
                 encoding="utf-8")
             n_pages += 1
 
@@ -402,12 +454,14 @@ def build(docs: Path, out: Path, wanted):
                          crumb_html([(ui["contents"], "../index.html"),
                                      (f"{num} · {short}", "index.html"),
                                      (fid, None)]),
-                         content, side, to_root, mermaid_tag_tpl.format(to_root=to_root)),
+                         content, side, to_root, mermaid_tag_tpl.format(to_root=to_root),
+                         fonts_link=fonts_tag_tpl.format(to_root=to_root, v=fonts_v)),
                     encoding="utf-8")
                 n_pages += 1
         counts[lang] = n_pages
 
     # ---- language router at the site root ------------------------------
+    fonts_link = fonts_tag_tpl.format(to_root="", v=fonts_v)
     router = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -415,6 +469,7 @@ def build(docs: Path, out: Path, wanted):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GoBCB Feature Docs</title>
 {THEME_BOOT}
+{fonts_link}
 <link rel="stylesheet" href="assets/site.css?v={css_v}">
 </head>
 <body>
@@ -448,9 +503,11 @@ def main():
     ap.add_argument("--sections", default="60-cross-cutting",
                     help="comma list of section dirs under docs/handover/feature-docs/<lang>/, or 'all'")
     ap.add_argument("--docs", type=Path, default=DOCS_DEFAULT, help="feature-docs source root")
-    ap.add_argument("--out", type=Path, default=OUT_DEFAULT, help="site output root")
+    ap.add_argument("--assets", type=Path, default=ASSETS_DEFAULT,
+                    help="hand-authored assets dir (copied into dist/)")
+    ap.add_argument("--out", type=Path, default=OUT_DEFAULT, help="dist output root")
     args = ap.parse_args()
-    build(args.docs, args.out, args.sections)
+    build(args.docs, args.out, args.assets, args.sections)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-24 · Activity logging (audit trail) · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=8faa95ce">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item is-active" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">60 · Cross-cutting</a><span class="sep">›</span><span>X-24</span></div>
+<h1><span class="id-chip">X-24</span> Activity logging (audit trail)</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</p>
+<p><a href="index.html">← 60 · Cross-cutting</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Activity logging.</strong> Every change to a database row made through six of the services is recorded automatically in one table, <code>etp."ActivityLogs"</code>: who changed which entity, from which values to which values, and from which IP address. Admins read the trail in the admin portal (<span class="link-na" title="Not included in the site yet">A-27</span>). The mechanism is an EF Core <strong>SaveChanges interceptor</strong>, so feature code does not call it.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Any <code>SaveChanges</code> in Admin, Booking, Event, Ticketing, TicketChecker or UserIssue. The "actor" is the <code>username</code> claim of the current request, or the text <code>System</code> when there is no request (workers, queue consumers).</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<p>A change to venues, events, prices, promo codes, users, tickets and so on leaves an audit entry. A user with role Admin or EventManager can search the log by service, entity name and entity id, or open the per-event trail.</p>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<ol>
+<li>Each of the six <code>DbContext</code> classes adds <code>ActivityLogInterceptor(userId, ipAddress, serviceName, loggingDbContext)</code> in <code>OnConfiguring</code>. <code>userId</code> is the <code>username</code> claim (else <code>System</code>); the IP is the first entry of <code>X-Forwarded-For</code> (else the connection address, else <code>Unknown</code>). The service name is a literal (<code>Admin</code>, <code>Booking</code>, ...).</li>
+<li><strong>Before</strong> the save (<code>SavingChangesAsync</code>): entries in state <strong>Modified</strong> or <strong>Deleted</strong> are logged. For Modified, only the properties whose value changed are stored, as JSON in <code>OldValues</code> and <code>NewValues</code>; for Deleted, all original values go to <code>OldValues</code>. <code>CreatedAt</code>, <code>UpdatedAt</code>, <code>CreatedBy</code>, <code>UpdatedBy</code> are left out. Rows whose old and new JSON are both <code>{}</code> are skipped.</li>
+<li><strong>After</strong> the save (<code>SavedChangesAsync</code>): <strong>Added</strong> entries are logged with all current values in <code>NewValues</code> (the key is only known after the insert).</li>
+<li>The rows are written through a separate <code>LoggingDbContext</code> (<code>etp."ActivityLogs"</code>) by its own <code>SaveChanges</code>.</li>
+<li><code>EntityContext</code> (JSON text) is built by <code>EntityContextBuilder</code> for known entity names, for example the venue, gallery and block names for a <code>BlockLevel</code>, so a reader sees names instead of numeric ids.</li>
+<li>A few Admin managers also call <code>IActivityLogger.LogActivityAsync(entityName, entityId, action, old, new)</code> explicitly; <code>AdminUserManager</code> does this for admin-user create, update and delete, because those changes happen in Cognito, not in the database.</li>
+</ol>
+<p><strong>Reading</strong> (Admin service, roles <code>Admin</code> and <code>EventManager</code>):</p>
+<ul>
+<li><code>GET /admin/api/v1/activity-log?serviceName=&amp;entityNames=&amp;entityNamesToExclude=&amp;entityId=&amp;pageOffset=&amp;pageSize=</code> (default <code>pageSize</code> 100)</li>
+<li><code>POST /admin/api/v1/activity-log/batch</code> with <code>{ "requests": [ {serviceName, entityName, entityId?, pageOffset, pageSize} ] }</code></li>
+<li><code>GET /admin/api/v1/activity-log/event/{eventId}</code></li>
+</ul>
+<p><code>ActivityLogManager</code> then fills <code>UserName</code> for each distinct <code>UserId</code> through <code>AdminUserManager.GetUserDetails</code> (a Cognito lookup); where the lookup throws <code>ArgumentException</code> (for example for <code>System</code>), the exception message becomes the name.</p>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Services</td>
+<td>Admin, Booking, Event, Ticketing, TicketChecker, UserIssue (write); Admin (read)</td>
+</tr>
+<tr>
+<td>Not covered</td>
+<td>Scheduler, Utility, PushNotification (no interceptor)</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>etp."ActivityLogs"</code></td>
+</tr>
+<tr>
+<td>Code</td>
+<td><code>Core/ETP.Core.EntityFramework/*</code> (<code>ActivityLogInterceptor</code>, <code>LoggingDbContext</code>, <code>ActivityLogConfiguration</code>, <code>EntityContextBuilder</code>), <code>Services/Admin/*</code> (<code>ActivityLogController</code>, <code>ActivityLogManager</code>, <code>ActivityLogRepository</code>, <code>ActivityLogger</code>)</td>
+</tr>
+<tr>
+<td>AWS</td>
+<td>Cognito (user names)</td>
+</tr>
+<tr>
+<td>Config</td>
+<td>Each service's own DB connection string; <code>LoggingDbContext</code> reuses it (<a href="X-26-configuration.html">X-26</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>Errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/activity-log</code></td>
+<td>roles <code>Admin</code>, <code>EventManager</code></td>
+<td>query as above</td>
+<td>paged list of <code>ActivityLogsResponse</code></td>
+<td>404, 500</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/activity-log/batch</code></td>
+<td>same</td>
+<td><code>ActivityLogsBatchRequest { requests: ActivityLogsRequest[] }</code></td>
+<td>paged list</td>
+<td>404, 500</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/activity-log/event/{eventId}</code></td>
+<td>same</td>
+<td>query <code>pageOffset</code>, <code>pageSize</code></td>
+<td>paged list</td>
+<td>404, 500</td>
+</tr>
+</tbody>
+</table>
+<p><code>ActivityLogsResponse</code> properties (camelCase on the wire, no string-enum converter in Admin): <code>serviceName</code>, <code>entityName</code>, <code>entityId</code>, <code>action</code> (<code>Added</code>, <code>Modified</code>, <code>Deleted</code>, or a custom text such as <code>Created</code>), <code>oldValues</code>, <code>newValues</code>, <code>entityContext</code> (all three are JSON <strong>strings</strong>), <code>transactionId</code>, <code>timestamp</code>, <code>userId</code>, <code>userName</code>, <code>ipAddress</code>.</p>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<ul>
+<li><code>etp."ActivityLogs"</code> columns: <code>Id</code>, <code>ServiceName</code>, <code>EntityName</code>, <code>EntityId</code>, <code>Action</code>, <code>OldValues</code>, <code>NewValues</code>, <code>EntityContext</code>, <code>TransactionId</code>, <code>Timestamp</code>, <code>UserId</code>, <code>IpAddress</code>.</li>
+<li>Every audited save causes a second <code>SaveChanges</code> on the logging context, so each write costs one extra database round trip.</li>
+</ul>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interceptor</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core.EntityFramework/Interceptors/ActivityLogInterceptor.cs</code></td>
+</tr>
+<tr>
+<td>Logging context and mapping</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core.EntityFramework/LoggingDbContext.cs</code>, <code>.../Configuration/ActivityLogConfiguration.cs</code></td>
+</tr>
+<tr>
+<td>Wiring per service</td>
+<td><code>.../Services/Admin/ETP.Admin.Storage/DbContexts/AdminDbContext.cs:77-85</code>; the same pattern in <code>BookingDbContext.cs:42-49</code>, <code>EventDbContext</code>, <code>TicketingDbContext</code>, <code>TicketCheckerDbContext</code>, <code>UserIssueDbContext</code></td>
+</tr>
+<tr>
+<td>Explicit logger</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Services/ActivityLogger.cs</code>, used in <code>Managers/AdminUserManager.cs:45-170</code></td>
+</tr>
+<tr>
+<td>Read API</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/ActivityLogController.cs</code>, <code>.../Managers/ActivityLogManager.cs</code>, <code>.../Repositories/ActivityLogRepository.cs</code></td>
+</tr>
+<tr>
+<td>Portal</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/global-activity-log/services/activity-log.service.ts:22</code>; <code>.../events/services/event.service.ts:256</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>The log is written before the main save for updates and deletes.</strong> If the main <code>SaveChanges</code> then fails, the Modified/Deleted log rows already exist (they use a different context and are committed on their own). Added rows are written only after a successful save. Do not treat the log as proof that a change happened.</li>
+<li><strong><code>TransactionId</code> does not group a transaction.</strong> <code>ActivityLogInterceptor.SetTransactionId</code> is never called anywhere, so every row gets its own new GUID.</li>
+<li><strong>Workers appear as <code>System</code></strong> with IP <code>Unknown</code>, so changes made by queue consumers and schedulers (capacity, ticket status, booking status) cannot be traced to a user.</li>
+<li><strong>Reading needs the log in the same database as the writers.</strong> Each service writes to its own connection; the Admin read API sees only what is in the database its <code>LoggingDbContext</code> points at, so a service on a different database would be invisible <span class="badge-unconfirmed">[UNCONFIRMED: Q-02]</span>.</li>
+<li><strong>Sensitive values.</strong> Property values are stored as plain JSON. For admin-user logging only name, email, phone, role and program ids are stored (no password); the generic interceptor stores every changed column of the entity, so any entity with a secret column would leak it into the log.</li>
+<li>No retention or cleanup job exists for <code>ActivityLogs</code> in the repository; the table only grows.</li>
+<li>The Scheduler, Utility and PushNotification services do not audit; their changes (for example device-token cleanup) have no entries.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  SV["Admin / Booking / Event / Ticketing / TicketChecker / UserIssue"] -->|"EF SaveChanges + interceptor"| DB[("etp tables")]
+  SV -->|"LoggingDbContext"| AL[("etp.ActivityLogs")]
+  AP["Admin portal /activity-log, event trail"] -->|"HTTP + token"| AD["Admin API"]
+  AD --> AL
+  AD -->|"AdminGetUser"| CG["Cognito"]
+</div>
+<p><strong>Depends on:</strong> every feature that writes data; the admin login for the <code>username</code> claim (<a href="X-01-admin-login.html">X-01</a>, <a href="X-15-authz-roles.html">X-15</a>). <strong>Affects:</strong> <span class="link-na" title="Not included in the site yet">A-27</span>.</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Full.</strong> The interceptor and the read API run locally.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>Admin seeded login, phone …01 (<code>Passw0rd!23</code>, <a href="X-01-admin-login.html">X-01</a>); role <code>Admin</code> or <code>EventManager</code> is required to read the log</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:4200</code> → Activity log; change something (for example a team name) and reload the log; Network shows <code>GET .../admin/api/v1/activity-log?serviceName=...</code></td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>: "GET /api/v1/activity-log" with <code>{{access_token_admin}}</code>, then a write request such as a team update</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>Breakpoints in <code>ActivityLogInterceptor.SavingChangesAsync</code> / <code>SavedChangesAsync</code>, and <code>ActivityLogManager.GetAllAsync</code></td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>SQL: <code>select "ServiceName","EntityName","EntityId","Action","UserId","Timestamp" from etp."ActivityLogs" order by "Timestamp" desc limit 20;</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-23-push-firebase.html"><span class="pager-label">Previous</span><span>X-23 · Push notifications (PushNotification service, Firebase)</span></a>
+  <a class="pager-next" href="X-25-redis.html"><span class="pager-label">Next</span><span>X-25 · Redis: cache, live capacity and locks</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

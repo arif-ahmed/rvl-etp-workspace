@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-06 · গ্রাহক নিবন্ধন · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=8faa95ce">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item is-active" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">60 · ক্রস-কাটিং</a><span class="sep">›</span><span>X-06</span></div>
+<h1><span class="id-chip">X-06</span> গ্রাহক নিবন্ধন</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> গ্রাহক নিবন্ধন</p>
+<p><a href="index.html">← 60 · ক্রস-কাটিং</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>গ্রাহক নিবন্ধন।</strong> একজন নতুন গ্রাহক ওয়েব পোর্টালে বা অ্যাপে GoBCB অ্যাকাউন্ট তৈরি করেন। এই অ্যাকাউন্টটি <strong>User</strong> Cognito
+pool-এ একজন ব্যবহারকারী, যা বাহ্যিক <strong>identity API</strong> তৈরি করে যখন গ্রাহক একবারের কোড দিয়ে ইমেইল ঠিকানা ও ফোন নম্বর —
+দুটোই — যাচাই করে। এর বিকল্প হিসেবে গ্রাহক <strong>OneID</strong> দিয়েও নিবন্ধন করতে পারেন, যা OneID-এর নিজস্ব সাইটে ঘটে।</p>
+<p>পাঁচটি রিপোজিটরির কোনোটিতেই identity API নেই; কীভাবে এটি আচরণ করে তার একমাত্র প্রমाण ক্লায়েন্টদের কল <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>মান</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>অ্যাক্টর</td>
+<td>Anonymous দর্শক</td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট ও স্ক্রিন</td>
+<td>পোর্টাল <code>/:lang/auth/register</code> → <code>verify-email</code> → <code>email-verified</code> → <code>verify-phone</code> → <code>phone-verified</code> → <code>set-password</code>। অ্যাপ: <code>signup</code> → <code>emailOTP</code> → <code>emailVerification</code> → <code>phoneNumberOtp</code> → <code>phoneNumberVerification</code> → <code>setPassword</code> (<code>lib/presentation/navigation/route_path.dart</code>-এ <code>RoutePath</code>)</td>
+</tr>
+<tr>
+<td>Cognito pool</td>
+<td>User (অ্যাকাউন্ট তৈরি করে identity API)</td>
+</tr>
+<tr>
+<td>রোল / প্রোগ্রাম স্কোপ</td>
+<td>নেই</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li>গ্রাহক নাম, ইমেইল ও ১০ সংখ্যার ফোন দেন (ক্লায়েন্ট <code>+880</code> যোগ করে) এবং শর্তাবলি গ্রহণ করেন।</li>
+<li>প্ল্যাটফর্ম ডেটাটি সাময়িকভাবে সংরক্ষণ করে ও একটি কোড ইমেইল করে। গ্রাহক সেটি লেখেন ("email verified")।</li>
+<li>প্ল্যাটফর্ম SMS-এ একটি কোড পাঠায়। গ্রাহক সেটি লেখেন ("phone verified")।</li>
+<li>গ্রাহক একটি পাসওয়ার্ড বেছে নেন। অ্যাকাউন্ট তৈরি হয়; পোর্টাল সফলতার বার্তা সহ লগইন পেজ খোলে।</li>
+<li><strong>OneID বিকল্প (পোর্টাল):</strong> "Register with OneID" একটি পপআপে OneID-এর নিবন্ধন পেজ খোলে; OneID ফিরে <code>/:lang/auth/login</code>-এ
+   রিডাইরেক্ট করলে পপআপ বন্ধ হয় এবং গ্রাহক OneID দিয়ে সাইন ইন করেন (<a href="X-08-oneid-sso.html">X-08</a>)। GoBCB-তে অ্যাকাউন্ট
+   প্রথম OneID লগইনে তৈরি হয়।</li>
+</ol>
+<h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
+<p>সব কল identity API base URL-এ যায় (পোর্টালে <code>environment.services.identity</code>, অ্যাপে <code>AUTH_API_BASE_URL</code>) সেই সাথে
+একটি static হেডার <code>Authorization: &lt;environment.headerkey | AUTH_API_TOKEN&gt;</code>। কোনো GoBCB ব্যাকএন্ড সার্ভিস জড়িত নেই।</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>থেকে → পর্যন্ত</th>
+<th>হপ</th>
+<th>রিকোয়েস্ট বডি (ক্লায়েন্ট যেভাবে পাঠায়)</th>
+<th>সফল হলে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>১</td>
+<td>ক্লায়েন্ট → identity <code>POST user/register-cached</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong></td>
+<td>পোর্টাল: <code>{ name, email (lower-case), phone, dob: "1900-01-01", address: "n/a", verification_type: "mobile", verification_id: "0123456789" }</code>। অ্যাপ: <code>{ name, email, phone, address, verification_type, verification_id, dob }</code></td>
+<td>পোর্টাল payload-টি <code>rvl_init_register</code> হিসেবে সংরক্ষণ করে ও ধাপ ২ শুরু করে</td>
+</tr>
+<tr>
+<td>২</td>
+<td>ক্লায়েন্ট → identity <code>POST otp/send-otp</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong></td>
+<td><code>{ type: "email", destination: &lt;email&gt; }</code></td>
+<td><code>verify-email</code>-এ নেভিগেট করে</td>
+</tr>
+<tr>
+<td>৩</td>
+<td>ক্লায়েন্ট → identity <code>POST otp/verify-otp</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong></td>
+<td><code>{ type: "email", destination, otp }</code></td>
+<td><code>email-verified</code>-এ নেভিগেট করে</td>
+</tr>
+<tr>
+<td>৪</td>
+<td>ক্লায়েন্ট → identity <code>POST otp/send-otp</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong></td>
+<td><code>{ type: "sms", destination: &lt;phone&gt; }</code></td>
+<td><code>verify-phone</code>-এ নেভিগেট করে</td>
+</tr>
+<tr>
+<td>৫</td>
+<td>ক্লায়েন্ট → identity <code>POST otp/verify-otp</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong></td>
+<td><code>{ type: "sms", destination, otp }</code></td>
+<td>রেসপন্সের <code>user_id</code> <code>rvl_init_id</code> হিসেবে সংরক্ষণ হয়</td>
+</tr>
+<tr>
+<td>৬</td>
+<td>ক্লায়েন্ট → identity <code>POST user/register</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong></td>
+<td>পোর্টাল: <code>{ user_id, password }</code>। অ্যাপ: <code>{ user_id, ekyc, address, password }</code></td>
+<td>পোর্টাল সংরক্ষিত মান মুছে <code>/auth/login</code> খোলে</td>
+</tr>
+<tr>
+<td>৭</td>
+<td>identity API → Cognito User pool</td>
+<td>(রিপোজিটরির বাইরে)</td>
+<td>—</td>
+<td>ব্যবহারকারী তৈরি হয় <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span></td>
+</tr>
+</tbody>
+</table>
+<p>ক্লায়েন্টরা যে এরর কোড চেন (<code>status_message</code> / এক্সেপশন টেক্সট থেকে): <code>user_already_exists</code>, <code>passport_or_nid_required</code>
+(register-cached); <code>user_not_found</code>, <code>user_data_incomplete</code>, <code>error_getting_verification_information</code>, <code>error_creating_user</code>,
+<code>error_saving_data_to_db</code>, <code>server_error</code> (register)।</p>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট (পোর্টাল)</td>
+<td><code>UserRegistrationComponent</code>, <code>EmailVerificationCodeComponent</code>, <code>EmailVerifiedComponent</code>, <code>PhoneVerificationCodeComponent</code>, <code>SetPasswordComponent</code>, NgRx <code>IdentityEffects</code>, <code>IdentityApiService</code></td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট (অ্যাপ)</td>
+<td><code>presentation/feature/auth/signup/*</code> view model, <code>AuthRepositoryImpl</code>, <code>AuthApiServiceImpl</code>, <code>AuthApiClient</code></td>
+</tr>
+<tr>
+<td>বাহ্যিক</td>
+<td>Identity API <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>; OneID নিবন্ধন পেজ (<code>environment.aws.oneIdRegisterUrl</code>)</td>
+</tr>
+<tr>
+<td>AWS</td>
+<td>Cognito User pool</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরকট">6. API কন্ট্রাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পাথ (identity API)</th>
+<th>অথ</th>
+<th>রিকোয়েস্ট</th>
+<th>রেসপন্স</th>
+<th>প্রধান এরর</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>user/register-cached</code></td>
+<td>static হেডার key</td>
+<td>ধাপ ১ দেখুন</td>
+<td>পোর্টাল পড়ে না</td>
+<td><code>user_already_exists</code>, <code>passport_or_nid_required</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>otp/send-otp</code></td>
+<td>static হেডার key</td>
+<td><code>SendOtp { type, destination }</code></td>
+<td>পড়া হয় না</td>
+<td><code>status_message</code> টেক্সট</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>otp/verify-otp</code></td>
+<td>static হেডার key</td>
+<td><code>VerifyOtp { type, destination, otp }</code></td>
+<td><code>{ user_id }</code> (ফোন ধাপ)</td>
+<td><code>invalid_otp</code> (<a href="X-09-user-forgot-password.html">X-09</a> দেখুন)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>user/register</code></td>
+<td>static হেডার key</td>
+<td><code>SignUpPayload { user_id, password }</code> (পোর্টাল)</td>
+<td>পড়া হয় না</td>
+<td>§4-এর তালিকা</td>
+</tr>
+</tbody>
+</table>
+<p>Payload ক্লাস: <code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/models/user-auth.ts</code>। <code>OtpType</code> মান: <code>sms</code>, <code>email</code>
+(<code>modules/core/enums/Enums.ts:15-18</code>)।</p>
+<pre><code class="language-json">// POST {identity}/user/register-cached   (portal)
+{
+  &quot;name&quot;: &quot;Rahim Uddin&quot;,
+  &quot;phone&quot;: &quot;+8801711111111&quot;,
+  &quot;email&quot;: &quot;rahim@example.com&quot;,
+  &quot;dob&quot;: &quot;1900-01-01&quot;,
+  &quot;address&quot;: &quot;n/a&quot;,
+  &quot;verification_type&quot;: &quot;mobile&quot;,
+  &quot;verification_id&quot;: &quot;0123456789&quot;
+}
+</code></pre>
+<pre><code class="language-json">// POST {identity}/otp/verify-otp   (phone step)
+{ &quot;type&quot;: &quot;sms&quot;, &quot;destination&quot;: &quot;+8801711111111&quot;, &quot;otp&quot;: &quot;482913&quot; }
+
+// 200 (only the field the portal reads)
+{ &quot;user_id&quot;: &quot;&lt;id issued by the identity API&gt;&quot; }
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<ul>
+<li>Identity API: সাময়িক নিবন্ধন, OTP (ইমেইল ও SMS), সবশেষে Cognito ব্যবহারকারী। সাময়িক ডেটা ও প্রোফাইল কোথায় সংরক্ষণ করে
+  তা দেখা যায় না <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>।</li>
+<li>ব্রাউজার (পোর্টাল) local storage: <code>rvl_init_register</code>, <code>rvl_init_id</code>, <code>email_resend_code_timestamp</code>, <code>phone_resend_code_timestamp</code>;
+  সফল হওয়ার পর সরানো হয়।</li>
+<li>কোনো GoBCB টেবিলে লেখা হয় না।</li>
+</ul>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>পোর্টাল ফরম ও OneID রেজিস্টার পপআপ</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/featured/auth/components/user-registration/user-registration.component.ts:172-266</code></td>
+</tr>
+<tr>
+<td>পোর্টাল effects (ধাপ ১–৬)</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/modules/identity/store/identity.effects.ts:38-212</code></td>
+</tr>
+<tr>
+<td>পোর্টালের identity API ক্লায়েন্ট</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/identity-api.service.ts:30-64</code></td>
+</tr>
+<tr>
+<td>অ্যাপের identity API কল</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_service/auth_api_service/auth_api_service_impl.dart:34-240</code></td>
+</tr>
+<tr>
+<td>অ্যাপের static হেডার</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_client/auth_api_client.dart</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>identity API একটি ব্ল্যাক বক্স।</strong> নিবন্ধন, OTP, প্রোফাইল, পাসওয়ার্ড রিসেট ও অ্যাপ ভার্সন সবই সেখানে এবং সোর্স কোনো
+   রিপোজিটরিতে নেই <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>। go-live-এর আগে BS23-এর কাছে এর রিপোজিটরি, হোস্টিং ও মালিক চাইুন।</li>
+<li><strong>static key ক্লায়েন্টে পাঠানো হয়।</strong> <code>environment.headerkey</code> (পোর্টাল বান্ডল) ও <code>AUTH_API_TOKEN</code> (অ্যাপের <code>.env</code>, অ্যাপ
+   শুরুতে <code>Logger.debug</code> দিয়েও ছাপা হয়, <code>lib/main/main.dart:55</code>) ক্লায়েন্ট পাওয়া যে কেউ পড়তে পারে।</li>
+<li><strong>পোর্টাল প্লেসহোল্ডার পরিচয় ডেটা পাঠায়</strong> (<code>dob: "1900-01-01"</code>, <code>address: "n/a"</code>, <code>verification_id: "0123456789"</code> )।
+   অ্যাপ আসল মান ও একটি <code>ekyc</code> ফিল্ড পাঠায়। identity API-র আসল NID/passport ডেটা দরকার কি না স্পষ্ট নয়: অ্যাপ একটি
+   <code>passport_or_nid_required</code> এরর সামলায় <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>।</li>
+<li><strong>অ্যাপের <code>register</code> অজানা এরর লুকায়।</strong> <code>AuthApiServiceImpl.register</code> <code>BaseException</code> ধরে এবং কেবল ছয়টি জানা মেসেজ পুনরায়
+   ছুঁড়ে দেয়; অন্য যেকোনো এরর মেসেজ চাপা পড়ে এবং প্রবাহ সফল হওয়ার মতোই চলতে থাকে।</li>
+<li><strong>ক্লায়েন্ট OTP রেসপন্সের <code>user_id</code>-কে বিশ্বাস করে</strong> এবং সেটি পাসওয়ার্ডের সাথে ফেরত পাঠায়। identity API
+   সার্ভার-সাইডে <code>user/register</code>-কে যাচাই করা OTP-এর সাথে যুক্ত করে কি না এখান থেকে বোঝা যায় না।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  P["User portal / app<br/>sign-up screens"] -->|"HTTP, static key<br/>register-cached, otp/*, register"| ID["Identity API<br/>(external, not in repos)"]
+  ID -->|"create user (assumed)"| CG["Cognito User pool"]
+  ID -->|"email / SMS OTP"| U(("Customer"))
+  P -.->|"popup"| OID["OneID registration page"]
+</div>
+<p><strong>নির্ভর করে:</strong> identity API, Cognito User pool। <strong>প্রভাব ফেলে:</strong> <a href="X-07-user-password-login.html">X-07</a>, <a href="X-08-oneid-sso.html">X-08</a>,
+<span class="link-na" title="এখনো সাইটে যোগ হয়নি">P-11</span> (প্রোফাইল আছে)।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকাল টেস্টযোগ্যতা: লোকালে নয়।</strong> identity API-র কোনো সোর্স নেই; <code>/p/identity</code>-এর নিচের সবকিছুতে ইউজার-পোর্টাল প্রক্সি 503
+দেয়, <code>user/my-profile</code> স্টাব ছাড়া (<code>docs/user-portal-local.md</code> §5), আর মোবাইল গেটওয়ে <code>/identity</code>-তে 503 দেয়
+(<code>docs/mobile-local.md</code> §5)। বরং সিড করা গ্রাহক <code>+8801700000011</code> / <code>Passw0rd!23</code> ব্যবহার করুন।</p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>সিড করা User-pool গ্রাহক <code>+8801700000011</code> (<code>floci/seed-users.ps1</code>); প্রয়োজনে Floci-র বিপরীতে <code>aws cognito-idp admin-create-user</code> দিয়ে আরও তৈরি করুন</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>http://localhost:4201/en/auth/register</code> রেন্ডার হয়; জমা দিলে 503 এরর দেখায়। DevTools → Network-এ <code>POST /p/identity/user/register-cached</code> দেখায় <code>Authorization: &lt;headerkey&gt;</code>-সহ (<code>Bearer</code> নয়)</td>
+</tr>
+<tr>
+<td>ইমুলেটর</td>
+<td><code>pwsh ./scripts/Setup-MobileApps.ps1 -App user -Run</code>; সাইন-আপ স্ক্রিন খোলে, <code>http://localhost:5200/identity/...</code>-এর কল 503 দেয়</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>কোনো কলেকশনই identity API কভার করে না</td>
+</tr>
+<tr>
+<td>Visual Studio ডিবাগ</td>
+<td>প্রযোজ্য নয় (কোনো GoBCB সার্ভিস জড়িত নয়)</td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>ডিপ্লয় করা পরিবেশে: নতুন ফোন নম্বর User pool-এ দেখা যায় (<code>aws cognito-idp list-users --user-pool-id &lt;UserPoolId&gt; --filter "phone_number = \"+880…\""</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-05-admin-provisioning.html"><span class="pager-label">পূর্ববর্তী</span><span>X-05 · স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+  <a class="pager-next" href="X-07-user-password-login.html"><span class="pager-label">পরবর্তী</span><span>X-07 · ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

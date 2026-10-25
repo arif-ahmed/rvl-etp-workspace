@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>60 · ক্রস-কাটিং · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=8faa95ce">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section is-active" href="index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><span>60 · ক্রস-কাটিং</span></div>
+<h1><span class="id-chip">60</span> ক্রস-কাটিং (অথেনটিকেশন, অথরাইজেশন, প্ল্যাটফর্ম সার্ভিস)</h1>
+<p>অনেক ফিচারে ভাগ করা বিষয়: সাইন-ইন, অ্যাক্সেস নিয়ন্ত্রণ, সার্ভিস-থেকে-সার্ভিস কল, স্টোরেজ, মেসেজিং, লগিং, ক্যাশ, কনফিগারেশন।</p>
+<div class="cards">
+      <a class="card" href="X-01-admin-login.html"><span class="card-title"><span class="id-chip">X-01</span> অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span><span class="card-desc">তিন ধাপের অ্যাডমিন সাইন-ইন: ফোন, SMS OTP, Cognito পাসওয়ার্ড।</span></a>
+      <a class="card" href="X-02-admin-forgot-password.html"><span class="card-title"><span class="id-chip">X-02</span> অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span><span class="card-desc">SMS OTP-র পরে অ্যাডমিন পাসওয়ার্ড রিসেট।</span></a>
+      <a class="card" href="X-03-admin-change-password-logout.html"><span class="card-title"><span class="id-chip">X-03</span> অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span><span class="card-desc">Cognito-তে পাসওয়ার্ড পরিবর্তন; সাইন-আউট ও স্থানীয় অবস্থা মুছে ফেলা।</span></a>
+      <a class="card" href="X-04-admin-session.html"><span class="card-title"><span class="id-chip">X-04</span> অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span><span class="card-desc">অ্যাডমিন পোর্টাল কীভাবে টোকেন সংযুক্ত, ক্যাশ ও রিফ্রেশ করে।</span></a>
+      <a class="card" href="X-05-admin-provisioning.html"><span class="card-title"><span class="id-chip">X-05</span> স্টাফ অ্যাকাউন্ট তৈরি</span><span class="card-desc">Admin সার্ভিস কীভাবে Cognito-তে অ্যাডমিন, চেকার ও এজেন্ট অ্যাকাউন্ট তৈরি করে।</span></a>
+      <a class="card" href="X-06-user-registration.html"><span class="card-title"><span class="id-chip">X-06</span> গ্রাহক নিবন্ধন</span><span class="card-desc">ইমেইল ও ফোন OTP দিয়ে সাইন-আপ, তারপর পাসওয়ার্ড; বিকল্প OneID।</span></a>
+      <a class="card" href="X-07-user-password-login.html"><span class="card-title"><span class="id-chip">X-07</span> ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span><span class="card-desc">পোর্টাল ও অ্যাপে User-pool সাইন-ইন।</span></a>
+      <a class="card" href="X-08-oneid-sso.html"><span class="card-title"><span class="id-chip">X-08</span> OneID সিঙ্গেল সাইন-অন</span><span class="card-desc">Cognito-ফেডারেটেড OneID দিয়ে সাইন-ইন; প্রথম লগইনে স্বয়ংক্রিয় নিবন্ধন।</span></a>
+      <a class="card" href="X-09-user-forgot-password.html"><span class="card-title"><span class="id-chip">X-09</span> গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span><span class="card-desc">identity API-র মাধ্যমে OTP-ভিত্তিক পাসওয়ার্ড রিসেট।</span></a>
+      <a class="card" href="X-10-user-session.html"><span class="card-title"><span class="id-chip">X-10</span> গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span><span class="card-desc">পোর্টাল ও অ্যাপে সেশন ব্যবস্থাপনা।</span></a>
+      <a class="card" href="X-11-delete-account-force-update.html"><span class="card-title"><span class="id-chip">X-11</span> অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span><span class="card-desc">শুধু অ্যাপে অ্যাকাউন্ট মুছে ফেলা ও ন্যূনতম-ভার্সন গেট।</span></a>
+      <a class="card" href="X-12-checker-login.html"><span class="card-title"><span class="id-chip">X-12</span> চেকার লগইন</span><span class="card-desc">চেকার অ্যাপে TicketChecker-pool সাইন-ইন।</span></a>
+      <a class="card" href="X-13-agent-pool.html"><span class="card-title"><span class="id-chip">X-13</span> এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span><span class="card-desc">এজেন্ট অ্যাকাউন্ট ও একমাত্র Agent API।</span></a>
+      <a class="card" href="X-14-authz-pool-policies.html"><span class="card-title"><span class="id-chip">X-14</span> অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span><span class="card-desc">প্রতিটি endpoint-এ টোকেন কোন Cognito pool থেকে আসতে হবে।</span></a>
+      <a class="card" href="X-15-authz-roles.html"><span class="card-title"><span class="id-chip">X-15</span> অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span><span class="card-desc"><code>custom:role</code> → role claim ও <code>[Authorize(Roles=…)]</code>; রোল × endpoint ম্যাট্রিক্স।</span></a>
+      <a class="card" href="X-16-authz-program-scope.html"><span class="card-title"><span class="id-chip">X-16</span> অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span><span class="card-desc"><code>X-Program-Id</code>, <code>custom:program_ids</code>, <code>[AuthorizeProgram]</code> ও EF query filter।</span></a>
+      <a class="card" href="X-17-authz-client-side.html"><span class="card-title"><span class="id-chip">X-17</span> ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span><span class="card-desc">রোল অনুযায়ী পোর্টাল কী লুকায় বা আটকায়; এটি নিরাপত্তা সীমানা নয়।</span></a>
+      <a class="card" href="X-18-endpoints-without-auth.html"><span class="card-title"><span class="id-chip">X-18</span> অথরাইজেশন ছাড়া endpoint</span><span class="card-desc">টোকেন ছাড়া পৌঁছানো যায় এমন সব endpoint, ও কেন।</span></a>
+      <a class="card" href="X-19-service-to-service.html"><span class="card-title"><span class="id-chip">X-19</span> সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span><span class="card-desc">টোকেন ফরোয়ার্ডিংসহ typed HTTP client, টোকেনবিহীন ওয়ার্কার কল ও SQS।</span></a>
+      <a class="card" href="X-20-file-storage.html"><span class="card-title"><span class="id-chip">X-20</span> ফাইল স্টোরেজ (S3, CloudFront)</span><span class="card-desc">মিডিয়া ও টিকিট বাকেট, ফোল্ডার কাঠামো, signed URL ও cookie।</span></a>
+      <a class="card" href="X-21-email-ses.html"><span class="card-title"><span class="id-chip">X-21</span> ইমেইল (SES)</span><span class="card-desc">প্ল্যাটফর্ম কোথায় ইমেইল পাঠায়।</span></a>
+      <a class="card" href="X-22-sms-notification.html"><span class="card-title"><span class="id-chip">X-22</span> SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span><span class="card-desc">রিপোর বাইরের সার্ভিসে SMS/OTP ও নোটিফিকেশন কল।</span></a>
+      <a class="card" href="X-23-push-firebase.html"><span class="card-title"><span class="id-chip">X-23</span> পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span><span class="card-desc">ডিভাইস টোকেন, send API, কিউ ও FCM।</span></a>
+      <a class="card" href="X-24-activity-logging.html"><span class="card-title"><span class="id-chip">X-24</span> অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span><span class="card-desc">সার্ভিসজুড়ে entity পরিবর্তন কীভাবে রেকর্ড হয়।</span></a>
+      <a class="card" href="X-25-redis.html"><span class="card-title"><span class="id-chip">X-25</span> Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span><span class="card-desc">কী-পরিবার, ক্যাশ ব্যবহার ও RedLock distributed lock।</span></a>
+      <a class="card" href="X-26-configuration.html"><span class="card-title"><span class="id-chip">X-26</span> কনফিগারেশন ও সিক্রেট</span><span class="card-desc">AWS-এ ও লোকালে সেটিং কোথা থেকে আসে; কী রেফারেন্স।</span></a>
+    </div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>
