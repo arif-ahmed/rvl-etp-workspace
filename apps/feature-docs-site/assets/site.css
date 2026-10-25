@@ -159,12 +159,21 @@ html[data-theme="dark"] .icon-sun { display: block; }
 
 .side-nav { display: flex; flex-direction: column; gap: 4px; }
 
+/* the whole head is the toggle (title included); each section body leads
+   with an "All features" link to the section index */
 .side-sec-head {
   display: flex;
   align-items: center;
   gap: 4px;
+  width: 100%;
   padding: 2px 4px;
+  border: 0;
   border-radius: 8px;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 .side-sec-head:hover { background: var(--surface-2); }
 
@@ -173,16 +182,10 @@ html[data-theme="dark"] .icon-sun { display: block; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: 0;
-  border-radius: 6px;
-  background: none;
+  width: 24px;
+  height: 24px;
   color: var(--text-muted);
-  cursor: pointer;
 }
-.side-chevron:hover { background: var(--accent-soft); color: var(--accent); }
 .side-chevron svg { width: 13px; height: 13px; transition: transform 0.15s ease; }
 .side-sec.is-open > .side-sec-head .side-chevron svg { transform: rotate(90deg); }
 
@@ -193,8 +196,6 @@ html[data-theme="dark"] .icon-sun { display: block; }
   font-weight: 700;
   color: var(--text);
 }
-.side-sec-title:hover { text-decoration: none; }
-.side-sec-title.is-active { color: var(--accent); }
 
 .side-count {
   flex: none;

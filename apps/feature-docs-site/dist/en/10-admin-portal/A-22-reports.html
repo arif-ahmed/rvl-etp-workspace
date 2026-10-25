@@ -10,7 +10,7 @@ if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'d
 document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
 <link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
-<link rel="stylesheet" href="../../assets/site.css?v=5ded2c9a">
+<link rel="stylesheet" href="../../assets/site.css?v=2fa7957c">
 </head>
 <body>
 <header class="topbar">
@@ -24,11 +24,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   <aside class="sidebar" id="sidebar">
     <nav class="side-nav">
     <div class="side-sec" data-dir="ov">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="Expand / collapse section">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
         <span class="side-sec-title">Overview</span>
         <span class="side-count">4</span>
-      </div>
+      </button>
       <div class="side-sec-body">
         <a class="side-item" href="../00-platform-primer.html"><span class="id-chip">00</span><span>Platform primer</span></a>
         <a class="side-item" href="../01-system-map.html"><span class="id-chip">01</span><span>System map</span></a>
@@ -37,11 +37,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="ap">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="Expand / collapse section">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
         <span class="side-sec-title">Appendices</span>
         <span class="side-count">5</span>
-      </div>
+      </button>
       <div class="side-sec-body">
         <a class="side-item" href="../90-appendix-a-legacy.html"><span class="id-chip">90</span><span>Appendix A — Legacy, unused and dormant code</span></a>
         <a class="side-item" href="../91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — Endpoint index</span></a>
@@ -51,12 +51,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec is-open" data-dir="10-admin-portal">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="true" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="index.html">10 · Admin Portal</a>
+      <button class="side-sec-head" type="button" aria-expanded="true" title="Expand / collapse section">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">10 · Admin Portal</span>
         <span class="side-count">31</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="index.html"><span class="id-chip">10</span><span>All features</span></a>
         <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
         <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
         <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
@@ -91,12 +92,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="20-user-portal">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../20-user-portal/index.html">20 · User Web Portal</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="Expand / collapse section">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">20 · User Web Portal</span>
         <span class="side-count">13</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../20-user-portal/index.html"><span class="id-chip">20</span><span>All features</span></a>
         <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
         <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
         <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
@@ -113,12 +115,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="30-user-app">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../30-user-app/index.html">30 · User App</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="Expand / collapse section">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">30 · User App</span>
         <span class="side-count">10</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../30-user-app/index.html"><span class="id-chip">30</span><span>All features</span></a>
         <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
         <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
         <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
@@ -132,12 +135,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="40-checker-app">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../40-checker-app/index.html">40 · Checker App</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="Expand / collapse section">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">40 · Checker App</span>
         <span class="side-count">6</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../40-checker-app/index.html"><span class="id-chip">40</span><span>All features</span></a>
         <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
         <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
         <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
@@ -147,12 +151,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="50-system-initiated">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../50-system-initiated/index.html">50 · System-initiated</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="Expand / collapse section">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">50 · System-initiated</span>
         <span class="side-count">17</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../50-system-initiated/index.html"><span class="id-chip">50</span><span>All features</span></a>
         <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
         <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
         <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
@@ -173,12 +178,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="60-cross-cutting">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="Expand / collapse section">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">60 · Cross-cutting</span>
         <span class="side-count">26</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../60-cross-cutting/index.html"><span class="id-chip">60</span><span>All features</span></a>
         <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
         <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
         <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
@@ -464,6 +470,6 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   </main>
 </div>
 <script src="../../assets/vendor/mermaid.min.js"></script>
-<script src="../../assets/site.js?v=d7ce93f0"></script>
+<script src="../../assets/site.js?v=61779a45"></script>
 </body>
 </html>

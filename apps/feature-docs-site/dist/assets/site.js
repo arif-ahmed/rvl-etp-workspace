@@ -88,8 +88,8 @@
 
     function setOpen(sec, open) {
       sec.classList.toggle("is-open", open);
-      var chev = sec.querySelector(".side-chevron");
-      if (chev) chev.setAttribute("aria-expanded", open ? "true" : "false");
+      var head = sec.querySelector(".side-sec-head");
+      if (head) head.setAttribute("aria-expanded", open ? "true" : "false");
     }
 
     var secs = Array.prototype.slice.call(doc.querySelectorAll(".side-sec"));
@@ -98,9 +98,9 @@
       if (Object.prototype.hasOwnProperty.call(saved, dir)) {
         setOpen(sec, !!saved[dir]); // user's own choice beats the page default
       }
-      var chev = sec.querySelector(".side-chevron");
-      if (chev) {
-        chev.addEventListener("click", function () {
+      var head = sec.querySelector(".side-sec-head");
+      if (head) {
+        head.addEventListener("click", function () {
           setOpen(sec, !sec.classList.contains("is-open"));
           var out = {};
           secs.forEach(function (s) { out[s.getAttribute("data-dir")] = s.classList.contains("is-open"); });

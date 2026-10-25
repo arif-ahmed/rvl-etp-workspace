@@ -10,7 +10,7 @@ if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'d
 document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
 <link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
-<link rel="stylesheet" href="../../assets/site.css?v=5ded2c9a">
+<link rel="stylesheet" href="../../assets/site.css?v=2fa7957c">
 </head>
 <body>
 <header class="topbar">
@@ -24,11 +24,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   <aside class="sidebar" id="sidebar">
     <nav class="side-nav">
     <div class="side-sec" data-dir="ov">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
         <span class="side-sec-title">ওভারভিউ</span>
         <span class="side-count">৪</span>
-      </div>
+      </button>
       <div class="side-sec-body">
         <a class="side-item" href="../00-platform-primer.html"><span class="id-chip">00</span><span>প্ল্যাটফর্ম প্রাইমার</span></a>
         <a class="side-item" href="../01-system-map.html"><span class="id-chip">01</span><span>সিস্টেম ম্যাপ</span></a>
@@ -37,11 +37,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="ap">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
         <span class="side-sec-title">পরিশিষ্ট</span>
         <span class="side-count">৫</span>
-      </div>
+      </button>
       <div class="side-sec-body">
         <a class="side-item" href="../90-appendix-a-legacy.html"><span class="id-chip">90</span><span>অ্যাপেন্ডিক্স A — লেগ্যাসি, অব্যবহৃত ও নিষ্ক্রিয় কোড</span></a>
         <a class="side-item" href="../91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — এন্ডপয়েন্ট ইনডেক্স</span></a>
@@ -51,12 +51,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="10-admin-portal">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">10 · অ্যাডমিন পোর্টাল</span>
         <span class="side-count">৩১</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../10-admin-portal/index.html"><span class="id-chip">10</span><span>সব ফিচার</span></a>
         <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
         <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
         <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
@@ -91,12 +92,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="20-user-portal">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">20 · ইউজার ওয়েব পোর্টাল</span>
         <span class="side-count">১৩</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../20-user-portal/index.html"><span class="id-chip">20</span><span>সব ফিচার</span></a>
         <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
         <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
         <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
@@ -113,12 +115,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="30-user-app">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../30-user-app/index.html">30 · ইউজার অ্যাপ</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">30 · ইউজার অ্যাপ</span>
         <span class="side-count">১০</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../30-user-app/index.html"><span class="id-chip">30</span><span>সব ফিচার</span></a>
         <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
         <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
         <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
@@ -132,12 +135,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec is-open" data-dir="40-checker-app">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="true" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="index.html">40 · চেকার অ্যাপ</a>
+      <button class="side-sec-head" type="button" aria-expanded="true" title="অংশ খোলা / বন্ধ করুন">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">40 · চেকার অ্যাপ</span>
         <span class="side-count">৬</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="index.html"><span class="id-chip">40</span><span>সব ফিচার</span></a>
         <a class="side-item is-active" href="C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
         <a class="side-item" href="C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
         <a class="side-item" href="C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
@@ -147,12 +151,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="50-system-initiated">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">50 · সিস্টেম-চালিত</span>
         <span class="side-count">১৭</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../50-system-initiated/index.html"><span class="id-chip">50</span><span>সব ফিচার</span></a>
         <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
         <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
         <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
@@ -173,12 +178,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
       </div>
     </div>
     <div class="side-sec" data-dir="60-cross-cutting">
-      <div class="side-sec-head">
-        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
-        <a class="side-sec-title" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+      <button class="side-sec-head" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন">
+        <span class="side-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="side-sec-title">60 · ক্রস-কাটিং</span>
         <span class="side-count">২৬</span>
-      </div>
+      </button>
       <div class="side-sec-body">
+        <a class="side-item" href="../60-cross-cutting/index.html"><span class="id-chip">60</span><span>সব ফিচার</span></a>
         <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
         <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
         <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
@@ -406,6 +412,6 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   </main>
 </div>
 <script src="../../assets/vendor/mermaid.min.js"></script>
-<script src="../../assets/site.js?v=d7ce93f0"></script>
+<script src="../../assets/site.js?v=61779a45"></script>
 </body>
 </html>

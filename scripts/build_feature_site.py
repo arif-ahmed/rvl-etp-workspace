@@ -50,6 +50,7 @@ UI = {
         "ref_appendix": "Appendices",
         "outside": "Repository file, not part of this site",
         "count": "{n} features",
+        "all_features": "All features",
         "toggle_section": "Expand / collapse section",
         "router_title": "Choose a language",
         "router_note": "Light / dark mode can be switched from the top bar on any page.",
@@ -63,6 +64,7 @@ UI = {
         "ref_appendix": "পরিশিষ্ট",
         "outside": "রিপোজিটরির ফাইল, এই সাইটের অংশ নয়",
         "count": "{n}টি ফিচার",
+        "all_features": "সব ফিচার",
         "toggle_section": "অংশ খোলা / বন্ধ করুন",
         "router_title": "ভাষা বেছে নিন",
         "router_note": "যেকোনো পেজের উপরের বার থেকে লাইট / ডার্ক মোড বদলানো যায়।",
@@ -298,27 +300,28 @@ def page(lang, title, crumb, content, sidebar, to_root, mermaid_tag, lang_toggle
 def sidebar_html(sections, ui, lang, cur_dir, active=None, root_docs=()):
     """Collapsible nav groups: overview, appendices, then one group per section.
 
+    The whole group header toggles the group; each section body leads with an
+    "All features" link to the section index (the header is no longer that link).
     cur_dir: section dirname the page lives in (None = root-level page).
     active: 'root:<stem>', 'sec:<dir>' or '<dir>/<file>.html'.
     A group starts open when it holds the current/active page; the user's own
-    toggling (chevron) is persisted by site.js across pages.
+    toggling is persisted by site.js across pages.
     """
-    def group(key, title_html, items, is_open):
+    def group(key, title_html, count, items, is_open):
         open_cls, exp = (" is-open", "true") if is_open else ("", "false")
         out = [f'    <div class="side-sec{open_cls}" data-dir="{key}">',
-               '      <div class="side-sec-head">',
-               (f'        <button class="side-chevron" type="button" aria-expanded="{exp}" '
-                f'title="{html.escape(ui["toggle_section"])}" aria-label="{html.escape(ui["toggle_section"])}">'
-                f'{SVG_CHEV}</button>'),
+               (f'      <button class="side-sec-head" type="button" aria-expanded="{exp}" '
+                f'title="{html.escape(ui["toggle_section"])}">'),
+               f'        <span class="side-chevron" aria-hidden="true">{SVG_CHEV}</span>',
                f'        {title_html}',
-               f'        <span class="side-count">{bn_num(str(len(items)), lang)}</span>',
-               '      </div>',
+               f'        <span class="side-count">{bn_num(str(count), lang)}</span>',
+               '      </button>',
                '      <div class="side-sec-body">']
         out.extend(items)
         out += ['      </div>', '    </div>']
         return out
 
-    def item(href, chip, label, is_on):
+    def item(href, chip, label, is_on=""):
         return (f'        <a class="side-item{is_on}" href="{href}">'
                 f'<span class="id-chip">{chip}</span><span>{html.escape(label)}</span></a>')
 
@@ -332,16 +335,17 @@ def sidebar_html(sections, ui, lang, cur_dir, active=None, root_docs=()):
                       " is-active" if active == f"root:{d['stem']}" else "") for d in docs]
         open_default = any(active == f"root:{d['stem']}" for d in docs)
         parts += group(group_key, f'<span class="side-sec-title">{html.escape(group_label)}</span>',
-                       items, open_default)
+                       len(docs), items, open_default)
 
     for num, short, _full, _desc, feats, dirname in sections:
         prefix = dirname + "/" if cur_dir is None else ("" if dirname == cur_dir else f"../{dirname}/")
-        items = [item(f"{prefix}{f['file'][:-3]}.html", f["id"], f["title"],
-                      " is-active" if active == f"{dirname}/{f['file'][:-3]}.html" else "")
-                 for f in feats]
-        title = (f'<a class="side-sec-title{" is-active" if active == f"sec:{dirname}" else ""}" '
-                 f'href="{prefix}index.html">{num} · {html.escape(short)}</a>')
-        parts += group(dirname, title, items, dirname == cur_dir)
+        items = [item(f"{prefix}index.html", num, ui["all_features"],
+                      " is-active" if active == f"sec:{dirname}" else "")]
+        items += [item(f"{prefix}{f['file'][:-3]}.html", f["id"], f["title"],
+                       " is-active" if active == f"{dirname}/{f['file'][:-3]}.html" else "")
+                  for f in feats]
+        title = f'<span class="side-sec-title">{num} · {html.escape(short)}</span>'
+        parts += group(dirname, title, len(feats), items, dirname == cur_dir)
     parts.append('    </nav>')
     return "\n".join(parts)
 
