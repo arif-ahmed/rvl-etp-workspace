@@ -40,6 +40,22 @@ FONTS_LINK_TPL = '<link rel="stylesheet" href="{to_root}assets/vendor/fonts/font
 WOFF2_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
 
+# standalone documents outside feature-docs/, rendered once per language tree
+# at <lang>/<stem>.html (same single-source content in both trees)
+EXTRA_DOCS = [
+    {
+        "src": ROOT / "docs" / "ETP_Production_Incident_Reliability_Review.md",
+        "stem": "incident-review",
+        "chip": "INC",
+        "label": {"en": "Incident & Reliability Review",
+                  "bn": "ইনসিডেন্ট ও রিলায়েবিলিটি রিভিউ"},
+        "card_desc": {
+            "en": "Post-launch incidents from the BPL 2025 rollout, production risks to verify, and recommended actions.",
+            "bn": "বিপিএল ২০২৫ রোলআউটের ইনসিডেন্ট, যাচাই করার মতো ঝুঁকি ও প্রস্তাবিত কাজ।",
+        },
+    },
+]
+
 UI = {
     "en": {
         "contents": "Contents",
@@ -48,6 +64,7 @@ UI = {
         "na": "Not included in the site yet",
         "ref_overview": "Overview",
         "ref_appendix": "Appendices",
+        "reports": "Reports",
         "outside": "Repository file, not part of this site",
         "count": "{n} features",
         "all_features": "All features",
@@ -62,6 +79,7 @@ UI = {
         "na": "এখনো সাইটে যোগ হয়নি",
         "ref_overview": "ওভারভিউ",
         "ref_appendix": "পরিশিষ্ট",
+        "reports": "রিপোর্ট",
         "outside": "রিপোজিটরির ফাইল, এই সাইটের অংশ নয়",
         "count": "{n}টি ফিচার",
         "all_features": "সব ফিচার",
@@ -297,13 +315,14 @@ def page(lang, title, crumb, content, sidebar, to_root, mermaid_tag, lang_toggle
 """
 
 
-def sidebar_html(sections, ui, lang, cur_dir, active=None, root_docs=()):
-    """Collapsible nav groups: overview, appendices, then one group per section.
+def sidebar_html(sections, ui, lang, cur_dir, active=None, root_docs=(), extras=()):
+    """Collapsible nav groups: overview, appendices, reports, then one group per section.
 
     The whole group header toggles the group; each section body leads with an
     "All features" link to the section index (the header is no longer that link).
     cur_dir: section dirname the page lives in (None = root-level page).
-    active: 'root:<stem>', 'sec:<dir>' or '<dir>/<file>.html'.
+    active: 'root:<stem>', 'extra:<stem>', 'sec:<dir>' or '<dir>/<file>.html'.
+    extras: standalone docs rendered at <lang>/<stem>.html (reports group).
     A group starts open when it holds the current/active page; the user's own
     toggling is persisted by site.js across pages.
     """
@@ -336,6 +355,13 @@ def sidebar_html(sections, ui, lang, cur_dir, active=None, root_docs=()):
         open_default = any(active == f"root:{d['stem']}" for d in docs)
         parts += group(group_key, f'<span class="side-sec-title">{html.escape(group_label)}</span>',
                        len(docs), items, open_default)
+
+    if extras:
+        items = [item(f"{root_prefix}{e['stem']}.html", e["chip"], e["label"],
+                      " is-active" if active == f"extra:{e['stem']}" else "") for e in extras]
+        parts += group("extras", f'<span class="side-sec-title">{html.escape(ui["reports"])}</span>',
+                       len(extras), items,
+                       any(active == f"extra:{e['stem']}" for e in extras))
 
     for num, short, _full, _desc, feats, dirname in sections:
         prefix = dirname + "/" if cur_dir is None else ("" if dirname == cur_dir else f"../{dirname}/")
@@ -480,12 +506,21 @@ def build(docs: Path, out: Path, assets: Path, wanted):
         rest = re.sub(r"^\[[^\]]+\]\(\.\./(?:en|bn)/README\.md\)\s*$", "", readme_src[m.end():], flags=re.M)
         # the README's nested per-feature TOC block is redundant here (the sidebar
         # and the section indexes cover it); a section card grid navigates better
-        cards = "\n".join(
+        extras = [{"stem": e["stem"], "chip": e["chip"], "label": e["label"][lang]}
+                  for e in EXTRA_DOCS]
+        card_list = [
             f'      <a class="card" href="{d}/index.html">'
             f'<span class="card-title"><span class="id-chip">{num}</span> {html.escape(short)}</span>'
             f'<span class="card-desc">{inline_md(desc)}</span>'
             f'<span class="card-count">{html.escape(ui["count"].format(n=bn_num(str(len(feats)), lang)))}</span></a>'
-            for num, short, full, desc, feats, d in parsed[lang])
+            for num, short, full, desc, feats, d in parsed[lang]]
+        # standalone reports ride along in the same grid
+        card_list += [
+            f'      <a class="card" href="{e["stem"]}.html">'
+            f'<span class="card-title"><span class="id-chip">{e["chip"]}</span> {html.escape(e["label"])}</span>'
+            f'<span class="card-desc">{html.escape(ed["card_desc"][lang])}</span></a>'
+            for e, ed in zip(extras, EXTRA_DOCS)]
+        cards = "\n".join(card_list)
         card_grid = f'<div class="cards">\n{cards}\n      </div>'
         head, _, tail = rest.partition("<!-- TOC:START -->")
         tail = tail.partition("<!-- TOC:END -->")[2] if _ else rest
@@ -493,7 +528,8 @@ def build(docs: Path, out: Path, assets: Path, wanted):
                    + md_to_html(head, lang, "", built_md) + "\n"
                    + card_grid + "\n"
                    + md_to_html(tail, lang, "", built_md))
-        side = sidebar_html(parsed[lang], ui, lang, cur_dir=None, root_docs=root_docs[lang])
+        side = sidebar_html(parsed[lang], ui, lang, cur_dir=None, root_docs=root_docs[lang],
+                            extras=extras)
         (out / lang / "index.html").parent.mkdir(parents=True, exist_ok=True)
         (out / lang / "index.html").write_text(
             page(lang, home_title, "", content, side, "../",
@@ -519,10 +555,30 @@ def build(docs: Path, out: Path, assets: Path, wanted):
             content = (f'<h1><span class="id-chip">{d["num"]}</span> {html.escape(d["title"])}</h1>\n'
                        + body)
             side = sidebar_html(parsed[lang], ui, lang, cur_dir=None, active=f"root:{d['stem']}",
-                                root_docs=root_docs[lang])
+                                root_docs=root_docs[lang], extras=extras)
             (out / lang / f"{d['stem']}.html").write_text(
                 page(lang, f"{d['num']} · {d['title']}",
                      crumb_html([(ui["contents"], "index.html"), (f"{d['num']} · {d['title']}", None)]),
+                     content, side, "../", mermaid_tag_tpl.format(to_root="../"),
+                     fonts_link=fonts_tag_tpl.format(to_root="../", v=fonts_v)),
+                encoding="utf-8")
+            n_pages += 1
+
+        # ---- standalone extra docs (single source, same page in both trees) --
+        for e, ed in zip(extras, EXTRA_DOCS):
+            src = ed["src"].read_text(encoding="utf-8")
+            m = re.match(r"#\s+(.+?)\s*(?:\n|$)", src)
+            if not m:
+                sys.exit(f"{ed['src'].name}: no H1 title line")
+            doc_title, body_md = m.group(1), src[m.end():]
+            body = md_to_html(body_md, lang, "", built_md)
+            content = (f'<h1><span class="id-chip">{e["chip"]}</span> {html.escape(doc_title)}</h1>\n'
+                       + body)
+            side = sidebar_html(parsed[lang], ui, lang, cur_dir=None, active=f"extra:{e['stem']}",
+                                root_docs=root_docs[lang], extras=extras)
+            (out / lang / f"{e['stem']}.html").write_text(
+                page(lang, doc_title,
+                     crumb_html([(ui["contents"], "index.html"), (e["label"], None)]),
                      content, side, "../", mermaid_tag_tpl.format(to_root="../"),
                      fonts_link=fonts_tag_tpl.format(to_root="../", v=fonts_v)),
                 encoding="utf-8")
@@ -547,7 +603,7 @@ def build(docs: Path, out: Path, assets: Path, wanted):
                        f'{intro}\n'
                        f'<div class="cards">\n{cards}\n    </div>')
             side = sidebar_html(parsed[lang], ui, lang, cur_dir=dirname, active=f"sec:{dirname}",
-                                root_docs=root_docs[lang])
+                                root_docs=root_docs[lang], extras=extras)
             (sec_dir_out / "index.html").write_text(
                 page(lang, f"{num} · {short}", crumb_html([(ui["contents"], "../index.html"), (f"{num} · {short}", None)]),
                      content, side, to_root, mermaid_tag_tpl.format(to_root=to_root),
@@ -580,7 +636,7 @@ def build(docs: Path, out: Path, assets: Path, wanted):
                            + "\n".join(pager))
                 side = sidebar_html(parsed[lang], ui, lang, cur_dir=dirname,
                                     active=f"{dirname}/{f['file'][:-3]}.html",
-                                    root_docs=root_docs[lang])
+                                    root_docs=root_docs[lang], extras=extras)
                 (sec_dir_out / (f["file"][:-3] + ".html")).write_text(
                     page(lang, f"{fid} · {title}",
                          crumb_html([(ui["contents"], "../index.html"),

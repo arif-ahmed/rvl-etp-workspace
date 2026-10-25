@@ -1,8 +1,9 @@
 # feature-docs-site
 
 Static HTML site generated from [`docs/handover/feature-docs`](../../docs/handover/feature-docs)
-(English + বাংলা, light/dark). Covers the overview and appendix documents plus
-all six feature sections (10–60).
+(English + বাংলা, light/dark). Covers the overview and appendix documents, all six
+feature sections (10–60), and standalone reports such as the
+[production incident & reliability review](../../docs/ETP_Production_Incident_Reliability_Review.md).
 
 ## Layout
 

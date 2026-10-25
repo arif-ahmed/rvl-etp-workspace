@@ -169,6 +169,7 @@
 ```
 
 Evidence status-এর সম্ভাব্য মান:
+
 - `Reported` — public source-এ উল্লেখ আছে
 - `Verified` — internal evidence দিয়ে যাচাই করা হয়েছে
 - `Partially Verified` — কিছু তথ্য যাচাই হয়েছে, সব নয়
