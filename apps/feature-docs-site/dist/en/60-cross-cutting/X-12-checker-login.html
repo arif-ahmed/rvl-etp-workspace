@@ -70,6 +70,26 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
     <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
     <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../30-user-app/index.html">30 · User App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
+    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
+    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
+    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
+    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
+    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
+    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
+    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
+    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
+    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · Checker App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
     <a class="side-section" href="index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -142,7 +162,7 @@ them (<a href="X-05-admin-provisioning.html">X-05</a>, <a href="../10-admin-port
 <li>On start the splash screen checks the version and, if a session exists, opens the event page directly.</li>
 <li>Otherwise the checker types the phone number (without <code>+880</code>) and password.</li>
 <li>The app checks the version again; if an update is required, a blocking "Update required" sheet appears.</li>
-<li>On success the event page opens and loads the assigned event and gate (<span class="link-na" title="Not included in the site yet">C-01</span>).</li>
+<li>On success the event page opens and loads the assigned event and gate (<a href="../40-checker-app/C-01-assigned-event-gate.html">C-01</a>).</li>
 <li>"Sign out" is on the event page.</li>
 </ol>
 <h2 id="4-technical-flow">4. Technical flow</h2>
@@ -172,7 +192,7 @@ them (<a href="X-05-admin-provisioning.html">X-05</a>, <a href="../10-admin-port
 <td>3</td>
 <td>App → Admin, TicketChecker services</td>
 <td><strong class="hop-tag">[HTTP + user token]</strong> (<code>TicketApiClient</code>, <code>Bearer &lt;accessToken&gt;</code> from <code>fetchAuthSession</code>)</td>
-<td>First call: <code>GET /admin/api/v1/ticket-checker-gate/event-info</code> (<span class="link-na" title="Not included in the site yet">C-01</span>)</td>
+<td>First call: <code>GET /admin/api/v1/ticket-checker-gate/event-info</code> (<a href="../40-checker-app/C-01-assigned-event-gate.html">C-01</a>)</td>
 </tr>
 <tr>
 <td>4</td>
@@ -282,7 +302,7 @@ them (<a href="X-05-admin-provisioning.html">X-05</a>, <a href="../10-admin-port
    <a href="../10-admin-portal/A-17-ticket-checker-users.html">A-17</a>); the backend also has <code>PUT /admin/api/v1/ticket-checker/change-password</code>
    (body with the checker's access token), which no client calls.</li>
 <li><strong>Disabled accounts:</strong> disabling a checker in the admin portal calls <code>AdminUserGlobalSignOut</code>; the app keeps working
-   offline with already downloaded tickets until it next needs the server (<span class="link-na" title="Not included in the site yet">C-02</span>).</li>
+   offline with already downloaded tickets until it next needs the server (<a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>).</li>
 </ol>
 <h2 id="10-component-relationships">10. Component relationships</h2>
 <div class="mermaid">flowchart LR

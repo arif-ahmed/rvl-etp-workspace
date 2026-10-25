@@ -70,6 +70,26 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
     <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
     <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../30-user-app/index.html">30 · User App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
+    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
+    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
+    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
+    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
+    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
+    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
+    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
+    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
+    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · Checker App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
     <a class="side-section" href="index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -110,7 +130,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <p><strong>Push notifications to the mobile app.</strong> The <strong>PushNotification service</strong> stores each user's device tokens (FCM tokens) and turns a "send" request into batches of at most 200 tokens on the <code>FirebaseNotification</code> queue. A worker in the <strong>Scheduler</strong> service reads the queue and sends the batches through Firebase Cloud Messaging. The only caller that sends push in the current code is the admin event publish. Concepts: <span class="link-na" title="Not included in the site yet">queue-driven processing</span>, <span class="link-na" title="Not included in the site yet">background workers</span>.</p>
 <h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
 <ul>
-<li><strong>Register, replace, delete a token:</strong> the user app, on start-up and token refresh (<span class="link-na" title="Not included in the site yet">U-09</span>).</li>
+<li><strong>Register, replace, delete a token:</strong> the user app, on start-up and token refresh (<a href="../30-user-app/U-09-device-token.html">U-09</a>).</li>
 <li><strong>Send to all:</strong> Admin service when an admin publishes an event (<a href="../10-admin-portal/A-07-events.html">A-07</a>).</li>
 <li><strong>Clean up old tokens:</strong> Scheduler worker (<span class="link-na" title="Not included in the site yet">S-13</span>).</li>
 <li><strong>Deliver:</strong> Scheduler <code>FirebaseNotificationService</code> (<span class="link-na" title="Not included in the site yet">S-11</span>).</li>
@@ -317,7 +337,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   SCH -->|"FCM multicast"| FCM["Firebase"] --> APP
   SCH -->|"HTTP, no token: cleanup"| PN
 </div>
-<p><strong>Depends on:</strong> event publish (<a href="../10-admin-portal/A-07-events.html">A-07</a>), app token registration (<span class="link-na" title="Not included in the site yet">U-09</span>). <strong>Affects:</strong> push receipt in the app (<span class="link-na" title="Not included in the site yet">U-10</span>).</p>
+<p><strong>Depends on:</strong> event publish (<a href="../10-admin-portal/A-07-events.html">A-07</a>), app token registration (<a href="../30-user-app/U-09-device-token.html">U-09</a>). <strong>Affects:</strong> push receipt in the app (<a href="../30-user-app/U-10-push-receipt.html">U-10</a>).</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Partial.</strong> Token registration, <code>send-to-all</code> and the queue path work locally (PushNotification on port 5105, Floci SQS). Delivery cannot: Firebase is dummy, so no push arrives.</p>
 <table>

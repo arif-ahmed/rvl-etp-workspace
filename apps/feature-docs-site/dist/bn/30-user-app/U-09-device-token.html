@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>U-09 · পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="index.html">30 · ইউজার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+    <a class="side-item" href="U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+    <a class="side-item" href="U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+    <a class="side-item" href="U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+    <a class="side-item" href="U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+    <a class="side-item" href="U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+    <a class="side-item" href="U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+    <a class="side-item" href="U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+    <a class="side-item is-active" href="U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+    <a class="side-item" href="U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">30 · ইউজার অ্যাপ</a><span class="sep">›</span><span>U-09</span></div>
+<h1><span class="id-chip">U-09</span> পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</p>
+<p><a href="index.html">← 30 · ইউজার অ্যাপ</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন।</strong> যাতে প্ল্যাটফর্ম গ্রাহকের ফোনে পুশ নোটিফিকেশন পাঠাতে পারে, তার জন্য ডিভাইসের Firebase টোকেন সাইন-ইন করা ব্যবহারকারীর বিপরীতে রেজিস্টার করতে হয়। এই অংশে রয়েছে টোকেন পাওয়া (iOS-নির্দিষ্ট APNs ধাপসহ), তা রেজিস্টার করা, Firebase রোটেট করলে হালনাগাদ করা, এবং সাইন-আউটে তা সরানো। এটি <a href="../60-cross-cutting/X-23-push-firebase.html">X-23</a>-এর ক্লায়েন্ট অর্ধেক।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>যেকোনো সাইন-ইন করা গ্রাহক, প্রতিটি টোকেন মানের জন্য একবার। নিজস্ব কোনো রুট নেই — এটি সেশন লাইফসাইকেলের অংশ হিসেবে চলে।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li>সাইন-ইনের পর অ্যাপ Firebase-এর কাছ থেকে একটি push token চায় এবং সেটি প্ল্যাটফর্মে পাঠায়, যা সেটি ব্যবহারকারীর বিপরীতে সংরক্ষণ করে।</li>
+<li>Firebase পরে যদি টোকেনটি রোটেট করে (reinstall, restore, token refresh), অ্যাপ নতুন মানটি পাঠায়, যাতে প্ল্যাটফর্ম আর মৃত টোকেনে পাঠাতে বন্ধ করে।</li>
+<li>সাইন-আউটে অ্যাপ তার টোকেন সরায়, যাতে পুরোনো ডিভাইস আগের ব্যবহারকারীর নোটিফিকেশন না পায়।</li>
+</ol>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<ol>
+<li><strong>Firebase ইনিশিয়ালাইজেশন</strong> — <code>FirebaseService.initialize()</code> (<code>firebase_service.dart:20-30</code>) একটি <code>try/catch</code>-এর ভেতরে <code>Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)</code> কল করে, যা ব্যর্থ হলে লগ করে এগিয়ে যায়। অপশনগুলো <code>.env</code> key থেকে আসে (<code>data/lib/firebase_options.dart:51-64</code>): <code>FIREBASE_ANDROID_API_KEY</code>, <code>FIREBASE_ANDROID_APP_ID</code>, <code>FIREBASE_ANDROID_MESSAGING_SENDER_ID</code>, <code>FIREBASE_ANDROID_PROJECT_ID</code>, <code>FIREBASE_ANDROID_STORAGE_BUCKET</code>, সঙ্গে <code>FIREBASE_IOS_*</code>-এর সমতুর্যগুলো এবং <code>FIREBASE_IOS_BUNDLE_ID</code>।</li>
+<li><strong>টোকেন অর্জন</strong> — <code>setupFCMToken({required Function(String) onTokenRefresh})</code> (<code>:99-125</code>):
+   - <strong>শুধু iOS:</strong> ২ সেকেন্ড অপেক্ষা করে (<code>Future.delayed(const Duration(seconds: 2))</code>), তারপর <code>getAPNSToken()</code> কল করে; এটি এখনো null হলে সেটি <code>APNs token not yet available</code> লগ করে এবং <strong>কিছুই রেজিস্টার না করেই ফিরে যায়</strong> (<code>:101-110</code>);
+   - <code>FirebaseMessaging.instance.getToken()</code> → <code>onTokenRefresh(token)</code> (<code>:112-115</code>);
+   - <code>onTokenRefresh.listen(...)</code> রোটেশনের জন্য শুনতে থাকে; <code>.onError</code> শুধু লগ করে (<code>:117-121</code>);
+   - পুরো মেথডটি একটি <code>try/catch</code>-এ মোড়ানো যা লগ করে গিলে ফেলে (<code>:122-124</code>)।</li>
+<li><strong>[HTTP + ইউজার টোকেন] → PushNotification:</strong> <code>{"fcmToken": &lt;token&gt;}</code> সহ <code>POST pushnotification/api/v1/device-token</code> (<code>firebase_api_service_impl.dart:17-21</code>)। user id সার্ভার-সাইডে টোকেন থেকে নেওয়া হয়।</li>
+<li><strong>[HTTP + ইউজার টোকেন] → PushNotification:</strong> <code>PUT pushnotification/api/v1/device-token</code> — হালনাগাদের পথ, সংরক্ষিত টোকেন নতুনটি থেকে আলাদা হলে ব্যবহৃত হয় (<code>firebase_repository_impl.dart:69-77</code> <code>savedToken != fcmToken</code> তুলনা করে, তারপর সেভ করার আগে আপডেট কল করে)।</li>
+<li><strong>নতুন টোকেনটি আগে লোকালে সংরক্ষিত হয়</strong> (<code>_saveFirebaseFCMToken</code>, <code>:65</code>, <code>:77</code>), যাতে পরবর্তী চালু করায় আবার ফেচ না করেই তুলনা করা যায়।</li>
+<li><strong>[HTTP + ইউজার টোকেন] → PushNotification:</strong> <code>{"userId": …, "fcmToken": …}</code> সহ <code>DELETE pushnotification/api/v1/device-token</code> (<code>firebase_api_service_impl.dart:44-48</code>) — সাইন-আউটের পরিষ্কারকরণ।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>data/lib/service/firebase_service.dart</code>, <code>data/lib/repository/firebase_repository_impl.dart:10-77</code></td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>data/lib/firebase_options.dart</code> (<code>.env</code> থেকে), <code>data/lib/remote/api_service/firebase_api_service/</code></td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td><strong>PushNotification</strong> (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a> দেখুন — এই সার্ভিসে <code>UseAuthentication</code>/<code>UseAuthorization</code> কমেন্ট করা)</td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td>PushNotification-এর নিজস্ব ডিভাইস-টোকেন টেবিল</td>
+</tr>
+<tr>
+<td>বাহ্যিক</td>
+<td>Firebase Cloud Messaging, APNs</td>
+</tr>
+<tr>
+<td>সার্ভার</td>
+<td><code>S-13</code> পুরোনো টোকেন পরিষ্কার করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-13</span>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পাথ</th>
+<th>অথ</th>
+<th>রিকোয়েস্ট → রেসপন্স</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/pushnotification/api/v1/device-token</code></td>
+<td><strong>কোনোটিই প্রয়োগ করা হয় না</strong></td>
+<td><code>{ fcmToken }</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/pushnotification/api/v1/device-token</code></td>
+<td><strong>কোনোটিই প্রয়োগ করা হয় না</strong></td>
+<td><code>{ … }</code> আপডেট</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/pushnotification/api/v1/device-token</code></td>
+<td><strong>কোনোটিই প্রয়োগ করা হয় না</strong></td>
+<td><code>{ userId, fcmToken }</code></td>
+</tr>
+</tbody>
+</table>
+<p>তিনটিই PushNotification সার্ভিসে, যার authentication middleware নিষ্ক্রিয় (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>), তাই <span class="badge-unconfirmed">[UNCONFIRMED: Q-62]</span> — কাগজে অ্যাপ একটি user bearer পাঠায়, কিন্তু সার্ভার সেটি যাচাই করে না, এবং <code>POST</code> ব্যবহারকারীকে শুধু রিকোয়েস্ট বডি/টোকেন থেকে বের করে।</p>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>প্রতি (ব্যবহারকারী, টোকেন)-এর জন্য PushNotification-এর ডিভাইস-টোকেন টেবিলে একটি রো; শেষ টোকেনের জন্য লোকাল <code>SharedPreferences</code>; এবং iOS-এ ডিভাইস থেকে পঠিত একটি APNs টোকেন।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Firebase সার্ভিস</td>
+<td><code>rvl-gobcb-user-app/data/lib/service/firebase_service.dart:20-125</code></td>
+</tr>
+<tr>
+<td>রিপোজিটরি</td>
+<td><code>rvl-gobcb-user-app/data/lib/repository/firebase_repository_impl.dart:35-77</code></td>
+</tr>
+<tr>
+<td>API সার্ভিস</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_service/firebase_api_service/firebase_api_service_impl.dart:12-48</code></td>
+</tr>
+<tr>
+<td>অপশন</td>
+<td><code>rvl-gobcb-user-app/data/lib/firebase_options.dart:51-64</code></td>
+</tr>
+<tr>
+<td>Env key</td>
+<td><code>rvl-gobcb-user-app/env/README.md</code></td>
+</tr>
+<tr>
+<td>প্যাকেজ</td>
+<td><code>rvl-gobcb-user-app/pubspec.yaml</code> (<code>firebase_core</code>, <code>firebase_messaging</code>, <code>flutter_local_notifications</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>iOS-এ টোকেন প্রায়ই আদৌ রেজিস্টারই হয় না।</strong> ২ সেকেন্ডের অপেক্ষার সাথে null <code>getAPNSToken()</code> শেষে ফিরে আসে (<code>:106-110</code>), আর বাইরের <code>catch</code> ত্রুটিটি গিলে ফেলে — তাই একজন iOS গ্রাহক লম্বা সময় কোনো দৃশ্যমান লক্ষণ ছাড়াই পুশ সুবিধা ছাড়া থাকতে পারে। এটিই প্ল্যানে নথিভুক্ত "locally Firebase ডামি" ঘাটতির বাস্তব চেহারা <span class="badge-unconfirmed">[UNCONFIRMED: Q-63]</span>।</li>
+<li><strong>সব Firebase ত্রুটি গিলে ফেলা হয়</strong> (<code>catch (e) { Logger.debug(...) }</code> <code>:26-28</code>, <code>:122-124</code>), তাই ভুলভাবে কনফিগার করা <code>FIREBASE_*</code> key দেয় নীরবে পুশহীন একটি অ্যাপ।</li>
+<li><strong>Firebase কাজ করতে <code>.env</code> অবশ্যই দরকার</strong> এবং এটি gitignore করা; <code>firebase_options.dart</code>-এর প্রতিটি <code>dotenv.env[...]!</code> key না থাকলে থ্রো করবে, যা ইনিশিয়ালাইজের <code>catch</code> ধরে ফেলে — তাই key না থাকা আর key ভুল থাকা দুটোই হুবহু একই রূপ (পুশ নেই)।</li>
+<li><strong><code>firebase_repository_impl.dart:69</code>-এর তুলনাই POST বনাম PUT সিদ্ধান্ত করে</strong>; যে গ্রাহক অ্যাপ স্টোরেজ মুছে দেন তিনি হালনাগাদ না করে একই টোকেন আবার POST করেন।</li>
+<li><strong>সাইন-আউটে বডিতে <code>userId</code> সহ DELETE পাঠায়</strong> (<code>:46</code>), আর POST কেবল <code>fcmToken</code> নেয় — অসমতিমূলক, এবং দুটি কলের মধ্যে সার্ভার-সাইড আইডেন্টিটি আলাদা <span class="badge-unconfirmed">[UNCONFIRMED: Q-62]</span>।</li>
+<li><strong>অ্যাকাউন্ট মুছে ফেলার সময় ডিভাইস টোকেন মোছে না</strong>, কারণ delete-account-এর কোনো UI নেইই (<a href="U-07-profile-settings.html">Q-61</a>) — মুছে ফেলা গ্রাহকের ফোনে টোকেন থেকে যায় যতক্ষণ না <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-13</span> তা সরিয়ে দেয়।</li>
+<li><strong>সার্ভার-সাইড পরিষ্কার ওয়ার্কার <code>Services:Admin</code> কল করে <code>/pushnotification</code> prefix ছাড়া</strong> (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">Q-16</span>), যা একই এলাকার একটি আলাদা ত্রুটি।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  APP["App after sign-in"] --> FB["FirebaseService"]
+  FB -->|"getToken / getAPNSToken"| FCM["Firebase + APNs"]
+  APP -->|"POST or PUT device-token"| PN["PushNotification service<br/>(auth disabled)"]
+  APP --> SP[("SharedPreferences<br/>last token")]
+  APP -->|"DELETE on sign-out"| PN
+  PN -.->|"push send"| FCM
+  S13["S-13 cleanup worker"] -.-> PN
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="../60-cross-cutting/X-07-user-password-login.html">X-07</a> (টোকেন যার সাথে যুক্ত করা হবে এমন একজন সাইন-ইন করা ব্যবহারকারী), <a href="U-07-profile-settings.html">U-07</a>। <strong>প্রভাব ফেলে:</strong> <a href="U-10-push-receipt.html">U-10</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-11</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-12</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-13</span>।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে টেস্টযোগ্য: আংশিক।</strong> লোকালে Firebase একটি ডামি, তাই আসল টোকেন কেবল একটি আসল Firebase প্রজেক্টের বিপরীতেই পাওয়া যায় — লোকাল পথ কোড চালায়, কিন্তু ডেলিভারি নয়।</p>
+<table>
+<thead>
+<tr>
+<th>আইটেম</th>
+<th>বিস্তারিত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>seeded ইউজার <code>+8801700000011</code></td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td>প্রযোজ্য নয় (শুধু মোবাইল)</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td><code>.env</code>-এ আসল <code>FIREBASE_*</code> key সহ অ্যাপ চালু করুন; অ্যাপের লগে <code>Started Firebase Initialization</code> দেখুন এবং iOS-এ <code>APNs token not yet available</code> দেখুন</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/collections</code> — ডিভাইস-টোকেনের কলগুলো কোনো GoBCB কালেকশনে নেই; লোকাল PushNotification সার্ভিসের বিপরীতে হাতে কল করুন <span class="badge-unconfirmed">[UNCONFIRMED: Q-62]</span></td>
+</tr>
+<tr>
+<td>Visual Studio ডিবাগ</td>
+<td><code>PushNotificationController</code> ও ডিভাইস-টোকেন ম্যানেজার; ক্লায়েন্ট: <code>FirebaseRepositoryImpl.sendFirebaseFCMToken</code></td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>PushNotification ডিভাইস-টোকেন টেবিলে <code>SELECT</code>; FCM টোকেনের জন্য <code>adb logcat</code>; ডেলিভারি নিশ্চিত করতে <code>adb shell dumpsys firebase</code> বা Firebase কনসোল</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="U-08-issues-chat.html"><span class="pager-label">পূর্ববর্তী</span><span>U-08 · ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+  <a class="pager-next" href="U-10-push-receipt.html"><span class="pager-label">পরবর্তী</span><span>U-10 · পুশ নোটিফিকেশন গ্রহণ</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

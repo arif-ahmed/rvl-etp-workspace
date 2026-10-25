@@ -537,7 +537,7 @@ def build(docs: Path, out: Path, assets: Path, wanted):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--sections", default="10-admin-portal,20-user-portal,60-cross-cutting",
+    ap.add_argument("--sections", default="10-admin-portal,20-user-portal,30-user-app,40-checker-app,60-cross-cutting",
                     help="comma list of section dirs under docs/handover/feature-docs/<lang>/, or 'all'")
     ap.add_argument("--docs", type=Path, default=DOCS_DEFAULT, help="feature-docs source root")
     ap.add_argument("--assets", type=Path, default=ASSETS_DEFAULT,

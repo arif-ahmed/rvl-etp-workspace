@@ -70,6 +70,26 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
     <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
     <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../30-user-app/index.html">30 · ইউজার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -292,7 +312,7 @@ svgMapImageFile=&lt;file.svg&gt;
 <li><strong>পোর্টাল সার্ভিসের <code>updateVenueLayout</code> <code>PUT /venues/venueLayout/{id}</code> কল করে, যা ব্যাকএন্ডে নেই</strong> (শুধু <code>POST venueLayout</code> আছে)। স্ক্রিনগুলো <code>createVenueLayout</code> ব্যবহার করে, তাই মেথডটি মৃত কোড।</li>
 <li><strong>প্রতি level-এ entry gate নাম দিয়ে প্রতিস্থাপিত হয়।</strong> <code>CreateOrUpdateEntryGateAsync</code> পরিচিত id-গুলোর <code>IsActive</code> আপডেট করে এবং বাকিগুলো যোগ করে; নাম একটি রিকোয়েস্টের ভেতরে অনন্য হতে হবে, venue-জুড়ে নয়।</li>
 <li><strong>লেআউট বদলালে প্রতিটি program-venue কপি অপরাজা হয়ে ওঠে</strong>, ফলে প্রতিটি program-এ হাতে <strong>Sync</strong> করতে হয় (<a href="A-06-program-venue-mapping.html">A-06</a>)। ততক্ষণ পর্যন্ত সেসব program-এর ইভেন্টের দাম ও ক্যাপাসিটি যেমন তৈরি হয়েছিল তেমনই থাকে।</li>
-<li><strong>আরও দুটি অ্যাডমিন কন্ট্রোলার</strong> একই ট্রি পড়ে: <code>GalleryController</code> (<code>GET /gallery</code>) এবং <code>BlockLevelEntryGateController</code> (<code>GET /block-level-entry-gate/ids</code>, কেবল রোল <code>Admin</code>), যেটি <code>Core/.../AdminClient.cs</code> কল করতে পারে; TicketChecker সার্ভিস এখন gate টেবিলটি সরাসরি পড়ে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">C-02</span>)।</li>
+<li><strong>আরও দুটি অ্যাডমিন কন্ট্রোলার</strong> একই ট্রি পড়ে: <code>GalleryController</code> (<code>GET /gallery</code>) এবং <code>BlockLevelEntryGateController</code> (<code>GET /block-level-entry-gate/ids</code>, কেবল রোল <code>Admin</code>), যেটি <code>Core/.../AdminClient.cs</code> কল করতে পারে; TicketChecker সার্ভিস এখন gate টেবিলটি সরাসরি পড়ে (<a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>)।</li>
 <li>কন্ট্রোলার venue সফট-ডিলিট অফার করে না; পোর্টাল থেকে venue সরানো যায় না।</li>
 </ol>
 <h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>

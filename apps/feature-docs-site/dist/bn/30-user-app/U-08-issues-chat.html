@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>U-08 · ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="index.html">30 · ইউজার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+    <a class="side-item" href="U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+    <a class="side-item" href="U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+    <a class="side-item" href="U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+    <a class="side-item" href="U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+    <a class="side-item" href="U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+    <a class="side-item" href="U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+    <a class="side-item is-active" href="U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+    <a class="side-item" href="U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+    <a class="side-item" href="U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">30 · ইউজার অ্যাপ</a><span class="sep">›</span><span>U-08</span></div>
+<h1><span class="id-chip">U-08</span> ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</p>
+<p><a href="index.html">← 30 · ইউজার অ্যাপ</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট।</strong> গ্রাহক তার একটি অর্ডারের বিপরীতে একটি সমস্যা তোলেন এবং এরপর সেটি নিয়ে সাপোর্টের সাথে কথা বলেন। নিয়মগুলো সার্ভারের: <strong>অর্ডারপ্রতি একটি ইস্যু</strong> এবং <strong>বিবরণে ৬০০ অক্ষর</strong>। অ্যাপটি <a href="../20-user-portal/P-12-issues-chat.html">P-12</a>-এর সংশ্লিষ্ট সংস্করণ; সেই অংশের সার্ভার-সাইড ফলাফলগুলো — unauthenticated chat REST API, অনুপস্থিত unique index, সাইজ-লিমিটের অসামঞ্জস্য — এখানে হুবহু প্রযোজ্য।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>সাইন-ইন করা গ্রাহক। রুট <code>/issues</code> (তালিকা), <code>/reportIssue</code> (তোলা), <code>/chatCommunication</code> (থ্রেড)।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li><strong>My bookings</strong> থেকে গ্রাহক কোনো অর্ডারের জন্য <em>Report issue</em> খোলেন।</li>
+<li>তিনি সর্বোচ্চ ৬০০ অক্ষর লেখেন, চাইলে একটি ফাইল সংযুক্ত করেন এবং জমা দেন; বিবরণটিই চ্যাটের প্রথম বার্তা হয়ে যায়।</li>
+<li>গ্রাহক তার ইস্যুর তালিকা দেখেন তার স্ট্যাটাসসহ (<code>Open</code> বা <code>Resolved</code>)।</li>
+<li>থ্রেডে তিনি টেক্সট পাঠান, উত্তর দেখেন, টাইপিং ইন্ডিকেটর ও সংযুক্তি দেখেন, এবং যেকোনো সংযুক্তি ডাউনলোড করেন।</li>
+</ol>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + ইউজার টোকেন]</strong> <code>CreateReportIssue { publicOrderId, programId, description }</code> সহ <code>POST userissue/api/v1/user-issue</code> — পোর্টালের সঙ্গে একই DTO (<a href="../20-user-portal/P-12-issues-chat.html">P-12</a> §6)। ৬০০-অক্ষরের সীমা ও অর্ডারপ্রতি একটি ইস্যুর নিয়ম প্রয়োগ করে <code>ReportIssueManager</code>, কোনো ডেটাবেস constraint নয় (<a href="../20-user-portal/P-12-issues-chat.html">Q-47</a>)।</li>
+<li><strong class="hop-tag">[HTTP + ইউজার টোকেন]</strong> <code>GET userissue/api/v1/user-issue/user/{userId}</code> — তালিকা; <code>GET userissue/api/v1/user-issue/user-detail/{publicOrderId}</code> — একটি ইস্যু।</li>
+<li><strong class="hop-tag">[HTTP + ইউজার টোকেন]</strong> <code>GET userissue/api/v1/user-issue-chat/$issueId/messages</code> — চ্যাটের ইতিহাস, <code>ChatApiService.getMessages(issueId: …)</code>-এর মাধ্যমে।</li>
+<li><strong>পাঠানো SignalR-প্রথম, REST fallback-সহ</strong> (<code>chat_communication_repository_impl.dart:32-36</code>):
+   <code>dart
+   try {
+     await signalRService.sendMessage(chatModel.toJson());
+   } catch (e) {
+     await chatApiService.sendMessage(issueId: issueId, chatModel: chatModel);
+   }</code>
+   তাই অ্যাপ <strong>শুধুই REST নয়</strong>: এটি একটি লাইভ SignalR কানেকশন ধরে রাখে (<code>signal_r_service.dart</code>, <code>startConnection(issueId, onNewMessage: …)</code> / <code>stopConnection()</code>), এবং কেবল hub কল থ্রো করলেই <code>POST userissue/api/v1/user-issue-chat/send</code>-এ নেমে আসে। এতে প্ল্যানে নথিভুক্ত সেই অনুমান সংশোধিত হয় যে অ্যাপের চ্যাট শুধুই REST।</li>
+<li><strong>[HTTP, কোনো auth নেই] → chat REST</strong> <code>POST userissue/api/v1/user-issue-chat/send</code> এবং <code>GET userissue/api/v1/user-issue-chat/message/$messageId/attachment/download</code>। <span class="badge-unconfirmed">[UNCONFIRMED: Q-46]</span> — fallback পথটি হলো <strong>unauthenticated</strong> chat API, যার <code>senderId</code>/<code>senderType</code> ক্লায়েন্ট দেয় (<a href="../20-user-portal/P-12-issues-chat.html">P-12</a> নোট ১), তাই অ্যাপের fallback পথটিই খোলা পথ।</li>
+<li><strong>সংযুক্তি</strong> multipart হিসেবে আপলোড হয় এবং <code>DownloadService.downloadFile(url: await chatApiService.getUrl(messageId: …), headers: await chatApiService.getAttachmentHeaders(), …, saveInPublicStorage: true, …)</code> (<code>:41-58</code>) দিয়ে ডাউনলোড হয়, তারপর <code>openFile</code> দিয়ে খোলা হয়।</li>
+<li>৬০০-অক্ষরের সীমা ক্লায়েন্ট-সাইডে মিরাল করা আছে, কিন্তু ফাইল-সাইজের সীমা সার্ভারের ১০ MB থেকে আলাদা (<a href="../20-user-portal/P-12-issues-chat.html">Q-48</a>) <span class="badge-unconfirmed">[UNCONFIRMED: Q-48]</span>।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>lib/presentation/feature/issues/</code>, <code>feature/report_issue/</code>, <code>feature/chat_communication/</code></td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট সার্ভিস</td>
+<td><code>ChatCommunicationRepositoryImpl</code>, <code>SignalRService</code>, <code>ChatApiService</code>, <code>DownloadService</code></td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>UserIssue (REST + SignalR hub)</td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td><code>UserIssues</code>, চ্যাটের বার্তা</td>
+</tr>
+<tr>
+<td>S3</td>
+<td><code>chat-attachments/{reportedIssueId}/…</code></td>
+</tr>
+<tr>
+<td>বাহ্যিক</td>
+<td>নেই</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পাথ</th>
+<th>অথ</th>
+<th>নোট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/userissue/api/v1/user-issue</code></td>
+<td>User</td>
+<td><code>CreateReportIssue</code>; ৬০০-এর বেশি অক্ষর বা দ্বিতীয় ইস্যু থ্রো করে</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/userissue/api/v1/user-issue/user/{userId}</code></td>
+<td>User</td>
+<td>ইস্যু তালিকা</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/userissue/api/v1/user-issue/user-detail/{publicOrderId}</code></td>
+<td>User</td>
+<td>একটি ইস্যু</td>
+</tr>
+<tr>
+<td>WS</td>
+<td><code>/userissue/chathub</code></td>
+<td>User বা Admin bearer</td>
+<td>লাইভ পাঠানো ও নেওয়া</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/userissue/api/v1/user-issue-chat/send</code></td>
+<td><strong>নেই</strong></td>
+<td>ব্যর্থ hub পাঠানোর জন্য REST fallback</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/userissue/api/v1/user-issue-chat/$issueId/messages</code></td>
+<td>User (ব্যবহৃত)</td>
+<td>ইতিহাস</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/userissue/api/v1/user-issue-chat/message/$messageId/attachment/download</code></td>
+<td><strong>নেই</strong></td>
+<td>সংযুক্তি ডাউনলোড</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p><code>UserIssues</code> রো, চ্যাট বার্তার রো, প্রতিটি সংযুক্তির জন্য একটি S3 অবজেক্ট, এবং একটি SignalR গ্রুপ মেম্বারশিপ — পোর্টালের হুবহু (<a href="../20-user-portal/P-12-issues-chat.html">P-12</a> §7)।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>চ্যাট রিপোজিটরি</td>
+<td><code>rvl-gobcb-user-app/data/lib/repository/chat_communication_repository_impl.dart:24-77</code></td>
+</tr>
+<tr>
+<td>SignalR সার্ভিস</td>
+<td><code>rvl-gobcb-user-app/data/lib/service/signal_r_service.dart</code></td>
+</tr>
+<tr>
+<td>চ্যাট API</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_service/chat_api_service/</code></td>
+</tr>
+<tr>
+<td>ইস্যু API</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_service/issue_api_service/</code></td>
+</tr>
+<tr>
+<td>ফিচার</td>
+<td><code>rvl-gobcb-user-app/lib/presentation/feature/issues/</code>, <code>feature/report_issue/</code>, <code>feature/chat_communication/</code></td>
+</tr>
+<tr>
+<td>প্যাকেজ</td>
+<td><code>rvl-gobcb-user-app/pubspec.yaml</code> (<code>signalr</code> client dependency, <code>open_file</code>)</td>
+</tr>
+<tr>
+<td>সার্ভার</td>
+<td><code>rvl-gobcb-backend/Services/UserIssue/ETP.UserIssue.Service/Hubs/UserIssueChatHub.cs</code>, <code>Api/ReportIssueChatController.cs</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>অ্যাপের চ্যাট SignalR-প্রথম, শুধুই REST নয়</strong> (§4 নোট ৪)। প্ল্যানের আগের অনুমান এখানে সংশোধিত; পোর্টাল SignalR-শুধু এবং অ্যাপ সেই সাথে REST fallback যোগ করে।</li>
+<li><strong>REST fallback-টি হলো unauthenticated এন্ডপয়েন্ট</strong> (<a href="../20-user-portal/P-12-issues-chat.html">Q-46</a>)। ইভেন্টের ময়দানে দুর্বল কানেকশনে থাকা একজন গ্রাহক — ঠিক যখন সাপোর্ট সবচেয়ে বেশি দরকার — নীরবে anonymous API-তে নেমে আসে।</li>
+<li><strong>ব্যর্থ hub পাঠানো fallback-এ গিলে যায়</strong>, ফলে আসল পাঠানোর ত্রুটি একটি REST ত্রুটি হিসেবে দেখা যায় এবং মূল SignalR কারণ হারিয়ে যায় (<code>catch (e)</code>-তে অব্যবহৃত <code>e</code>)।</li>
+<li><strong>সংযুক্তি ডাউনলোডও anonymous এন্ডপয়েন্ট ব্যবহার করে</strong>, আর public storage-এ লেখে (<code>saveInPublicStorage: true</code>), যার মানে ডিভাইসের যেকোনো অ্যাপ সাপোর্টের সংযুক্তি পড়তে পারে।</li>
+<li><strong>অ্যাপ থেকে কোনো read receipt নেই</strong> — unread-count এন্ডপয়েন্টগুলো সার্ভারে আছে কিন্তু অ্যাপ সেগুলো কল করে না, তাই badge-এর কাউন্ট দেখানো যায় না।</li>
+<li><strong>ইস্যু resolved হওয়ার পুশ সার্ভার-সাইডে বাস্তবায়িত নয়</strong> (<a href="../20-user-portal/P-12-issues-chat.html">Q-50</a>), তাই সাপোর্ট উত্তর দিলে অ্যাপ গ্রাহককে জানাবে না।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  C["Customer"] --> RI["/reportIssue"]
+  RI -->|"POST user-issue"| API["UserIssue API"]
+  API --> M["ReportIssueManager"]
+  M --> DB[("UserIssues + messages")]
+  RI --> CH["/chatCommunication"]
+  CH <-->|"WebSocket chathub"| HUB["UserIssueChatHub"]
+  CH -->|"fallback only"| REST["user-issue-chat REST<br/>(anonymous)"]
+  CH --> S3[("S3 chat-attachments")]
+  A["Support agent"] -.-> see A-24
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="U-06-my-bookings-tickets.html">U-06</a> (অর্ডার), <a href="U-07-profile-settings.html">U-07</a> (আগেই আনা ব্যবহারকারী)। <strong>প্রভাব ফেলে:</strong> <a href="../10-admin-portal/A-24-user-issues-admin.html">A-24</a>, একই থ্রেডের অপার প্রান্ত।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে টেস্টযোগ্য:</strong> ইস্যু ও REST-এর জন্য <strong>সম্পূর্ণ</strong>; hub-এর জন্য <strong>আংশিক</strong> (UserIssue সার্ভিসের WebSocket রুট দরকার)।</p>
+<table>
+<thead>
+<tr>
+<th>আইটেম</th>
+<th>বিস্তারিত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>কমপক্ষে একটি পরিশোধিত অর্ডারসহ seeded ইউজার <code>+8801700000011</code></td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td>পোর্টালে সমতুর্য — <a href="../20-user-portal/P-12-issues-chat.html">P-12</a> দেখুন</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>অ্যাপ চালু করুন; My tickets খুলুন → একটি অর্ডার → ইস্যু রিপোর্ট করুন; কোন পথে বার্তা যাচ্ছে (hub নাকি REST fallback) তা দেখতে অ্যাপের লগ দেখুন</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-userissue.postman_collection.json</code>: "POST /api/v1/user-issue", "GET /api/v1/user-issue/user/{userId}", "GET /api/v1/user-issue/user-detail/{orderId}", "GET /api/v1/user-issue-chat/{reportedIssueId}/messages", "POST /api/v1/user-issue-chat/send"; <code>{{access_token_user}}</code> সেট করুন</td>
+</tr>
+<tr>
+<td>Visual Studio ডিবাগ</td>
+<td><code>ReportIssueManager.CreateAsync</code>, <code>ReportIssueChatManager.SendMessageAsync</code>, <code>UserIssueChatHub.JoinUserIssueChat</code>; ক্লায়েন্ট: <code>ChatCommunicationRepositoryImpl.sendMessage</code></td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td><code>etp."UserIssues"</code>-এ SQL; চ্যাটের রো; Floci-তে <code>chat-attachments/{id}/</code>-এর নিচে S3 অবজেক্ট; fallback বাধ্য করতে WebSocket URL ব্লক করে একটি বার্তা পাঠান</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="U-07-profile-settings.html"><span class="pager-label">পূর্ববর্তী</span><span>U-07 · প্রোফাইল ও সেটিংস</span></a>
+  <a class="pager-next" href="U-09-device-token.html"><span class="pager-label">পরবর্তী</span><span>U-09 · পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

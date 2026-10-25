@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C-04 · ম্যানুয়াল এন্ট্রি · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../30-user-app/index.html">30 · ইউজার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+    <a class="side-section" href="index.html">40 · চেকার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+    <a class="side-item" href="C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+    <a class="side-item" href="C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+    <a class="side-item is-active" href="C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+    <a class="side-item" href="C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+    <a class="side-item" href="C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">40 · চেকার অ্যাপ</a><span class="sep">›</span><span>C-04</span></div>
+<h1><span class="id-chip">C-04</span> ম্যানুয়াল এন্ট্রি</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> ম্যানুয়াল এন্ট্রি</p>
+<p><a href="index.html">← 40 · চেকার অ্যাপ</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>ম্যানুয়াল এন্ট্রি।</strong> টিকিট স্ক্যান না হলে যে পথটি বাকি থাকে: ক্ষতিগ্রস্ত প্রিন্ট, মাসলা-পড়া QR, কিংবা গ্রাহক সংখ্যাটি পড়ে শোনাচ্ছেন। চেকার টিকিট আইডিটি টাইপ করেন এবং অ্যাপ স্ক্যানারের মতোই একই "এই টিকিট কি আমার সেটে আছে এবং এখনো অব্যবহৃত?" পরীক্ষা প্রয়োগ করে — তবে <strong>সিগনেচার যাচাই ছাড়া</strong>, কারণ যাচাই করার মতো কিছুই নেই। এই পার্থক্যটিই হ্যান্ডওভারের গুরুত্বপূর্ণ বিষয়: একটি ম্যানুয়াল এন্ট্রি একটি মানবিক দাবি, ক্রিপ্টোগ্রাফিক দাবি নয়।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>QR স্ক্রিনে (<a href="C-03-qr-scan-validation.html">C-03</a>) থাকা একজন চেকার, ম্যানুয়াল-এন্ট্রি আইকনের মাধ্যমে। রুট <code>/manualEntry</code>।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li>চেকার QR স্ক্রিনে ম্যানুয়াল-এন্ট্রি আইকনে চাপেন এবং টিকিট আইডি টাইপ করেন।</li>
+<li>আইডিটি বড় হাতের অক্ষরে রূপান্তর করে QR স্ক্রিনে ফেরত পাঠানো হয়, যা সেটিকে লোকাল ম্যাপে খোঁজে।</li>
+<li>তিনটি ফলাফল: <strong>আমার সেটে নেই</strong> → invalid ticket; <strong>আগেই চেক করা হয়েছে</strong> (<code>count &gt; 0</code>) → already checked; অন্যথায় → <strong>valid</strong>, বাকি সংখ্যা কমে যায় এবং টিকিটটি ব্যবহৃত হিসেবে চিহ্নিত হয়।</li>
+</ol>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<ol>
+<li><code>onTapManualEntryIcon()</code> (<code>qr_page_view_model.dart:187-196</code>) একটি কলব্যাক নিয়ে <code>ManualEntryRoute</code>-এ নেভিগেট করে।</li>
+<li><code>ManualEntryViewModel.onClickSubmit(ticketId)</code> (<code>manual_entry_view_model.dart:26-32</code>) <strong>প্রথমে স্ক্রিনটি pop করে</strong> এবং তারপর কলব্যাক কল করে:
+   <code>dart
+   navigateBack();
+   argument?.onReceivedTicketId(ticketId.toUpperCase());</code></li>
+<li><strong>ইনপুটটি খোঁজার আগেই বড় হাতের অক্ষরে রূপান্তর হয়</strong> (<code>:32</code>), তাই ইনপুটকে ফোল্ড করার মাধ্যমে টিকিট আইডি case-insensitively তুলনা হয় — সেভ করা মানগুলো নিচু হাতের অক্ষরে রূপান্তর করা হয় না।</li>
+<li><code>_checkManualEntry({required String ticketId})</code> (<code>qr_page_view_model.dart:198-231</code>):
+   - <code>_allTicketList[ticketId] == null</code> → <code>_updateTicketStatus(ticketId: ticketId, isManual: true)</code>, তারপর একটি শব্দসহ <code>InvalidTicket()</code> (<code>:200-208</code>)। <strong>রোটি তবুও লেখা হয়</strong> যদিও টিকিটটি অজানা — ডাউনলোডে কখনোই না থাকা এমন টিকিটে ম্যানুয়াল চেষ্টা কীভাবে পরে সার্ভারে পৌঁছায়, সেটাই এর ফলে;
+   - <code>ticketState.count &gt; 0</code> → একটি শব্দসহ <code>AlreadyCheckedTicket()</code>, এবং <strong>ইচ্ছাকৃতভাবে কোনো লেখা নেই</strong> — কোডে এর টীকা দেওয়া আছে: "If we know this ticket is already checked, we don't need to send it to backend" (<code>:210-220</code>);
+   - অন্যথায় → <code>_remainingTickets</code> কমানো, <code>_updateTicketStatus(ticketId: ticketId, isManual: true)</code>, তারপর একটি শব্দসহ <code>ValidTicket()</code> (<code>:222-230</code>)।</li>
+<li><code>_updateTicketStatus</code> লেখে <code>isManual: true</code> এবং <code>isSynced: false</code> (<code>:347-372</code>), যা <a href="C-05-ticket-sync.html">C-05</a>-কে এটিকে <code>-1</code> হিসেবে পাঠাতে দেয়।</li>
+<li><code>checkTextFieldText</code> (<code>manual_entry_view_model.dart:22-24</code>) চেকার টাইপ করার সঙ্গে সঙ্গে <code>_manualEntryState.value.validateTicketId(text)</code> কল করে।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>lib/presentation/feature/manual_entry/manual_entry_view_model.dart</code> + স্ক্রিন</td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>lib/presentation/feature/qr_page/qr_page_view_model.dart:187-231</code></td>
+</tr>
+<tr>
+<td>লোকাল DB</td>
+<td>drift <code>qrTable</code> (<a href="C-02-offline-ticket-download.html">C-02</a>)</td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>এন্ট্রির সময় কোনোটিই নয় — শুধু স্থানীয়</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরকট">6. API কন্ট্রাক্ট</h2>
+<p><strong>কোনোটি নয়।</strong> একটি ম্যানুয়াল এন্ট্রি কোনো HTTP কল করে না; এটি পরে <a href="C-05-ticket-sync.html">C-05</a> দিয়ে সিঙ্ক হয়।</p>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>প্রতি ম্যানুয়াল চেষ্টায় একটি লোকাল রো: <code>checkNumber + 1</code>, <code>isScannedFromOurApp = true</code>, <strong><code>isManual = true</code></strong>, <code>isSynced = false</code>। অজানা টিকিট আইডির ক্ষেত্রে একটি <strong>নতুন রো তৈরি হয়</strong> (<code>:200-208</code>), তাই লোকাল টেবিল এমন আইডিতে বড় হতে পারে যেগুলো কখনোই ইভেন্টে ছিল না।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ম্যানুয়াল এন্ট্রি ভিউ মডেল</td>
+<td><code>rvl-gobcb-checker-app/lib/presentation/feature/manual_entry/manual_entry_view_model.dart:22-32</code></td>
+</tr>
+<tr>
+<td>এন্ট্রি চেক</td>
+<td><code>rvl-gobcb-checker-app/lib/presentation/feature/qr_page/qr_page_view_model.dart:187-231</code></td>
+</tr>
+<tr>
+<td>স্ট্যাটাস লেখা</td>
+<td><code>rvl-gobcb-checker-app/lib/presentation/feature/qr_page/qr_page_view_model.dart:347-372</code></td>
+</tr>
+<tr>
+<td>wire-এ ম্যানুয়াল এনকোডিং</td>
+<td><code>rvl-gobcb-checker-app/data/lib/repository/qr_repository_impl.dart:24-26</code></td>
+</tr>
+<tr>
+<td>রুট</td>
+<td><code>rvl-gobcb-checker-app/lib/presentation/navigation/route_path.dart</code> (<code>manualEntry</code>)</td>
+</tr>
+<tr>
+<td>Admin দিক</td>
+<td><a href="../10-admin-portal/A-11-seat-reservation.html">A-11</a>, <a href="../60-cross-cutting/X-13-agent-pool.html">X-13</a> (এজেন্টের অফলাইন-বিক্রীত টিকিটের প্রবাহ — অফলাইন টিকিটগুলোর অস্তিত্বই এর ফল)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>একটি ম্যানুয়াল এন্ট্রি VDS সিগনেচার যাচাই সম্পূর্ণভাবে এড়িয়ে যায়।</strong> সিগনেচারের পথ কেবল <code>onQRCodeDetected</code>-এ (<a href="C-03-qr-scan-validation.html">C-03</a>); ম্যানুয়াল এন্ট্রি সরাসরি লোকাল ম্যাপের খোঁজায় যায়। তাই একজন চেকার ডাউনলোড করা সেটে থাকা যেকোনো টিকিট আইডি গ্রহণ করতে পারেন, প্রিন্ট করা হোক বা না হোক <span class="badge-unconfirmed">[UNCONFIRMED: Q-75]</span>।</li>
+<li><strong>অজানা টিকিট আইডিও লোকাল ডাটাবেসে লেখা হয়</strong> (§4 নোট 4), তাই একটি টাইপিং ভুল নতুন রো হয়ে যায়, যা পরে এমন একটি টিকিটের জন্য <code>-1</code> ম্যানুয়াল চেক হিসেবে সার্ভারে জানানো হয় যেটি আসলে নেই <span class="badge-unconfirmed">[UNCONFIRMED: Q-75]</span>।</li>
+<li><strong>দৈর্ঘ্য যাচাইটি কমেন্ট করা আছে</strong> (<code>manual_entry_view_model.dart:27-30</code> — <code>if (ticketId.length &lt; 13)</code> ব্লকটি কমেন্ট করা), তাই ফিল্ডটি যেকোনো কিছু গ্রহণ করে; একমাত্র দ্বার হলো স্ট্রিংটি লোকাল ম্যাপে আছে কি না।</li>
+<li><strong>শুধু ইনপুটটি বড় হাতের অক্ষরে রূপান্তর হয়</strong>, তাই ছাপা টিকিটে থাকা নিচু হাতের অক্ষরের আইডি মিশ্র-কেস সেভ করা মানের সঙ্গে মিলবে, কিন্তু সেভ করা মানগুলো নিজেরা অক্ষত থাকে — case-সম্পর্কিত মিস ডিবাগ করার সময় এই অসমতা মনে রাখার মতো।</li>
+<li><strong>খোঁজার আগে স্ক্রিনটি pop হয়</strong>, তাই ফলাফলটি এন্ট্রি স্ক্রিনে নয়, QR স্ক্রিনে দেখা যায়; চেকার দ্রুত পিছনে ফিরে গেলে তিনি ফলাফলটি মিস করতে পারেন।</li>
+<li><strong>সার্ভারে ম্যানুয়াল এন্ট্রি আর স্ক্যান কেবল <code>-1</code> convention দিয়ে আলাদা</strong> (<a href="C-02-offline-ticket-download.html">Q-68</a>), তাই sign বিবেচনা না করলে গেট রিপোর্টে দুটি মিশে যায় <span class="badge-unconfirmed">[UNCONFIRMED: Q-68]</span>।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  CK["Checker"] --> ME["/manualEntry<br/>types ticket id"]
+  ME -->|"toUpperCase"| QR["QR screen<br/>_checkManualEntry"]
+  QR --> L{"in local map?"}
+  L -->|"no"| INV["Invalid ticket<br/>(row still written)"]
+  L -->|"count > 0"| AL["Already checked<br/>(no write)"]
+  L -->|"count == 0"| OK["Valid<br/>isManual = true"]
+  INV & OK --> DB[("Local qrTable<br/>isSynced = false")]
+  DB -.->|"sent as -1"| C5["C-05 sync"]
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="C-02-offline-ticket-download.html">C-02</a> (লোকাল সেট), <a href="C-03-qr-scan-validation.html">C-03</a> (যে স্ক্রিন থেকে এটি খোলা হয়)। <strong>প্রভাব ফেলে:</strong> <a href="C-05-ticket-sync.html">C-05</a>, <a href="../10-admin-portal/A-19-gate-reports.html">A-19</a>।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে টেস্টযোগ্যতা: সম্পূর্ণ</strong> — কোনো নেটওয়ার্ক জড়িত নয়।</p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>ডাউনলোড করা ইভেন্টসহ একজন চেকার; একটি অব্যবহৃত টিকিট আইডি এবং একটি আগেই স্ক্যান করা টিকিট আইডি</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td>প্রযোজ্য নয়</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>QR স্ক্রিন খুলুন, ম্যানুয়াল-এন্ট্রি আইকনে চাপুন; একটি বৈধ অব্যবহৃত আইডি টাইপ করুন (Valid আশা করুন), একই আইডি আবার (Already checked আশা করুন), একটি অজানা আইডি (Invalid আশা করুন), এবং একটি নিচু হাতের অক্ষরের বৈধ আইডি (<code>toUpperCase</code>-এর কারণে Valid আশা করুন)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>কোনো এন্ডপয়েন্ট জড়িত নয়</td>
+</tr>
+<tr>
+<td>Visual Studio ডিবাগ</td>
+<td><code>ManualEntryViewModel.onClickSubmit</code>, <code>QrPageViewModel._checkManualEntry</code></td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td><code>SELECT * FROM qrTable WHERE "isManual" = 1</code>; এরপর ৯০-সেকেন্ডের sync চালান (<a href="C-05-ticket-sync.html">C-05</a>) এবং নিশ্চিত করুন সেই রোগুলো <code>-1</code> হিসেবে বেরিয়ে যাচ্ছে</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="C-03-qr-scan-validation.html"><span class="pager-label">পূর্ববর্তী</span><span>C-03 · QR স্ক্যান যাচাই</span></a>
+  <a class="pager-next" href="C-05-ticket-sync.html"><span class="pager-label">পরবর্তী</span><span>C-05 · স্ক্যান সিঙ্ক</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

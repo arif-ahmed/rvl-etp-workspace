@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>U-07 · প্রোফাইল ও সেটিংস · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="index.html">30 · ইউজার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+    <a class="side-item" href="U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+    <a class="side-item" href="U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+    <a class="side-item" href="U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+    <a class="side-item" href="U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+    <a class="side-item" href="U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+    <a class="side-item is-active" href="U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+    <a class="side-item" href="U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+    <a class="side-item" href="U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+    <a class="side-item" href="U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">30 · ইউজার অ্যাপ</a><span class="sep">›</span><span>U-07</span></div>
+<h1><span class="id-chip">U-07</span> প্রোফাইল ও সেটিংস</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> প্রোফাইল ও সেটিংস</p>
+<p><a href="index.html">← 30 · ইউজার অ্যাপ</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>প্রোফাইল ও সেটিংস।</strong> অ্যাপের অ্যাকাউন্ট স্ক্রিন: ব্যক্তিগত তথ্য, গ্রাহক যেসব ফিল্ড সম্পাদনা করতে পারেন, পাসওয়ার্ড পরিবর্তনের ফর্ম, এবং ভাষা ও থিমের মতো অ্যাপ-লেভেল সেটিংস। এটি <a href="../20-user-portal/P-11-profile.html">P-11</a>-এর অ্যাপ সংশ্লিষ্ট সংস্করণ, এবং একই সাথে <strong>অ্যাকাউন্ট মুছে ফেলা</strong> সুবিধা দেওয়া একমাত্র ক্লায়েন্ট (<a href="../60-cross-cutting/X-11-delete-account-force-update.html">X-11</a>)।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>সাইন-ইন করা গ্রাহক, হোম ড্রয়ার বা প্রোফাইল ট্যাব থেকে। রুট <code>/profile</code>, <code>/setting</code>, এবং auth সাব-রুট <code>/forgetPassword</code>, <code>/confirmNewPassword</code>, <code>/forgetPasswordSuccess</code>।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li>প্রোফাইল স্ক্রিন গ্রাহকের তথ্য লোড করে এবং নাম, ফোন, ইমেইল ও সম্পাদনাযোগ্য ফিল্ড দেখায়।</li>
+<li>জন্ম তারিখ, পরিচয়পত্র বা ঠিকানা সম্পাদনা করে সেভ করলে identity API হালনাগাদ হয়।</li>
+<li><strong>Change password</strong> ফর্ম নতুন পাসওয়ার্ড ও কনফার্মেশনের মিল যাচাই করে, তারপর Cognito কল করে।</li>
+<li>সেটিংসে থাকে ভাষা, থিম এবং সাইন-আউট।</li>
+<li><strong>অ্যাকাউন্ট মুছে ফেলা</strong> নিশ্চিতকরণ চায় এবং identity API কল করে — পোর্টালে এর কোনো সমতুর্য নেই।</li>
+</ol>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<ol>
+<li><strong>[HTTP + ইউজার টোকেন] → identity API:</strong> <code>GET user/my-profile?user_id={userId}</code> (<code>profile_api_service_impl.dart:17-22</code>) → <code>UserDataResponse</code>। লক্ষ্য করুন, অ্যাপ <code>user_id</code> একটি <strong>query parameter</strong> হিসেবে পাঠায়, যা পোর্টালের কল করে না (<a href="../20-user-portal/P-11-profile.html">P-11</a> §4) <span class="badge-unconfirmed">[UNCONFIRMED: Q-60]</span>।</li>
+<li><strong>[HTTP + ইউজার টোকেন] → identity API:</strong> <code>PUT user/my-profile</code> (<code>:32-38</code>) যেখানে <code>verification_type</code>, <code>verification_id</code>, <code>address</code> এবং <strong><code>dob</code> <code>DateFormat("yyyy-MM-dd")</code> ফরম্যাটে</strong> — অর্থাৎ শুধু তারিখের একটি স্ট্রিং, যেখানে পোর্টাল পূর্ণ ISO timestamp পাঠায়। ত্রুটিগুলো টাইপ করা এক্সেপশনে মানচিত্রিত হয়: <code>user_update_and_verification_failed</code> → <code>UserUpdateAndVerificationFailedException</code>, অন্য যেকোনো কিছু → <code>UserProfileUpdateFailedException</code> (<code>:39-44</code>)।</li>
+<li><span class="badge-unconfirmed">[UNCONFIRMED: Q-61]</span> — <strong><code>delete-my-profile</code>-এর কোনো কলার নেই।</strong> <code>auth_api_service_impl.dart:296</code> <code>apiClient.delete('user/delete-my-profile')</code> বাস্তবায়ন করে, কিন্তু কোনো view model বা স্ক্রিন সেটি কল করে না: <code>lib/</code> ও <code>domain/</code>-এ সার্চ করলে কোনো কলার বা রুট পাওয়া যায় না। তাই API ডেটা লেয়ারে যুক্ত, কিন্তু delete-account <strong>UI অনুপস্থিত</strong>, যা <a href="../60-cross-cutting/X-11-delete-account-force-update.html">X-11</a>-এর বর্ণনার বিরোধিতা করে, সেখানে এটিকে app-only বলা হয়েছে। স্ক্রিনটি হয় সরানো হয়েছে, নয়তো কখনোই বানানো হয়নি।</li>
+<li><strong>পাসওয়ার্ড পরিবর্তন</strong> identity API-র মাধ্যমে নয়, auth রিপোজিটরি থেকে Amplify/Cognito-র মাধ্যমে যায় (<code>auth_repository_impl.dart</code>)। ফর্মটি <code>profile_view_model.dart</code>-এ সর্বনিম্ন দৈর্ঘ্য ৮ এবং কনফার্মেশন ফিল্ড যাচাই করে (<code>confirmNewPasswordTextFieldChecker</code>, <code>:323-325</code>, <code>password_tab_states.dart</code>-সহ)।</li>
+<li><strong>Register SSO user</strong> (<code>POST user/register-sso</code>, <code>:49-54</code>) OneID সাইন-ইন সফল হওয়ার পর ব্যবহৃত হয়, বডি <code>{"name": "", "cognito_sub": …}</code> — নাম <strong>খালি</strong> পাঠানো হয়, তাই OneID ব্যবহারকারীদের প্রোফাইলের নাম তারা নিজে না লেখা পর্যন্ত ফাঁকা থাকে।</li>
+<li>সেটিংসের অবস্থা (ভাষা, থিম, লোকেশন, দেশ) <code>data/lib/local/shared_preference/entity/</code>-এর নিচে <code>SharedPreferences</code> এন্টিটিতে রাখা হয়; সাইন-আউট Amplify সেশন মুছে ফেলে।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>lib/presentation/feature/profile/</code> (<code>state/password_tab_states.dart</code>-সহ), <code>feature/settings/</code></td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট সার্ভিস</td>
+<td><code>ProfileRepositoryImpl</code>, <code>AuthRepositoryImpl</code>, <code>ProfileApiServiceImpl</code>, <code>AuthApiServiceImpl</code></td>
+</tr>
+<tr>
+<td>API ক্লায়েন্ট</td>
+<td><code>profile_api_client.dart</code>, <code>auth_api_client.dart</code> (base URL <code>.env</code> <code>AUTH_API_BASE_URL</code>-এ থেকে)</td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Identity API (প্রোফাইল, ডিলিট), Cognito user pool (পাসওয়ার্ড)</td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td>identity API-এর নিজস্ব user টেবিল</td>
+</tr>
+<tr>
+<td>লোকাল</td>
+<td><code>SharedPreferences</code>: ভাষা, থিম, সেশন</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পাথ</th>
+<th>অথ</th>
+<th>রিকোয়েস্ট → রেসপন্স</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>{AUTH_API_BASE_URL}/user/my-profile?user_id={userId}</code></td>
+<td>user bearer</td>
+<td>— → <code>UserDataResponse</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>{AUTH_API_BASE_URL}/user/my-profile</code></td>
+<td>user bearer</td>
+<td><code>{ verification_type, verification_id, address, dob }</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>{AUTH_API_BASE_URL}/user/register-sso</code></td>
+<td>—</td>
+<td><code>{ name: "", cognito_sub }</code></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>{AUTH_API_BASE_URL}/user/delete-my-profile</code></td>
+<td>user bearer</td>
+<td><strong>বাস্তবায়িত, কোনো কলার নেই</strong> (<a href="../20-user-portal/P-11-profile.html">Q-61</a>)</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Cognito change-password</td>
+<td>user pool session</td>
+<td>পুরোনো ও নতুন পাসওয়ার্ড</td>
+</tr>
+</tbody>
+</table>
+<p>নমুনা, অ্যাপ যেভাবে PUT রিকোয়েস্ট পাঠায় (লক্ষ্য করুন শুধু তারিখের <code>dob</code>):</p>
+<pre><code class="language-json">{ &quot;verification_type&quot;: &quot;nid&quot;, &quot;verification_id&quot;: &quot;1994567890123&quot;,
+  &quot;address&quot;: &quot;House 42, Road 7, Dhanmondi, Dhaka-1209&quot;, &quot;dob&quot;: &quot;1994-07-21&quot; }
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>identity API-এর user রো (<code>dob</code>, ঠিকানা, ভেরিফিকেশন); Cognito পাসওয়ার্ড; সেটিংসের জন্য লোকাল <code>SharedPreferences</code>। <code>etp</code>-তে কিছু লেখা হয় না — পোর্টালের মতোই, প্রোফাইল পরিবর্তন কখনোই টিকিট হোল্ডারের তথ্যে পৌঁছায় না (<a href="U-06-my-bookings-tickets.html">U-06</a>)।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Profile API</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_service/profile_api_service/profile_api_service_impl.dart:17-54</code></td>
+</tr>
+<tr>
+<td>অ্যাকাউন্ট ডিলিট</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_service/auth_api_service/auth_api_service_impl.dart:296</code></td>
+</tr>
+<tr>
+<td>প্রোফাইল রিপোজিটরি</td>
+<td><code>rvl-gobcb-user-app/data/lib/repository/profile_repository_impl.dart:17</code></td>
+</tr>
+<tr>
+<td>Auth রিপোজিটরি</td>
+<td><code>rvl-gobcb-user-app/data/lib/repository/auth_repository_impl.dart:12</code></td>
+</tr>
+<tr>
+<td>প্রোফাইল ভিউ মডেল</td>
+<td><code>rvl-gobcb-user-app/lib/presentation/feature/profile/profile_view_model.dart:323-325</code></td>
+</tr>
+<tr>
+<td>পাসওয়ার্ড স্টেট</td>
+<td><code>rvl-gobcb-user-app/lib/presentation/feature/profile/state/password_tab_states.dart:8-39</code></td>
+</tr>
+<tr>
+<td>সেটিংস এন্টিটি</td>
+<td><code>rvl-gobcb-user-app/data/lib/local/shared_preference/entity/</code> (<code>language_</code>, <code>app_theme_mode_</code>, <code>user_session_</code>)</td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_client/profile_api_client.dart</code>, <code>auth_api_client.dart:6</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong><code>delete-my-profile</code> বাস্তবায়িত কিন্তু পৌঁছানো যায় না</strong> (§4 নোট ৩) <span class="badge-unconfirmed">[UNCONFIRMED: Q-61]</span>। এটি <a href="../60-cross-cutting/X-11-delete-account-force-update.html">X-11</a>-এর বিরোধিতা করে এবং সেখানে সংশোধন করা দরকার: আজ কোনো ক্লায়েন্টই UI-এর মাধ্যমে অ্যাকাউন্ট মুছতে পারে না। এন্ডপয়েন্টটি আছে, তাই ঘাটতি শুধু অনুপস্থিত স্ক্রিন।</li>
+<li><strong><code>dob</code> পাঠানো হয় <code>yyyy-MM-dd</code> হিসেবে</strong>, পোর্টালে পূর্ণ ISO timestamp। identity API দুটোই পার্স করলে ঠিক আছে; কঠোরভাবে ভ্যালিডেট করলে দুটো ক্লায়েন্টের একটি ব্যর্থ হবে <span class="badge-unconfirmed">[UNCONFIRMED: Q-60]</span>।</li>
+<li><strong>অ্যাপের GET-এ <code>user_id</code> একটি query parameter হিসেবে যায়</strong>, কিন্তু পোর্টালের কলে যায় না — একই এন্ডপয়েন্ট কীভাবে কল করা হচ্ছে তার একটি অসামঞ্জস্য (<a href="../20-user-portal/P-11-profile.html">Q-60</a>)।</li>
+<li><strong>OneID রেজিস্ট্রেশন খালি নাম পাঠায়</strong> (<code>:51</code>), তাই OneID সাইন-ইনের পর গ্রাহক তা সম্পাদনা না করা পর্যন্ত প্রোফাইলের নাম ফাঁকা থাকে।</li>
+<li><strong>পোর্টালের মতো একই চারটি সম্পাদনাযোগ্য ফিল্ড</strong> — নাম, ফোন ও ইমেইল দুই ক্লায়েন্টেই read-only থাকে, তাই ভুল করে লেখা ফোন নম্বর পণ্যের কোথাও শুধরানো যায় না <code>[UNCONFIRMED: Q-43](../20-user-portal/P-11-profile.md)</code>।</li>
+<li><strong>সেটিংস <code>SharedPreferences</code>-এ থাকে</strong>, তাই ভাষা ও থিম প্রতি ডিভাইসে আলাদা এবং অ্যাপ পুনর্বinstall করলে হারিয়ে যায়।</li>
+<li><strong>identity API এই রিপোজিটরিতে নেই</strong> <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>, তাই এর কোনো কলই ওয়ার্কস্পেসের কোড থেকে যাচাই করা যায় না।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  C["Customer"] --> PF["/profile"]
+  C --> ST["/setting"]
+  PF -->|"GET/PUT user/my-profile"| ID["Identity API<br/>(not in repo)"]
+  PF -->|"Auth.changePassword"| CG["Cognito user pool"]
+  PF -->|"register-sso after OneID"| ID
+  PF -.->|"delete-my-profile, no UI"| ID
+  ST --> SP[("SharedPreferences<br/>language, theme, session")]
+  ST --> SO["Sign out"]
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="../60-cross-cutting/X-06-user-registration.html">X-06</a>, <a href="../60-cross-cutting/X-07-user-password-login.html">X-07</a>, <a href="../60-cross-cutting/X-08-oneid-sso.html">X-08</a>। <strong>প্রভাব ফেলে:</strong> <a href="U-09-device-token.html">U-09</a> — টোকেনটি PushNotification সার্ভিসে প্রতি সাইন-ইন করা ব্যবহারকারীর জন্য আলাদা করে সংরক্ষিত।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে টেস্টযোগ্য: আংশিক।</strong> স্ক্রিনগুলো <code>/p/identity</code> স্টাবের বিপরীতে সম্পূর্ণ চলে; Cognito কলের জন্য আসল বা লোকাল user pool দরকার।</p>
+<table>
+<thead>
+<tr>
+<th>আইটেম</th>
+<th>বিস্তারিত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>seeded ইউজার <code>+8801700000011</code>; <code>/p/identity</code> স্টাব একটি নির্দিষ্ট প্রোফাইল ফেরত দেয়</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td>পোর্টালে <code>/en/user-profile</code> — <a href="../20-user-portal/P-11-profile.html">P-11</a> দেখুন</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>অ্যাপ চালু করুন; <code>/profile</code> খুলুন; DOB ও ঠিকানা সম্পাদনা করে অ্যাপের লগে PUT বডি দেখুন — নিশ্চিত করুন <code>dob</code> হলো <code>yyyy-MM-dd</code>; খালি নাম দেখতে OneID দিয়ে সাইন-ইন করুন</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>কোনো GoBCB কালেকশনে নেই — এগুলো identity-API-র কল <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span></td>
+</tr>
+<tr>
+<td>Visual Studio ডিবাগ</td>
+<td>কেবল ক্লায়েন্ট (<code>ProfileRepositoryImpl</code>); identity API আউট অফ প্রসেস</td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>Floci কনসোল লগে স্টাবের গ্রহণ করা PUT বডি; ভাষা ও থিমের জন্য <code>SharedPreferences</code>-এর বিষয়বস্তু</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="U-06-my-bookings-tickets.html"><span class="pager-label">পূর্ববর্তী</span><span>U-06 · আমার বুকিং ও টিকিট</span></a>
+  <a class="pager-next" href="U-08-issues-chat.html"><span class="pager-label">পরবর্তী</span><span>U-08 · ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

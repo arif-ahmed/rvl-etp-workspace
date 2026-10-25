@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>U-05 · বুকিং ও WebView পেমেন্ট · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="index.html">30 · ইউজার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+    <a class="side-item" href="U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+    <a class="side-item" href="U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+    <a class="side-item" href="U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+    <a class="side-item is-active" href="U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+    <a class="side-item" href="U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+    <a class="side-item" href="U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+    <a class="side-item" href="U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+    <a class="side-item" href="U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+    <a class="side-item" href="U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">30 · ইউজার অ্যাপ</a><span class="sep">›</span><span>U-05</span></div>
+<h1><span class="id-chip">U-05</span> বুকিং ও WebView পেমেন্ট</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> বুকিং ও WebView পেমেন্ট</p>
+<p><a href="index.html">← 30 · ইউজার অ্যাপ</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>বুকিং ও WebView পেমেন্ট।</strong> কেনাকাটার একেবারে শেষ ধাপ। অ্যাপ অর্ডারটি Booking-এ পাঠায়, একটি <code>checkoutUrl</code> পায়, সেটি অ্যাপের ভেতরের <strong>WebView</strong>-তে খোলে, এবং পেমেন্ট সফল হয়েছে কি না তা শুধুমাত্র <strong>কোন URL-এ WebView নেভিগেট করল সেটি দেখেই</strong> সিদ্ধান্ত নেয়। অ্যাপের দৃষ্টিকোণ থেকে কোনো gateway callback নেই এবং কোনো polling loop-ও নেই — এটিই ওয়েব পোর্টাল থেকে মূল পার্থক্য, যেখানে পেমেন্ট-স্ট্যাটাস এন্ডপয়েন্ট পোল করা হয় (<a href="../20-user-portal/P-06-booking-payment.html">P-06</a>)।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>সাইন-ইন করা গ্রাহক <a href="U-04-seat-selection-promo.html">U-04</a> সম্পন্ন করছেন। রুট <code>/payment</code> (<code>RoutePath.payment</code>), সঙ্গে <code>PaymentArgument { paymentUrl, targetUrl, onPaymentSuccess }</code>।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li>অ্যাপ অর্ডারটি পাঠায়; Booking <code>checkoutUrl</code> ফেরত দেয় (DgePay পেজ)।</li>
+<li>WebView সেটি লোড করে এবং লোড হওয়ার সময় একটি প্রগ্রেস বার দেখায়।</li>
+<li>গ্রাহক gateway পেজে পেমেন্ট করেন।</li>
+<li>সফল হলে gateway একটি পরিচিত হোস্টে রিডাইরেক্ট করে। WebView সেই URL দেখে, <code>onPaymentSuccess</code> কল করে, এবং অ্যাপ <strong>My tickets</strong>-এ চলে যায়।</li>
+<li>গ্রাহক বাতিল করলে বা ফিরে আসলে কিছুই হয় না — <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-05</span> অবস্ধার মেয়াদ শেষ না হওয়া পর্যন্ত অর্ডারটি pending থাকে।</li>
+</ol>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + ইউজার টোকেন]</strong> <code>POST booking/api/v1/user-booking-order</code> (<code>ticket_api_service_impl.dart:65</code>) → <code>CheckOutResponse { checkoutUrl }</code> (<code>response/check_out_response.dart:13</code>)। সিট, টিকিট-হোল্ডারের নাম ও ফোনসহ <code>ticket_booking_view_model.dart:521-528</code> থেকে কল করা হয়।</li>
+<li><code>if (paymentUrl != null)</code> হলে অ্যাপ <code>PaymentArgument(paymentUrl, targetUrl, onPaymentSuccess)</code> সহ <code>/payment</code>-এ যায় (<code>:530-553</code>)। <code>targetUrl</code> আসে <strong><code>.env</code></strong> থেকে: <code>dotenv.env['PAYMENT_SUCCESS_URL'] ?? 'ticket-bangla.com/tickets'</code> (<code>:535-536</code>) — এটি একটি <strong>hard-coded production fallback</strong> <span class="badge-unconfirmed">[UNCONFIRMED: Q-58]</span>।</li>
+<li><code>PaymentViewModel</code> তৈরি করে একটি <code>WebViewController</code> (<code>payment_view_model.dart:44-52</code>) <code>webview_flutter</code> 4.13.0 থেকে (+ <code>webview_flutter_android</code> 4.10.1, <code>webview_flutter_wkwebview</code> 3.23.0), <strong>JavaScript enabled</strong> রেখে (<code>setJavaScriptMode(JavaScriptMode.unrestricted)</code>), সাদা ব্যাকগ্রাউন্ড, iOS inline-media প্যারামিটার (<code>:54-62</code>) এবং Android ডিবাগিং ও gesture-free media playback (<code>:64-70</code>)।</li>
+<li><strong>সাফল্য শনাক্তকরণ</strong> হয় <code>_onNavigationRequest</code>-এ (<code>:109-126</code>):
+   - URL যদি <code>http://</code> বা <code>https://</code> দিয়ে শুরু হয় <strong>এবং</strong> <code>targetUrlHostName</code> ধারণ করে, তাহলে — একবার-use <code>_hasPopped</code> ফ্ল্যাগের নিরাপত্তাবলয়ে — এটি <code>argument.onPaymentSuccess(request.url)</code> কল করে এবং স্ক্রিন pop করে, <code>NavigationDecision.prevent</code> ফেরত দেয়;
+   - অন্যান্য http/https URL স্বাভাবিকভাবে নেভিগেট করে;
+   - <strong>অন্য যেকোনো স্কিম ব্লক করা হয়</strong> <code>NavigationDecision.prevent</code> দিয়ে এবং লগ করা হয় (<code>:122-125</code>) — gateway-কে ব্যাংক অ্যাপে হ্যান্ড-অফ দেওয়া এটাই আটকায়।</li>
+<li><code>onPaymentSuccess</code> একটি <code>ticket_booking_success</code> analytics ইভেন্ট ফায়ার করে, যেখানে থাকে <code>payment_success_url</code>, <code>event_id</code>, <code>gallery_id</code>, <code>block_id</code>, <code>level_id</code>, <code>number_of_seats</code>, <code>price_per_seat</code> ও <code>total_charge</code> (<code>:537-551</code>), তারপর <code>_navigateToMyTicketPage()</code> কল করে।</li>
+<li>এই মেথডটি অর্ডার <strong>খোলে না</strong>। এটি ব্যাক স্ট্যাক মুছে <code>HomeRoute(initialNavigationItemType: NavigationItemType.myTickets)</code>-এ যায় (<code>:556-565</code>)।</li>
+<li>সার্ভার-সাইডে অর্ডারের পেমেন্ট সম্পন্ন করে DgePay callback এবং <code>OrderSuccess</code> মেসেজ; <a href="../20-user-portal/P-06-booking-payment.html">P-06</a> ও <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-01</span> দেখুন।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>lib/presentation/feature/payment/payment_view_model.dart</code>, <code>payment_argument.dart</code>, <code>feature/ticket_booking/</code></td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>.env</code> key <code>PAYMENT_SUCCESS_URL</code></td>
+</tr>
+<tr>
+<td>API সার্ভিস</td>
+<td><code>data/lib/remote/api_service/ticket_api_service/ticket_api_service_impl.dart:65</code></td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Booking (অর্ডার), Admin (পেমেন্ট-gateway কনফিগ read model)</td>
+</tr>
+<tr>
+<td>বাহ্যিক</td>
+<td>WebView-এর ভেতরে <strong>DgePay</strong> gateway পেজ</td>
+</tr>
+<tr>
+<td>অ্যানালিটিক্স</td>
+<td><code>AnalyticsRepository.logCustomEvent</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পাথ</th>
+<th>অথ</th>
+<th>রিকোয়েস্ট → রেসপন্স</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/booking/api/v1/user-booking-order</code></td>
+<td>User</td>
+<td>বুকিং + সিট + হোল্ডার → <code>CheckOutResponse { checkoutUrl }</code></td>
+</tr>
+<tr>
+<td>—</td>
+<td>WebView নেভিগেশন</td>
+<td>—</td>
+<td>অ্যাপ <code>request.url</code> পরীক্ষা করে; <strong>সফলতায় কোনো API কল হয় না</strong></td>
+</tr>
+</tbody>
+</table>
+<p>নমুনা, রেসপন্স (মানগুলো কেবল উদাহরণ হিসেবে):</p>
+<pre><code class="language-json">{ &quot;checkoutUrl&quot;: &quot;https://dgpay.dhaka-payment.com/checkout/8f2c1d4e-77aa-4b2e-9c31-55de9a0b1f22&quot; }
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>Booking সার্ভিস অর্ডার ও তার সিট লেখে; gateway নিজস্ব callback-এর মাধ্যমে পেমেন্ট জানায় (অ্যাপ থেকে নয়)। লোকালে একটি analytics ইভেন্ট লগ হয়। কোনো S3 অবজেক্ট নয়, ক্লায়েন্ট থেকে কোনো কিউ মেসেজ নয়।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>পেমেন্ট ভিউ মডেল</td>
+<td><code>rvl-gobcb-user-app/lib/presentation/feature/payment/payment_view_model.dart:44-142</code></td>
+</tr>
+<tr>
+<td>আর্গুমেন্ট</td>
+<td><code>rvl-gobcb-user-app/lib/presentation/feature/payment/route/payment_argument.dart:4-12</code></td>
+</tr>
+<tr>
+<td>বুকিং + নেভিগেশন</td>
+<td><code>rvl-gobcb-user-app/lib/presentation/feature/ticket_booking/ticket_booking_view_model.dart:517-565</code></td>
+</tr>
+<tr>
+<td>অর্ডার তৈরির API</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/api_service/ticket_api_service/ticket_api_service_impl.dart:65</code></td>
+</tr>
+<tr>
+<td>রেসপন্স মডেল</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/response/check_out_response.dart:3-13</code></td>
+</tr>
+<tr>
+<td>প্যাকেজ</td>
+<td><code>rvl-gobcb-user-app/pubspec.yaml</code> (<code>webview_flutter: 4.13.0</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>সাফল্য সার্ভারে যাচাই না করে রিডাইরেক্ট URL থেকে অনুমান করা হয়।</strong> অ্যাপ কখনো পেমেন্ট-স্ট্যাটাস এন্ডপয়েন্ট কল করে না, ফলে gateway পেজ যেদের রিডাইরেক্ট করে কিন্তু webhook এখনো পৌঁছায়নি এমন একজন গ্রাহক "সফল" দেখেন অথচ অর্ডারটি এখনো অপরিশোধিত থাকে <span class="badge-unconfirmed">[UNCONFIRMED: Q-59]</span>। এটিই প্ল্যানে উল্লেখ করা অ্যাপ বনাম পোর্টালের পার্থক্য।</li>
+<li><strong>সাফল্যের হোস্ট মিলিয়ে দেখা হয় <code>String.contains</code></strong> দিয়ে (<code>:113</code>), সুনির্দিষ্ট prefix দিয়ে নয়। সেই স্ট্রিং ধারণ করে এমন যেকোনো gateway URL — একটি দেখতে-একই হোস্টসহ — সফল হিসেবে গণ্য হয় <span class="badge-unconfirmed">[UNCONFIRMED: Q-58]</span>।</li>
+<li><strong>Fallback-টি হলো production domain</strong> <code>'ticket-bangla.com/tickets'</code> (<code>:536</code>), তাই <code>.env</code>-এর key না থাকলে একটি development build-ও production-কেই নিজের সাফল্যের URL হিসেবে ধরে নেয় <span class="badge-unconfirmed">[UNCONFIRMED: Q-58]</span>।</li>
+<li><strong>null <code>checkoutUrl</code> নীরবে ব্যর্থ হয়।</strong> <code>if (paymentUrl != null)</code> নেভিগেশনটি রক্ষা করে (<code>:530</code>) কিন্তু কোনো <code>else</code> নেই — কোনো toast নেই, কোনো error state নেই। গ্রাহক পে করে ট্যাপ করেন এবং কিছুই হয় না, যা পোর্টালের জন্য নথিভুক্ত একই ত্রুটি (<a href="../20-user-portal/P-06-booking-payment.html">P-06</a>)।</li>
+<li><strong>কোনো cancel বা timeout হ্যান্ডলিং নেই।</strong> WebView থেকে ফিরে আসলে <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-05</span> পর্যন্ত অর্ডার pending থাকে, আর অ্যাপে পেমেন্ট আবার শুরু করার কোনো উপায় নেই <span class="badge-unconfirmed">[UNCONFIRMED: Q-57]</span>।</li>
+<li><strong>WebView-তে JavaScript unrestricted</strong>, যা gateway-এর প্রয়োজন; নোট ২-এর সাথে মিলিয়ে এর মানে WebView-এর ভেতরে লোড হওয়া যেকোনো পেজই সাফল্যের callback ট্রিগার করতে পারে।</li>
+<li><strong>Non-http স্কিম ব্লক করা আছে</strong> (<code>:122-125</code>), যা ব্যাংক অ্যাপে হ্যান্ড-অফ আটকায়। ভবিষ্যতের কোনো gateway-কে কাস্টম স্কিম দরকার হলে এই যাচাই বদলাতে হবে।</li>
+<li><strong>Android WebView ডিবাগিং শর্তহীনভাবে চালু</strong> (<code>AndroidWebViewController.enableDebugging(true)</code>, <code>:66</code>), release build-এও।</li>
+<li><strong><code>_hasPopped</code> callback-টিকে একবার-use করে</strong>, ফলে সাফল্যের হোস্ট দুইবার ছুঁয়ে যাওয়া একটি redirect চেইন শুধু একবারই নেভিগেট করে।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  TB["/ticketBooking"] -->|"POST user-booking-order"| BKG["Booking service"]
+  BKG -->|"checkoutUrl"| WV["WebView /payment"]
+  WV -->|"gateway page"| DG["DgePay"]
+  DG -->|"redirect to host in PAYMENT_SUCCESS_URL"| WV
+  WV -->|"url.contains(target) → prevent + onPaymentSuccess"| AN["Analytics event"]
+  WV -->|"navigate, clear back stack"| MT["Home → My tickets (U-06)"]
+  DG -.->|"server-side callback"| BKG
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="U-04-seat-selection-promo.html">U-04</a> (সিট ও হোল্ডার), <a href="../60-cross-cutting/X-19-service-to-service.html">X-19</a> (gateway কনফিগারেশন), <a href="../10-admin-portal/A-03-program-settings.html">A-03</a> (কোন gateway একটি প্রোগ্রাম ব্যবহার করে)। <strong>প্রভাব ফেলে:</strong> <a href="U-06-my-bookings-tickets.html">U-06</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-01</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-05</span>।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে টেস্টযোগ্য: আংশিক।</strong> অর্ডারের POST লোকালে কাজ করে, কিন্তু আসল DgePay পেজে লোকাল থেকে পৌঁছানো যায় না। একটি স্টাব gateway বা নিচে বর্ণিত ডামি ব্যবহার করুন।</p>
+<table>
+<thead>
+<tr>
+<th>আইটেম</th>
+<th>বিস্তারিত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>seeded ইউজার <code>+8801700000011</code>; খালি সিটসহ একটি ইভেন্ট</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td>পোর্টালে <code>/en/checkout</code> — <a href="../20-user-portal/P-06-booking-payment.html">P-06</a> দেখুন</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>অ্যাপ চালু করুন; <code>.env</code>-এ <code>PAYMENT_SUCCESS_URL</code> সেট করুন এমন একটি লোকাল স্টাব পেজের হোস্টে যা "pay"-এর পর নিজেকেই রিডাইরেক্ট করে; Android WebView ডিবাগিং দিয়ে <code>chrome://inspect</code>-এর মাধ্যমে লাইভ পেজ দেখা যায়</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-booking.postman_collection.json</code>: "POST /api/v1/user-booking-order"</td>
+</tr>
+<tr>
+<td>Visual Studio ডিবাগ</td>
+<td>ক্লায়েন্ট: <code>PaymentViewModel._onNavigationRequest</code>; সার্ভার: Booking সার্ভিসে <code>UserBookingOrderController</code> ও DgePay callback হ্যান্ডলার</td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td><code>UserBookingOrders</code>-এ <code>PaymentStatus</code>-এর উপর <code>SELECT</code>; অ্যাপের লগ লাইন <code>WebView is loading (progress : …%)</code>; নোট ৪ reproduce করতে <code>null</code> মানের একটি <code>checkoutUrl</code> স্টাব করুন</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="U-04-seat-selection-promo.html"><span class="pager-label">পূর্ববর্তী</span><span>U-04 · সিট নির্বাচন ও প্রোমো কোড</span></a>
+  <a class="pager-next" href="U-06-my-bookings-tickets.html"><span class="pager-label">পরবর্তী</span><span>U-06 · আমার বুকিং ও টিকিট</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

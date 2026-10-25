@@ -70,6 +70,26 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
     <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
     <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../30-user-app/index.html">30 · ইউজার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -122,7 +142,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
    - <code>GET /event/api/v1/ticket-pricing/list</code> → <code>EventTicketPriceManager.GetAllTicketPricingAsync</code> <strong>শুধু Redis key <code>ticket_pricing_all</code></strong> থেকে পড়ে — অর্থাৎ এই স্ক্রিনের কনটেন্ট। Key না থাকলে এটি "Ticket pricing data not found in cache. Please ensure Admin service has populated the cache." লগ করে এবং একটি <strong>ফাঁকা তালিকা</strong> ফেরত দেয়।
    - <code>GET /event/api/v1/ticket-pricing/program-pricing</code> → <code>ProgramPricingManager.GetProgramPricingAsync</code> প্রকৃত event, venue, gallery, ticket-type ও price টেবিল থেকে একটি <strong>live</strong> তালিকা তৈরি করে।</li>
 </ol>
-<p>ইউজার পোর্টাল ও অ্যাপ রেন্ডার করে <strong><code>program-pricing</code></strong>, <code>list</code> নয়। পোর্টালে <code>EventApiService.getTicketPricingList()</code> (<code>event-api.service.ts:65-70</code>, যা <code>/list</code>-এ যায়)-এর <strong>কোনো কলকারী নেইই</strong>, অথবা <code>getProgramPricing()</code> (<code>:72-77</code>) <code>event.effects.ts:40</code> থেকে কল হয় এবং <code>ticket-pricing.component.ts:46</code> ও <code>event-overview.component.ts:171</code> তা পড়ে। <strong>তাই এই স্ক্রিনে কর্মীরা যে কনটেন্ট সম্পাদনা করেন, তা গ্রাহকের কাছে অদৃশ্য</strong>, আর ধাপ 3-এ তৈরি করা Redis ক্যাশ করা তালিকাও কখনও দেখানো হয় না (<a href="../20-user-portal/P-03-info-pages.html">P-03</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">U-03</span>)।</p>
+<p>ইউজার পোর্টাল ও অ্যাপ রেন্ডার করে <strong><code>program-pricing</code></strong>, <code>list</code> নয়। পোর্টালে <code>EventApiService.getTicketPricingList()</code> (<code>event-api.service.ts:65-70</code>, যা <code>/list</code>-এ যায়)-এর <strong>কোনো কলকারী নেইই</strong>, অথবা <code>getProgramPricing()</code> (<code>:72-77</code>) <code>event.effects.ts:40</code> থেকে কল হয় এবং <code>ticket-pricing.component.ts:46</code> ও <code>event-overview.component.ts:171</code> তা পড়ে। <strong>তাই এই স্ক্রিনে কর্মীরা যে কনটেন্ট সম্পাদনা করেন, তা গ্রাহকের কাছে অদৃশ্য</strong>, আর ধাপ 3-এ তৈরি করা Redis ক্যাশ করা তালিকাও কখনও দেখানো হয় না (<a href="../20-user-portal/P-03-info-pages.html">P-03</a>, <a href="../30-user-app/U-03-info-pages.html">U-03</a>)।</p>
 <h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
 <table>
 <thead>
@@ -248,7 +268,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   EV["Event service"] -->|"read"| R
   P["User portal / app"] --> EV
 </div>
-<p><strong>নির্ভর করে:</strong> কিছু নয়। <strong>প্রভাব ফেলে:</strong> <a href="../20-user-portal/P-03-info-pages.html">P-03</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">U-03</span>।</p>
+<p><strong>নির্ভর করে:</strong> কিছু নয়। <strong>প্রভাব ফেলে:</strong> <a href="../20-user-portal/P-03-info-pages.html">P-03</a>, <a href="../30-user-app/U-03-info-pages.html">U-03</a>।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকালে টেস্টযোগ্যতা: সম্পূর্ণ।</strong></p>
 <table>

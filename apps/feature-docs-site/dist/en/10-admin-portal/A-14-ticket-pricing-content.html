@@ -70,6 +70,26 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
     <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
     <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../30-user-app/index.html">30 · User App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
+    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
+    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
+    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
+    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
+    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
+    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
+    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
+    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
+    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · Checker App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -122,7 +142,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
    - <code>GET /event/api/v1/ticket-pricing/list</code> → <code>EventTicketPriceManager.GetAllTicketPricingAsync</code> reads <strong>only from the Redis key <code>ticket_pricing_all</code></strong> — i.e. this screen's content. If the key is missing it logs "Ticket pricing data not found in cache. Please ensure Admin service has populated the cache." and returns an <strong>empty list</strong>.
    - <code>GET /event/api/v1/ticket-pricing/program-pricing</code> → <code>ProgramPricingManager.GetProgramPricingAsync</code> builds a <strong>live</strong> list from the real event, venue, gallery, ticket-type and price tables.</li>
 </ol>
-<p>The user portal and the app render <strong><code>program-pricing</code></strong>, not <code>list</code>. In the portal, <code>EventApiService.getTicketPricingList()</code> (<code>event-api.service.ts:65-70</code>, hitting <code>/list</code>) has <strong>no caller at all</strong>, while <code>getProgramPricing()</code> (<code>:72-77</code>) is called from <code>event.effects.ts:40</code> and read by <code>ticket-pricing.component.ts:46</code> and <code>event-overview.component.ts:171</code>. <strong>So the content staff edit on this screen is invisible to customers</strong>, and the Redis-cached list built in step 3 is never displayed (<a href="../20-user-portal/P-03-info-pages.html">P-03</a>, <span class="link-na" title="Not included in the site yet">U-03</span>).</p>
+<p>The user portal and the app render <strong><code>program-pricing</code></strong>, not <code>list</code>. In the portal, <code>EventApiService.getTicketPricingList()</code> (<code>event-api.service.ts:65-70</code>, hitting <code>/list</code>) has <strong>no caller at all</strong>, while <code>getProgramPricing()</code> (<code>:72-77</code>) is called from <code>event.effects.ts:40</code> and read by <code>ticket-pricing.component.ts:46</code> and <code>event-overview.component.ts:171</code>. <strong>So the content staff edit on this screen is invisible to customers</strong>, and the Redis-cached list built in step 3 is never displayed (<a href="../20-user-portal/P-03-info-pages.html">P-03</a>, <a href="../30-user-app/U-03-info-pages.html">U-03</a>).</p>
 <h2 id="5-components">5. Components</h2>
 <table>
 <thead>
@@ -248,7 +268,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   EV["Event service"] -->|"read"| R
   P["User portal / app"] --> EV
 </div>
-<p><strong>Depends on:</strong> nothing. <strong>Affects:</strong> <a href="../20-user-portal/P-03-info-pages.html">P-03</a>, <span class="link-na" title="Not included in the site yet">U-03</span>.</p>
+<p><strong>Depends on:</strong> nothing. <strong>Affects:</strong> <a href="../20-user-portal/P-03-info-pages.html">P-03</a>, <a href="../30-user-app/U-03-info-pages.html">U-03</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full.</strong></p>
 <table>

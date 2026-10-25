@@ -70,6 +70,26 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
     <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
     <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../30-user-app/index.html">30 · User App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
+    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
+    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
+    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
+    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
+    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
+    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
+    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
+    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
+    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · Checker App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -107,7 +127,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <p><a href="index.html">← 10 · Admin portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
 </blockquote>
 <h2 id="1-name-and-purpose">1. Name and purpose</h2>
-<p><strong>Support issues and chat.</strong> A customer reports a problem with an order (the customer side is <a href="../20-user-portal/P-12-issues-chat.html">P-12</a> and <span class="link-na" title="Not included in the site yet">U-08</span>). The support team lists the issues, opens one, answers in a real-time chat, adds feedback and marks it <strong>Resolved</strong>. The feature runs in the <strong>UserIssue</strong> service (port 5110 locally), with a SignalR hub for the chat. Concepts: <span class="link-na" title="Not included in the site yet">path-prefix routing</span>, <span class="link-na" title="Not included in the site yet">token forwarding</span>.</p>
+<p><strong>Support issues and chat.</strong> A customer reports a problem with an order (the customer side is <a href="../20-user-portal/P-12-issues-chat.html">P-12</a> and <a href="../30-user-app/U-08-issues-chat.html">U-08</a>). The support team lists the issues, opens one, answers in a real-time chat, adds feedback and marks it <strong>Resolved</strong>. The feature runs in the <strong>UserIssue</strong> service (port 5110 locally), with a SignalR hub for the chat. Concepts: <span class="link-na" title="Not included in the site yet">path-prefix routing</span>, <span class="link-na" title="Not included in the site yet">token forwarding</span>.</p>
 <h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
 <p>Staff with role <code>customer_support</code> or <code>admin</code> (<code>Issues</code> menu with a program selected, <code>/issues/list</code>, <code>/issues/:id/details</code>; the <strong>server</strong> admin policy admits any admin-pool user). The hub accepts the <strong>user</strong> and <strong>admin</strong> schemes.</p>
 <h2 id="3-business-flow">3. Business flow</h2>
@@ -283,7 +303,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   UI-->>A: NewMessage (group ReportedIssue_id)
   A->>UI: PUT user-issue/{id} (feedback, Resolved)
 </div>
-<p><strong>Depends on:</strong> customer issue creation (<a href="../20-user-portal/P-12-issues-chat.html">P-12</a>, <span class="link-na" title="Not included in the site yet">U-08</span>), <a href="../20-user-portal/P-06-booking-payment.html">P-06</a> (orders). <strong>Affects:</strong> the dashboard tile (<a href="A-21-dashboard.html">A-21</a>), <a href="A-23-reconciliation.html">A-23</a>.</p>
+<p><strong>Depends on:</strong> customer issue creation (<a href="../20-user-portal/P-12-issues-chat.html">P-12</a>, <a href="../30-user-app/U-08-issues-chat.html">U-08</a>), <a href="../20-user-portal/P-06-booking-payment.html">P-06</a> (orders). <strong>Affects:</strong> the dashboard tile (<a href="A-21-dashboard.html">A-21</a>), <a href="A-23-reconciliation.html">A-23</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Partial.</strong> The service, hub and REST API run (UserIssue on port 5110); customer data and notifications come from the dummy Serverless API.</p>
 <table>

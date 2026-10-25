@@ -70,6 +70,26 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
     <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
     <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../30-user-app/index.html">30 · User App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
+    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
+    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
+    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
+    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
+    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
+    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
+    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
+    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
+    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · Checker App</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -107,7 +127,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <p><a href="index.html">← 10 · Admin portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
 </blockquote>
 <h2 id="1-name-and-purpose">1. Name and purpose</h2>
-<p><strong>Gate assignment.</strong> For each event the admin decides which ticket checkers work at which <strong>entry gate</strong>, and whether each checker may <strong>download</strong> the event's ticket list to the phone. The checker app only shows the event and gate to which its user is assigned with download enabled (<span class="link-na" title="Not included in the site yet">C-01</span>, <span class="link-na" title="Not included in the site yet">C-02</span>). Concepts: <span class="link-na" title="Not included in the site yet">Redis live capacity</span> (the gate map lives in Redis).</p>
+<p><strong>Gate assignment.</strong> For each event the admin decides which ticket checkers work at which <strong>entry gate</strong>, and whether each checker may <strong>download</strong> the event's ticket list to the phone. The checker app only shows the event and gate to which its user is assigned with download enabled (<a href="../40-checker-app/C-01-assigned-event-gate.html">C-01</a>, <a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>). Concepts: <span class="link-na" title="Not included in the site yet">Redis live capacity</span> (the gate map lives in Redis).</p>
 <h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
 <p>Staff on the event's <strong>Ticket Checker Assign</strong> tab (<code>/events/event-details/:id</code>, component <code>event-ticket-checker-gate</code>) and on the <strong>Ticket Checkers</strong> list (<code>/ticket-checker</code>, per checker). <code>TicketCheckerGateController</code> accepts the <strong>admin and ticket-checker authentication schemes</strong> with roles <code>Admin</code>, <code>EventManager</code>, <code>BCBPersonnel</code> and <code>TicketChecker</code> at class level; only <code>GET /{eventId}</code> and <code>POST /</code> (assign) add <code>Roles = Admin, EventManager</code>, and <code>event-info</code> needs the <code>ticket-checker</code> policy (see §9).</p>
 <h2 id="3-business-flow">3. Business flow</h2>
@@ -128,7 +148,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
    - if it does not exist: any posted user already assigned elsewhere is refused; otherwise a <code>TicketCheckerGate</code> is created for the event, program and venue and the Redis hash <code>TicketCheckerLevelGateMap</code> gets one entry <code>{eventId}_{entryGateId}</code> → gate id per entry-gate id (<a href="../60-cross-cutting/X-25-redis.html">X-25</a>).</li>
 <li><code>POST .../ticket-checker-gate/force-assign</code> and <code>.../force-unassign</code> with a list of <code>AssignTicketCheckerGate</code>: force-assign sets <code>IsDownloadEnable = true</code> for the posted users on existing gates after checking that none is download-enabled in <strong>another event</strong> ("The following user(s) are already download-enabled in another event: ..."); force-unassign sets it to false. A gate that does not exist is skipped silently.</li>
 <li><code>PUT .../ticket-checker-gate/update-download-status/{userId}/{gateId}/{status}</code> flips one checker's flag; <code>DELETE .../ticket-checker-gate/remove-user/{id}</code> removes a gate-user row; <code>GET .../ticket-checker-gate/user/{userId}</code> lists a checker's gates.</li>
-<li>The checker app reads its assignment from <code>GET .../ticket-checker-gate/event-info</code> (policy <code>ticket-checker</code>, <span class="link-na" title="Not included in the site yet">C-01</span>).</li>
+<li>The checker app reads its assignment from <code>GET .../ticket-checker-gate/event-info</code> (policy <code>ticket-checker</code>, <a href="../40-checker-app/C-01-assigned-event-gate.html">C-01</a>).</li>
 </ol>
 <h2 id="5-components">5. Components</h2>
 <table>
@@ -235,7 +255,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 }
 </code></pre>
 <h2 id="7-data-and-side-effects">7. Data and side effects</h2>
-<p>Gate and gate-user rows; Redis gate map; activity log (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>). The ticket list of the gate (<code>ticket_checker_tickets:*</code>) is built later when the checker downloads (<span class="link-na" title="Not included in the site yet">C-02</span>).</p>
+<p>Gate and gate-user rows; Redis gate map; activity log (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>). The ticket list of the gate (<code>ticket_checker_tickets:*</code>) is built later when the checker downloads (<a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>).</p>
 <h2 id="8-code-references">8. Code references</h2>
 <table>
 <thead>
@@ -282,7 +302,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   TC -->|"read gate map"| R
   W["S-15"] -->|"disable download after event"| G
 </div>
-<p><strong>Depends on:</strong> <a href="A-05-venues.html">A-05</a>, <a href="A-07-events.html">A-07</a>, <a href="A-17-ticket-checker-users.html">A-17</a>. <strong>Affects:</strong> <span class="link-na" title="Not included in the site yet">C-01</span>, <span class="link-na" title="Not included in the site yet">C-02</span>, <span class="link-na" title="Not included in the site yet">C-05</span>, <a href="A-19-gate-reports.html">A-19</a>, <span class="link-na" title="Not included in the site yet">S-14</span>.</p>
+<p><strong>Depends on:</strong> <a href="A-05-venues.html">A-05</a>, <a href="A-07-events.html">A-07</a>, <a href="A-17-ticket-checker-users.html">A-17</a>. <strong>Affects:</strong> <a href="../40-checker-app/C-01-assigned-event-gate.html">C-01</a>, <a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>, <a href="../40-checker-app/C-05-ticket-sync.html">C-05</a>, <a href="A-19-gate-reports.html">A-19</a>, <span class="link-na" title="Not included in the site yet">S-14</span>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full for the admin side.</strong></p>
 <table>
