@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-03 · প্রোগ্রাম সেটিংস · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item is-active" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">10 · অ্যাডমিন পোর্টাল</a><span class="sep">›</span><span>A-03</span></div>
+<h1><span class="id-chip">A-03</span> প্রোগ্রাম সেটিংস</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> প্রোগ্রাম সেটিংস</p>
+<p><a href="index.html">← 10 · অ্যাডমিন পোর্টাল</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>প্রোগ্রাম সেটিংস।</strong> একটি program-এর বাণিজ্যিক নিয়ম: একজন গ্রাহক কতগুলো অর্ডার ও আসন কিনতে পারবেন, কোনো ইভেন্টের সাপেক্ষে বিক্রি কখন খুলবে ও বন্ধ হবে, টিকিট জেনারেশন কখন খুলবে, টিকিট-নম্বরের প্রিফিক্স, VAT, সার্ভিস চার্জ এবং পেমেন্ট gateway। এগুলো program-এর প্রতিটি ইভেন্টের ডিফল্ট; একটি ইভেন্ট এগুলো ওভাররাইড করতে পারে (<a href="A-08-event-settings.html">A-08</a>)।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>রোল <code>admin</code> বা <code>event_manager</code>-এর কর্মী (কন্ট্রোলার কেবল এই দুটিকেই অনুমোদন করে)। প্রবেশবিন্দু: <strong>Prog. Managem.</strong> → একটি program → ট্যাব <strong>Program Settings</strong> (<code>/program-management/program-home/:id</code>)।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<p>অ্যাডমিন একটি program বেছে নেন, মান বদলান এবং <strong>Update</strong> চাপেন। ফর্মের নিয়মগুলো: প্রতি ইভেন্টে প্রতি গ্রাহকের সর্বোচ্চ অর্ডার; প্রতি অর্ডারে সর্বোচ্চ আসন; "ticket selling start from" (ইভেন্ট শুরুর কত ঘণ্টা আগে); "ticket selling stop from" (ইভেন্ট <strong>শেষ</strong> হওয়ার কত ঘণ্টা আগে); "ticket available from" (ইভেন্ট শুরুর কত ঘণ্টা আগে, যখন টিকিট জেনারেট করা যায়, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>); limited-availability থ্রেশহোল্ড; টিকিট-নম্বরের প্রিফিক্স; পেমেন্ট gateway (DgePay বা SSLCommerz); VAT ও সার্ভিস চার্জ (পরিমাণ বা শতকরা); VAT inclusive।</p>
+<h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + user token]</strong> ট্যাবটি <code>GET /admin/api/v1/program-settings/{programId}</code> লোড করে ফর্ম পূরণ করে; program ড্রপডাউন আসে <code>GET /admin/api/v1/program</code> থেকে।</li>
+<li><strong class="hop-tag">[HTTP + user token]</strong> <strong>Update</strong> পুরো <code>ProgramSettings</code> object (JSON body) নিয়ে <code>PUT /admin/api/v1/program-settings</code> পাঠায়।</li>
+<li><code>ProgramSettingsManager.UpdateAsync</code> <code>ProgramId</code> দিয়ে সারিটি লোড করে (না থাকলে "No program settings found"), ঘণ্টা, সীমা, প্রিফিক্স, থ্রেশহোল্ড, VAT-inclusive ফ্ল্যাগ ও gateway কপি করে; এরপর, যদি <strong>program-এর কোনো ইভেন্ট প্রকাশিত হয়ে থাকে</strong>, তাহলে VAT-এর মান/শতকরা ফ্ল্যাগ বা সার্ভিস চার্জের মান/শতকরা ফ্ল্যাগ বদলাতে "Cannot update VAT and Service Charge while events are published." দিয়ে বাধা দেয়; নয়তে VAT ও সার্ভিস চার্জও কপি করে। এটি সেভ করে এবং Redis key <code>program_settings_details:{programId}</code> মুছে ফেলে, যাতে পরের পড়ায় সেটি নতুন করে তৈরি হয় (<a href="../60-cross-cutting/X-25-redis.html">X-25</a>)।</li>
+<li>মানগুলো কোথায় ব্যবহৃত হয়: <strong>ইভেন্ট তৈরির সময় program settings ইভেন্টের নিজস্ব settings-এ কপি হয়</strong> (<a href="A-07-events.html">A-07</a>)। একটি ইভেন্ট পড়ার সময় <code>EventManager</code> হিসাব করে <code>TicketSellingStartDateTime = ইভেন্ট শুরু − TicketSellingStartFromHour</code>, <code>TicketSellingStopDateTime = ইভেন্ট **শেষ** − TicketSellingStopFromHour</code> এবং <code>TicketAvailabilityStartDateTime = ইভেন্ট শুরু − TicketAvailableFromHour</code>, ইভেন্টের নিজস্ব settings থাকলে সেখান থেকে, না থাকলে program settings থেকে (<a href="A-08-event-settings.html">A-08</a>)। Booking অর্ডারের সময় সীমা ও চার্জ পড়ে (<a href="../20-user-portal/P-06-booking-payment.html">P-06</a>)।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>features/program-management/components/program-settings/*</code>, <code>services/program-settings.service.ts</code> (দ্বিতীয় একটি কপি লিঙ্কহীন <code>features/program-settings</code> মডিউলে আছে)</td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Admin: <code>ProgramSettingsController</code>, <code>ProgramSettingsManager</code>; Booking ও Event একই টেবিল read model হিসেবে পড়ে</td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td><code>ProgramSettings</code></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td><code>program_settings_details:{programId}</code> (ক্যাশ, আপডেটে মুছে যায়)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরকট">6. API কন্ট্রাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পাথ</th>
+<th>অথ</th>
+<th>রিকোয়েস্ট</th>
+<th>রেসপন্স</th>
+<th>প্রধান ত্রুটি</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/program-settings</code></td>
+<td><code>Admin</code>, <code>EventManager</code></td>
+<td>none</td>
+<td><code>ProgramSettings[]</code></td>
+<td></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/program-settings/{programId}</code></td>
+<td>same</td>
+<td>পাথ</td>
+<td><code>ProgramSettings</code></td>
+<td></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/api/v1/program-settings</code></td>
+<td>same</td>
+<td><code>ProgramSettings</code></td>
+<td><code>ProgramSettings</code></td>
+<td>400 <code>No program settings found</code>, <code>Cannot update VAT and Service Charge while events are published.</code></td>
+</tr>
+</tbody>
+</table>
+<p>প্রধান নমুনা, <code>PUT</code>-এর body (প্রপার্টির নাম <code>ProgramSettings</code> থেকে; দেখানো মানগুলো <a href="A-02-programs.html">A-02</a>-এর তৈরি-ডিফল্ট):</p>
+<pre><code class="language-json">{
+  &quot;id&quot;: 7,
+  &quot;programId&quot;: 12,
+  &quot;limitedAvailabilityThreshold&quot;: 60,
+  &quot;allowableMaximumOrderPerUser&quot;: 4,
+  &quot;allowableMaximumSeatPerOrder&quot;: 4,
+  &quot;ticketSellingStartFromHour&quot;: 72,
+  &quot;ticketSellingStopFromHour&quot;: 1,
+  &quot;ticketAvailableFromHour&quot;: 48,
+  &quot;ticketNumberPrefix&quot;: &quot;T20&quot;,
+  &quot;vat&quot;: 15,
+  &quot;isVatPercentage&quot;: true,
+  &quot;serviceCharge&quot;: 0,
+  &quot;isServiceChargePercentage&quot;: true,
+  &quot;isVatInclusive&quot;: true,
+  &quot;paymentGateway&quot;: 1
+}
+</code></pre>
+<p><code>paymentGateway</code>: <code>1</code> = DgePay, <code>2</code> = SSLCommerz (Admin সার্ভিস নাম নয়, সংখ্যা পাঠায়)।</p>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p><code>ProgramSettings</code> সারি আপডেট হয়; ক্যাশ key মুছে যায়; অ্যাক্টিভিটি লগ এন্ট্রি তৈরি হয়। বিদ্যমান ইভেন্টগুলো <strong>পরিবর্তন হয় না</strong> (তারা settings-এর নিজস্ব কপি ধরে রাখে)।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>কন্ট্রোলার</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/ProgramSettingsController.cs:14-62</code></td>
+</tr>
+<tr>
+<td>ম্যানেজার</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/ProgramSettingsManager.cs:58-125</code></td>
+</tr>
+<tr>
+<td>মডেল</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Models/Settings/ProgramSettings.cs</code></td>
+</tr>
+<tr>
+<td>তারিখ হিসাব</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/EventManager.cs:96-136, 185-186</code></td>
+</tr>
+<tr>
+<td>পোর্টাল ফর্ম</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/program-management/components/program-settings/program-settings.component.html</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>সেটিংস কপি হয়, রেফারেন্স হয় না।</strong> পোর্টাল দিয়ে তৈরি প্রতিটি ইভেন্ট তৈরির সময় নিজস্ব <code>EventSettings</code> সারি পায়, তাই program settings বদলালে কেবল এরপর তৈরি ইভেন্টগুলো প্রভাবিত হয়; বিদ্যমান কোনো ইভেন্ট বদলাতে <a href="A-08-event-settings.html">A-08</a> ব্যবহার করুন।</li>
+<li><strong>VAT লক শুধু program-এর <em>প্রকাশিত</em> ইভেন্টগুলো দেখে</strong>; একটি খসড়া ইভেন্ট পুনরায় সেভ না হওয়া পর্যন্ত পুরনো মান ধরে রাখে, এবং এই নিয়ম ইতিমধ্যে দেওয়া অর্ডারগুলোকে রক্ষা করে না।</li>
+<li><strong>টিকিট-বিক্রির শেষ মাপা হয় ইভেন্টের শেষ থেকে</strong> (<code>EndDateTime</code>), যেখানে শুরু মাপা হয় ইভেন্ট শুরু থেকে; শেষের তারিখ না থাকা ইভেন্ট <code>EventManager</code>-এ ব্যর্থ হবে (<code>entity.EndDateTime.Value</code>)।</li>
+<li><strong><code>TicketNumberPrefix</code> যেকোনো সময় সম্পাদনা করা যায়</strong>; নতুন টিকিট ইভেন্টের settings-এর প্রিফিক্স ব্যবহার করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>), তাই মাঝে পরিবর্তন হলে একটি ইভেন্টের টিকিটে দুটি প্রিফিক্স থাকতে পারে।</li>
+<li>পেমেন্ট gateway JSON-এ একটি enum সংখ্যা; <code>SSLCommerz</code> ফর্মে সমর্থিত, কিন্তু তার callback নিষ্ক্রিয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">Appendix A</span>); BS23 অন্য কিছু নিশ্চিত না করলে <code>DgePay</code> বেছে নিন <span class="badge-unconfirmed">[UNCONFIRMED: Q-19]</span>।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  AP["Admin portal: Program Settings tab"] -->|"PUT /program-settings (HTTP + token)"| AD["Admin API"]
+  AD --> DB[("ProgramSettings")]
+  AD -->|"delete program_settings_details:id"| R[("Redis")]
+  DB -.->|"read model"| BK["Booking: limits, VAT, charges"]
+  DB -.->|"read model"| EV["Event service"]
+  EM["A-07 EventManager"] -->|"selling dates"| DB
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="A-02-programs.html">A-02</a>। <strong>প্রভাব ফেলে:</strong> <a href="A-07-events.html">A-07</a>, <a href="A-08-event-settings.html">A-08</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-10</span>।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালে টেস্টযোগ্যতা: সম্পূর্ণ।</strong></p>
+<table>
+<thead>
+<tr>
+<th>আইটেম</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td><code>pwsh ./scripts/Seed-EtpData.ps1</code>; অ্যাডমিন <code>…01</code> বা একটি <code>event_manager</code> লগইন (<code>…02</code> থেকে <code>…05</code>, <a href="../60-cross-cutting/X-01-admin-login.html">X-01</a>)</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>http://localhost:4200</code> → <strong>Prog. Managem.</strong> → program → <strong>Program Settings</strong>; Network: <code>PUT .../admin/api/v1/program-settings</code></td>
+</tr>
+<tr>
+<td>ইমুলেটর</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>: "GET /api/v1/program-settings/{programId}", "PUT /api/v1/program-settings"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>ProgramSettingsManager.UpdateAsync</code> ("published events" শাখাটি দেখুন)</td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>SQL: <code>select * from etp."ProgramSettings" where "ProgramId" = &lt;id&gt;</code>; আপডেটের পর <code>redis-cli GET program_settings_details:&lt;id&gt;</code> nil ফেরত দেয়</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="A-02-programs.html"><span class="pager-label">পূর্ববর্তী</span><span>A-02 · প্রোগ্রাম</span></a>
+  <a class="pager-next" href="A-04-teams.html"><span class="pager-label">পরবর্তী</span><span>A-04 · দল (টিম)</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

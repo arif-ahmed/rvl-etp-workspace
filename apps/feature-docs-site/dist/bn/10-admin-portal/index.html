@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 · অ্যাডমিন পোর্টাল · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section is-active" href="index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><span>10 · অ্যাডমিন পোর্টাল</span></div>
+<h1><span class="id-chip">10</span> অ্যাডমিন পোর্টাল</h1>
+<p>Angular admin portal (<code>rvl-gobcb-admin-portal</code>) থেকে স্টাফ যে ফিচারগুলো চালু করেন; Admin Cognito pool।</p>
+<h2 id="সইন-ইন-ও-অযকসস">সাইন-ইন ও অ্যাক্সেস</h2>
+<ul>
+<li><a href="../60-cross-cutting/X-01-admin-login.html">X-01 অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</a></li>
+<li><a href="../60-cross-cutting/X-02-admin-forgot-password.html">X-02 অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</a></li>
+<li><a href="../60-cross-cutting/X-03-admin-change-password-logout.html">X-03 অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</a></li>
+<li><a href="../60-cross-cutting/X-04-admin-session.html">X-04 অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</a></li>
+<li><a href="../60-cross-cutting/X-05-admin-provisioning.html">X-05 স্টাফ অ্যাকাউন্ট তৈরি</a></li>
+<li><a href="../60-cross-cutting/X-15-authz-roles.html">X-15 অথরাইজেশন স্তর ২–৩: স্টাফ রোল</a></li>
+<li><a href="../60-cross-cutting/X-16-authz-program-scope.html">X-16 অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</a></li>
+<li><a href="../60-cross-cutting/X-17-authz-client-side.html">X-17 ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</a></li>
+</ul>
+<div class="cards">
+      <a class="card" href="A-01-program-selection.html"><span class="card-title"><span class="id-chip">A-01</span> প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span><span class="card-desc">একটি প্রোগ্রাম (সিরিজ/টুর্নামেন্ট) বেছে নেওয়া; এরপর পোর্টাল <code>X-Program-Id</code> পাঠায় ও প্রোগ্রামের মেনু দেখায়।</span></a>
+      <a class="card" href="A-02-programs.html"><span class="card-title"><span class="id-chip">A-02</span> প্রোগ্রাম</span><span class="card-desc">প্রোগ্রাম (ইভেন্টগুলোর সিরিজ/টুর্নামেন্ট) তৈরি, সম্পাদনা ও মুছে ফেলা।</span></a>
+      <a class="card" href="A-03-program-settings.html"><span class="card-title"><span class="id-chip">A-03</span> প্রোগ্রাম সেটিংস</span><span class="card-desc">প্রোগ্রাম-ভিত্তিক বাণিজ্যিক নিয়ম: পেমেন্ট গেটওয়ে, ক্রয়সীমা, VAT/সার্ভিস চার্জ, টিকিট প্রিফিক্স।</span></a>
+      <a class="card" href="A-04-teams.html"><span class="card-title"><span class="id-chip">A-04</span> দল (টিম)</span><span class="card-desc">প্রোগ্রামের ইভেন্টে খেলা দলগুলোর তালিকা রক্ষণাবেক্ষণ।</span></a>
+      <a class="card" href="A-05-venues.html"><span class="card-title"><span class="id-chip">A-05</span> ভেন্যু ও স্টেডিয়াম লেআউট</span><span class="card-desc">ভেন্যু সংজ্ঞায়িত করা: SVG ম্যাপ, gallery → block → level কাঠামো, entry gate ও mini gate।</span></a>
+      <a class="card" href="A-06-program-venue-mapping.html"><span class="card-title"><span class="id-chip">A-06</span> প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span><span class="card-desc">প্রোগ্রামে ভেন্যু যুক্ত করা এবং প্রোগ্রাম-ভিত্তিক ভেন্যু ডিটেইলস (লেভেলভিত্তিক দাম, ধারণক্ষমতা, মুদ্রা) তৈরি/সিঙ্ক।</span></a>
+      <a class="card" href="A-07-events.html"><span class="card-title"><span class="id-chip">A-07</span> ইভেন্ট (ম্যাচ)</span><span class="card-desc">ইভেন্ট তৈরি, সম্পাদনা, সেগমেন্ট, প্রকাশ/অপ্রকাশ, ডুপ্লিকেট ও চালু/বন্ধ করা।</span></a>
+      <a class="card" href="A-08-event-settings.html"><span class="card-title"><span class="id-chip">A-08</span> ইভেন্ট সেটিংস ওভাররাইড</span><span class="card-desc">একটি নির্দিষ্ট ইভেন্টের জন্য প্রোগ্রাম সেটিংস ওভাররাইড করা।</span></a>
+      <a class="card" href="A-09-event-level-pricing.html"><span class="card-title"><span class="id-chip">A-09</span> ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span><span class="card-desc">ইভেন্টের ভেন্যু কাঠামো দেখা ও কোনো লেভেলের দাম পরিবর্তন।</span></a>
+      <a class="card" href="A-10-capacity-adjustment.html"><span class="card-title"><span class="id-chip">A-10</span> ইভেন্ট ধারণক্ষমতা সমন্বয়</span><span class="card-desc">কোনো ইভেন্টে একটি লেভেলের বিক্রয়যোগ্য ধারণক্ষমতা বাড়ানো বা কমানো।</span></a>
+      <a class="card" href="A-11-seat-reservation.html"><span class="card-title"><span class="id-chip">A-11</span> সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span><span class="card-desc">কমপ্লিমেন্টারি বা পার্টনারের জন্য অনলাইন বিক্রির বাইরে সিট সংরক্ষণ।</span></a>
+      <a class="card" href="A-12-reserved-tickets.html"><span class="card-title"><span class="id-chip">A-12</span> রিজার্ভড টিকিট তৈরি ও বিতরণ</span><span class="card-desc">রিজার্ভেশনের টিকিট তৈরি, সাইন, merge/zip, ডাউনলোড ও ইমেইল ("Generate Tickets" মেনু)।</span></a>
+      <a class="card" href="A-13-ticket-layouts.html"><span class="card-title"><span class="id-chip">A-13</span> টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span><span class="card-desc">টিকিট প্রিন্টের PDF টেমপ্লেট আপলোড/প্রকাশ এবং তাতে ছাপা অ্যাট্রিবিউট।</span></a>
+      <a class="card" href="A-14-ticket-pricing-content.html"><span class="card-title"><span class="id-chip">A-14</span> টিকিট-প্রাইসিং কনটেন্ট পেজ</span><span class="card-desc">পাবলিক টিকিট-প্রাইসিং তথ্য পেজ রক্ষণাবেক্ষণ।</span></a>
+      <a class="card" href="A-15-promo-codes.html"><span class="card-title"><span class="id-chip">A-15</span> প্রোমো কোড</span><span class="card-desc">মূল্য, সীমা, মেয়াদ ও প্রোগ্রাম/ইভেন্ট/গ্যালারি নির্ধারণসহ প্রোমো কোড তৈরি।</span></a>
+      <a class="card" href="A-16-discounts.html"><span class="card-title"><span class="id-chip">A-16</span> সিস্টেম ডিসকাউন্ট</span><span class="card-desc">কোড ছাড়াই স্বয়ংক্রিয় ডিসকাউন্ট (যেমন early bird)।</span></a>
+      <a class="card" href="A-17-ticket-checker-users.html"><span class="card-title"><span class="id-chip">A-17</span> টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span><span class="card-desc">গেট স্টাফের TicketChecker-pool অ্যাকাউন্ট তৈরি ও ব্যবস্থাপনা।</span></a>
+      <a class="card" href="A-18-gate-assignment.html"><span class="card-title"><span class="id-chip">A-18</span> গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span><span class="card-desc">ইভেন্টের গেটে চেকার নির্ধারণ, force-assign/unassign, টিকিট-ডাউনলোড স্ট্যাটাস রিসেট।</span></a>
+      <a class="card" href="A-19-gate-reports.html"><span class="card-title"><span class="id-chip">A-19</span> গেট (টিকিট-চেকার) রিপোর্ট</span><span class="card-desc">বিস্তারিত স্ক্যান রিপোর্ট, ডুপ্লিকেট-এন্ট্রি ও ম্যানুয়াল-এন্ট্রি রিপোর্ট, এক্সপোর্ট।</span></a>
+      <a class="card" href="A-20-raffle-draw.html"><span class="card-title"><span class="id-chip">A-20</span> র‍্যাফেল ড্র</span><span class="card-desc">ইভেন্টের বৈধ টিকিট নম্বর থেকে র‍্যাফেল বিজয়ী রেকর্ড।</span></a>
+      <a class="card" href="A-21-dashboard.html"><span class="card-title"><span class="id-chip">A-21</span> ড্যাশবোর্ড</span><span class="card-desc">প্রোগ্রাম ড্যাশবোর্ডের টাইল ও চার্ট (বিক্রি, আসন্ন ইভেন্ট)।</span></a>
+      <a class="card" href="A-22-reports.html"><span class="card-title"><span class="id-chip">A-22</span> বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span><span class="card-desc">Reports মেনু: বুকিং অর্ডার, ইভেন্টভিত্তিক/সারাংশ বিক্রি, রাজস্ব, পেমেন্ট অসঙ্গতি।</span></a>
+      <a class="card" href="A-23-reconciliation.html"><span class="card-title"><span class="id-chip">A-23</span> রিকনসিলিয়েশন অনুসন্ধান</span><span class="card-desc">গ্রাহকের অভিযোগ মীমাংসায় অর্ডার নম্বর, ট্রানজ্যাকশন আইডি, ফোন ইত্যাদি দিয়ে অর্ডার খোঁজা।</span></a>
+      <a class="card" href="A-24-user-issues-admin.html"><span class="card-title"><span class="id-chip">A-24</span> ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span><span class="card-desc">গ্রাহকের ইস্যু তালিকা, আপডেট ও উত্তর; রিয়েল-টাইম চ্যাটসহ।</span></a>
+      <a class="card" href="A-25-admin-users.html"><span class="card-title"><span class="id-chip">A-25</span> অ্যাডমিন ইউজার</span><span class="card-desc">রোল ও প্রোগ্রামসহ অ্যাডমিন অ্যাকাউন্ট তৈরি, সম্পাদনা, বন্ধ/চালু, মুছে ফেলা।</span></a>
+      <a class="card" href="A-26-agent-users.html"><span class="card-title"><span class="id-chip">A-26</span> এজেন্ট (বিক্রেতা) ইউজার</span><span class="card-desc">অফলাইন বিক্রেতা এজেন্টদের Agent-pool অ্যাকাউন্ট ব্যবস্থাপনা।</span></a>
+      <a class="card" href="A-27-activity-log.html"><span class="card-title"><span class="id-chip">A-27</span> অ্যাক্টিভিটি লগ ভিউয়ার</span><span class="card-desc">সার্ভিসগুলোর মাধ্যমে করা পরিবর্তনের অডিট ট্রেইল দেখা।</span></a>
+      <a class="card" href="A-28-media-configuration.html"><span class="card-title"><span class="id-chip">A-28</span> মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span><span class="card-desc">পাবলিক পোর্টাল ও অ্যাপে দেখানো ছবি ও ব্লক ব্যবস্থাপনা।</span></a>
+      <a class="card" href="A-29-content-editor.html"><span class="card-title"><span class="id-chip">A-29</span> কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span><span class="card-desc">গ্রাহককে দেখানো স্থির কনটেন্ট পেজ সম্পাদনা।</span></a>
+      <a class="card" href="A-30-header-footer-social.html"><span class="card-title"><span class="id-chip">A-30</span> হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span><span class="card-desc">পাবলিক হেডার/ফুটার ও সোশ্যাল-মিডিয়া লিংক সম্পাদনা।</span></a>
+      <a class="card" href="A-31-general-notices.html"><span class="card-title"><span class="id-chip">A-31</span> সাধারণ নোটিশ</span><span class="card-desc">পাবলিক পোর্টালে দেখানো নোটিশ প্রকাশ।</span></a>
+    </div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-04 · দল (টিম) · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item is-active" href="A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">10 · অ্যাডমিন পোর্টাল</a><span class="sep">›</span><span>A-04</span></div>
+<h1><span class="id-chip">A-04</span> দল (টিম)</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> টিম</p>
+<p><a href="index.html">← 10 · অ্যাডমিন পোর্টাল</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>দল (টিম)।</strong> যেসব দল (ক্রিকেট সাইড) একটি program-এর ইভেন্টগুলোতে খেলে, প্রতিটির একটি নাম, সংক্ষিপ্ত নাম, লোগো এবং ঐচ্ছিক flag থাকে। ইভেন্টগুলো এই তালিকা থেকেই তাদের দল বাছে (<a href="A-07-events.html">A-07</a>), আর গ্রাহক-মুখী পেজগুলো লোগো ও flag দেখায় (<a href="../20-user-portal/P-02-browse-events.html">P-02</a>)।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>রোল <code>admin</code> বা <code>event_manager</code>-এর কর্মী (<code>TeamsController</code>)। প্রবেশবিন্দু: <strong>Prog. Managem.</strong> → একটি program → ট্যাব <strong>Team Management</strong> (<code>/program-management/program-home/:id</code>), তারপর তৈরি বা সম্পাদনা (<code>/program-management/create/:programId</code>, <code>/program-management/edit/:id</code>)।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<p>একটি program-এর দলগুলো তালিকাভুক্ত করুন, নাম, সংক্ষিপ্ত নাম, লোগো ও flag ছবি দিয়ে একটি দল যোগ করুন, সম্পাদনা করুন, সক্রিয় বা নিষ্ক্রিয় করুন, অথবা মুছে ফেলুন। program-এর কোনো প্রকাশিত বা ইতিমধ্যে শেষ হয়ে গেছে এমন ইভেন্ট থাকলে দলটি সম্পাদনা করা যায় না।</p>
+<h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + user token]</strong> তালিকা: <code>GET /admin/api/v1/teams/program/{programId}</code> (ট্যাব) বা <code>GET /admin/api/v1/teams?{search, sort, paging}</code> (পেজযুক্ত); একটি দল: <code>GET /admin/api/v1/teams/{id}</code>।</li>
+<li>তৈরি: <code>programId</code>, <code>name</code>, <code>shortName</code>, <code>logo</code>, <code>flag</code>, <code>isFlag</code>, <code>isActive</code> সহ <code>multipart/form-data</code> হিসেবে <code>POST /admin/api/v1/teams</code>। <code>ProgramTeamManager.CreateAsync</code> নাম যাচাই করে (আবশ্যক, সর্বোচ্চ 100 অক্ষর), ইনসার্ট করে, লোগো <code>teams-logo/{id}/{guid}{ext}</code> পাথে ও flag <code>teams-flag/{id}/{guid}{ext}</code> পাথে আপলোড করে, এবং URL <code>{AWS:Bucket:BaseUrl}/{key}</code> <code>Logo</code> ও <code>Flag</code>-এ সংরক্ষণ করে (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>)।</li>
+<li>আপডেট: <code>PUT /admin/api/v1/teams/{id}</code> (multipart)। <code>CheckValidationForUpdate</code> অতিরিক্তভাবে program-এর সব ইভেন্ট লোড করে (<code>GetEventsByProgramIdIgnoreEndDateAsync</code>) এবং কোনোটি প্রকাশিত বা শেষ হয়ে গেলে "Program team cannot be edited because one or more events are published or expired." ছুঁড়ে দেয়।</li>
+<li>টগল: <code>PUT /admin/api/v1/teams/toggle-status/{id}</code> <code>IsActive</code> উল্টে দেয়।</li>
+<li>মুছে ফেলা: <code>DELETE /admin/api/v1/teams/{id}</code>: একটি <strong>সফট ডিলিট</strong> (<code>IsDeleted = true</code>)।</li>
+<li>এডিট ফর্ম চালু করার আগে পোর্টাল <code>GET /admin/api/v1/events/programs/{programId}/events/no-end-date-check</code> যাচাই করে (<code>teams-management.service.ts</code>)।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>features/program-management/components/{teams-list,create-teams}</code>, <code>services/teams-management.service.ts</code>; লিঙ্কহীন <code>features/program-settings/pages/program-teams</code>-এ কপি</td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Admin: <code>TeamsController</code>, <code>ProgramTeamManager</code>, <code>TeamRepository</code></td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td><code>ProgramTeams</code> (Admin entity <code>ProgramTeam</code>)</td>
+</tr>
+<tr>
+<td>স্টোরেজ</td>
+<td>S3 media: <code>teams-logo/{id}</code>, <code>teams-flag/{id}</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরকট">6. API কন্ট্রাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পাথ</th>
+<th>অথ</th>
+<th>রিকোয়েস্ট</th>
+<th>রেসপন্স</th>
+<th>প্রধান ত্রুটি</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/teams/program/{programId}</code></td>
+<td><code>Admin</code>, <code>EventManager</code></td>
+<td>পাথ</td>
+<td><code>ProgramTeam[]</code></td>
+<td></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/teams</code></td>
+<td>same</td>
+<td>query (search, sort, paging)</td>
+<td>পেজযুক্ত <code>ProgramTeam</code></td>
+<td></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/teams/{id}</code></td>
+<td>same</td>
+<td>পাথ</td>
+<td><code>ProgramTeam</code></td>
+<td></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/teams</code></td>
+<td>same</td>
+<td><code>CreateOrUpdateProgramTeam</code> (multipart)</td>
+<td><code>ProgramTeam</code></td>
+<td>400 <code>Name is missing.</code>, <code>Name should not be more than 100</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/api/v1/teams/{id}</code></td>
+<td>same</td>
+<td><code>CreateOrUpdateProgramTeam</code> (multipart)</td>
+<td><code>ProgramTeam</code></td>
+<td>উপরের মতো 400; 500 <code>Program team cannot be edited because one or more events are published or expired.</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/api/v1/teams/toggle-status/{id}</code></td>
+<td>same</td>
+<td>পাথ</td>
+<td><code>ProgramTeam</code></td>
+<td>400 <code>Invalid event ID.</code>, <code>Team with ID {id} not found.</code></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/admin/api/v1/teams/{id}</code></td>
+<td>same</td>
+<td>পাথ</td>
+<td><code>ProgramTeam</code></td>
+<td>400 <code>'{id}' doesn't exist.</code></td>
+</tr>
+</tbody>
+</table>
+<p>প্রধান নমুনা, <code>POST /admin/api/v1/teams</code> multipart (ফিল্ডের নাম <code>CreateOrUpdateProgramTeam</code> থেকে; মানগুলো উদাহরণবিশেষ):</p>
+<pre><code>programId=12
+name=Dhaka Dynamites
+shortName=DD
+isActive=true
+isFlag=false
+logo=&lt;file&gt;
+flag=&lt;file&gt;
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p><code>Logo</code> ও <code>Flag</code> URL-সহ একটি <code>ProgramTeams</code> সারি; দুটি S3 ফোল্ডার; অ্যাক্টিভিটি লগ এন্ট্রি (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>)।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>কন্ট্রোলার</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TeamsController.cs:28-140</code></td>
+</tr>
+<tr>
+<td>ম্যানেজার</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/ProgramTeamManager.cs:41-260</code></td>
+</tr>
+<tr>
+<td>রিপোজিটরি</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Storage/Repositories/TeamRepository.cs:111-121</code></td>
+</tr>
+<tr>
+<td>পোর্টাল সার্ভিস</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/program-management/services/teams-management.service.ts:24-47</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>এডিট লক খুবই মোটা।</strong> যেকোনো প্রকাশিত বা শেষ হয়ে যাওয়া ইভেন্ট থাকা একটি program-এর দলকে একেবারেই সম্পাদনা করা যায় না (সংক্ষিপ্ত নামের বানানভুলও নয়); আপডেটের সময় লোগো ও flag আপলোডের ক্ষেত্রেও একই বিষয়। তৈরিতে কোনো বাধা নেই।</li>
+<li><strong>মুছে ফেলায় ব্যবহারের যাচাই নেই।</strong> ইতিমধ্যে কোনো ইভেন্টে ব্যবহৃত দলকে সফট-ডিলিট করা যায়; ইভেন্ট পেজগুলোতে তা এখনও দেখা যাবে কি না তা ব্যবহৃত কোয়েরির উপর নির্ভর করে <span class="badge-unconfirmed">[UNCONFIRMED: Q-20]</span>।</li>
+<li><strong>টগলের ত্রুটির বার্তায় "Invalid event ID." লেখা</strong> (কপি-পেস্ট); এটি আসলে দলের id-কেই বোঝায়।</li>
+<li><strong><code>isFlag</code></strong> দলের উপর সংরক্ষিত হয় (রিপোজিটরি কপি করে), কিন্তু ম্যানেজার flag আপলোড করবে কি না তা শুধু <code>flag</code> ফাইলের উপস্থিতি দেখে সিদ্ধান্ত নেয়; Admin সার্ভিসে অন্য কোথাও <code>IsFlag</code> পড়া হয় না।</li>
+<li><strong>আপডেট ভ্যালিডেশন রিকোয়েস্ট বডির <code>ProgramId</code></strong> ব্যবহার করে, সংরক্ষিত দলেরটি নয়, তাই অন্য program-এর id উল্লেখ করা একটি রিকোয়েস্ট সেই program-এর ইভেন্টগুলোর বিপরীতে যাচাই হয়।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  AP["Admin portal: Team Management"] -->|"multipart, HTTP + token"| AD["Admin API"]
+  AD --> DB[("ProgramTeams")]
+  AD -->|"teams-logo / teams-flag"| S3[("S3 media")]
+  EM["A-07 event form"] -->|"GET teams/program/id"| AD
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="A-02-programs.html">A-02</a>। <strong>প্রভাব ফেলে:</strong> <a href="A-07-events.html">A-07</a>, ইউজার পোর্টাল ও অ্যাপের ইভেন্ট পেজগুলো (<a href="../20-user-portal/P-02-browse-events.html">P-02</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">U-02</span>)।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালে টেস্টযোগ্যতা: সম্পূর্ণ।</strong></p>
+<table>
+<thead>
+<tr>
+<th>আইটেম</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td><code>pwsh ./scripts/Seed-EtpData.ps1</code>; অ্যাডমিন <code>…01</code></td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>http://localhost:4200</code> → <strong>Prog. Managem.</strong> → program → <strong>Team Management</strong> → যোগ; Network: multipart <code>POST .../admin/api/v1/teams</code></td>
+</tr>
+<tr>
+<td>ইমুলেটর</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>: "GET /api/v1/teams/program/{programId}", "POST /api/v1/teams" (form-data)</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>ProgramTeamManager.CreateAsync</code>, <code>CheckValidationForUpdate</code></td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>SQL: <code>select "Id","Name","Logo","Flag","IsActive","IsDeleted" from etp."ProgramTeams"</code>; <code>aws --endpoint-url http://localhost:4566 s3 ls s3://etp-local/teams-logo/ --recursive</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="A-03-program-settings.html"><span class="pager-label">পূর্ববর্তী</span><span>A-03 · প্রোগ্রাম সেটিংস</span></a>
+  <a class="pager-next" href="A-05-venues.html"><span class="pager-label">পরবর্তী</span><span>A-05 · ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

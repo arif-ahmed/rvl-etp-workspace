@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-05 · ভেন্যু ও স্টেডিয়াম লেআউট · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item is-active" href="A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">10 · অ্যাডমিন পোর্টাল</a><span class="sep">›</span><span>A-05</span></div>
+<h1><span class="id-chip">A-05</span> ভেন্যু ও স্টেডিয়াম লেআউট</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> ভেন্যু ও স্টেডিয়াম লেআউট</p>
+<p><a href="index.html">← 10 · অ্যাডমিন পোর্টাল</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>ভেন্যু।</strong> একটি venue হলো একটি স্টেডিয়াম বা প্রদর্শনী হল। এর বসার ব্যবস্থা একটি ট্রি হিসেবে মডেল করা: <strong>venue → gallery → block → level</strong>, প্রতিটি নোড একটি SVG ম্যাপ ছবির id (<code>SvgKey</code>)-এর সঙ্গে যুক্ত, যাতে seat-নির্বাচন স্ক্রিন ছবির সঠিক অংশ রঙ করতে পারে। level-এর উপর থাকে বসার ধারণক্ষমতা এবং ঐচ্ছিক আসনের লেবেল; <strong>entry gate</strong> ও <strong>mini gate</strong> level-এর সঙ্গে যুক্ত থাকে এবং টিকিটে ও চেকার অ্যাপে দেখা যায়। ধারণাগুলো: <span class="link-na" title="এখনো সাইটে যোগ হয়নি">shared database</span> (Booking, Ticketing ও Event এই টেবিলগুলো read model হিসেবে পড়ে)।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>রোল <code>admin</code> বা <code>event_manager</code>-এর কর্মী (<code>VenuesController</code>)। প্রবেশবিন্দু: গ্লোবাল মেনু <strong>Venue Management</strong> (<code>/venue-management</code>, শুধু গ্লোবাল মেনু): তালিকা, <strong>Create venue</strong> (<code>/venue-management/create-venue</code>), <strong>Update venue</strong> (<code>/update-venue/:venueId</code>), <strong>Stadium layout</strong> (<code>/stadium-layout/:venueId</code>), <strong>Exhibition layout</strong> (<code>/exhibition-layout/:venueId</code>), <strong>Gallery details</strong> (<code>/gallery-details/:venueId</code>)।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li>venue তৈরি করুন: ধরন (<code>Stadium</code> বা <code>ExhibitionHall</code>), নাম, সংক্ষিপ্ত নাম, অবস্থান, SVG ম্যাপ ছবি এবং SVG id-এর তালিকা।</li>
+<li>লেআউট তৈরি বা সম্পাদনা করুন: gallery, gallery-র ভেতরে block, block-এর ভেতরে level, প্রতিটিতে নাম, SVG key, বসার ধারণক্ষমতা, sellable/active ফ্ল্যাগ এবং (বসার থাকা level-এর জন্য) আসনের তালিকা।</li>
+<li>level-এর সঙ্গে entry gate ও mini gate যুক্ত করুন।</li>
+<li>লেআউট বদলানোর পর program-venue ডিটেইলস পুনরায় তৈরি করতে হয় (<a href="A-06-program-venue-mapping.html">A-06</a>), আর চলমান কোনো ইভেন্টের ওই নোডে টিকিট থাকলে পরিবর্তন প্রত্যাখ্যান করা হয়।</li>
+</ol>
+<h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + user token]</strong> তালিকা <code>GET /admin/api/v1/venues?pageOffset&amp;pageSize</code>; পুরো ট্রি-সহ একটি venue <code>GET /admin/api/v1/venues/venue?venueId=</code>; gallery, block ও level <code>GET .../venues/gallery</code>, <code>galleryBlocks</code>, <code>blockLevel</code>।</li>
+<li>তৈরি <code>POST /admin/api/v1/venues</code> (<code>multipart/form-data</code>): <code>VenueManager.CreateAsync</code> venue ইনসার্ট করে, তারপর <strong><code>UploadSvgKeys</code></strong> প্রতিটি SVG id-কে <code>_</code> দিয়ে ভাগ করে স্বয়ংক্রিয়ভাবে ট্রি তৈরি করে: <code>A_1_2</code> থেকে gallery <code>A</code>, block <code>A_1</code> ও level <code>A_1_2</code> হয়; <code>A_1</code> থেকে gallery <code>A</code> হয় এবং block ও level দুটোই key <code>A_1</code>; <code>A</code> থেকে gallery, block ও level তিনটিই key <code>A</code> (সব ফ্ল্যাগ <code>IsActive</code>, <code>IsSeatMapped</code>, <code>IsSellable</code> true, ধারণক্ষমতা 0)। SVG ম্যাপ ফাইল <code>venueimage/{venueId}/venue-svgimage-{id}-{guid}{ext}</code> পাথে আপলোড হয় এবং URL <code>SvgMapImage</code>-এ সংরক্ষিত হয়; আগে পুরনো ছবিটি মুছে ফেলা হয় (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>)।</li>
+<li>আপডেট <code>PUT /admin/api/v1/venues/venue/{venueId}</code> (multipart): ধরন, নাম, সংক্ষিপ্ত নাম বা অবস্থান বদলালে venue-এর প্রতিটি level <code>IsValidForUpdateAsync</code> দিয়ে যাচাই করা হয়, যা venue-এ একটি <strong>চলমান ইভেন্ট</strong> থাকলে এবং ওই level-এর কোনো টিকিট <code>Requested</code> বা <code>Generated</code> হলে বাধা দেয় ("This venue is currently being used. You cannot update that information.")। নতুন SVG key মার্জ করা হয় (<code>UpdateSvgKeys</code>) এবং <strong>venue-এর সব program-venue ডিটেইলস আনসিঙ্কড চিহ্নিত হয়</strong> (<code>IsSynced = false</code>)।</li>
+<li>লেআউট <code>POST /admin/api/v1/venues/venueLayout</code> (JSON <code>CreateOrUpdateVenueLayout</code>: <code>venueId</code>, <code>venueGalleries[]</code> তার ভেতরে <code>galleryBlocks[]</code> তার ভেতরে <code>blockLevels[]</code>): এক কলেই তৈরি বা আপডেট করে। বিদ্যমান কোনো gallery, block বা level-এর SVG key বা নাম বদলানো একই চলমান-ইভেন্ট নিয়মে "This gallery/block/level is currently being used. You cannot update that information." দিয়ে প্রত্যাখ্যাত হয়; শেষে সব program-venue ডিটেইলস আনসিঙ্কড চিহ্নিত হয়।</li>
+<li>গেট <code>GET/POST /admin/api/v1/venues/entry-gate</code> এবং <code>mini-gate</code> (<code>blockLevelId</code>): <code>CreateOrUpdateEntryGateAsync</code> একটি তালিকা নেয়, খালি তালিকা ও ডুপ্লিকেট নাম প্রত্যাখ্যান করে, বিদ্যমান gate-এর <code>IsActive</code> আপডেট করে এবং level-এর নতুনগুলো যোগ করে।</li>
+<li>"চলমান ইভেন্ট" (<code>CheckVenueHasRunningEventsAsync</code>, এছাড়া <code>GET /venues/has-running-events/{venueId}</code>): venue-এ এমন একটি ইভেন্ট আছে যা প্রকাশিত, যার টিকিট-বিক্রির শুরু (ইভেন্ট শুরু থেকে ইভেন্ট settings-এর <code>TicketSellingStartFromHour</code> বাদ দিলে) পেরিয়েছে এবং যার শেষ ভবিষ্যতে।</li>
+<li>এই venue-এর program-এর কপি আপ টু ডেট কি না তা দেখাতে পোর্টাল <code>GET /programVenueDetails/sync-status/{programId}/{venueId}</code>-ও জিজ্ঞাসা করে (<a href="A-06-program-venue-mapping.html">A-06</a>)।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>features/venue-management/{pages,services/venue-management.service.ts}</code> (পেজ: <code>venue-list</code>, <code>create-venue</code>, <code>stadium-layout-create</code>, <code>exhibition-layout-create</code>, <code>gallery-details</code>)</td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Admin: <code>VenuesController</code>, <code>BlockLevelEntryGateController</code>, <code>VenueManager</code>, <code>BlockLevelEntryGateManager</code>, <code>BlockLevelMiniGateManager</code></td>
+</tr>
+<tr>
+<td>অন্য সার্ভিস</td>
+<td>Ticketing (<code>ITicketingClient</code>-এর মাধ্যমে টিকিট স্ট্যাটাস লুকআপ), একই টেবিল Booking, Event, Ticketing-এর পড়া</td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td><code>Venues</code>, <code>VenueGalleries</code>, <code>GalleryBlocks</code>, <code>BlockLevels</code>, <code>BlockLevelEntryGates</code>, <code>BlockLevelMiniGates</code>, <code>ProgramVenues</code> (<code>IsSynced</code>)</td>
+</tr>
+<tr>
+<td>স্টোরেজ</td>
+<td>S3 media <code>venueimage/{venueId}</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরকট">6. API কন্ট্রাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পাথ</th>
+<th>অথ</th>
+<th>রিকোয়েস্ট</th>
+<th>রেসপন্স</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/venues</code></td>
+<td><code>Admin</code>, <code>EventManager</code></td>
+<td><code>pageOffset</code>, <code>pageSize</code>, search</td>
+<td>পেজযুক্ত <code>Venue</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/venues/{programId}</code></td>
+<td>same</td>
+<td>পাথ</td>
+<td>একটি program-এর venue</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/venues/venue?venueId=</code></td>
+<td>same</td>
+<td>query</td>
+<td>পুরো ট্রি-সহ <code>Venue</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/venues/gallery?venueId=</code>, <code>/galleryBlocks</code>, <code>/blockLevel</code></td>
+<td>same</td>
+<td>query</td>
+<td>নোড</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/venues</code></td>
+<td>same</td>
+<td><code>CreateOrUpdateVenue</code> (multipart)</td>
+<td><code>Venue</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/api/v1/venues/venue/{venueId}</code></td>
+<td>same</td>
+<td><code>CreateOrUpdateVenue</code> (multipart)</td>
+<td><code>Venue</code></td>
+</tr>
+<tr>
+<td>POST/PUT</td>
+<td><code>/admin/api/v1/venues/venueGallery</code>, <code>venueGallery/{id}</code>, <code>galleryBlocks</code>, <code>galleryBlocks/{id}</code>, <code>blockLevel</code>, <code>blockLevel/{id}</code></td>
+<td>same</td>
+<td>নোড DTO</td>
+<td>নোড</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/venues/venueLayout</code></td>
+<td>same</td>
+<td><code>CreateOrUpdateVenueLayout</code> (JSON)</td>
+<td><code>Venue</code></td>
+</tr>
+<tr>
+<td>GET/POST</td>
+<td><code>/admin/api/v1/venues/entry-gate</code>, <code>/mini-gate</code></td>
+<td>same</td>
+<td><code>blockLevelId</code> / gate-এর তালিকা</td>
+<td>gate</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/venues/has-running-events/{venueId}</code></td>
+<td>same</td>
+<td>পাথ</td>
+<td><code>bool</code></td>
+</tr>
+</tbody>
+</table>
+<p>প্রধান নমুনা, <code>POST /admin/api/v1/venues</code> (multipart; নাম <code>CreateOrUpdateVenue</code> থেকে; <code>type</code> হলো <code>1</code> Stadium বা <code>2</code> ExhibitionHall):</p>
+<pre><code>type=1
+name=Sher-e-Bangla National Cricket Stadium
+shortName=SBNCS
+location=Mirpur, Dhaka
+svgKeys=A
+svgKeys=A_1
+svgKeys=A_1_1
+svgMapImageFile=&lt;file.svg&gt;
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>নতুন ট্রি সারি, S3 ছবি, পরিবর্তনের পর প্রতিটি ম্যাপ করা program-এর জন্য <code>ProgramVenues.IsSynced = false</code>; অ্যাক্টিভিটি লগ (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>)।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>কন্ট্রোলার</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/VenuesController.cs:34-345</code></td>
+</tr>
+<tr>
+<td>ম্যানেজার</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/VenueManager.cs:103-704</code> (তৈরি 103, SVG ভাগ 197, আপডেট 262, লেআউট 470, বৈধতা 636, চলমান ইভেন্ট 649, আনসিঙ্ক 691)</td>
+</tr>
+<tr>
+<td>গেট</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/BlockLevelEntryGateManager.cs:26-</code></td>
+</tr>
+<tr>
+<td>পোর্টাল সার্ভিস</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/venue-management/services/venue-management.service.ts:26-80</code></td>
+</tr>
+<tr>
+<td>লেআউট স্ক্রিন</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/venue-management/pages/stadium-layout-create/stadium-layout-create.component.ts:224</code>, <code>.../gallery-details/gallery-details.component.ts:1207</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>SVG key-এর রীতিই সবকিছু চালায়।</strong> Gallery, block ও level চেনা হয় key-কে <code>_</code> দিয়ে ভাগ করে (<code>A</code>, <code>A_1</code>, <code>A_1_2</code>); কেবল এক থেকে তিনটি অংশ বোঝা যায়, আর চার বা তার বেশি অংশের key এক-অংশের key-এর মতোই পড়া হয় (gallery, block ও level তিনটিই প্রথম অংশ দিয়ে key করা)। SVG ফাইলের element id-গুলোকেও একই রীতি অনুসরণ করতে হবে, নয়তো seat map হাইলাইট হবে না।</li>
+<li><strong>"ব্যবহৃত" যাচাইটি সরু।</strong> এটি বদলানো আটকায় কেবল তখনই, যখন venue-এ একটি বর্তমানে চলমান প্রকাশিত ইভেন্ট আছে <strong>এবং</strong> ওই নোডে কোনো টিকিট <code>Requested</code> বা <code>Generated</code>। প্রকাশিত ইভেন্ট বিক্রিতে থাকা অবস্থায় কিন্তু এখনো কোনো টিকিট জেনারেট না হলে পরিবর্তনের অনুমতি থাকে, যদিও ক্যাপাসিটি সারি (A-09/A-10) তৈরি থাকতে পারে।</li>
+<li><strong>পোর্টাল সার্ভিসের <code>updateVenueLayout</code> <code>PUT /venues/venueLayout/{id}</code> কল করে, যা ব্যাকএন্ডে নেই</strong> (শুধু <code>POST venueLayout</code> আছে)। স্ক্রিনগুলো <code>createVenueLayout</code> ব্যবহার করে, তাই মেথডটি মৃত কোড।</li>
+<li><strong>প্রতি level-এ entry gate নাম দিয়ে প্রতিস্থাপিত হয়।</strong> <code>CreateOrUpdateEntryGateAsync</code> পরিচিত id-গুলোর <code>IsActive</code> আপডেট করে এবং বাকিগুলো যোগ করে; নাম একটি রিকোয়েস্টের ভেতরে অনন্য হতে হবে, venue-জুড়ে নয়।</li>
+<li><strong>লেআউট বদলালে প্রতিটি program-venue কপি অপরাজা হয়ে ওঠে</strong>, ফলে প্রতিটি program-এ হাতে <strong>Sync</strong> করতে হয় (<a href="A-06-program-venue-mapping.html">A-06</a>)। ততক্ষণ পর্যন্ত সেসব program-এর ইভেন্টের দাম ও ক্যাপাসিটি যেমন তৈরি হয়েছিল তেমনই থাকে।</li>
+<li><strong>আরও দুটি অ্যাডমিন কন্ট্রোলার</strong> একই ট্রি পড়ে: <code>GalleryController</code> (<code>GET /gallery</code>) এবং <code>BlockLevelEntryGateController</code> (<code>GET /block-level-entry-gate/ids</code>, কেবল রোল <code>Admin</code>), যেটি <code>Core/.../AdminClient.cs</code> কল করতে পারে; TicketChecker সার্ভিস এখন gate টেবিলটি সরাসরি পড়ে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">C-02</span>)।</li>
+<li>কন্ট্রোলার venue সফট-ডিলিট অফার করে না; পোর্টাল থেকে venue সরানো যায় না।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  AP["Admin portal: Venue Management"] -->|"multipart / JSON, HTTP + token"| AD["Admin API"]
+  AD --> DB[("Venues / Galleries / Blocks / Levels / Gates")]
+  AD -->|"venueimage/"| S3[("S3 media")]
+  AD -->|"ticket status per level (HTTP + token)"| TK["Ticketing"]
+  AD -->|"IsSynced = false"| PV[("ProgramVenues")]
+  DB -.->|"read model"| BK["Booking / Event / Ticketing"]
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="../60-cross-cutting/X-15-authz-roles.html">X-15</a>। <strong>প্রভাব ফেলে:</strong> <a href="A-06-program-venue-mapping.html">A-06</a>, <a href="A-07-events.html">A-07</a>, <a href="A-09-event-level-pricing.html">A-09</a>, <a href="A-10-capacity-adjustment.html">A-10</a>, <a href="A-11-seat-reservation.html">A-11</a>, <a href="A-18-gate-assignment.html">A-18</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, টিকিট (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>)।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালে টেস্টযোগ্যতা: সম্পূর্ণ</strong> (S3 হলো Floci; seeded venue আগে থেকেই আছে)।</p>
+<table>
+<thead>
+<tr>
+<th>আইটেম</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td><code>pwsh ./scripts/Seed-EtpData.ps1</code> (gallery ট্রিসহ একটি venue, <code>scripts/seed/01-catalog.sql</code>); অ্যাডমিন <code>…01</code></td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>http://localhost:4200</code> → <strong>Venue Management</strong>; Network: <code>GET .../admin/api/v1/venues/venue?venueId=</code>, <code>POST .../venues/venueLayout</code></td>
+</tr>
+<tr>
+<td>ইমুলেটর</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>: "GET /api/v1/venues", "POST /api/v1/venues" (form-data), "POST /api/v1/venues/venueLayout", "GET /api/v1/venues/has-running-events/{venueId}"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>VenueManager.SplitSvgKeys</code>, <code>CreateOrUpdateVenueLayoutAsync</code>, <code>IsValidForUpdateAsync</code></td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>ওই venue-এর জন্য SQL: <code>select "Id","SvgKey","SeatingCapacity" from etp."BlockLevels"</code>; আপডেটের পর <code>select "IsSynced" from etp."ProgramVenues"</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="A-04-teams.html"><span class="pager-label">পূর্ববর্তী</span><span>A-04 · দল (টিম)</span></a>
+  <a class="pager-next" href="A-06-program-venue-mapping.html"><span class="pager-label">পরবর্তী</span><span>A-06 · প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

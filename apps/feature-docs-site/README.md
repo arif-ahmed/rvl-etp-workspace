@@ -1,7 +1,7 @@
 # feature-docs-site
 
 Static HTML site generated from [`docs/handover/feature-docs`](../../docs/handover/feature-docs)
-(English + বাংলা, light/dark). First look covers the cross-cutting section only.
+(English + বাংলা, light/dark). Currently covers the admin-portal, user-portal and cross-cutting sections.
 
 ## Layout
 
@@ -15,8 +15,8 @@ Never edit `dist/` by hand; it is wiped on every build.
 ## Build
 
 ```bash
-python scripts/build_feature_site.py                      # cross-cutting only (current scope)
-python scripts/build_feature_site.py --sections all       # full 103-feature site
+python scripts/build_feature_site.py                      # sections built so far (current scope)
+python scripts/build_feature_site.py --sections all       # full site, all sections
 ```
 
 Requires Python 3.10+ with `pip install markdown`. Fonts and mermaid are vendored

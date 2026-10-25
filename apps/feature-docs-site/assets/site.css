@@ -164,6 +164,8 @@ html[data-theme="dark"] .icon-sun { display: block; }
   font-weight: 700;
   color: var(--text);
 }
+/* extra top spacing separates consecutive section blocks in the sidebar */
+.sidebar .side-section + .side-section, .sidebar .side-group + .side-section { margin-top: 20px; }
 .side-section:hover { background: var(--surface-2); text-decoration: none; }
 .side-section.is-active { background: var(--accent-soft); color: var(--accent); }
 

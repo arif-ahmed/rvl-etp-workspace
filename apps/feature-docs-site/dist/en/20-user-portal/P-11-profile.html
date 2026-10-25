@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P-11 · Profile view and update · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · Admin Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+    <a class="side-section" href="index.html">20 · User Web Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+    <a class="side-item" href="P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+    <a class="side-item" href="P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+    <a class="side-item" href="P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+    <a class="side-item" href="P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+    <a class="side-item" href="P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+    <a class="side-item" href="P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+    <a class="side-item" href="P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+    <a class="side-item" href="P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+    <a class="side-item" href="P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+    <a class="side-item is-active" href="P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+    <a class="side-item" href="P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+    <a class="side-item" href="P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">20 · User Web Portal</a><span class="sep">›</span><span>P-11</span></div>
+<h1><span class="id-chip">P-11</span> Profile view and update</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> প্রোফাইল দেখা ও আপডেট</p>
+<p><a href="index.html">← 20 · User portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Profile view and update.</strong> A signed-in customer sees the personal data held for them, and can correct the fields the platform lets them correct: date of birth, identity document, and address. Name, phone and email are shown read-only. The same page carries the <strong>Change password</strong> form (<a href="../60-cross-cutting/X-09-user-forgot-password.html">X-09</a> covers the forgot-password path; change-password here is the Cognito call).</p>
+<p>The profile itself lives in the <strong>identity API</strong>, which is not in this repository (<a href="../60-cross-cutting/X-06-user-registration.html">X-06</a> explains the split) <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Customer on <code>/en/user-profile</code> (a <code>:lang</code> segment is always present, <a href="P-13-language-switch.html">P-13</a>). The route has <strong>no AuthGuard</strong> — <code>app-routing.module.ts:41-46</code> lists <code>canActivate</code> for <code>tickets</code> and <code>issues</code> but not for <code>user-profile</code>. In practice the page still needs a valid session, because the component renders <code>user_data.name</code> straight from the NgRx store; an anonymous visit throws in the template rather than redirecting.</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>The page opens on the <strong>Profile</strong> tab: name, phone, email (read-only) plus the editable fields.</li>
+<li>For a OneID customer (<code>sso_provider === 'oneid'</code>) the DOB, identity-document and address fields are hidden and not validated, because OneID already supplies that data.</li>
+<li>Editing DOB / identity document / address and saving sends the update; the page shows a green banner <code>user_updated_and_verified</code> or a red banner mapped from the server's status code.</li>
+<li>The <strong>Change password</strong> tab (hidden for OneID users) asks for the old and new password and calls Cognito directly.</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<ol>
+<li><strong>[HTTP + user token] → identity API:</strong> <code>GET {services.identity}/user/my-profile</code> (<code>IdentityApiService.fetchUserProfile</code>, <code>identity-api.service.ts:66-71</code>). Two headers apply: the static API key from <code>environment.headerkey</code> (set once on the service, <code>:30-32</code>) and the Cognito bearer added by <code>TokenInterceptor</code>. The response is <code>UserProfile { user_data }</code>.</li>
+<li>The component maps <code>user_data</code> into a reactive form (<code>user-profile-pages.component.ts:78-86</code>). Controls: <code>fullName</code>, <code>phoneNumber</code>, <code>email</code>, <code>dob</code>, <code>verification_type</code>, <code>verification_id</code>, <code>address</code>.</li>
+<li><strong>[HTTP + user token] → identity API:</strong> <code>PUT {services.identity}/user/my-profile</code> (<code>updateUserProfile</code>, <code>:100-105</code>) with <code>UpdateProfile { verification_id, verification_type, address, dob }</code> — only these four. Name, phone and email cannot be changed from here. Dispatched through NgRx: <code>updateUserProfileInit</code> → effect <code>updateUserProfile$</code> (<code>identity.effects.ts:346-371</code>).</li>
+<li>The PUT passes <strong>no explicit headers object</strong>; it relies entirely on <code>TokenInterceptor</code>, whose allow-list matches on the substring <code>/user/my-profile</code> (<code>token.interceptor.ts:152, 189-193</code>). The consequence is that the static <code>headerkey</code> present on the GET is <em>not</em> applied to the PUT <span class="badge-unconfirmed">[UNCONFIRMED: Q-42]</span>.</li>
+<li><strong>Change password:</strong> <code>CognitoService.changePassword(old, new)</code> (<code>user-profile-pages.component.ts:319</code>) → Amplify <code>Auth.changePassword(cognitoUser, oldPassword, newPassword)</code> (<code>cognito.service.ts:182-198</code>). No GoBCB service is involved, so the result never reaches the platform's own tables.</li>
+<li><strong>Delete account has no UI in the portal.</strong> <code>deleteUserProfile()</code> (<code>identity-api.service.ts:91-98</code>) and the <code>deleteProfile$</code> effect (<code>identity.effects.ts:514-543</code>) exist but no component dispatches them; the action is reachable only from the user app (<a href="../60-cross-cutting/X-11-delete-account-force-update.html">X-11</a>).</li>
+</ol>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td><code>featured/profile/pages/user-profile-pages.component.ts</code> + <code>.html</code>, <code>featured/profile/profile-routing.module.ts</code></td>
+</tr>
+<tr>
+<td>Client services</td>
+<td><code>core/services/api/identity-api.service.ts</code>, <code>shared/services/cognito.service.ts</code>, <code>core/services/identity-store.service.ts</code>, NgRx <code>identity.effects.ts</code></td>
+</tr>
+<tr>
+<td>Service</td>
+<td>Identity API (not in this repo) for the profile; Cognito user pool for the password</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td>Identity API's own user table (not in this repo)</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>none</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response / errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>{services.identity}/user/my-profile</code></td>
+<td>Static API key + user bearer</td>
+<td>—</td>
+<td><code>UserProfile</code>; 404 <code>user_not_found</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>{services.identity}/user/my-profile</code></td>
+<td>User bearer (via interceptor)</td>
+<td><code>UpdateProfile</code></td>
+<td><code>user_updated_and_verified</code>, <code>user_update_and_verification_failed</code>, <code>invalid_request</code>, <code>server_error</code></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>{services.identity}/user/delete-my-profile</code></td>
+<td>User bearer</td>
+<td>—</td>
+<td>not reachable from the portal</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Cognito <code>ChangePassword</code></td>
+<td>user pool session</td>
+<td><code>oldPassword</code>, <code>newPassword</code></td>
+<td><code>IncorrectUsernameOrPasswordException</code>, <code>PasswordResetRequiredException</code>, … (mapped, see §9)</td>
+</tr>
+</tbody>
+</table>
+<p>Sample, GET response (values illustrative; the interesting part is <code>UserProfile.user_data</code>):</p>
+<pre><code class="language-json">{
+  &quot;user_data&quot;: {
+    &quot;registration_datetime&quot;: &quot;2026-03-14T09:22:31Z&quot;,
+    &quot;address&quot;: &quot;House 42, Road 7, Dhanmondi, Dhaka-1209&quot;,
+    &quot;email&quot;: &quot;rafiq.hasan@example.com&quot;,
+    &quot;name&quot;: &quot;Rafiq Hasan&quot;,
+    &quot;user_id&quot;: &quot;a1c9f0de-6b2e-4a71-9f30-2c9d5b8e77aa&quot;,
+    &quot;role&quot;: &quot;user&quot;,
+    &quot;dob&quot;: &quot;1994-07-21T00:00:00Z&quot;,
+    &quot;temp_user_id&quot;: &quot;b7e31044-2f5a-4c9d-8e11-77a0b3c1d902&quot;,
+    &quot;phone&quot;: &quot;+8801700000011&quot;,
+    &quot;verified&quot;: true,
+    &quot;isProfileCompleted&quot;: true,
+    &quot;sso_provider&quot;: &quot;oneid&quot;,
+    &quot;one_id&quot;: &quot;8812345678901234&quot;,
+    &quot;nonsensitive_data&quot;: { &quot;verification&quot;: { &quot;verification_id&quot;: &quot;1994567890123&quot;, &quot;verification_type&quot;: &quot;nid&quot; } },
+    &quot;sensitive_data&quot;: null
+  }
+}
+</code></pre>
+<p>Sample, PUT request body — exactly the four editable fields:</p>
+<pre><code class="language-json">{ &quot;verification_id&quot;: &quot;1994567890123&quot;, &quot;verification_type&quot;: &quot;nid&quot;, &quot;address&quot;: &quot;House 42, Road 7, Dhanmondi, Dhaka-1209&quot;, &quot;dob&quot;: &quot;1994-07-21T00:00:00&quot; }
+</code></pre>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>Only the identity API's user row is touched (<code>dob</code>, address, verification fields). The change-password call writes the Cognito pool's password. Nothing is written to the <code>etp</code> schema, no queue message is published, no file is stored.</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Route</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/app-routing.module.ts:41-46</code>, <code>:67-71</code></td>
+</tr>
+<tr>
+<td>Component</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/featured/profile/pages/user-profile-pages.component.ts:36-370</code></td>
+</tr>
+<tr>
+<td>Template</td>
+<td><code>.../user-profile-pages.component.html:11, 80-95, 187-286, 328-329, 410</code></td>
+</tr>
+<tr>
+<td>API service</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/core/services/api/identity-api.service.ts:23-152</code></td>
+</tr>
+<tr>
+<td>Models</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/core/models/user-profile.ts:3-68</code></td>
+</tr>
+<tr>
+<td>NgRx</td>
+<td><code>.../core/services/identity-store.service.ts:99-101</code>, <code>.../store/identity.effects.ts:346-371, 514-543</code></td>
+</tr>
+<tr>
+<td>Interceptor</td>
+<td><code>.../core/interceptors/token.interceptor.ts:152, 189-193</code></td>
+</tr>
+<tr>
+<td>Cognito</td>
+<td><code>.../shared/services/cognito.service.ts:182-198</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>No AuthGuard on <code>/user-profile</code>.</strong> An anonymous visit is not redirected; it renders and throws on an empty store. Consistent with <a href="../60-cross-cutting/X-17-authz-client-side.html">X-17</a> note 1.</li>
+<li><strong>Name, phone and email are read-only.</strong> The UI renders them disabled and the PUT body has no such fields, so a customer cannot correct a mistyped phone number from the portal <span class="badge-unconfirmed">[UNCONFIRMED: Q-43]</span>.</li>
+<li><strong>Static API key header asymmetry.</strong> GET sends <code>environment.headerkey</code>; PUT does not (interceptor only). It works today because the allow-list matches, but a stricter identity API would break the update <span class="badge-unconfirmed">[UNCONFIRMED: Q-42]</span>.</li>
+<li><strong>Identity-document validation is custom.</strong> <code>nid</code> must be digits of length 10, 13 or 17; <code>passport</code> must be alphanumeric (<code>user-profile-pages.component.ts:215-237</code>). No field has a maximum length.</li>
+<li><strong>Minimum age 12</strong> is enforced client-side by the date picker's <code>[max]</code> (<code>:209-213</code>); whether the identity API re-checks is unknown <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>.</li>
+<li><strong>OneID customers skip DOB / address / verification</strong> entirely (validators cleared and fields hidden, <code>:122-128</code> and <code>html:94</code>).</li>
+<li><strong>Raw status strings are matched, not displayed.</strong> The effect reads <code>success.status_message</code> / <code>error.error.status_message</code> but the template renders translated keys (<code>MESSAGES.SOMETHING_WRONG</code>), so a new server status code silently produces the generic message. The password tab does <code>{{ error | translate }}</code>, so an unmapped Cognito error surfaces as the raw key string (<code>html:410</code>).</li>
+<li><strong>A second, stale <code>User</code>/<code>UserData</code> interface</strong> exists at <code>featured/profile/models/user.ts:1-30</code> (with <code>ekyc</code> and <code>payment</code> fields) and is used by the Issues module; it is not the profile model's contract.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  C["Customer: /en/user-profile"] -->|"/user-profile route (no guard)"| PW["Profile page + NgRx store"]
+  PW -->|"GET/PUT /user/my-profile<br/>static API key + user bearer"| ID["Identity API<br/>(not in repo)"]
+  PW -->|"Auth.changePassword"| CG["Cognito user pool"]
+  PW -.->|"deleteUserProfile (no UI)"| ID
+</div>
+<p><strong>Depends on:</strong> <a href="../60-cross-cutting/X-06-user-registration.html">X-06</a> (the account must exist), <a href="../60-cross-cutting/X-07-user-password-login.html">X-07</a> (the session), <a href="P-13-language-switch.html">P-13</a> (the <code>/en</code> segment). <strong>Affects:</strong> nothing downstream — no platform table is read from the profile, so a DOB or address change never reaches the ticket holder data (<a href="P-09-ticket-details-downloads.html">P-09</a> keeps its own copy).</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Partial.</strong> The page runs fully against the local identity stub at <code>/p/identity</code> (<code>docs/user-portal-local.md</code>); OTP is stubbed with <code>123456</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>seeded user <code>+8801700000011</code>; the <code>/p/identity</code> stub returns a fixed <code>user_data</code> — edit DOB/address and confirm in DevTools that the PUT body has exactly the four fields</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:4200/en/user-profile</code>; Network tab: <code>GET</code> then <code>PUT /user/my-profile</code>, check <code>Authorization</code> and the static key; confirm the success banner with a valid NID (10/13/17 digits) and the error banner with a 5-digit one</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>not in any collection — <code>services.identity</code> is an external API with no GoBCB Postman collection <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span></td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>no local breakpoint target: the identity API is not in this solution. Use the Aspire AppHost only to watch the portal's HTTP traffic (<code>docs/local-dev.md</code> §6)</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>the stub's received PUT body in the Floci console log; the password change in the Cognito user pool console</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="P-10-oneid-ticket-sync.html"><span class="pager-label">Previous</span><span>P-10 · Sync tickets to OneID wallet</span></a>
+  <a class="pager-next" href="P-12-issues-chat.html"><span class="pager-label">Next</span><span>P-12 · Report an issue and chat with support</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

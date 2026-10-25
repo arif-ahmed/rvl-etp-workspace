@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-31 · General notices · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">10 · Admin Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+    <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+    <a class="side-item" href="A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+    <a class="side-item" href="A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+    <a class="side-item" href="A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+    <a class="side-item" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+    <a class="side-item" href="A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+    <a class="side-item" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+    <a class="side-item is-active" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · User Web Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">10 · Admin Portal</a><span class="sep">›</span><span>A-31</span></div>
+<h1><span class="id-chip">A-31</span> General notices</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> জেনারেল নোটিশ</p>
+<p><a href="index.html">← 10 · Admin portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>General notices.</strong> Short announcements (for example "gates open at 2 pm") that the public portal shows as a banner between a start and an end time. Each notice has a program, a text of up to 260 characters (simple HTML), a period and a publish flag. Do not confuse them with the <strong>Notice</strong> entries of the content editor (<a href="A-29-content-editor.html">A-29</a>), which are a different table.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Staff on <code>/settings/notice</code> (the <code>program-settings</code> module; <strong>not linked from any menu</strong>, reachable only by URL). Server roles <code>Admin</code>, <code>EventManager</code> (<code>GeneralNoticeController</code>); the public read is anonymous.</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<p>List notices, create one (program, text, start, end, publish), edit, delete. Customers see published notices whose end time has not passed, ordered by start time.</p>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + user token]</strong> <code>GET /admin/api/v1/general-notice</code> (all), <code>GET .../{id}</code>, <code>POST .../general-notice</code> (JSON <code>CreateOrUpdateGeneralNotice {programId, description, startDateTime, endDateTime, isPublished}</code>), <code>PUT .../{id}</code>, <code>DELETE .../{id}</code>. The form also loads programs and program settings (<code>GET /program</code>, <code>GET /program-settings/{programId}</code>).</li>
+<li>Validation: description required and at most 260 characters ("Description should not be more than 260"). Every create, update and delete deletes the Redis key <code>general_notice_published:list</code>.</li>
+<li>Public read <code>GET /admin/api/v1/general-notice/public</code> (<strong>anonymous</strong>, <code>[AllowAnonymous]</code>): <code>GetAllPublishedAsync</code> takes the published list from Redis (<code>GetOrSetAsync</code>, rebuilt from the database when absent), <strong>drops notices whose <code>EndDateTime</code> is before now</strong>, orders by <code>StartDateTime</code>, and replaces <code>&lt;p&gt;</code> and <code>&lt;/p&gt;</code> with <code>&lt;span&gt;</code> and <code>&lt;/span&gt;</code> in the text. The user portal calls this URL through the Event service base URL (<code>event-api.service.ts</code>, <a href="../20-user-portal/P-03-info-pages.html">P-03</a>).</li>
+</ol>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td><code>features/program-settings/pages/notice/*</code>, <code>services/notice.service.ts:19-43</code></td>
+</tr>
+<tr>
+<td>Service</td>
+<td>Admin (<code>GeneralNoticeController</code>, <code>GeneralNoticeManager</code>)</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>GeneralNotices</code></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td><code>general_notice_published:list</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>Main errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/general-notice</code>, <code>/{id}</code></td>
+<td><code>Admin</code>, <code>EventManager</code></td>
+<td></td>
+<td><code>GeneralNotice</code></td>
+<td></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/general-notice</code></td>
+<td>same</td>
+<td><code>CreateOrUpdateGeneralNotice</code></td>
+<td><code>GeneralNotice</code></td>
+<td>400 <code>Description is missing.</code>, <code>Description should not be more than 260</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/api/v1/general-notice/{id}</code></td>
+<td>same</td>
+<td>same</td>
+<td><code>GeneralNotice</code></td>
+<td></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/admin/api/v1/general-notice/{id}</code></td>
+<td>same</td>
+<td>path</td>
+<td><code>GeneralNotice</code></td>
+<td></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/general-notice/public</code></td>
+<td><strong>anonymous</strong></td>
+<td></td>
+<td><code>GeneralNoticePublic[]</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Primary sample, <code>POST /admin/api/v1/general-notice</code> (names from <code>CreateOrUpdateGeneralNotice</code>; values illustrative):</p>
+<pre><code class="language-json">{ &quot;programId&quot;: 12, &quot;description&quot;: &quot;&lt;p&gt;Gates open at 2:00 pm.&lt;/p&gt;&quot;,
+  &quot;startDateTime&quot;: &quot;2026-12-10T00:00:00Z&quot;, &quot;endDateTime&quot;: &quot;2026-12-10T23:59:59Z&quot;, &quot;isPublished&quot;: true }
+</code></pre>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p><code>GeneralNotices</code> row, cache delete, activity log (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>).</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Controller</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/GeneralNoticeController.cs:26-110</code></td>
+</tr>
+<tr>
+<td>Manager</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/GeneralNoticeManager.cs:26-110</code></td>
+</tr>
+<tr>
+<td>Portal</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/program-settings/services/notice.service.ts:19-43</code></td>
+</tr>
+<tr>
+<td>Customer read</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/event-api.service.ts:20, 56</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>The management screen is not in the menu</strong>, so staff may not know it exists.</li>
+<li><strong>The user portal fetches these notices but never renders them.</strong> <code>EventApiService.getAllGeneralNotices</code> <strong>is</strong> called from <code>home-events-page.component.ts:43</code>, the rows <strong>are</strong> date-filtered in memory and assigned to the component's <code>notices</code> array — but <strong><code>notices</code> is never bound in <code>home-events-page.component.html</code></strong>, and the code comment at <code>:40</code> says so outright: <code>// Fetch notices but do not start the marquee</code>. So each home-page load issues a request whose result is discarded, and the scrolling line customers actually see is the content editor's <code>Notice</code> type (<a href="A-29-content-editor.html">A-29</a>). Whether the user app renders them is not visible. <strong>This is the single most likely reason staff would report "I published a notice and nothing happened."</strong> <span class="badge-unconfirmed">[UNCONFIRMED: Q-35]</span></li>
+<li><strong>Public list is cached without a program filter</strong>; the response contains notices of every program, and the customer client filters — here it filters by <code>startDateTime</code>/<code>endDateTime</code> only, never by program.</li>
+<li><strong>The text is HTML</strong> and is not sanitised on save; only <code>&lt;p&gt;</code> is rewritten on read, so scripts or other tags in the text depend on the client's rendering <span class="badge-unconfirmed">[UNCONFIRMED: Q-33]</span>.</li>
+<li><strong>Ended notices stay in the cached list</strong> until the next change but are filtered out on every read, so they disappear on time without a cache refresh. Not-yet-started notices are returned too; the client decides whether to show them.</li>
+<li><strong>Delete is <code>DeleteByIdAsync</code></strong> of the repository; soft or hard is not checked here.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  AP["Admin portal /settings/notice"] -->|"HTTP + token"| AD["Admin API"]
+  AD --> DB[("GeneralNotices")]
+  AD -->|"delete list key"| R[("Redis")]
+  PUB["User portal"] -->|"general-notice/public (anonymous)"| AD
+</div>
+<p><strong>Depends on:</strong> <a href="A-02-programs.html">A-02</a>. <strong>Affects:</strong> <a href="../20-user-portal/P-03-info-pages.html">P-03</a>.</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Full.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>Admin <code>…01</code></td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:4200/settings/notice</code> (type the URL; program 0)</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>: "GET /api/v1/general-notice/public", "POST /api/v1/general-notice"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>GeneralNoticeManager.GetAllPublishedAsync</code></td>
+</tr>
+<tr>
+<td>Verify</td>
+<td><code>redis-cli GET general_notice_published:list</code>; SQL on <code>GeneralNotices</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="A-30-header-footer-social.html"><span class="pager-label">Previous</span><span>A-30 · Header/footer and social-media settings</span></a>
+  <span class="empty"></span>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

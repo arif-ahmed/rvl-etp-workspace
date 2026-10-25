@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-22 · বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item is-active" href="A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">10 · অ্যাডমিন পোর্টাল</a><span class="sep">›</span><span>A-22</span></div>
+<h1><span class="id-chip">A-22</span> বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</p>
+<p><a href="index.html">← 10 · অ্যাডমিন পোর্টাল</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>রিপোর্ট।</strong> একটি প্রোগ্রামের <strong>Reports</strong> মেনু অর্ডার ও অর্থের read-only ভিউ দেয়: বুকিং অর্ডার (মেট্রিক্স ও এক্সপোর্টসহ), প্রতি ইভেন্টে বিক্রি, প্রতিদিন ও প্রতি ইভেন্টে রাজস্ব, সারাংশ, এবং একটি <strong>পেমেন্ট অসঙ্গতি</strong> রিপোর্ট যা gateway যা আসায় এবং অর্ডারে যা লেখা আছে তার মধ্যে তুলনা করে। গেট রিপোর্টগুলো <a href="A-19-gate-reports.html">A-19</a>-এ।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>প্রোগ্রাম নির্বাচিত করে কর্মীরা (<code>/report/*</code>, রুটগুলো <code>AuthGuard</code>-এ সুরক্ষিত)। মেনুটি <a href="../60-cross-cutting/X-17-authz-client-side.html">X-17</a>-এর রোলগুলোকে দেখায়। Booking-এর <code>ReportController</code> (<code>/booking/api/v1/report/admin/...</code>) থেকে <strong>কোনো <code>[Authorize]</code> নেই</strong>; অর্ডার তালিকা ও ডিটেইল endpointগুলো admin policy চায়।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<table>
+<thead>
+<tr>
+<th>মেনু আইটেম</th>
+<th>রুট</th>
+<th>কী দেখায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Booking Orders</td>
+<td><code>/report/booking-orders</code></td>
+<td>স্ট্যাটাস ফিল্টার, অর্ডার নম্বর খোঁজা, মেট্রিক্স ও এক্সপোর্টসহ একটি ইভেন্টের অর্ডার</td>
+</tr>
+<tr>
+<td>Payment Discrepancy</td>
+<td><code>/report/payment-discrepancy</code></td>
+<td>সেই অর্ডারগুলো যেখানে gateway-এর পরিমাণ অর্ডারের মোট থেকে আলাদা</td>
+</tr>
+<tr>
+<td>Event-Wise Sales</td>
+<td><code>/report/event-wise-sales</code></td>
+<td>একটি ইভেন্টের প্রতি লেভেলে আসন ও পরিমাণ</td>
+</tr>
+<tr>
+<td>Summary Sales</td>
+<td><code>/report/summary-sales</code></td>
+<td>প্রতি ইভেন্টে বিক্রির সারাংশ</td>
+</tr>
+<tr>
+<td>Day-wise Revenue</td>
+<td><code>/report/day-wise-revenue</code></td>
+<td>দুই তারিখের মধ্যে রাজস্ব</td>
+</tr>
+<tr>
+<td>Event-wise Revenue</td>
+<td><code>/report/event-wise-revenue</code></td>
+<td>একটি ইভেন্টের রাজস্বের বিস্তারিত</td>
+</tr>
+<tr>
+<td>Summary Revenue</td>
+<td><code>/report/summary-revenue</code></td>
+<td>প্রতি ইভেন্টে রাজস্বের সারাংশ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
+<p>পোর্টাল থেকে সব কল <strong class="hop-tag">[HTTP + ইউজার টোকেন]</strong> সরাসরি Booking-এ (ইভেন্ট বাছাইয়ের জন্য Admin-এ):</p>
+<ol>
+<li>ইভেন্ট বাছাই <code>GET /admin/api/v1/events/search?...</code> (<a href="A-07-events.html">A-07</a>)।</li>
+<li>বুকিং অর্ডার: <code>GET /booking/api/v1/user-booking-order/admin/list/{eventId}?page&amp;status&amp;orderNumber&amp;sortOrder&amp;programId</code> (admin policy, প্রতি পাতায় ২০টি), <code>GET .../user-booking-order/admin/{bookingId}</code> (ডিটেইল), <code>GET /booking/api/v1/report/admin/booking-metrics?eventId</code> → <code>GetBookingMetricstByEventId</code>: রিজার্ভড টিকিট, ক্যাপাসিটি অ্যাডজাস্টমেন্ট, সিটিং ক্যাপাসিটি, বিক্রীত টিকিট, অনলাইনে তৈরি টিকিট এবং স্ট্যাটাস অনুযায়ী অর্ডারের সংখ্যা (<code>Pending</code>, <code>Failed</code>, <code>Paid</code>, <code>Requested</code>, <code>Generated</code>); এক্সপোর্ট <code>GET .../report/admin/export-booking-orders?eventId&amp;programId</code>।</li>
+<li>বিক্রি ও রাজস্ব: <code>GET .../report/admin/event-sales-summary?programId</code>, <code>event-sales-details?id&amp;programId</code>, <code>event-revenue-summary?programId</code>, <code>event-revenue-sales-details?id&amp;programId</code>, <code>revenue-report-list?startDate&amp;endDate&amp;eventId&amp;programId</code>।</li>
+<li>পেমেন্ট অসঙ্গতি: <code>GET .../report/admin/payment-discrepancy?programId&amp;eventId</code>: <code>etp."UserBookingOrders"</code>-এর ওপর একটি হাতে-লেখা SQL যা সংরক্ষিত <code>PaymentInfo</code> JSON থেকে gateway-এর জানানো পরিমাণ পড়ে (DgePay-এর জন্য <code>data.amount</code>, SSLCommerz-এর জন্য <code>amount</code>), এবং <code>OverBilling</code> (gateway-এর পরিমাণ <code>TotalCharge</code>-এর চেয়ে বেশি) ও <code>UnderBilling</code> (কম) ফেরত দেয়, সঙ্গে gateway-এর নাম, স্ট্যাটাস টেক্সট ও পেমেন্ট পদ্ধতি।</li>
+<li>প্রতিটি রিপোর্ট endpoint <code>programId</code>-কে একটি <strong>query parameter</strong> হিসেবে নেয়, যা পোর্টাল নির্বাচিত প্রোগ্রাম থেকে বেছে নেয় (<a href="A-01-program-selection.html">A-01</a>)।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>features/reports/*</code>, <code>services/booking-orders.service.ts</code>, <code>services/report.service.ts:41-92</code></td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Booking (<code>ReportController</code>, <code>UserBookingOrderController</code>, <code>BookingReportManager</code>, repositories); Admin (events search)</td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td><code>UserBookingOrders</code>, <code>EventVenueDetails</code>, <code>SeatReservations</code>, <code>EventCapacityAdjustments</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরকট">6. API কন্ট্রাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/user-booking-order/admin/list/{eventId}</code></td>
+<td>admin policy</td>
+<td>page, <code>status</code>, <code>orderNumber</code>, <code>sortOrder</code>, <code>programId</code></td>
+<td>পাতাভিত্তিক অর্ডার</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/user-booking-order/admin/{id}</code></td>
+<td>admin policy</td>
+<td>path</td>
+<td>অর্ডারের বিবরণ</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/report/admin/booking-metrics</code></td>
+<td><strong>none</strong></td>
+<td><code>eventId</code></td>
+<td><code>BookingMetrics</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/report/admin/export-booking-orders</code></td>
+<td><strong>none</strong></td>
+<td><code>eventId</code>, <code>programId</code></td>
+<td><code>ExportOrderDetails[]</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/report/admin/event-sales-summary</code>, <code>event-revenue-summary</code></td>
+<td><strong>none</strong></td>
+<td><code>programId</code></td>
+<td>সারাংশ</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/report/admin/event-sales-details</code>, <code>event-revenue-sales-details</code></td>
+<td><strong>none</strong></td>
+<td><code>id</code>, <code>programId</code></td>
+<td>বিস্তারিত সারি</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/report/admin/revenue-report-list</code></td>
+<td><strong>none</strong></td>
+<td><code>startDate</code>, <code>endDate</code>, <code>eventId</code>, <code>programId</code></td>
+<td>সারি</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/report/admin/payment-discrepancy</code></td>
+<td><strong>none</strong></td>
+<td><code>programId</code>, <code>eventId</code></td>
+<td><code>PaymentDiscrepancyData[]</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>PaymentDiscrepancyData</code> ফিল্ড (SQL alias): <code>EventName</code>, <code>EventStartDateTime</code>, <code>UserId</code>, <code>OrderNumber</code>, <code>NumberOfSeats</code>, <code>OrderTime</code>, <code>ETPTxnId</code>, <code>Status</code>, <code>ETPChargeAmount</code>, <code>PaymentGateway</code>, <code>GatewayChargedAmount</code>, <code>OverBilling</code>, <code>UnderBilling</code>, <code>PaymentMethod</code>.</p>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>শুধু পড়ে।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Report controller</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/ReportController.cs:14-160</code></td>
+</tr>
+<tr>
+<td>Orders list and detail</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs:325, 378</code></td>
+</tr>
+<tr>
+<td>Manager</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Domain/Managers/BookingReportManager.cs:22-105</code></td>
+</tr>
+<tr>
+<td>Discrepancy SQL</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Storage/Repositories/UserBookingOrderRepository.cs:1446-1560</code></td>
+</tr>
+<tr>
+<td>Portal</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/reports/services/booking-orders.service.ts:25-57</code>, <code>report.service.ts:41-92</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>আর্থিক ডেটা টোকেন ছাড়াই পড়া যায়।</strong> আটটি <code>report/admin/*</code> endpointই অজ্ঞাতপরিচয়ের (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>): গ্রাহকের user id, অর্ডার নম্বর, পরিমাণ ও পেমেন্টের বিবরণ যেকোনো সেই ব্যক্তিকে ফেরত দেয় যে Booking-এর পাথে পৌঁছাতে পারে।</li>
+<li><strong>প্রোগ্রাম স্কোপ হলো একটি প্যারামিটার।</strong> <code>programId</code> ক্লায়েন্ট বেছে নেয়; <code>programId=0</code> বা অন্য প্রোগ্রাম দিলে সবই ফেরত আসে (সার্ভার-সাইডে কোনো যাচাই নেই, <a href="../60-cross-cutting/X-16-authz-program-scope.html">X-16</a>)।</li>
+<li><strong>অসঙ্গতি রিপোর্ট সংরক্ষিত gateway JSON-এর গঠনের ওপর নির্ভরশীল</strong>; keyগুলো (<code>data.amount</code>, <code>data.payment_method</code>, <code>card_type</code>) দুটি gateway-এর জন্য হার্ড-কোড করা। anonymous bypass endpoint যে অর্ডারকে Paid চিহ্নিত করে, সেটি পরিমাণ <code>1.0</code> ও gateway DgePay-সহ একটি নির্দিষ্ট payment-info লেখা সংরক্ষণ করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-01</span>, <code>UserBookingOrderManager.cs:495-545</code>), তাই এই রিপোর্ট সেটিকে under-billed হিসেবে দেখাবে; এই endpoint-এর অপব্যবহার সেখানেই চোখে পড়বে।</li>
+<li><strong>তুলনার নিয়ম বদলেছে।</strong> SQL-এর একটি আগের সংস্করণ (repository-তে commented out) সেই অর্ডারগুলো বাদ দিত যেখানে gateway-এর পরিমাণ <code>TotalCharge × 1.03</code>-এর সমান ছিল; সক্রিয় query-তে gateway-এর পরিমাণ ও <code>TotalCharge</code>-এর মধ্যে প্রতিটি অ-শূন্য পার্থক্য রিপোর্ট হয়।</li>
+<li><strong>বিক্রির চার্টে ক্যাপাসিটি মানে ভেন্যুর সিটিং ক্যাপাসিটি</strong>, বর্তমানে বরাদ্দ ও রিজার্ভেশনের পরের অনলাইন ক্যাপাসিটি নয় (<a href="A-10-capacity-adjustment.html">A-10</a>, <a href="A-11-seat-reservation.html">A-11</a>); তাই বিক্রীত ও উপলব্ধের যোগফল গ্রাহক যা কিনতে পারেন তার সমান হয় না।</li>
+<li><strong>রাজস্ব রিপোর্টে তারিখগুলো স্ট্রিং</strong> (<code>GetUserBookingOrdersByEvent</code>-এ <code>startDate</code>, <code>endDate</code>); মাস-শেষে reconcile করার আগে দিনের সীমানা কোন time zone ব্যবহার হচ্ছে তা যাচাই করা উচিত <span class="badge-unconfirmed">[UNCONFIRMED: Q-30]</span>।</li>
+<li><strong>এক্সপোর্ট সব সারি</strong> মেমরিতে ও একটি response-এ নেয়।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  AP["Admin portal /report/*"] -->|"HTTP + token"| BK["Booking API"]
+  AP -->|"events/search"| AD["Admin API"]
+  BK --> OR[("UserBookingOrders (PaymentInfo JSON)")]
+  BK --> EV[("EventVenueDetails, SeatReservations, Adjustments")]
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="../20-user-portal/P-06-booking-payment.html">P-06</a> (অর্ডার), <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-05</span> (স্ট্যাটাস), <a href="A-09-event-level-pricing.html">A-09</a>। <strong>প্রভাব ফেলে:</strong> রিকনসিলিয়েশন (<a href="A-23-reconciliation.html">A-23</a>), VAT যাচাই (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-10</span>)।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে পরীক্ষা: সম্পূর্ণ</strong> seeded অর্ডারসহ (<code>scripts/seed/03-orders-tickets.sql</code>)।</p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td><code>pwsh ./scripts/Seed-EtpData.ps1</code>; admin <code>…01</code>; একটি প্রোগ্রাম নির্বাচন করুন</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>http://localhost:4200/report/booking-orders</code> এবং §3-এর অন্য রুটগুলো; Network: <code>GET .../booking/api/v1/report/admin/...</code></td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-booking.postman_collection.json</code>: "GET /api/v1/report/admin/booking-metrics", "GET /api/v1/report/admin/payment-discrepancy", "GET /api/v1/user-booking-order/admin/list/{eventId}" (admin token)</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>BookingReportManager.GetBookingMetricstByEventId</code>, <code>UserBookingOrderRepository.GetPaymentDiscrepancyDataAsync</code></td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>SQL: <code>select "OrderNumber","TotalCharge","Status" from etp."UserBookingOrders" where "EventLongId" = &lt;id&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="A-21-dashboard.html"><span class="pager-label">পূর্ববর্তী</span><span>A-21 · ড্যাশবোর্ড</span></a>
+  <a class="pager-next" href="A-23-reconciliation.html"><span class="pager-label">পরবর্তী</span><span>A-23 · রিকনসিলিয়েশন অনুসন্ধান</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

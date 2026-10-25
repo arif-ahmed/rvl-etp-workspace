@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-07 · Events (matches) · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">10 · Admin Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+    <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+    <a class="side-item" href="A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+    <a class="side-item" href="A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+    <a class="side-item is-active" href="A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+    <a class="side-item" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+    <a class="side-item" href="A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+    <a class="side-item" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+    <a class="side-item" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · User Web Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">10 · Admin Portal</a><span class="sep">›</span><span>A-07</span></div>
+<h1><span class="id-chip">A-07</span> Events (matches)</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> ইভেন্ট (ম্যাচ)</p>
+<p><a href="index.html">← 10 · Admin portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Events.</strong> An event is one match or show of a program at a venue, made of one or more <strong>segments</strong> (a sport segment with two teams, or a concert segment). Creating an event builds its own copy of the commercial settings and of the venue's levels with prices and capacities, so ticket sales run per event. Publishing makes it visible and sellable; the platform then also tells app users by push notification. Concepts: <span class="link-na" title="Not included in the site yet">shared database</span>, <span class="link-na" title="Not included in the site yet">Redis live capacity</span>.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Staff with roles <code>admin</code>, <code>event_manager</code>, <code>ticket_manager</code>, <code>ticket_operator</code> (<code>BCBPersonnel</code>) (class attribute of <code>EventsController</code>; <code>[AuthorizeProgram]</code> is commented out). Entry: program menu <strong>Events</strong> (<code>/events</code>): list, <strong>Create</strong> (<code>/events/create</code>), <strong>Edit</strong> (<code>/events/edit/:id</code>), <strong>Details</strong> (<code>/events/event-details/:id</code>).</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>List events of the selected program; filter, search.</li>
+<li><strong>Create:</strong> program, venue, name (≤ 60 characters), start and end, cover image, one or more segments (name, type <code>Sport</code> or <code>Concert</code>, start, end, team 1 and team 2 for sport, banner image).</li>
+<li>Review and adjust prices, capacity, settings (<a href="A-08-event-settings.html">A-08</a>, <a href="A-09-event-level-pricing.html">A-09</a>, <a href="A-10-capacity-adjustment.html">A-10</a>).</li>
+<li><strong>Publish</strong> (needs published ticket layouts for all active galleries, <a href="A-13-ticket-layouts.html">A-13</a>); customers can then see and, once selling opens, buy.</li>
+<li><strong>Toggle</strong> active/inactive a published event; <strong>Unpublish</strong> only before selling starts; <strong>Duplicate</strong>; <strong>Delete</strong>.</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<ol>
+<li><strong>Create</strong> <strong class="hop-tag">[HTTP + user token]</strong> <code>POST /admin/api/v1/events</code> (<code>multipart/form-data</code>, <code>CreateEvent</code>). <code>EventManager.CreateAsync</code>:
+   - <code>CheckValidityOfCreateEvent</code>: program and venue ids exist; name required and ≤ 60; start not in the past; end after start; cover image required; per segment: name, dates, banner required; sport needs two different teams, concert gets no teams.
+   - A new <code>EventId</code> GUID is assigned to the event and to each segment.
+   - <strong>The program settings are copied into a new <code>EventSettings</code> row</strong> (limits, selling hours, prefix, VAT, service charge, gateway) (<a href="A-03-program-settings.html">A-03</a>); <code>IsVatInclusive</code> is also set on the event.
+   - Insert; upload the cover to <code>eventcover/{id}/...</code> and each banner to <code>eventsegmentcover/...</code> (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>).
+   - <code>GenerateEventVenueDetails(programId, eventId)</code> copies the program's venue-detail rows into the event (<a href="A-09-event-level-pricing.html">A-09</a>).
+   - <strong class="hop-tag">[HTTP + user token]</strong> <code>IBookingClient.CreateCapacity(list)</code> creates a <code>Capacities</code> row per level in Booking (<code>TicketingCapacity</code> = the level's seating capacity, seats if any), then <code>GetEventLiveCapacity</code> seeds <code>event_live:{id}</code> in Redis (<span class="link-na" title="Not included in the site yet">S-02</span>).</li>
+<li><strong>Update</strong> <code>PUT /admin/api/v1/events/{id}</code> (multipart):
+   - <strong>Not published:</strong> <code>CheckValidityOfUpdateEvent</code> (venue exists, name, dates, segment rules incl. "Concert segments cannot have team IDs."), then the event and its segments are updated.
+   - <strong>Published:</strong> the validity check is <strong>skipped</strong> and only these fields change: event end time, VAT-inclusive flag, cover image, each segment's end time, banner and teams.
+   - The caches <code>event_details:*</code>, <code>admin_event_details:*</code>, <code>event_settings_details:{id}</code>, <code>event_venue_details:*</code> are deleted.</li>
+<li><strong>Publish</strong> <code>PUT /admin/api/v1/events/publish/{id}</code>: fails if already published, if the program has no ticket layout for the venue ("No ticket layout configuration found for VenueId: n."), or if an <strong>active gallery has no published layout</strong> ("Ticket layout is not configured for all active galleries."); sets <code>IsPublished</code>, clears the same caches, resets <code>event_ticket_counter:{eventId}</code> to 0, and sends a push notification to all app users (title "New Event Available!", data <code>eventId</code>, <code>eventName</code>, <code>type = event_published</code>) through PushNotification; a failed push is logged and ignored (<a href="../60-cross-cutting/X-23-push-firebase.html">X-23</a>).</li>
+<li><strong>Unpublish</strong> <code>PUT .../unpublish/{id}</code>: fails if not published, or if <code>event start − TicketSellingStartFromHour</code> is already in the past ("Event can't unpublished after start ticket selling."); clears caches.</li>
+<li><strong>Toggle</strong> <code>PUT .../toggle-status/{id}</code>: only for published events, flips <code>IsActive</code>; clears caches.</li>
+<li><strong>Duplicate</strong> <code>POST .../duplicate/{id}</code>: creates "<code>{name} - Copy</code>" unpublished, copies segments, settings, venue details and capacities (again through <code>CreateCapacity</code> and <code>GetEventLiveCapacity</code>), and the gate and checker assignments of the original (<a href="A-18-gate-assignment.html">A-18</a>).</li>
+<li><strong>Delete</strong> <code>DELETE .../{id}</code>: soft delete (<code>IsDeleted</code>), clears the list cache.</li>
+<li>Date-times such as <code>TicketSellingStartDateTime</code>, <code>TicketSellingStopDateTime</code> and <code>TicketAvailabilityStartDateTime</code> are <strong>computed when events are read</strong> (event start/end minus the settings' hours; event settings if present, else program settings), not stored.</li>
+</ol>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td><code>features/events/pages/{event-list,event-create,event-details}</code>, <code>services/event.service.ts</code></td>
+</tr>
+<tr>
+<td>Services</td>
+<td>Admin (<code>EventsController</code>, <code>EventManager</code>, <code>EventVenueDetailsManager</code>); Booking (<code>CreateCapacity</code>); PushNotification (publish push); Event service reads the same tables</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>Events</code>, <code>EventSegments</code>, <code>EventSettings</code>, <code>EventVenueDetails</code>, Booking <code>Capacities</code></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td><code>event_details:*</code>, <code>admin_event_details:*</code>, <code>event_settings_details:*</code>, <code>event_venue_details:*</code>, <code>event_ticket_counter:*</code>, <code>event_live:*</code> (<a href="../60-cross-cutting/X-25-redis.html">X-25</a>)</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>S3 <code>eventcover/</code>, <code>eventsegmentcover/</code></td>
+</tr>
+<tr>
+<td>Queue</td>
+<td><code>FirebaseNotification</code> indirectly on publish</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>Main errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/events</code></td>
+<td>roles Admin, EventManager, TicketManager, BCBPersonnel</td>
+<td>paging, search, sort</td>
+<td>paged <code>Event</code></td>
+<td></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/events/{id}</code></td>
+<td>same</td>
+<td>path</td>
+<td><code>Event</code></td>
+<td></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/events</code></td>
+<td>same</td>
+<td><code>CreateEvent</code> (multipart)</td>
+<td><code>Event</code></td>
+<td>400 messages in §4</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/api/v1/events/{id}</code></td>
+<td>same</td>
+<td><code>UpdateEvent</code> (multipart)</td>
+<td><code>Event</code></td>
+<td>400</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/api/v1/events/publish/{id}</code>, <code>unpublish/{id}</code>, <code>toggle-status/{id}</code></td>
+<td>same</td>
+<td>path</td>
+<td><code>Event</code></td>
+<td>400 messages in §4</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/events/duplicate/{id}</code></td>
+<td>same</td>
+<td>path</td>
+<td><code>Event</code></td>
+<td>400 <code>Event with ID n not found</code></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/admin/api/v1/events/{id}</code></td>
+<td>same</td>
+<td>path</td>
+<td><code>Event</code></td>
+<td>500 <code>Event with ID n not found.</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/events/search</code>, <code>/list</code>, <code>/published/list</code>, <code>/filtered-list/{status}/{count}</code>, <code>/by-public-id/{eventId}</code>, <code>/program/{programId}/events</code>, <code>/programs/{programId}/events/no-end-date-check</code>, <code>/{start}/{end}/{eventId}</code></td>
+<td>same (<code>/published/list</code>: see <a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>)</td>
+<td></td>
+<td>lists</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Primary sample, <code>POST /admin/api/v1/events</code> (multipart; names from <code>CreateEvent</code>/<code>CreateEventSegment</code>; ASP.NET model binding indexes the segments; values illustrative):</p>
+<pre><code>programId=12
+venueId=3
+name=Dhaka vs Chattogram
+startDateTime=2026-12-10T10:00:00.000Z
+endDateTime=2026-12-10T18:00:00.000Z
+eventCoverImageFile=&lt;file&gt;
+segments[0].name=Match 1
+segments[0].segmentType=0
+segments[0].startDateTime=2026-12-10T10:00:00.000Z
+segments[0].endDateTime=2026-12-10T18:00:00.000Z
+segments[0].team1Id=4
+segments[0].team2Id=5
+segments[0].bannerImageFile=&lt;file&gt;
+</code></pre>
+<p>(<code>segmentType</code>: <code>0</code> Sport, <code>1</code> Concert.)</p>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>New event, segments, settings copy, venue-detail copy, Booking capacities, Redis counters, S3 images, and on publish a push to all devices. Activity log entries (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>).</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Controller</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/EventsController.cs:29-300</code></td>
+</tr>
+<tr>
+<td>Create and validation</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/EventManager.cs:211-363</code></td>
+</tr>
+<tr>
+<td>Update</td>
+<td><code>.../EventManager.cs:364-537</code></td>
+</tr>
+<tr>
+<td>Publish, unpublish, toggle</td>
+<td><code>.../EventManager.cs:657-891</code> (push at <code>:722-745</code>)</td>
+</tr>
+<tr>
+<td>Duplicate</td>
+<td><code>.../EventManager.cs:908-1034</code></td>
+</tr>
+<tr>
+<td>Date computation</td>
+<td><code>.../EventManager.cs:96-136, 185-186</code></td>
+</tr>
+<tr>
+<td>Portal</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/events/services/event.service.ts:28-60</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>Creation is not atomic across services.</strong> The event is saved first; the Booking <code>CreateCapacity</code> call happens afterwards over HTTP. If it fails, the event exists without capacity rows, and the API returns an error, so a retry creates a second event. Check Booking <code>Capacity</code> rows when an event "has no seats" (<span class="link-na" title="Not included in the site yet">S-01</span>).</li>
+<li><strong>A published event skips validation on update</strong>, so its end time can be set before its start time, and the segment end can be changed without checks (only end times and teams are accepted for published events).</li>
+<li><strong>Settings are a copy</strong> taken at creation. Later changes to the program settings do not reach existing events; use <a href="A-08-event-settings.html">A-08</a>.</li>
+<li><strong>Null end date.</strong> <code>EndDateTime</code> is nullable in the DTO, the create check does not reject a null end, but the date computation dereferences <code>EndDateTime.Value</code>; always send an end time.</li>
+<li><strong>Start in the past is rejected on every update</strong>, even of a draft: editing a draft event after its start time fails with "StartDateTime must be greater than or equal to the current date and time."</li>
+<li><strong>Unpublish is only possible before selling opens</strong>; after that, use Toggle (inactive) to stop sales.</li>
+<li><strong>Duplicate copies gate and checker assignments</strong> of the original event, so check them before publishing the copy.</li>
+<li><strong>Publish sends a push to everyone</strong> and there is no preview or test mode, so a test publish in production notifies real users.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">sequenceDiagram
+  participant A as Admin portal
+  participant AD as Admin API
+  participant DB as Admin DB
+  participant BK as Booking API
+  participant R as Redis
+  participant PN as PushNotification
+  A->>AD: POST /events (multipart, HTTP + token)
+  AD->>DB: event, segments, EventSettings copy, venue details
+  AD->>BK: CreateCapacity (HTTP + token)
+  AD->>R: seed event_live:{id}
+  A->>AD: PUT /events/publish/{id}
+  AD->>DB: IsPublished = true
+  AD->>R: clear event caches, reset ticket counter
+  AD->>PN: send-to-all (HTTP + token)
+</div>
+<p><strong>Depends on:</strong> <a href="A-02-programs.html">A-02</a>, <a href="A-03-program-settings.html">A-03</a>, <a href="A-04-teams.html">A-04</a>, <a href="A-05-venues.html">A-05</a>, <a href="A-06-program-venue-mapping.html">A-06</a>, <a href="A-13-ticket-layouts.html">A-13</a>. <strong>Affects:</strong> everything customer-facing (<a href="../20-user-portal/P-02-browse-events.html">P-02</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>), <a href="A-08-event-settings.html">A-08</a> to <a href="A-12-reserved-tickets.html">A-12</a>, reports, <span class="link-na" title="Not included in the site yet">S-07</span>.</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Full</strong> except the push (dummy Firebase).</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td><code>pwsh ./scripts/Seed-EtpData.ps1</code> (events, layouts); admin <code>…01</code>; select a program in the top bar (<a href="A-01-program-selection.html">A-01</a>)</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:4200/events</code> → create, publish; Network: multipart <code>POST .../admin/api/v1/events</code>, <code>PUT .../events/publish/{id}</code></td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>: "GET /api/v1/events", "POST /api/v1/events" (form-data), "PUT /api/v1/events/publish/{id}", "POST /api/v1/events/duplicate/{id}"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>EventManager.CreateAsync</code>, <code>PublishEventAsync</code>; Booking <code>CapacityController.CreateCapacityAsync</code></td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>SQL: <code>select "Id","Name","IsPublished","IsActive" from etp."Events"</code>; Booking <code>Capacities</code> rows for the event id; <code>redis-cli GET event_live:&lt;id&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="A-06-program-venue-mapping.html"><span class="pager-label">Previous</span><span>A-06 · Program–venue mapping and venue details</span></a>
+  <a class="pager-next" href="A-08-event-settings.html"><span class="pager-label">Next</span><span>A-08 · Event settings override</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P-08 · টিকিট তৈরির অনুরোধ · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item is-active" href="P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">20 · ইউজার ওয়েব পোর্টাল</a><span class="sep">›</span><span>P-08</span></div>
+<h1><span class="id-chip">P-08</span> টিকিট তৈরির অনুরোধ</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> টিকিট জেনারেশন অনুরোধ</p>
+<p><a href="index.html">← 20 · ইউজার পোর্টাল</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>টিকিট তৈরির অনুরোধ।</strong> পেমেন্টের পর গ্রাহকের কাছে একটি <code>Paid</code> অর্ডার ও <em>খসখসে</em> (draft) টিকিট সারি থাকে। ইভেন্টের <strong>টিকিটের প্রাপ্যতার তারিখ</strong> এলে গ্রাহক <strong>Request tickets</strong> চাপেন; এরপর প্ল্যাটফর্ম প্রতিটি টিকিটের জন্য ফাঁকা PDF ছাপে, সেগুলোর প্রতিটিকে TSP-এর মাধ্যমে QR কোডসহ ডিজিটালি সই করে, এবং অর্ডারটি <code>Requested</code> ও পরে <code>Generated</code> হয়। গ্রাহক পেজে অপেক্ষা করেন (এটি প্রতি ৩০ সেকেন্ডে আবার যাচাই করে) যেতে যেতে সাইন করা PDF ডাউনলোড করা যায় (<a href="P-09-ticket-details-downloads.html">P-09</a>)।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>সাইন-ইন করা গ্রাহক <code>/{lang}/tickets/ticket-details/{publicId}</code>-এ (<code>TicketPreviewComponent</code>), কেবল তখনই যখন অর্ডারটি <code>Paid</code> এবং ইভেন্টের <code>ticketAvailabilityStartDateTime</code> পেরিয়েছে (হোল্ডারের নাম ও ফোন আগেই পূরণ করা থাকে, <a href="P-09-ticket-details-downloads.html">P-09</a>)।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li>প্রাপ্যতার তারিখের আগে বোতামটি নিষ্ক্রিয়। প্রাপ্যতার তারিখ থেকে <strong>Request tickets</strong> একটি নিশ্চিতকরণের পপ-আপ খোলে ("তৈরি হওয়ার পর টিকিটের তথ্য আর বদলানো যাবে না"; পপ-আপের লেখা ইংরেজিতে হার্ড-কোড করা, অনূদিত নয়)।</li>
+<li>নিশ্চিত করার পর অর্ডারের স্ট্যাটাস <code>Requested</code> হয়; একটি পপ-আপ জানায় তৈরি চলছে; পেজটি "চলছে" অবস্থা দেখায় এবং প্রতি ৩০ সেকেন্ডে আবার যাচাই করে।</li>
+<li>সব টিকিট সই হলে অর্ডার <code>Generated</code> হয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-06</span>); পেজটি টিকিট রিলোড করে এবং <strong>Download</strong>, <strong>Share</strong> এবং একাধিক টিকিট হলে <strong>Download all</strong> বোতামগুলো দেখায়।</li>
+</ol>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<ol>
+<li>খসখসে টিকিট থাকে কারণ বিস্তারিতের কল সেগুলো চাহিয়া তৈরি করে: <code>GetTicketsInfo</code> কোনো সারি নেই এমন একটি <code>Paid</code> অর্ডারের সারি তৈরি করে (Redis লক <code>create_user_ticket_{publicId}</code>-এর নিচে, <code>InitiateBulkTicketForNewlyPaidOrder</code>), এর সাথে পেমেন্ট callback ও ওয়ার্কার ছাড়াও (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>)।</li>
+<li><strong class="hop-tag">[HTTP, no token → Ticketing]</strong> পোর্টাল পাঠায় <code>PATCH {services.tickets}/ticketing/api/v1/booking-order-ticket/generate-request/{publicId}</code> ফাঁকা শরীরে (<code>BookingApiService.requestTicketsById</code>)। কন্ট্রোলার অ্যাকশনে <strong>কোনো <code>[Authorize]</code> নেই</strong> এবং ম্যানেজারও কলার যাচাই করে না; তবু পোর্টালের টোকন ইন্টারসেপ্টর ইউজার টোকেন যুক্ত করে কারণ URL-এ <code>/ticketing</code> আছে।</li>
+<li><code>TicketManager.TicketGenerateRequest</code>:</li>
+<li>Booking থেকে অর্ডার পড়ে (<strong class="hop-tag">[HTTP, no token]</strong> <code>GET .../user-booking-order/public-id/{id}</code>);</li>
+<li><code>ValidateTicketGeneration</code>: স্ট্যাটাস <code>Requested</code> বা <code>Generated</code> → <code>Request to generate ticket is already taken.</code>; <code>Paid</code> নয় → <code>Only paid order requests can generate tickets</code>; ইভেন্টের <code>TicketAvailabilityStartDateTime</code> এখনের (UTC) চেয়ে পরে → <code>You can request after ticket availability date.</code>;</li>
+<li>লেভেলের তথ্য এবং প্রোগ্রাম, ভেন্যু ও গ্যালারির <strong>প্রকাশিত টিকিট লেআউট</strong> লোড করে (<a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>);</li>
+<li>প্রতিটি টিকিটের জন্য ফাঁকা PDF আঁকে (<code>GetBlankPdf</code>) এবং টিকিট বাকেটে <code>{BlankBase}/user/{userId}/{orderId}/{ticketNumber}.pdf</code> পাথে আপলোড করে (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>); টিকিটের স্ট্যাটাস <code>Requested</code> ও লেআউটের ব্যাক-পেজ URL বসায়; সেভ করে;</li>
+<li>প্রতিটি টিকিটের জন্য প্রকাশ করে <strong class="hop-tag">[SQS: TicketSigning]</strong> একটি <code>SignedTicketGeneration</code> বার্তা (<code>UnsignedTicketUrl</code>, লেআউটের সাইজ অনুযায়ী <code>QRPosition</code>, <code>GateId</code> = লেভেলের এন্ট্রি গেট, <code>Data</code> = নাম, ফোন, তারিখ ও সময় (UTC+6), টিকিট আইডি, ইভেন্ট আইডি, গ্যালারি, ব্লক, লেভেল, এন্ট্রি গেট, মিনি গেট, আসন); সই করার ওয়ার্কার <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>;</li>
+<li><strong class="hop-tag">[HTTP, no token → Booking]</strong> <code>PATCH .../user-booking-order/generate-ticket-request/{publicId}</code> অর্ডারের স্ট্যাটাস <code>Requested</code> বসায়, এবং তার টিকিটসহ অর্ডারটি ফেরত দেয়।</li>
+<li>ব্রাউজার রেসপন্স থেকে টিকিট ও অর্ডারের স্ট্যাটাস হালনাগাদ করে এবং "তৈরি" পপ-আপ খোলে। এরপর থেকে <code>ngOnInit</code>-এর টাইমার (প্রতি ৩০ সে) স্ট্যাটাস <code>Requested</code> থাকা অবস্থায় <strong class="hop-tag">[HTTP + user token]</strong> <code>GET /booking/api/v1/user-booking-order/check-generated-status?id=</code> কল করে; <code>true</code> ফেরত এলে পোর্টাল টিকিটগুলো রিলোড করে (<code>details</code>)।</li>
+<li>ব্যাকগ্রাউন্ড: <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span> প্রতিটি টিকিট সই করে ও সংরক্ষণ করে (<code>SignedTicketUrl</code>); <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-06</span> সব টিকিট সই হলে অর্ডার <code>Generated</code> চিহ্নিত করে; <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-12</span> পুশ বার্তা পাঠায়।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>tickets/components/{ticket-preview,request-tickets-modal,ticket-generation-modal,in-progress-ticket-modal}</code>, <code>booking-api.service.ts:50-54, 93-98</code></td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Ticketing (<code>BookingOrderTicketController.GenerateTicketRequest</code>, <code>TicketManager</code>); Booking (<code>generate-ticket-request</code>, <code>check-generated-status</code>); Event (ইভেন্ট, লেআউট, লেভেলের তথ্য)</td>
+</tr>
+<tr>
+<td>কিউ / ওয়ার্কার</td>
+<td>SQS <code>TicketSigning</code> → <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>; <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-06</span></td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td><code>Tickets</code>, <code>TicketLayoutConfigs</code>, <code>UserBookingOrders</code></td>
+</tr>
+<tr>
+<td>স্টোরেজ</td>
+<td>টিকিট বাকেট <code>{BlankBase}/user/...</code> (ফাঁকা), <code>{SignedBase}</code> (সই করা)</td>
+</tr>
+<tr>
+<td>বাহ্যিক</td>
+<td>TSP (ওয়ার্কারের মাধ্যমে)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরকট">6. API কন্ট্রাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পথ</th>
+<th>অথ</th>
+<th>রিকোয়েস্ট</th>
+<th>রেসপন্স</th>
+<th>প্রধান এরর</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PATCH</td>
+<td><code>/ticketing/api/v1/booking-order-ticket/generate-request/{publicId}</code></td>
+<td><strong>none</strong></td>
+<td>path</td>
+<td><code>UserBookingResponse</code> (অর্ডার ও টিকিট)</td>
+<td>§4 ধাপ 3-এর 400 বার্তাগুলো</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/user-booking-order/check-generated-status</code></td>
+<td>User</td>
+<td><code>id</code> (order public id)</td>
+<td><code>true</code>/<code>false</code></td>
+<td>400 <code>Booking not found.</code>, <code>Privacy error.</code></td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/booking/api/v1/user-booking-order/generate-ticket-request/{publicId}</code></td>
+<td><strong>none</strong> (internal)</td>
+<td>path</td>
+<td><code>UserBooking</code></td>
+<td><code>Order not found</code></td>
+</tr>
+</tbody>
+</table>
+<p>প্রধান নমুনা, <code>PATCH /ticketing/api/v1/booking-order-ticket/generate-request/{publicId}</code>-এর রেসপন্স (সংক্ষিপ্ত; মানগুলো কাল্পনিক):</p>
+<pre><code class="language-json">{ &quot;publicId&quot;: &quot;5b1f7a64-6c1e-4c0a-8f6e-0f3d2f9a7b10&quot;, &quot;status&quot;: &quot;Requested&quot;, &quot;numberOfSeats&quot;: 2,
+  &quot;tickets&quot;: [ { &quot;id&quot;: 301, &quot;ticketNumber&quot;: &quot;BDI7K2M9Q-1&quot;, &quot;status&quot;: &quot;Requested&quot;, &quot;seat&quot;: &quot;A1&quot;,
+                 &quot;ticketHolderName&quot;: &quot;Nadia Rahman&quot;, &quot;ticketHolderIdentification&quot;: &quot;01711111111&quot; } ] }
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>টিকিট বাকেটে ফাঁকা PDF, টিকিট ও অর্ডারের স্ট্যাটাস পরিবর্তন, প্রতি টিকিটে একটি SQS বার্তা, পরে সই করা PDF ও একটি পুশ নোটিফিকেশন।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>পোর্টাল</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/featured/tickets/components/ticket-preview/ticket-preview.component.ts:55-100, 204-250</code></td>
+</tr>
+<tr>
+<td>কন্ট্রোলার</td>
+<td><code>rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service/Api/BookingOrderTicketController.cs:112-119</code></td>
+</tr>
+<tr>
+<td>ম্যানেজার</td>
+<td><code>rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Domain/Managers/TicketManager.cs:146-208, 261-356, 358-372</code></td>
+</tr>
+<tr>
+<td>বুকিং দিক</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs:363-371</code>; <code>.../UserBookingOrderManager.cs:903-919, 1019-1042</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>যে কেউ public id জানে যেকোনো অর্ডারের জন্য তৈরি চালু করতে পারে:</strong> Ticketing অ্যাকশন ও Booking-এর <code>generate-ticket-request</code> অ্যাকশন দুটোই anonymous (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span> নোট 4)। প্রাপ্যতার তারিখ ও <code>Paid</code> যাচাই তবুও প্রযোজ্য।</li>
+<li><strong>লেখার ক্রম atomic নয়।</strong> টিকিট <code>Requested</code> চিহ্নিত ও বার্তা প্রকাশ করা হয় আগে, এরপর Booking অর্ডারটি <code>Requested</code> হয়; Booking কল ব্যর্থ হলে টিকিট ইতিমধ্যে সই হচ্ছে অথচ অর্ডার এখনো <code>Paid</code> দেখায়, আর বোতামটি আবার চাপলে প্রত্যাখ্যান হয় (<code>ValidateTicketGeneration</code> অর্ডারটি দেখে, যা এখনো <code>Paid</code>, তাই দ্বিতীয় অনুরোধ আবার ছাপে ও আবার প্রকাশ করে) <span class="badge-unconfirmed">[UNCONFIRMED: Q-40]</span>।</li>
+<li><strong>হোল্ডারের ডেটা অনুরোধের সময়ই ফ্রিজ হয়।</strong> QR পেলোডে থাকে অনুরোধের সময় সংরক্ষিত নাম ও ফোন; এরপর সম্পাদনা প্রত্যাখ্যাত হয় কারণ অর্ডার আর <code>Paid</code> নয় (<a href="P-09-ticket-details-downloads.html">P-09</a>)।</li>
+<li><strong>প্রাপ্যতার সময় দুটো ঘড়ি ব্যবহার করে।</strong> বোতামটি ব্রাউজারের ঘড়ি দিয়ে চালু হয় (<code>Date.now()</code> বনাম <code>ticketAvailabilityStartDateTime</code>, প্রতি ৩০ সে রিফ্রেশ হয়) অথচ সার্ভার UTC "এখন" দিয়ে তুলনা করে; ভুল ডিভাইস ঘড়ি বোতামটি তাড়াতাড়ি দেখাতে পারে (সার্ভার প্রত্যাখ্যান করে) বা দেরি করে।</li>
+<li><strong>অনুরোধের সময় TSP-এর সবচেয়ে ব্যস্ত মুহূর্ত।</strong> প্রাপ্যতার তারিখ এলে অনেক গ্রাহক একসাথে বোতাম চাপেন; কাজটি <code>TicketSigning</code>-এ সারিবদ্ধ হয় এবং ওয়ার্কার সই করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>); গ্রাহক কেবল অপেক্ষা করে ও পোল করে।</li>
+<li><strong>অপেক্ষার অবস্থায় কোনো টাইমআউট নেই।</strong> সই করা আটকে গেলে অর্ডার <code>Requested</code> থাকে এবং পেজটি চিরকাল পোল করে; সাপোর্ট ইস্যু তালিকা বা reconciliation-এ (<a href="../10-admin-portal/A-23-reconciliation.html">A-23</a>) তা খুঁজে পায় <span class="badge-unconfirmed">[UNCONFIRMED: Q-12]</span>।</li>
+<li><strong>লেআউট অনুরোধের সময়ই পড়া হয়।</strong> পরে প্রকাশিত লেআউট ইতিমধ্যে অনুরোধ করা টিকিটগুলোকে প্রভাবিত করে না (<a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>)।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">sequenceDiagram
+  participant U as User portal
+  participant T as Ticketing API
+  participant B as Booking API
+  participant S3 as S3 ticket bucket
+  participant Q as SQS TicketSigning
+  participant W as Signing worker (S-08)
+  U->>T: PATCH generate-request/{publicId} (no server auth)
+  T->>B: GET public-id/{id} (HTTP, no token)
+  T->>S3: blank PDF per ticket
+  T->>Q: SignedTicketGeneration per ticket
+  T->>B: PATCH generate-ticket-request (status Requested)
+  T-->>U: order + tickets (Requested)
+  W->>S3: signed PDF; ticket Generated
+  U->>B: GET check-generated-status every 30 s (HTTP + user token)
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="P-06-booking-payment.html">P-06</a>, <a href="P-09-ticket-details-downloads.html">P-09</a> (হোল্ডারের ডেটা), <a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>, <a href="../10-admin-portal/A-07-events.html">A-07</a> (প্রাপ্যতার তারিখ)। <strong>প্রভাব ফেলে:</strong> <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-06</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-12</span>, <a href="P-09-ticket-details-downloads.html">P-09</a>।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকাল টেস্টযোগ্যতা: আংশিক।</strong> সই করার জন্য TSP সার্টিফিকেট লাগে, যা লোকালে ডামি, তাই টিকিট <code>Requested</code> হয় কিন্তু সই হয় না।</p>
+<table>
+<thead>
+<tr>
+<th>আইটেম</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>ইউজার <code>+8801700000011</code>; একটি সিড করা <code>Paid</code> অর্ডার যার ইভেন্টের টিকিট প্রাপ্যতার তারিখ পেরিয়েছে</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>http://localhost:4201/en/tickets</code> থেকে অর্ডার খুলুন → <strong>View details</strong> → <strong>Request tickets</strong>; Network: <code>generate-request</code> (200), তারপর প্রতি ৩০ সে <code>check-generated-status</code></td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>— (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">U-06</span>)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-ticketing.postman_collection.json</code>: "PATCH /api/v1/booking-order-ticket/generate-request/{publicId}"; <code>etp-booking</code>: "GET /api/v1/user-booking-order/check-generated-status"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>TicketManager.TicketGenerateRequest</code>, <code>ValidateTicketGeneration</code> (Ticketing সার্ভিস); ওয়ার্কার: <code>TicketSigning</code> কনজিউমার (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>)</td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>SQL: <code>select "TicketNumber","Status","BlankTicketUrl","SignedTicketUrl" from etp."Tickets" where "BookingOrderPublicId"=...</code>; Floci SQS <code>TicketSigning</code> কিউয়ের গভীরতা; Floci S3-এ টিকিট বাকেটের <code>ls</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="P-07-my-bookings.html"><span class="pager-label">পূর্ববর্তী</span><span>P-07 · আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+  <a class="pager-next" href="P-09-ticket-details-downloads.html"><span class="pager-label">পরবর্তী</span><span>P-09 · টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

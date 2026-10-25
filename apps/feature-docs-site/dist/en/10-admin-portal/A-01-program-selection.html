@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-01 · Program selection and program-scoped menu · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">10 · Admin Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item is-active" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+    <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+    <a class="side-item" href="A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+    <a class="side-item" href="A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+    <a class="side-item" href="A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+    <a class="side-item" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+    <a class="side-item" href="A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+    <a class="side-item" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+    <a class="side-item" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · User Web Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">10 · Admin Portal</a><span class="sep">›</span><span>A-01</span></div>
+<h1><span class="id-chip">A-01</span> Program selection and program-scoped menu</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</p>
+<p><a href="index.html">← 10 · Admin portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Program selection.</strong> A <em>program</em> is a series or tournament that groups events (see <a href="A-02-programs.html">A-02</a>). After signing in, a staff member picks one program in the top bar. From then on every request carries the header <code>X-Program-Id</code>, the portal shows the <strong>program menu</strong> (dashboard, events, promo codes, reports, issues, ticket layouts), and the backend limits program-owned data to that program. With no program selected (<code>0</code>) the portal shows the <strong>global menu</strong> (programs, venues, users, settings, agents, ticket checkers). Concepts: <span class="link-na" title="Not included in the site yet">path-prefix routing</span>; the authorization side is in <a href="../60-cross-cutting/X-16-authz-program-scope.html">X-16</a> and <a href="../60-cross-cutting/X-17-authz-client-side.html">X-17</a>.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Any signed-in staff member (<strong>admin pool</strong>; roles <code>admin</code>, <code>event_manager</code>, <code>ticket_manager</code>, <code>ticket_operator</code>, <code>customer_support</code>, <code>ticket_operator</code> (<code>BCBPersonnel</code>), <a href="../60-cross-cutting/X-15-authz-roles.html">X-15</a>). Trigger: after login, or the top-bar dropdown, or "Back to global menu".</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>After login the portal loads the program list. A user who is not <code>admin</code> sees only the programs listed in their <code>custom:program_ids</code> attribute; <code>admin</code> sees all.</li>
+<li>If no program is chosen yet (<code>globalProgramId</code> is <code>0</code>), a modal asks the user to choose one.</li>
+<li>Choosing a program stores it in the browser and moves the user to the landing page of their role (for example <code>/</code> dashboard for admin, <code>/issues</code> for customer support, <code>/events</code> for event manager, <code>/events/event-ticket</code> for ticket manager).</li>
+<li>"Back to global menu" (with a confirmation) resets the program to <code>0</code> and returns to the global page of the role (<code>/program-management</code> or <code>/home</code>).</li>
+<li>Log-out and role change also reset the program to <code>0</code> (<a href="../60-cross-cutting/X-03-admin-change-password-logout.html">X-03</a>, <a href="../60-cross-cutting/X-17-authz-client-side.html">X-17</a>).</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + user token]</strong> <code>app.topbar.component.ts</code> <code>getPrograms()</code> → <code>GET /admin/api/v1/program</code> (all programs). <strong>The filtering by <code>custom:program_ids</code> is done in the browser</strong>, using the Cognito attributes of the signed-in user.</li>
+<li><code>ProgramService</code> (<code>core/services/program.service.ts</code>) keeps the current id in a <code>BehaviorSubject</code> and in <code>localStorage</code> key <code>globalProgramId</code>; the default is <code>0</code>.</li>
+<li><code>ProgramIdInterceptor</code> adds <code>X-Program-Id: &lt;id&gt;</code> to <strong>every</strong> request except the 2FA OTP calls (<code>/admin/login-2fa</code>). Interceptor order: Auth, Loader, ProgramId (<a href="../60-cross-cutting/X-04-admin-session.html">X-04</a>).</li>
+<li>Route guards: <code>ProgramMenuGuard</code> allows a route only when the program id is greater than 0, else it redirects to <code>/program-management</code>; <code>LimitedMenuGuard</code> allows a route only when the id is <code>0</code>, else it redirects to <code>/</code> (<a href="../60-cross-cutting/X-17-authz-client-side.html">X-17</a>).</li>
+<li><strong>Backend:</strong> <code>ProgramIdMiddleware</code> reads <code>X-Program-Id</code> (a positive integer, otherwise 0) into <code>HttpContext.Items["ProgramId"]</code>; <code>ProgramIdAccessor</code> exposes it, and the <code>AdminDbContext</code> global query filter restricts entities that carry a program id to <code>ProgramId &lt;= 0 OR match</code> (<span class="link-na" title="Not included in the site yet">explainer</span>, <a href="../60-cross-cutting/X-16-authz-program-scope.html">X-16</a>). The <code>[AuthorizeProgram]</code> attribute that compares the header with the user's <code>custom:program_ids</code> is applied only to the dashboard controller.</li>
+</ol>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td>Admin portal: <code>layout/app.topbar.component.ts</code>, <code>layout/app.menu.component.ts</code>, <code>core/services/program.service.ts</code>, <code>interceptors/program-id.interceptor.ts</code>, <code>core/guard/program-menu.guard.ts</code>, <code>core/guard/limited-menu.guard.ts</code></td>
+</tr>
+<tr>
+<td>Services</td>
+<td>Admin (<code>ProgramIdMiddleware</code>, <code>ProgramIdAccessor</code>, <code>AdminDbContext</code>); no other service reads the header (only <code>Core/.../AdminClient.cs</code> mentions it)</td>
+</tr>
+<tr>
+<td>AWS</td>
+<td>Cognito attributes <code>custom:role</code>, <code>custom:program_ids</code></td>
+</tr>
+<tr>
+<td>Browser storage</td>
+<td><code>localStorage["globalProgramId"]</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/program</code></td>
+<td>roles <code>Admin</code>, <code>EventManager</code>, and the others listed on <code>ProgramController</code></td>
+<td>none (header <code>X-Program-Id</code>)</td>
+<td>list of programs (<a href="A-02-programs.html">A-02</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>Request header on every call: <code>X-Program-Id: 12</code> (example value). The header is <strong>not</strong> validated against the user's program list except in <code>DashboardController</code> (<a href="A-21-dashboard.html">A-21</a>).</p>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>None on the server. Browser: <code>localStorage</code> entry. The selected id influences all list queries of program-owned entities.</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Program dropdown and modal</td>
+<td><code>rvl-gobcb-admin-portal/src/app/layout/app.topbar.component.ts:166-215</code></td>
+</tr>
+<tr>
+<td>Reset on "back to global"</td>
+<td><code>rvl-gobcb-admin-portal/src/app/layout/app.menu.component.ts:286-300</code></td>
+</tr>
+<tr>
+<td>Program state</td>
+<td><code>rvl-gobcb-admin-portal/src/app/core/services/program.service.ts</code></td>
+</tr>
+<tr>
+<td>Header interceptor</td>
+<td><code>rvl-gobcb-admin-portal/src/app/interceptors/program-id.interceptor.ts</code></td>
+</tr>
+<tr>
+<td>Guards</td>
+<td><code>rvl-gobcb-admin-portal/src/app/core/guard/program-menu.guard.ts</code>, <code>limited-menu.guard.ts</code></td>
+</tr>
+<tr>
+<td>Middleware</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Middleware/ProgramIdMiddleware.cs</code></td>
+</tr>
+<tr>
+<td>Program list endpoint</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/ProgramController.cs:27</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>The user's program list is enforced only in the browser</strong> (and in the dashboard). <code>GET /program</code> returns every program to any allowed role, and the backend trusts the <code>X-Program-Id</code> header, so a staff member can send another program's id with an ordinary HTTP client and see that program's data (<a href="../60-cross-cutting/X-16-authz-program-scope.html">X-16</a>).</li>
+<li><strong>Two menus, one flag.</strong> Which menu appears depends only on <code>globalProgramId</code> being <code>0</code> or not, held in <code>localStorage</code>; it survives a browser restart. A user who edits it by hand reaches pages the guard would otherwise redirect, but the server still applies the role checks.</li>
+<li>The header is added to calls to <strong>all</strong> services (Admin, Booking, Ticketing), but only Admin has the program query filter and reads it; Booking report endpoints take an explicit <code>programId</code> query parameter (see <a href="A-22-reports.html">A-22</a>).</li>
+<li>Customer support and ticket operator roles have no program menu: they land on <code>/home</code> or <code>/issues</code>.</li>
+<li>The interceptor excludes only <code>/admin/login-2fa</code>; calls to AWS Cognito are not Angular <code>HttpClient</code> calls and do not carry the header.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">sequenceDiagram
+  participant U as Staff member
+  participant P as Admin portal
+  participant A as Admin API
+  participant DB as Admin DB
+  U->>P: sign in
+  P->>A: GET /admin/api/v1/program (HTTP + token)
+  A-->>P: all programs
+  P->>P: keep programs in custom:program_ids
+  U->>P: choose program
+  P->>P: localStorage globalProgramId = id
+  P->>A: any call + X-Program-Id
+  A->>DB: query with program filter
+</div>
+<p><strong>Depends on:</strong> admin login (<a href="../60-cross-cutting/X-01-admin-login.html">X-01</a>), program setup (<a href="A-02-programs.html">A-02</a>), roles (<a href="../60-cross-cutting/X-15-authz-roles.html">X-15</a>). <strong>Affects:</strong> nearly every admin feature (<a href="A-07-events.html">A-07</a>, <a href="A-15-promo-codes.html">A-15</a>, <a href="A-21-dashboard.html">A-21</a>, <a href="A-22-reports.html">A-22</a>).</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Full.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td><code>pwsh ./scripts/Seed-EtpData.ps1</code> creates programs; admin phone <code>…01</code> (OTP stub <code>123456</code>, password <code>Passw0rd!23</code>, <a href="../60-cross-cutting/X-01-admin-login.html">X-01</a>); other seeded admins <code>…02</code> to <code>…05</code> have other roles</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:4200</code> → log in → the program dropdown in the top bar; DevTools → Application → Local Storage <code>globalProgramId</code>; Network → any request → header <code>X-Program-Id</code></td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code> "GET /api/v1/program" with <code>{{access_token_admin}}</code> (<code>base_url</code> has no <code>/admin</code> prefix, see Appendix D); add header <code>X-Program-Id</code> to test filtering</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>ProgramIdMiddleware.InvokeAsync</code> (Admin), then a query on a program-scoped entity</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>Compare a list endpoint (for example <code>GET /events</code>) with <code>X-Program-Id: 0</code> and with a real id; SQL: <code>select "Id","Name" from etp."Programs"</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <span class="empty"></span>
+  <a class="pager-next" href="A-02-programs.html"><span class="pager-label">Next</span><span>A-02 · Programs</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

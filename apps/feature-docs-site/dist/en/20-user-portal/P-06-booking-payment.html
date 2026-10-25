@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P-06 · Booking order and payment · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · Admin Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+    <a class="side-section" href="index.html">20 · User Web Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+    <a class="side-item" href="P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+    <a class="side-item" href="P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+    <a class="side-item" href="P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+    <a class="side-item" href="P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+    <a class="side-item is-active" href="P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+    <a class="side-item" href="P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+    <a class="side-item" href="P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+    <a class="side-item" href="P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+    <a class="side-item" href="P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+    <a class="side-item" href="P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+    <a class="side-item" href="P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+    <a class="side-item" href="P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">20 · User Web Portal</a><span class="sep">›</span><span>P-06</span></div>
+<h1><span class="id-chip">P-06</span> Booking order and payment</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> বুকিং অর্ডার ও পেমেন্ট</p>
+<p><a href="index.html">← 20 · User portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Booking and payment.</strong> The heart of the business: the customer confirms the selection of <a href="P-04-seat-selection.html">P-04</a>, the platform checks the rules, locks the capacity, creates a <code>Pending</code> order with a server-computed price, sends the customer to the <strong>DgePay</strong> payment page, and, when DgePay reports back, marks the order <code>Paid</code> and starts everything that follows (capacity deduction, VAT challan, ticket creation). If payment does not arrive in time the order is cancelled and the seats are released (<span class="link-na" title="Not included in the site yet">S-05</span>).</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Signed-in customer with a <strong>completed profile</strong> (the server refuses otherwise), pressing <strong>Purchase</strong> on the seats page and confirming in the payment pop-up (<code>CompletePaymentModalComponent</code>). The payment itself happens on DgePay's hosted page.</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>The pop-up repeats the choice (event, seats, price) and offers <strong>Pay</strong>; pressing it disables the button while the request runs.</li>
+<li>The browser is redirected to DgePay (<code>window.location.href = checkoutUrl</code>); the customer pays by their method.</li>
+<li>DgePay tells the platform the result; the platform then sends the customer's browser back to the portal (the configured <code>DgePay:RedirectUrl</code>), which shows the booking list (<a href="P-07-my-bookings.html">P-07</a>).</li>
+<li>A <code>Paid</code> order gets tickets; the customer asks for the final signed tickets later (<a href="P-08-ticket-generation-request.html">P-08</a>).</li>
+<li>If the customer abandons the page, nothing is charged; the <code>Pending</code> order and its seat lock expire after about 12 minutes.</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + user token]</strong> <code>POST {services.bookings}/booking/api/v1/user-booking-order</code> with <code>TicketPurchase</code> (<a href="P-04-seat-selection.html">P-04</a> §4 step 6) (<code>BookingApiService.ticketPurchase</code>; server <code>[Authorize(Policy = User)]</code>). <code>UserBookingOrderManager.CreateAsync</code>:</li>
+<li>loads the caller's profile from the identity API (<code>userClient.GetUserAsync()</code>, <strong class="hop-tag">[HTTP, static key]</strong>); no profile or <code>IsProfileCompleted</code> false → <code>Complete your profile first!</code>;</li>
+<li>takes the Redis lock <code>user_booking:{userId}</code> (60 s); not acquired → <code>Simultaneous order is prohibited. Try again later.</code>;</li>
+<li>loads the event through the Event client; not published or not active → <code>This event is currently unavailable for booking.</code>;</li>
+<li><code>ValidateBookingOrderCreate</code>: gallery, block, level ids &gt; 0; seats &gt; 0; <code>PricePerSeat &gt; 0</code>, <code>TotalCharge &gt; 0</code>, <code>Vat ≥ 0</code> (client values, only checked for sign); <code>NumberOfSeats ≤ AllowableMaximumSeatPerOrder</code>; the level's gallery, block and level must exist, be active and sellable, and match the sent ids (<code>unauthorized_access</code> otherwise); selling window (<code>ticket_selling_is_not_started_yet</code>, <code>ticket_selling_stopped</code>); <code>order_limit_exceeded</code> and <code>seat_limit_exceeded</code> from the customer's earlier orders (see note 5);</li>
+<li>for seated levels: the requested seats must all be in the live free-seat list, else <code>Unavailable seats: ...</code>;</li>
+<li>generates a unique order number <code>{TicketNumberPrefix}{code}</code>;</li>
+<li>takes the lock <code>level_booking_{event}_{gallery}_{block}_{level}</code> (60 s, waits up to 15 s) and calls <code>CapacityManager.BookLevelCapacity</code> (<strong>locks</strong> the seats/amount for 12 minutes in the Redis hash <code>level_locked:*</code>; live capacity is reduced only after payment, <span class="link-na" title="Not included in the site yet">S-01</span>);</li>
+<li><strong>computes the price on the server</strong> from the event settings (VAT inclusive or on top, percentage or fixed), the level price, the system discount (<code>Discounts</code> table), the promo code (<a href="P-05-apply-promo-code.html">P-05</a>) and the platform (service) charge; stores <code>Vat</code>, <code>Discount</code>, <code>PromoDiscount</code>, <code>PlatformCharge</code>, <code>TotalCharge</code>, status <code>Pending</code>, a new <code>PaymentTransactionId</code> (GUID), <code>OneIdUserId</code> from the profile;</li>
+<li>stores one <code>BookedUserRecords</code> row per ticket (the holder names and phones sent, empty rows for the rest);</li>
+<li>asks DgePay for the checkout link (<code>InitiateDgePayPayment</code>) and returns <code>{ publicId, checkoutUrl }</code> with HTTP 201. The gateway choice code (<code>ResolvePaymentGateway</code>, SSLCommerz) is <strong>commented out</strong>: every order uses DgePay (<span class="link-na" title="Not included in the site yet">Q-19</span>).</li>
+<li><strong>[HTTP, static/encrypted] → DgePay:</strong> <code>DgePayPaymentManager.InitiatePaymentAndGetCheckoutLink</code> authenticates (<code>/payment_gateway/authenticate</code>, Basic client credentials), AES-encrypts the body (amount, transaction id, callback URL <code>DgePay:CallbackUrl</code>) and posts to <code>/payment_gateway/initiate_payment</code>; the answer's <code>WebViewUrl</code> is the checkout link. Any failure returns <code>null</code> (logged only).</li>
+<li>The customer pays on DgePay. DgePay then calls <strong class="hop-tag">[HTTP, no token]</strong> <code>GET /booking/api/v1/user-booking-order/dgepay/payment-status?data=&lt;AES-encrypted&gt;</code> (anonymous). <code>HandleDgePayment</code> decrypts the data, finds the order by <code>UniqueTxnId</code>, and:
+   - status <strong>Paid</strong> and order younger than 12 minutes: publishes <strong class="hop-tag">[SQS: OrderSuccess]</strong> (level capacity update, <span class="link-na" title="Not included in the site yet">S-01</span>), sets the status, stores the callback text and time, calls Ticketing <code>initiate-user-ticket</code> (creates the ticket rows, <span class="link-na" title="Not included in the site yet">S-07</span>) and publishes <strong class="hop-tag">[SQS: VatChallanProcessing]</strong> (<span class="link-na" title="Not included in the site yet">S-10</span>);
+   - status <strong>not Paid</strong>: deletes the order from the locked-capacity hash;
+   - order <strong>older than 12 minutes</strong>: the status and the capacity message are <em>not</em> applied (the order is left for the background cancel); the callback text is still stored. The code after that point does not look at the age: for a <code>Paid</code> callback it still calls <code>initiate-user-ticket</code> (which refuses because the order is not <code>Paid</code>, logged as a warning) and <strong>still publishes the VAT challan message</strong> <span class="badge-unconfirmed">[UNCONFIRMED: Q-15]</span>.
+   The action then <strong>always</strong> answers with a 302 to <code>DgePay:RedirectUrl</code>, even if processing failed (errors are only logged).</li>
+<li>Background: orders still <code>Pending</code> after the callback window are re-checked against DgePay (<code>check_transaction_status</code>) and cancelled if unpaid (<span class="link-na" title="Not included in the site yet">S-05</span>).</li>
+<li><strong>Portal after redirect:</strong> the portal route <code>tickets</code> (without language) redirects to <code>/{savedLanguage}/tickets</code> (<a href="P-07-my-bookings.html">P-07</a>); no payment result is passed in the URL, the list reads the status from the server.</li>
+<li><strong>Test/bypass path:</strong> <code>GET /booking/api/v1/user-booking-order/payment-status-bypass?rawData=&lt;order public id&gt;</code> is <strong>anonymous</strong>, does not ask DgePay, forces <code>Paid</code> with the text "BY PASS TRANSACTION - TEST", publishes OrderSuccess and initiates tickets (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>; this is the critical finding of the review).</li>
+</ol>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td><code>tickets/components/complete-payment-modal</code>, <code>stadium-seat-page</code> (<code>openCompletePaymentModal</code>), <code>booking-api.service.ts:31-42</code></td>
+</tr>
+<tr>
+<td>Services</td>
+<td>Booking (<code>UserBookingOrderController</code>, <code>UserBookingOrderManager</code>, <code>CapacityManager</code>, <code>DgePayPaymentManager</code>); Event (event and level info through <code>EventClient</code>); Ticketing (<code>initiate-user-ticket</code>); identity API (profile)</td>
+</tr>
+<tr>
+<td>Queues / workers</td>
+<td>SQS <code>OrderSuccess</code> → <span class="link-na" title="Not included in the site yet">S-01</span>; <code>VatChallanProcessing</code> → <span class="link-na" title="Not included in the site yet">S-10</span>; re-check job <span class="link-na" title="Not included in the site yet">S-05</span></td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>UserBookingOrders</code>, <code>BookedUserRecords</code>, read of <code>Discounts</code>, <code>PromoCodes</code></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>locks <code>user_booking:{userId}</code>, <code>level_booking_...</code>; hash <code>level_locked:{e}_{g}_{b}_{l}</code> (<a href="../60-cross-cutting/X-25-redis.html">X-25</a>)</td>
+</tr>
+<tr>
+<td>External</td>
+<td>DgePay (<code>authenticate</code>, <code>initiate_payment</code>, <code>check_transaction_status</code>); identity API</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>Main errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/booking/api/v1/user-booking-order</code></td>
+<td>User</td>
+<td><code>UserBookingOrder</code> (= <code>TicketPurchase</code>)</td>
+<td>201 <code>UserBookingOrderResponse { publicId, checkoutUrl }</code></td>
+<td>400 messages in §4 step 1</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/user-booking-order/dgepay/payment-status</code></td>
+<td>anonymous (DgePay callback)</td>
+<td><code>data</code> (encrypted)</td>
+<td>302 to <code>DgePay:RedirectUrl</code></td>
+<td>none returned</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/user-booking-order/payment-status-bypass</code></td>
+<td><strong>anonymous</strong></td>
+<td><code>rawData</code> (order public id)</td>
+<td>302</td>
+<td>none returned</td>
+</tr>
+</tbody>
+</table>
+<p>Primary sample, <code>POST /booking/api/v1/user-booking-order</code> (names from <code>UserBookingOrder</code>; values illustrative; <code>totalCharge</code>, <code>pricePerSeat</code> and <code>vat</code> are only sign-checked):</p>
+<pre><code class="language-json">{ &quot;eventId&quot;: &quot;9f0b2c1e-3b0e-4a43-9d5e-6f5f3d0c1a11&quot;, &quot;galleryId&quot;: 5, &quot;blockId&quot;: 11, &quot;levelId&quot;: 31,
+  &quot;numberOfSeats&quot;: 2, &quot;pricePerSeat&quot;: 1500, &quot;hasSeats&quot;: true, &quot;seats&quot;: &quot;A1,A2&quot;,
+  &quot;promoCode&quot;: &quot;&quot;, &quot;totalCharge&quot;: 3450, &quot;vat&quot;: 450,
+  &quot;bookedUserDetails&quot;: [ { &quot;userName&quot;: &quot;Nadia Rahman&quot;, &quot;phoneNumber&quot;: &quot;01711111111&quot; },
+                         { &quot;userName&quot;: &quot;&quot;, &quot;phoneNumber&quot;: &quot;&quot; } ] }
+</code></pre>
+<pre><code class="language-json">{ &quot;publicId&quot;: &quot;5b1f7a64-6c1e-4c0a-8f6e-0f3d2f9a7b10&quot;, &quot;checkoutUrl&quot;: &quot;https://pay.example.com/checkout/abc123&quot; }
+</code></pre>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p><code>UserBookingOrders</code> (<code>Pending</code>, later <code>Paid</code>), <code>BookedUserRecords</code>, seat lock in Redis, DgePay session, then (after payment) SQS messages, ticket rows in Ticketing, a VAT message and capacity changes. The activity log records the order changes (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>).</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Controller</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs:43-86, 239-262</code></td>
+</tr>
+<tr>
+<td>Create</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Domain/Managers/UserBookingOrderManager.cs:61-330</code></td>
+</tr>
+<tr>
+<td>Callback</td>
+<td><code>.../UserBookingOrderManager.cs:331-452</code> (DgePay), <code>495-545</code> (bypass)</td>
+</tr>
+<tr>
+<td>Validation, gateway</td>
+<td><code>.../UserBookingOrderManager.cs:562-760</code></td>
+</tr>
+<tr>
+<td>DgePay client</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Domain/Managers/DgePayPaymentManager.cs:27-130, 188-265</code></td>
+</tr>
+<tr>
+<td>Portal</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/featured/tickets/components/complete-payment-modal/complete-payment-modal.component.ts:37-58</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>Anyone who knows an order's public id can mark it paid.</strong> <code>payment-status-bypass</code> is anonymous and permanent in the code; it also starts ticket creation. Remove it or protect it before production use (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>). Locally it is a handy way to simulate a payment (§11).</li>
+<li><strong>The checkout failure is invisible to the customer.</strong> If DgePay does not return a link, <code>checkoutUrl</code> is <code>null</code>; the portal only acts when a URL exists, so the pop-up stays in the loading state with no message (<code>loading</code> is not reset).</li>
+<li><strong>A paid order after 12 minutes is lost to the platform.</strong> A late DgePay callback neither updates the status nor deducts capacity; the money may have been taken while the order is cancelled by the background job (<span class="link-na" title="Not included in the site yet">S-05</span>, <span class="badge-unconfirmed">[UNCONFIRMED: Q-11]</span>).</li>
+<li><strong>Two customers choosing the same seats:</strong> the first order takes the lock; the second fails with <code>Unavailable seats: ...</code> or a capacity message (<a href="P-04-seat-selection.html">P-04</a> note 2). A refused purchase keeps its seats locked until the 12-minute lock expires <span class="badge-unconfirmed">[UNCONFIRMED: Q-37]</span>.</li>
+<li><strong>Limit checks are loose.</strong> <code>order_limit_exceeded</code> fires only when the customer already has <em>more than</em> <code>AllowableMaximumOrderPerUser</code> orders (so one more than the limit is possible), and <code>seat_limit_exceeded</code> compares <em>all</em> seats the customer ever booked for the event plus the new ones with the <strong>per-order</strong> maximum <code>AllowableMaximumSeatPerOrder</code>, so that setting works as a per-customer total as well <span class="badge-unconfirmed">[UNCONFIRMED: Q-38]</span>.</li>
+<li><strong>The server price can differ from the preview</strong> (<a href="P-04-seat-selection.html">P-04</a> note 1); the amount charged is <code>TotalCharge</code> as computed in step 8.</li>
+<li><strong>No "resume payment".</strong> The endpoint that would regenerate a checkout link for a pending order is commented out in the controller (<code>UserBookingOrderController.cs:287</code>); a customer who closes the DgePay page must buy again.</li>
+<li><strong>The callback trusts the encrypted message.</strong> <code>HandleDgePayment</code> takes the status from the decrypted <code>data</code> (shared AES key) and does not call <code>check_transaction_status</code>; only the background re-check does (<span class="link-na" title="Not included in the site yet">S-05</span>). Protect the key like a password (<a href="../60-cross-cutting/X-26-configuration.html">X-26</a>).</li>
+<li><strong>Always a redirect.</strong> A failure while processing the callback is logged as critical and the customer is still sent to the portal, where the order shows <code>Pending</code> until the re-check.</li>
+<li><strong>Error messages from the server are shown as text</strong> (<code>err.error.title</code>); machine codes such as <code>ticket_selling_stopped</code> or <code>order_limit_exceeded</code> are displayed as they are unless the portal translates them <span class="badge-unconfirmed">[UNCONFIRMED: Q-39]</span>.</li>
+<li><strong>Profile call per order.</strong> Each order calls the identity API; if it is down the customer cannot buy (<code>Complete your profile first!</code> is also the message for a missing profile).</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">sequenceDiagram
+  participant U as User portal
+  participant B as Booking API
+  participant R as Redis
+  participant D as DgePay
+  participant Q as SQS OrderSuccess / VatChallanProcessing
+  participant T as Ticketing API
+  U->>B: POST user-booking-order (HTTP + user token)
+  B->>R: lock user_booking, level_booking; lock capacity (level_locked)
+  B->>D: authenticate + initiate_payment (encrypted)
+  D-->>B: WebViewUrl
+  B-->>U: 201 publicId, checkoutUrl
+  U->>D: browser redirect, customer pays
+  D->>B: GET dgepay/payment-status?data (anonymous callback)
+  B->>Q: OrderSuccess, VatChallanProcessing
+  B->>T: initiate-user-ticket (HTTP, no token)
+  B-->>U: 302 to DgePay:RedirectUrl
+</div>
+<p><strong>Depends on:</strong> <a href="P-04-seat-selection.html">P-04</a>, <a href="P-05-apply-promo-code.html">P-05</a>, <a href="../10-admin-portal/A-03-program-settings.html">A-03</a> and <a href="../10-admin-portal/A-08-event-settings.html">A-08</a> (VAT, charge, limits), <a href="../10-admin-portal/A-16-discounts.html">A-16</a>, <a href="../60-cross-cutting/X-06-user-registration.html">X-06</a> (profile). <strong>Affects:</strong> <a href="P-07-my-bookings.html">P-07</a>, <a href="P-08-ticket-generation-request.html">P-08</a>, <span class="link-na" title="Not included in the site yet">S-01</span>, <span class="link-na" title="Not included in the site yet">S-05</span>, <span class="link-na" title="Not included in the site yet">S-07</span>, <span class="link-na" title="Not included in the site yet">S-10</span>, <a href="../10-admin-portal/A-22-reports.html">A-22</a>, <a href="../10-admin-portal/A-23-reconciliation.html">A-23</a>.</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Partial.</strong> DgePay is a dummy locally, so the real payment page and callback cannot run; the order creation and the capacity lock can.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>User <code>+8801700000011</code> / <code>Passw0rd!23</code> (profile complete); nine seeded orders for this user (paid, pending, failed, cancelled)</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:4201/en/tickets/{eventId}/seats</code> → <strong>Purchase</strong> → <strong>Pay</strong>; the redirect to the dummy checkout fails by design; inspect the Network call <code>user-booking-order</code> (201 with <code>checkoutUrl</code>, or 400) and the new <code>Pending</code> row</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>— (the app cannot sign in locally, <span class="link-na" title="Not included in the site yet">U-05</span>)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-booking.postman_collection.json</code>: "POST /api/v1/user-booking-order", "GET /api/v1/user-booking-order/dgepay/payment-status", "GET /api/v1/user-booking-order/payment-status-bypass" (set <code>rawData</code> to the <code>publicId</code> to simulate a successful payment locally; never enable this endpoint in a shared environment)</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>UserBookingOrderManager.CreateAsync</code> (breakpoints at the validation, <code>BookLevelCapacity</code>, price steps 1-7), <code>HandleDgePayment</code>; Booking service from the Aspire AppHost</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>SQL: <code>select "OrderNumber","Status","TotalCharge","Vat","Discount","PromoDiscount","PlatformCharge","PaymentTransactionId" from etp."UserBookingOrders" order by "CreatedAt" desc limit 5</code>; Redis <code>HGETALL level_locked:{e}_{g}_{b}_{l}</code>; after the bypass call: SQS OrderSuccess message in Floci, status <code>Paid</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="P-05-apply-promo-code.html"><span class="pager-label">Previous</span><span>P-05 · Apply promo code</span></a>
+  <a class="pager-next" href="P-07-my-bookings.html"><span class="pager-label">Next</span><span>P-07 · My bookings and generation status</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

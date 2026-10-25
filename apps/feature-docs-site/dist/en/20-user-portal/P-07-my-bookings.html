@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P-07 · My bookings · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · Admin Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+    <a class="side-section" href="index.html">20 · User Web Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+    <a class="side-item" href="P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+    <a class="side-item" href="P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+    <a class="side-item" href="P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+    <a class="side-item" href="P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+    <a class="side-item" href="P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+    <a class="side-item is-active" href="P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+    <a class="side-item" href="P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+    <a class="side-item" href="P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+    <a class="side-item" href="P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+    <a class="side-item" href="P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+    <a class="side-item" href="P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+    <a class="side-item" href="P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">20 · User Web Portal</a><span class="sep">›</span><span>P-07</span></div>
+<h1><span class="id-chip">P-07</span> My bookings</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> আমার বুকিং</p>
+<p><a href="index.html">← 20 · User portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>My bookings.</strong> The signed-in customer's list of orders: event, event date, order number, booking date, status (<code>Pending</code>, <code>Paid</code>, <code>Requested</code>, <code>Generated</code>, <code>Cancelled</code>), seat count and, for OneID customers, the OneID sync state (<a href="P-10-oneid-ticket-sync.html">P-10</a>). From a row the customer opens the ticket page (<a href="P-09-ticket-details-downloads.html">P-09</a>), the payment invoice, or the issue screen (<a href="P-12-issues-chat.html">P-12</a>). This is also the landing page after payment (<a href="P-06-booking-payment.html">P-06</a>).</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Signed-in customer. Route <code>/{lang}/tickets</code> (<code>AllBookingsPageComponent</code>, <code>AuthGuard</code>). Reached from the header menu and after the DgePay redirect.</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>Two tables (mobile: cards): <strong>Upcoming</strong> (events that have not ended) and <strong>All</strong>, both sorted by booking date, newest first, with paging and column sorting in the browser.</li>
+<li>A <code>Paid</code>, <code>Requested</code> or <code>Generated</code> order shows an active <strong>View details</strong> button and an <strong>Invoice</strong> button; a <code>Cancelled</code> or <code>Pending</code> order shows a disabled button.</li>
+<li><strong>Report an issue</strong> goes to the issue screen of the order: the existing issue if there is one, otherwise the form (<a href="P-12-issues-chat.html">P-12</a>).</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + user token]</strong> <code>GET {services.bookings}/booking/api/v1/user-booking-order/list?page=0&amp;pageSize=50&amp;sortOrder=Descending</code> (<code>BookingApiService.getAllbookings</code>; the portal always asks for the first 50). The server (<code>UserBookingOrderManager.GetAllByUser</code>) reads the caller's orders (<code>FindByUserId(User.GetId(), page, pageSize, sortOrder)</code>), then, <strong>one by one</strong>, asks the Event service for the event name and dates, and adds the OneID sync flag from the tickets (<code>GetOneIdSyncStatusAsync</code>).</li>
+<li>The browser maps each item to a table row (<code>id</code> = order public id, <code>eventName</code>, <code>eventDate</code>, <code>bookingId</code> = order number, <code>status</code>, <code>quantity</code>, <code>eventEndDate</code>, <code>oneIdSync</code>, <code>oneIdUserId</code>); the <strong>Upcoming</strong> table is the rows whose <code>eventEndDate</code> is in the future; a <strong>sync status</strong> column appears when any row has a <code>oneIdUserId</code>.</li>
+<li>View details → <code>/{lang}/tickets/ticket-details/{publicId}</code>; Invoice → <code>/{lang}/tickets/payment-invoice/{publicId}</code> (both use <code>BookingDetailsComponent</code>, which loads <code>GET /ticketing/api/v1/booking-order-ticket/details?publicId=</code>, <a href="P-09-ticket-details-downloads.html">P-09</a>).</li>
+<li>Report an issue → <code>GET /userissue/api/v1/user-issue/user-detail/{orderId}</code>; a 400 with title <code>User issue not found</code> means "no issue yet" and opens the form (<a href="P-12-issues-chat.html">P-12</a>).</li>
+</ol>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td><code>tickets/pages/all-bookings-page</code>, <code>tickets/pages/booking-details</code>, <code>booking-api.service.ts:44-48</code></td>
+</tr>
+<tr>
+<td>Services</td>
+<td>Booking (<code>UserBookingOrderController.GetAllOrders</code>, <code>UserBookingOrderManager.GetAllByUser</code>); Event (event name and dates)</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>UserBookingOrders</code>, Ticketing <code>Tickets</code> (OneID flag)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/user-booking-order/list</code></td>
+<td>User</td>
+<td><code>page</code>, <code>pageSize</code>, <code>sortOrder</code> (<code>Ascending</code>/<code>Descending</code>)</td>
+<td>paged <code>UserBooking</code> (<code>items[]</code>, paging fields)</td>
+</tr>
+</tbody>
+</table>
+<p>Primary sample (one item of <code>items</code>; property names from the portal's <code>Booking</code> model; values illustrative):</p>
+<pre><code class="language-json">{ &quot;publicId&quot;: &quot;5b1f7a64-6c1e-4c0a-8f6e-0f3d2f9a7b10&quot;, &quot;orderNumber&quot;: &quot;BDI7K2M9Q&quot;, &quot;eventName&quot;: &quot;1st ODI, Mirpur&quot;,
+  &quot;eventStartDateTime&quot;: &quot;2026-12-10T08:00:00Z&quot;, &quot;eventEndDateTime&quot;: &quot;2026-12-10T16:00:00Z&quot;,
+  &quot;createdAt&quot;: &quot;2026-12-01T09:30:00Z&quot;, &quot;status&quot;: &quot;Paid&quot;, &quot;numberOfSeats&quot;: 2,
+  &quot;oneIdUserId&quot;: null, &quot;oneIdSync&quot;: false }
+</code></pre>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>Read only.</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Page</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/featured/tickets/pages/all-bookings-page/all-bookings-page.component.ts:97-140, 200-235</code></td>
+</tr>
+<tr>
+<td>Template</td>
+<td><code>.../all-bookings-page/all-bookings-page.component.html:61-130</code></td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/booking-api.service.ts:44-48</code></td>
+</tr>
+<tr>
+<td>Controller / manager</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs:298-306</code>; <code>.../UserBookingOrderManager.cs:764-809</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>Only the newest 50 orders are shown</strong>, whatever the paging controls say: the portal requests <code>page=0&amp;pageSize=50</code> once and pages in the browser.</li>
+<li><strong>One event lookup per order (up to 50 calls)</strong> run one after another (the parallel version was commented out because of <code>DbContext</code> threading problems). The list gets slower as customers accumulate orders.</li>
+<li><strong>Order-status display is a raw string.</strong> The status text comes from the server enum; <code>Failed</code> is a server status but the portal model (<code>BookingStatus</code>) has no <code>Failed</code>, so such a row shows the default grey badge and no action buttons.</li>
+<li><strong>A <code>Pending</code> order has no "Pay now"</strong>: the regenerate-payment endpoint is commented out (<a href="P-06-booking-payment.html">P-06</a> note 7).</li>
+<li><strong>The "Upcoming" filter uses the browser clock</strong> and the event end time.</li>
+<li><strong>OneID flag is computed twice</strong> in <code>GetAllByUser</code> (two identical calls to <code>GetOneIdSyncStatusAsync</code>); harmless but wasteful.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  U["Customer: My bookings"] -->|"HTTP + user token: list"| BK["Booking API"]
+  BK --> DB[("UserBookingOrders")]
+  BK -->|"event name and dates, per order"| EV["Event API"]
+  BK -->|"OneID sync flag"| TK[("Tickets")]
+  U --> P9["P-09 ticket details"]
+  U --> P12["P-12 issue"]
+</div>
+<p><strong>Depends on:</strong> <a href="P-06-booking-payment.html">P-06</a>. <strong>Affects:</strong> <a href="P-09-ticket-details-downloads.html">P-09</a>, <a href="P-10-oneid-ticket-sync.html">P-10</a>, <a href="P-12-issues-chat.html">P-12</a>.</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Full</strong> (nine seeded orders for <code>+8801700000011</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>User <code>+8801700000011</code> / <code>Passw0rd!23</code>; statuses Paid ×6, Pending, Failed, Cancelled</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:4201/en/tickets</code>; Network: <code>user-booking-order/list</code></td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>— (see <span class="link-na" title="Not included in the site yet">U-06</span>)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-booking.postman_collection.json</code>: "GET /api/v1/user-booking-order/list" (token <code>{{access_token_user}}</code>)</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>UserBookingOrderManager.GetAllByUser</code></td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>SQL: <code>select "OrderNumber","Status","NumberOfSeats","CreatedAt" from etp."UserBookingOrders" where "UserId"=...</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="P-06-booking-payment.html"><span class="pager-label">Previous</span><span>P-06 · Booking order and online payment (DgePay)</span></a>
+  <a class="pager-next" href="P-08-ticket-generation-request.html"><span class="pager-label">Next</span><span>P-08 · Ticket generation request</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

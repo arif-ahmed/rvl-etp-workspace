@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P-05 · Apply promo code · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · Admin Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+    <a class="side-section" href="index.html">20 · User Web Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+    <a class="side-item" href="P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+    <a class="side-item" href="P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+    <a class="side-item" href="P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+    <a class="side-item is-active" href="P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+    <a class="side-item" href="P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+    <a class="side-item" href="P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+    <a class="side-item" href="P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+    <a class="side-item" href="P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+    <a class="side-item" href="P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+    <a class="side-item" href="P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+    <a class="side-item" href="P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+    <a class="side-item" href="P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">20 · User Web Portal</a><span class="sep">›</span><span>P-05</span></div>
+<h1><span class="id-chip">P-05</span> Apply promo code</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> প্রোমো কোড প্রয়োগ</p>
+<p><a href="index.html">← 20 · User portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Apply promo code.</strong> On the seat-selection page (<a href="P-04-seat-selection.html">P-04</a>) the customer types a promo code and presses <strong>Apply</strong>. The server checks that the code is valid for this customer, program, event and gallery, and the page shows the discount in the price preview. The codes themselves are created by staff (<a href="../10-admin-portal/A-15-promo-codes.html">A-15</a>).</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Signed-in customer on <code>/{lang}/tickets/{eventId}/seats</code>.</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>Type the code (spaces cannot be typed, <code>preventSpace</code>) and press <strong>Apply</strong>.</li>
+<li>Success: the discount (percentage or fixed amount) is subtracted in the price box and the code is shown as applied; <strong>Remove</strong> clears it.</li>
+<li>Failure: one message under the box: "invalid", or "expired" when the server says the code has expired. Every other reason (not started, usage limit, per-user limit, wrong program/event/gallery) shows the same "invalid" message.</li>
+<li>Changing the gallery, block or level clears the code.</li>
+<li>The code is only <em>checked</em> here. It is counted as used when the order is paid (<a href="P-06-booking-payment.html">P-06</a>).</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + user token]</strong> <code>POST {services.bookings}/booking/api/v1/user-booking-order/apply-promo-code</code> with <code>{promoCode, programId, eventId (public GUID), galleryId}</code> (<code>BookingApiService.applyPromoCode</code>; server <code>[Authorize(Policy = User)]</code>).</li>
+<li><code>UserBookingOrderManager.ValidateApplyPromoCodeAsync</code>:</li>
+<li>an empty code → <code>Invalid promo code. Please enter a valid code.</code>;</li>
+<li><code>promoCodeRepository.GetByCodeAsync(code.Trim(), eventId)</code> (exact, case-sensitive code match on non-deleted rows that are assigned to the event); none → the same message;</li>
+<li>now before <code>StartDateTime</code> → <code>This promo code is not active yet.</code>; after <code>EndDateTime</code> → <code>This promo code has expired. Please use a valid code.</code>;</li>
+<li>usage: orders that carry the code and have status <code>Paid</code>, <code>Requested</code> or <code>Generated</code> are counted; total ≥ <code>TotalUsageLimit</code> → <code>This code has reached its usage limit and is no longer valid.</code>; this user's count ≥ <code>LimitPerUser</code> → <code>You have already used this promo code the maximum allowed times.</code>;</li>
+<li>eligibility through <code>AssignTo</code> rows: the program must be assigned, then the event (an empty event list means all events), then the gallery (an empty gallery list means all galleries) → <code>This promo code is not applicable to the selected program/event/gallery.</code>;</li>
+<li>success returns <code>{ isSuccess: true, discountType, discountValue, discountAppliedTo }</code>.</li>
+<li>Every failure is an <code>ArgumentException</code>; the exception filter turns it into HTTP 400 with a problem-details body whose <code>title</code> is the message. The portal reads <code>error.error.title</code> and maps text containing "not active" or "expired" to translation keys (<code>stadium-seat-page.component.ts:545-565</code>).</li>
+<li>The preview discount uses <code>discountAppliedTo</code>: <code>BasePrice</code> (percentage of the base price) or <code>DiscountedPrice</code> (percentage of the price after the system discount); <code>discountType</code> is <code>Percentage</code> or <code>FixedAmount</code>.</li>
+<li><strong>Purchase repeats the whole check.</strong> <code>CreateAsync</code> calls <code>ValidateApplyPromoCodeAsync</code> again and computes the promo discount itself (<a href="P-06-booking-payment.html">P-06</a>); if the code is no longer valid the exception is not caught and the order is refused with the same message (see note 3).</li>
+</ol>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td><code>tickets/pages/stadium-seat-page</code> (<code>applyPromoCode</code>, <code>removePromoCode</code>), <code>booking-api.service.ts:63-73</code></td>
+</tr>
+<tr>
+<td>Service</td>
+<td>Booking (<code>UserBookingOrderController.ApplyPromoCode</code>, <code>UserBookingOrderManager</code>, <code>PromoCodeRepository</code>)</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>PromoCodes</code>, <code>PromoCodeAssignments</code> (events, galleries), <code>UserBookingOrders</code> (usage count)</td>
+</tr>
+<tr>
+<td>Cache</td>
+<td>none</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>Main errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/booking/api/v1/user-booking-order/apply-promo-code</code></td>
+<td>User</td>
+<td><code>ApplyPromoCodeRequest</code></td>
+<td><code>ApplyPromoCodeResponse</code></td>
+<td>400 with the messages above</td>
+</tr>
+</tbody>
+</table>
+<p>Primary sample, request and success response (names from <code>ApplyPromoCodeRequest</code> / <code>ApplyPromoCodeResponse</code>; values from the local seed code <code>BCBWELCOME10</code> for the 2nd ODI Pavilion):</p>
+<pre><code class="language-json">{ &quot;promoCode&quot;: &quot;BCBWELCOME10&quot;, &quot;programId&quot;: 1, &quot;eventId&quot;: &quot;9f0b2c1e-3b0e-4a43-9d5e-6f5f3d0c1a11&quot;, &quot;galleryId&quot;: 5 }
+</code></pre>
+<pre><code class="language-json">{ &quot;isSuccess&quot;: true, &quot;discountType&quot;: &quot;Percentage&quot;, &quot;discountValue&quot;: 10, &quot;discountAppliedTo&quot;: &quot;BasePrice&quot; }
+</code></pre>
+<p>Failure example (HTTP 400): <code>{ "title": "This promo code has expired. Please use a valid code.", "status": 400 }</code>.</p>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>None; a check only. The usage counters are derived by counting orders, not stored on the code (<span class="link-na" title="Not included in the site yet">S-16</span> note on counting).</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Portal call</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/booking-api.service.ts:63-73</code></td>
+</tr>
+<tr>
+<td>Portal page</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/featured/tickets/pages/stadium-seat-page/stadium-seat-page.component.ts:519-566</code></td>
+</tr>
+<tr>
+<td>Controller</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs:443-453</code></td>
+</tr>
+<tr>
+<td>Manager</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Domain/Managers/UserBookingOrderManager.cs:1135-1193</code></td>
+</tr>
+<tr>
+<td>Repository</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Storage/Repositories/PromoCodeRepository.cs:13-35</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>The code is not "used" at apply time.</strong> Two customers can apply the last remaining use at the same time; whoever is counted as <code>Paid</code>/<code>Requested</code>/<code>Generated</code> first wins, and the other's purchase is refused at the second check.</li>
+<li><strong>Pending orders do not count.</strong> Orders still <code>Pending</code> (not yet paid) are not counted against the limits, so the limits can be exceeded while payments are in flight.</li>
+<li><strong>A refused purchase still holds the seats for a while.</strong> In <code>CreateAsync</code> the seats are locked in Redis (<code>BookLevelCapacity</code>, 12-minute lock) <em>before</em> the promo code is validated; if the code is rejected at that moment the order is not created but the lock stays until it expires after 12 minutes, so those seats look unavailable to others for that time <span class="badge-unconfirmed">[UNCONFIRMED: Q-37]</span>. The recomputed discount can also differ from the preview (<a href="P-04-seat-selection.html">P-04</a> note 1).</li>
+<li><strong>Case-sensitive, exact match.</strong> <code>bcbwelcome10</code> does not match <code>BCBWELCOME10</code>.</li>
+<li><strong>The "active" flag of a code is not part of the check;</strong> only the start and end dates are used (<span class="link-na" title="Not included in the site yet">S-16</span>); a promo code that staff unpublish in the admin portal still works until it is deleted or expires <span class="badge-unconfirmed">[UNCONFIRMED: Q-18]</span>.</li>
+<li><strong>The portal hides the reason</strong> for usage-limit and per-user-limit refusals (it shows "invalid" for them), although the server returns precise messages.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">sequenceDiagram
+  participant U as User portal
+  participant B as Booking API
+  participant DB as Booking tables
+  U->>B: POST apply-promo-code (HTTP + user token)
+  B->>DB: PromoCodes + AssignTo, count orders with the code
+  B-->>U: isSuccess, discountType, discountValue, discountAppliedTo (or 400 title)
+  Note over U,B: Checked again when the order is created (P-06)
+</div>
+<p><strong>Depends on:</strong> <a href="../10-admin-portal/A-15-promo-codes.html">A-15</a>, <a href="P-04-seat-selection.html">P-04</a>. <strong>Affects:</strong> <a href="P-06-booking-payment.html">P-06</a>, <a href="../10-admin-portal/A-22-reports.html">A-22</a> (promo usage in reports).</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Full.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>User <code>+8801700000011</code> / <code>Passw0rd!23</code>; seeded codes <code>BCBWELCOME10</code> (2nd ODI Pavilion), <code>BPLFLAT100</code>, <code>OLDCODE</code> (expired)</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:4201/en/events</code> → 2nd ODI → seats → Pavilion → code <code>BCBWELCOME10</code> → <strong>Apply</strong>; Network: <code>apply-promo-code</code> (200 or 400)</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>— (see <span class="link-na" title="Not included in the site yet">U-04</span>)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-booking.postman_collection.json</code>: "POST /api/v1/user-booking-order/apply-promo-code" (token <code>{{access_token_user}}</code> from <code>etp-login-all-pools</code>)</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>UserBookingOrderManager.ValidateApplyPromoCodeAsync</code> (Booking service from the Aspire AppHost)</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>SQL: <code>select "Code","StartDateTime","EndDateTime","TotalUsageLimit","LimitPerUser" from etp."PromoCodes"</code>; count: <code>select count(*) from etp."UserBookingOrders" where "PromoCode"='BCBWELCOME10' and "Status" in (...)</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="P-04-seat-selection.html"><span class="pager-label">Previous</span><span>P-04 · Seat selection</span></a>
+  <a class="pager-next" href="P-06-booking-payment.html"><span class="pager-label">Next</span><span>P-06 · Booking order and online payment (DgePay)</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

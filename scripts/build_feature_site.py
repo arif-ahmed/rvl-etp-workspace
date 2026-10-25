@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Build the static HTML site from docs/handover/feature-docs.
 
-Default scope is the cross-cutting section only (first look). Widen later with:
+Default scope is the sections built so far. Widen later with:
 
     python scripts/build_feature_site.py --sections all
-    python scripts/build_feature_site.py --sections 10-admin-portal,60-cross-cutting
 
 Layout:
     apps/feature-docs-site/assets/  hand-authored + vendored assets (source, committed)
@@ -48,8 +47,8 @@ UI = {
         "prev": "Previous",
         "next": "Next",
         "na": "Not included in the site yet",
-        "scope_note": "First look: only the cross-cutting section is included. "
-                      "The remaining sections will be added by re-running the build with a wider scope.",
+        "scope_note": "Included sections: {sections}. "
+                      "The remaining sections can be added by re-running the build with a wider scope.",
         "router_title": "Choose a language",
         "router_note": "Light / dark mode can be switched from the top bar on any page.",
     },
@@ -59,7 +58,7 @@ UI = {
         "prev": "পূর্ববর্তী",
         "next": "পরবর্তী",
         "na": "এখনো সাইটে যোগ হয়নি",
-        "scope_note": "প্রথম দৃশ্য: আপাতত শুধু ক্রস-কাটিং অংশটি রয়েছে। "
+        "scope_note": "অন্তর্ভুক্ত অংশ: {sections}। "
                       "বাকি অংশগুলো পরে বিল্ড আবার চালিয়ে যোগ হবে।",
         "router_title": "ভাষা বেছে নিন",
         "router_note": "যেকোনো পেজের উপরের বার থেকে লাইট / ডার্ক মোড বদলানো যায়।",
@@ -125,6 +124,25 @@ def strip_feature_h1(text):
     return m.group(1), m.group(2), text[m.end():]
 
 
+def readme_body(text):
+    """Section README markdown before the features table, minus H1 and back-link.
+
+    The table itself is rendered as the section index card grid; what precedes
+    it (intro paragraph, e.g. admin-portal's 'Sign-in and access' link list)
+    belongs on the index page too.
+    """
+    lines = text.splitlines()
+    row = re.compile(r"^\|\s*[A-Z]+-\d+\s*\|")
+    cut = next((i for i, ln in enumerate(lines) if row.match(ln)), None)
+    if cut is not None:
+        j = cut - 1
+        while j >= 0 and not lines[j].startswith("#"):
+            j -= 1
+        lines = lines[:max(j, 0)]
+    drop = re.compile(r"^#\s|^\[[^\]]+\]\((?:\.\./)?README\.md\)\s*$")
+    return "\n".join(ln for ln in lines if not drop.match(ln)).strip()
+
+
 BN_LIST_NUM = re.compile(r"^(\s*)([০-৯]+)([.)])\s+")
 
 
@@ -188,23 +206,24 @@ def rewrite_links(body, cur_dir, built_md, na_label):
     return ANCHOR.sub(repl, body)
 
 
-def convert_feature(src, lang, cur_dir, built_md):
-    text = normalize_bn_list_numbers(src)
-    fid, title, rest = strip_feature_h1(text)
-
+def md_to_html(text, lang, cur_dir, built_md):
+    """Convert markdown (H1 already stripped) and apply the site post-processing."""
     md = markdown.Markdown(
         extensions=["tables", "fenced_code", "toc", "sane_lists"],
         extension_configs={"toc": {"toc_depth": "2-3", "slugify": slugify_unicode}},
     )
-    body = md.convert(rest)
-
+    body = md.convert(normalize_bn_list_numbers(text))
     body = MERMAID_BLOCK.sub(
         lambda m: '<div class="mermaid">' + html.unescape(m.group(1)) + "</div>", body)
     body = UNCONFIRMED.sub(
         lambda m: '<span class="badge-unconfirmed">' + m.group(1) + "</span>", body)
     body = HOP_TAG.sub(r'<strong class="hop-tag">\1</strong>', body)
-    body = rewrite_links(body, cur_dir, built_md, UI[lang]["na"])
-    return fid, title, body
+    return rewrite_links(body, cur_dir, built_md, UI[lang]["na"])
+
+
+def convert_feature(src, lang, cur_dir, built_md):
+    fid, title, rest = strip_feature_h1(src)
+    return fid, title, md_to_html(rest, lang, cur_dir, built_md)
 
 
 # --------------------------------------------------------------------------
@@ -259,16 +278,19 @@ def page(lang, title, crumb, content, sidebar, to_root, mermaid_tag, lang_toggle
 """
 
 
-def sidebar_html(sections, ui, in_section, active=None):
+def sidebar_html(sections, ui, cur_dir, active=None):
     """sections: [(num, short_title, full_title, desc, feats, dir_name)] for one language.
 
-    in_section=True  -> page lives inside the section dir (links relative to it)
-    in_section=False -> page is the language root index (links prefixed with <dir>/)
+    cur_dir: section dirname the page lives in (None = language root index).
+    Same-section links are bare; other sections get ../<dir>/; the root prefixes <dir>/.
     active: 'sec:<dir>' marks the section link, '<dir>/<file>.html' a feature link.
     """
     parts = []
     for num, short, _full, _desc, feats, dirname in sections:
-        prefix = "" if in_section else dirname + "/"
+        if cur_dir is None:
+            prefix = dirname + "/"
+        else:
+            prefix = "" if dirname == cur_dir else f"../{dirname}/"
         is_on = " is-active" if active == f"sec:{dirname}" else ""
         parts.append(f'    <a class="side-section{is_on}" '
                      f'href="{prefix}index.html">{num} · {html.escape(short)}</a>')
@@ -393,16 +415,17 @@ def build(docs: Path, out: Path, assets: Path, wanted):
         n_pages = 0
 
         # ---- language root index -------------------------------------
+        section_list = ", ".join(f"{num} · {short}" for num, short, _f, _d, _fe, _d2 in parsed[lang])
         cards = "\n".join(
             f'    <a class="card" href="{d}/index.html">'
             f'<span class="card-title"><span class="id-chip">{num}</span> {html.escape(short)}</span>'
             f'<span class="card-desc">{inline_md(desc)}</span></a>'
             for num, short, full, desc, feats, d in parsed[lang])
         content = (f'<h1>{html.escape(ui["contents"])}</h1>\n'
-                   f'<p class="scope-note">{html.escape(ui["scope_note"])}</p>\n'
+                   f'<p class="scope-note">{html.escape(ui["scope_note"].format(sections=section_list))}</p>\n'
                    f'<div class="cards">\n{cards}\n    </div>')
         # sidebar links from the language root are prefixed with each section dir
-        side = sidebar_html(parsed[lang], ui, in_section=False)
+        side = sidebar_html(parsed[lang], ui, cur_dir=None)
         (out / lang / "index.html").parent.mkdir(parents=True, exist_ok=True)
         (out / lang / "index.html").write_text(
             page(lang, ui["contents"], "", content, side, "../",
@@ -417,16 +440,19 @@ def build(docs: Path, out: Path, assets: Path, wanted):
             sec_dir_out.mkdir(parents=True, exist_ok=True)
             to_root = "../../"
 
-            # section index (cards grid built from the README table)
+            # section index (README intro + cards grid built from the README table)
+            readme_text = (docs / lang / dirname / "README.md").read_text(encoding="utf-8")
+            intro = md_to_html(readme_body(readme_text), lang, dirname, built_md) or \
+                f'<p>{inline_md(desc)}</p>'
             cards = "\n".join(
                 f'      <a class="card" href="{f["file"][:-3]}.html">'
                 f'<span class="card-title"><span class="id-chip">{f["id"]}</span> {html.escape(f["title"])}</span>'
                 f'<span class="card-desc">{inline_md(f["purpose"])}</span></a>'
                 for f in feats)
             content = (f'<h1><span class="id-chip">{num}</span> {html.escape(full)}</h1>\n'
-                       f'<p>{inline_md(desc)}</p>\n'
+                       f'{intro}\n'
                        f'<div class="cards">\n{cards}\n    </div>')
-            side = sidebar_html(parsed[lang], ui, in_section=True, active=f"sec:{dirname}")
+            side = sidebar_html(parsed[lang], ui, cur_dir=dirname, active=f"sec:{dirname}")
             (sec_dir_out / "index.html").write_text(
                 page(lang, f"{num} · {short}", crumb_html([(ui["contents"], "../index.html"), (f"{num} · {short}", None)]),
                      content, side, to_root, mermaid_tag_tpl.format(to_root=to_root),
@@ -457,7 +483,7 @@ def build(docs: Path, out: Path, assets: Path, wanted):
                 pager.append("</div>")
                 content = (f'<h1><span class="id-chip">{fid}</span> {html.escape(title)}</h1>\n{body}\n'
                            + "\n".join(pager))
-                side = sidebar_html(parsed[lang], ui, in_section=True,
+                side = sidebar_html(parsed[lang], ui, cur_dir=dirname,
                                     active=f"{dirname}/{f['file'][:-3]}.html")
                 (sec_dir_out / (f["file"][:-3] + ".html")).write_text(
                     page(lang, f"{fid} · {title}",
@@ -511,7 +537,7 @@ def build(docs: Path, out: Path, assets: Path, wanted):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--sections", default="60-cross-cutting",
+    ap.add_argument("--sections", default="10-admin-portal,20-user-portal,60-cross-cutting",
                     help="comma list of section dirs under docs/handover/feature-docs/<lang>/, or 'all'")
     ap.add_argument("--docs", type=Path, default=DOCS_DEFAULT, help="feature-docs source root")
     ap.add_argument("--assets", type=Path, default=ASSETS_DEFAULT,

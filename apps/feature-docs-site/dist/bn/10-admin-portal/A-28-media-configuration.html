@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-28 · মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন) · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item is-active" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">10 · অ্যাডমিন পোর্টাল</a><span class="sep">›</span><span>A-28</span></div>
+<h1><span class="id-chip">A-28</span> মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</p>
+<p><a href="index.html">← 10 · অ্যাডমিন পোর্টাল</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>মিডিয়া কনফিগারেশন।</strong> পাবলিক পেজের ছবি ও ব্লকগুলো <strong>landing-page items</strong> হিসেবে ব্যবস্থাপিত হয়: hero ব্যানার, স্পনসর লোগো, গ্রাফিটি ব্যানার, একটি বিজ্ঞাপন, গ্যালারি পেজ (দুটি শিরোনামযুক্ত সেগমেন্ট), contact-us ব্লক এবং রেজিস্ট্রেশন ব্যানার। সবগুলো একটি টেবিলে (<code>LandingPageImages</code>) রাখা হয়, <code>Type</code> দিয়ে আলাদা করা হয়। ইউজার পোর্টাল ও অ্যাপ কেবল <strong>প্রকাশিত</strong> আইটেমগুলো পড়ে (<a href="../20-user-portal/P-01-home-content.html">P-01</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">U-02</span>)। টেক্সট পেজগুলো (শর্তাবলি, প্রাইভেসি, FAQ, নোটিশ) একই টেবিল ব্যবহার করে এবং <a href="A-29-content-editor.html">A-29</a>-এ বর্ণিত।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>যে কর্মীরা <strong>Site Settings → Media Configuration</strong> খুলতে পারেন (গ্লোবাল মেনু, <code>/media-configuration</code>; সাইন ইন ছাড়া আর কোনো route guard নেই)। <code>LandingPageImageController</code> রোল <code>Admin</code> ও <code>EventManager</code> অনুমোদন করে; একটি read endpoint পাবলিক।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li>পেজটি আইটেমগুলো ধরন অনুযায়ী গ্রুপ করে তালিকাভুক্ত করে (Hero, Sponsors, Graffiti, Advertisement, Gallery page, Contact us, Registration)।</li>
+<li>ধরনের একটি আইটেম ছবি (স্পনসরের ক্ষেত্রে একটি thumbnail), শিরোনাম, বিবরণ, action URL, ঐচ্ছিক শুরু ও শেষ সময় এবং display order দিয়ে <strong>তৈরি</strong> করুন; <strong>সম্পাদনা</strong>; <strong>মুছে ফেলা</strong>; <strong>duplicate</strong>; <strong>publish/unpublish</strong>; একটি আইটেমকে অন্য অবস্থানে সরিয়ে <strong>সাজান</strong>; গ্যালারি পেজের ক্ষেত্রে একসঙ্গে তার দুটি সেগমেন্টে কয়েকটি ছবি যোগ করুন।</li>
+<li>গ্রাহকের কাছে কেবল প্রকাশিত আইটেম দেখা যায়; প্রতি ধরনে প্রকাশিত আইটেমের সংখ্যা সীমাবদ্ধ।</li>
+</ol>
+<h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + ইউজার টোকেন]</strong> <code>GET /admin/api/v1/landing-page-image</code> (সব), <code>GET .../{id}</code>; পাবলিক <code>GET .../landing-page-image/public</code> (<strong>anonymous</strong>, Redis key <code>landing_page_image_published:list</code> থেকে দেওয়া হয় এবং না থাকলে ডেটাবেস থেকে আবার তৈরি হয়)।</li>
+<li>তৈরি <code>POST .../landing-page-image</code> (<code>multipart/form-data</code>, <code>CreateOrUpdateLandingPageImage {title, question, description, actionUrl, type, displayOrder, isPublished, startDateTime, endDateTime, imageFile, thumbnailFile}</code>)। <code>CreateAsync</code>: যাচাই (ছবি আবশ্যক; <code>Sponsors</code>-এর জন্য একটি thumbnail; <strong>কেবল একটি</strong> <code>Advertisement</code>, একটি <code>Terms_Condition</code>, একটি <code>Privacy_Policy</code> থাকতে পারে); <code>Terms_Condition</code> ও <code>Privacy_Policy</code> সবসময় প্রকাশিত অবস্থায় সংরক্ষিত হয়; <code>CreatedBy</code> = অ্যাডমিনের নাম (Cognito lookup); ছবি যায় S3 <code>landing-page/{type}/...</code>-এ এবং তার URL সংরক্ষিত হয়; টেক্সট ধরনগুলোর (<code>Notice</code>, <code>Terms_Condition</code>, <code>Privacy_Policy</code>, <code>FAQ</code>) কোনো ছবি নেই; এরপর cache key মুছে ফেলা হয় (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>, <a href="../60-cross-cutting/X-25-redis.html">X-25</a>)।</li>
+<li>হালনাগাদ <code>PUT .../{id}</code>; মুছে ফেলা <code>DELETE .../{id}</code>; duplicate <code>PUT .../duplicate/{id}</code>; গ্যালারি <code>POST .../add-gallery-image</code> (দুটি সেগমেন্ট, প্রতিটিতে শিরোনাম ও কয়েকটি ছবির ফাইল, ধরন <code>Gallery_Page_Segment_1</code> ও <code>_2</code>)।</li>
+<li>প্রকাশ <code>PUT .../publish/{id}</code> ও unpublish <code>PUT .../unpublish/{id}</code>: <code>IsPublished</code> টগল করে; প্রকাশ প্রত্যাখ্যান করা হয় যখন ধরনের <strong>ইতিমধ্যে প্রকাশিত</strong> আইটেমের সংখ্যা সীমায় পৌঁছায়: <code>Hero</code> ও <code>Sponsors</code>-এর জন্য <strong>৬</strong>, <code>Graffiti</code>-এর জন্য <strong>৪</strong>, <code>Registration</code>-এর জন্য <strong>৩</strong> (অন্যগুলোতে সীমা নেই): "A maximum of {n} {type} can be published at a time."; সংখ্যা cached প্রকাশিত তালিকা থেকে নেওয়া হয়।</li>
+<li>পুনর্বিন্যাস <code>PUT .../display-order/{type}/{displayOrder1}/{displayOrder2}</code>: অবস্থান ১-এর আইটেমকে অবস্থান ২-এ নিয়ে যায় এবং মাঝের আইটেমগুলো এক ধাপ সরায়; দুটি অবস্থানই ০-এর চেয়ে বড় হতে হবে।</li>
+<li>প্রতিটি পরিবর্তন <code>landing_page_image_published:list</code> মুছে ফেলে।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>features/media-configuration/*</code> (পেজ <code>hero-banner</code>, <code>sponsors-banner</code>, <code>graffiti-banner</code>, <code>advertisement-banner</code>, <code>gallery-page</code>, <code>contact-us</code>, <code>register-page</code>), <code>services/media-configuration.service.ts:19-59</code>; লিঙ্কহীন <code>features/program-settings/pages/landing-page-*</code>-এ একটি পুরোনো কপি</td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Admin (<code>LandingPageImageController</code>, <code>LandingPageImageManager</code>); Event সার্ভিস প্রকাশিত তালিকা পড়ে</td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td><code>LandingPageImages</code></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td><code>landing_page_image_published:list</code></td>
+</tr>
+<tr>
+<td>স্টোরেজ</td>
+<td>S3 media <code>landing-page/{type}</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরকট">6. API কন্ট্রাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/landing-page-image</code>, <code>/{id}</code></td>
+<td><code>Admin</code>, <code>EventManager</code></td>
+<td></td>
+<td>আইটেম</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/landing-page-image/public</code></td>
+<td><strong>anonymous</strong></td>
+<td></td>
+<td><code>LandingPageImagePublic[]</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/landing-page-image</code></td>
+<td>same</td>
+<td>multipart</td>
+<td>আইটেম</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/landing-page-image/add-gallery-image</code></td>
+<td>same</td>
+<td>multipart <code>GalleryPageSegmentImages</code></td>
+<td>আইটেম</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/api/v1/landing-page-image/{id}</code>, <code>publish/{id}</code>, <code>unpublish/{id}</code>, <code>duplicate/{id}</code>, <code>display-order/{type}/{o1}/{o2}</code></td>
+<td>same</td>
+<td></td>
+<td>আইটেম</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/admin/api/v1/landing-page-image/{id}</code></td>
+<td>same</td>
+<td>path</td>
+<td>আইটেম</td>
+</tr>
+</tbody>
+</table>
+<p><code>type</code>-এর মান: <code>Hero</code>, <code>Sponsors</code>, <code>Graffiti</code>, <code>Advertisement</code>, <code>Gallery_Page_Segment_1</code>, <code>Gallery_Page_Segment_2</code>, <code>Contact_Us</code>, <code>Registration</code>, <code>Notice</code>, <code>Terms_Condition</code>, <code>Privacy_Policy</code>, <code>FAQ</code> (স্ট্রিং)। প্রধান নমুনা, <code>POST /admin/api/v1/landing-page-image</code> multipart (নাম <code>CreateOrUpdateLandingPageImage</code> থেকে):</p>
+<pre><code>type=Hero
+title=Premier League 2026
+description=Book now
+actionUrl=https://example.com/events
+displayOrder=1
+isPublished=true
+imageFile=&lt;file&gt;
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>সারি, S3 ফাইল, cache মুছে ফেলা; activity log (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>) entity <code>LandingPageImage</code> নথিভুক্ত করে।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Controller</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/LandingPageImageController.cs:27-190</code></td>
+</tr>
+<tr>
+<td>Manager</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/LandingPageImageManager.cs:47-340</code></td>
+</tr>
+<tr>
+<td>Enum</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Enums/Enums.cs:20-34</code></td>
+</tr>
+<tr>
+<td>Portal</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/media-configuration/services/media-configuration.service.ts:19-59</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>প্রকাশের সীমা একটি cached তালিকা পড়ে।</strong> <code>PublishLandingPageImageAsync</code> প্রকাশিত আইটেম গণনা করে <code>GetAllPublishedAsync</code>-এর মাধ্যমে, যা Redis থেকে আসে; cache পুরোনো হলে সীমার যাচাই যেকোনো দিকে ভুল হতে পারে।</li>
+<li><strong>Publish টগল করে।</strong> <code>publish/{id}</code> ফ্ল্যাগ উল্টায়; পুনরায় কল করলে unpublish হয়। পোর্টাল publish ও unpublish আলাদা করে কল করে, তবে দুটি ক্লিকে পরিবর্তন ফিরে যেতে পারে।</li>
+<li><strong>স্পনসরের জন্য thumbnail দরকার; বিজ্ঞাপন, শর্তাবলি ও প্রাইভেসি প্রতিটির জন্য একটি করে আইটেমের অনুমতি</strong>, যা কেবল তৈরির সময়ে প্রয়োগ করা হয়; সম্পাদনায় singleton নিয়ম আবার দেখা হয় না।</li>
+<li><strong><code>GetOrSetAsync</code>-এ manager কোনো expiry ঠিক করে না</strong>, তাই প্রকাশিত তালিকা Redis-এ থাকে যতক্ষণ না কোনো পরিবর্তন তা মুছে ফেলে; ডেটাবেসে হাতে করা সম্পাদনা পরের পরিবর্তনের আগে গ্রাহকের কাছে অদৃশ্য থাকে।</li>
+<li><strong>এই টেবিলের একটি পাবলিক, অপ্রমাণীকৃত read</strong> ইচ্ছাকৃত (<code>public</code> রুট) এবং ইউজার পোর্টাল ও অ্যাপ এটি কল করে।</li>
+<li><strong>পোর্টালে দুটি কপি</strong>: লিঙ্কহীন <code>/settings/landing-page</code> পেজগুলো একই endpoint কল করে।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  AP["Admin portal: Media Configuration"] -->|"multipart, HTTP + token"| AD["Admin API"]
+  AD --> DB[("LandingPageImages")]
+  AD -->|"landing-page/{type}"| S3[("S3 media")]
+  AD -->|"delete published list key"| R[("Redis")]
+  PUB["User portal / app"] -->|"GET landing-page-image/public (anonymous)"| AD
+  AD -->|"GetOrSet"| R
+</div>
+<p><strong>নির্ভর করে:</strong> অ্যাডমিন লগইন (<a href="../60-cross-cutting/X-01-admin-login.html">X-01</a>)। <strong>প্রভাব ফেলে:</strong> <a href="../20-user-portal/P-01-home-content.html">P-01</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">U-02</span>, <a href="../20-user-portal/P-03-info-pages.html">P-03</a>।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে পরীক্ষা: সম্পূর্ণ।</strong></p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>Admin <code>…01</code>; seeded ব্যানার (<code>scripts/seed/01-catalog.sql</code>)</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>http://localhost:4200/media-configuration</code> → একটি hero ব্যানার যোগ করুন → <code>http://localhost:4201</code> home দেখুন</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>: "GET /api/v1/landing-page-image", "GET /api/v1/landing-page-image/public", "PUT /api/v1/landing-page-image/publish/{id}"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>LandingPageImageManager.CreateAsync</code>, <code>PublishLandingPageImageAsync</code></td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td><code>redis-cli GET landing_page_image_published:list</code>; <code>aws --endpoint-url http://localhost:4566 s3 ls s3://etp-local/landing-page/ --recursive</code>; <code>LandingPageImages</code>-এ SQL</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="A-27-activity-log.html"><span class="pager-label">পূর্ববর্তী</span><span>A-27 · অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+  <a class="pager-next" href="A-29-content-editor.html"><span class="pager-label">পরবর্তী</span><span>A-29 · কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

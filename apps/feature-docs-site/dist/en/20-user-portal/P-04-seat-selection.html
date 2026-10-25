@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P-04 · Seat and ticket selection · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · Admin Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+    <a class="side-section" href="index.html">20 · User Web Portal</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+    <a class="side-item" href="P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+    <a class="side-item" href="P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+    <a class="side-item is-active" href="P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+    <a class="side-item" href="P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+    <a class="side-item" href="P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+    <a class="side-item" href="P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+    <a class="side-item" href="P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+    <a class="side-item" href="P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+    <a class="side-item" href="P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+    <a class="side-item" href="P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+    <a class="side-item" href="P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+    <a class="side-item" href="P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">20 · User Web Portal</a><span class="sep">›</span><span>P-04</span></div>
+<h1><span class="id-chip">P-04</span> Seat and ticket selection</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> আসন ও টিকিট নির্বাচন</p>
+<p><a href="index.html">← 20 · User portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Seat selection.</strong> After pressing <strong>Buy tickets</strong> (<a href="P-02-browse-events.html">P-02</a>) the signed-in customer chooses <em>where</em> to sit and <em>how many</em> tickets to buy: gallery → block → level (or row), on a stadium SVG map; the number of tickets; the exact seats when the level has numbered seats; optionally the name and phone of each ticket holder; and sees a live price preview with VAT, service charge, system discount and promo code (<a href="P-05-apply-promo-code.html">P-05</a>). The page ends with the <strong>Purchase</strong> button, which is the start of <a href="P-06-booking-payment.html">P-06</a>.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<p>Signed-in customer (User pool). Route <code>/{lang}/tickets/{eventId}/seats</code>, protected by <code>AuthGuard</code> (local flag only, <a href="../60-cross-cutting/X-10-user-session.html">X-10</a>) and by a route resolver (<code>VenueDetailsResolverService</code>).</p>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>The page opens with the venue map. Only events whose status is <code>Available</code> or <code>LimitedAvailability</code> open; any other status sends the customer back to the home page.</li>
+<li>The customer picks a gallery, then a block, then a level (a row for seated levels). The map highlights the choice; the first seat-mapped block and level are preselected.</li>
+<li>The customer picks the number of tickets (1 up to the live capacity of the level). For a seated level the portal proposes the first <em>n</em> free seats in seat order and lets the customer change them in a seat dialog (cannot pick more or fewer than <em>n</em>).</li>
+<li>Optional holder names (letters and spaces, at most 17 characters) and 11-digit phone numbers for each ticket.</li>
+<li>The price box shows subtotal, VAT, service charge, system discount, promo discount and total. Changing gallery, block or level resets the promo code and discount.</li>
+<li><strong>Purchase</strong> opens the confirmation pop-up of <a href="P-06-booking-payment.html">P-06</a>.</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP, no token]</strong> Route resolver: <code>GET {services.events}/event/api/v1/events/venue-details/{eventId}</code> (<code>EventApiService.getVenueDetailsByEventId</code>, Event service). The answer is the event with its venue, SVG file, galleries → blocks → levels (each with <code>pricePerSeat</code>, <code>svgKey</code>, <code>isSeatMapped</code>, <code>hasSeats</code>, live <code>availableCapacity</code>) and <code>eventSettings</code> (VAT, service charge, VAT-inclusive flag, limits). If <code>availabilityStatus</code> is not <code>Available</code>/<code>LimitedAvailability</code> the resolver navigates home; if the session is gone (<code>No current user</code>) it signs out and goes to login. The server builds this from the cached <code>event_venue_details:{id}</code> and replaces each level's capacity with the live Redis value (<code>GetLevelLiveCapacity</code>).</li>
+<li>The venue SVG is loaded and drawn by <code>SvgRenderService</code>; <code>updateView(key)</code> colours the map by splitting the selected key on <code>_</code> (1 to 3 parts).</li>
+<li><strong class="hop-tag">[HTTP + user token]</strong> For a seated level: <code>GET {services.bookings}/booking/api/v1/capacity/level-user-portal-seats?eventId={Events.Id}&amp;galleryId=&amp;blockId=&amp;levelId=</code> (<code>BookingApiService.getAvailableSeats</code>). The server (<code>CapacityManager.GetLevelUserPortalSeats</code>) returns two comma-separated strings: <code>total</code> (all seat names of the level) and <code>available</code> (the live free seats, Redis hash <code>level_live:*</code>/seat sets, <a href="../60-cross-cutting/X-25-redis.html">X-25</a>). The portal sorts by letter then number and marks unavailable seats.</li>
+<li><strong class="hop-tag">[HTTP, no token]</strong> System discount: <code>GET {services.tickets}/admin/api/v1/discount/program/{programId}/{eventId}/{galleryId}</code> (<code>BookingApiService.getDiscount</code>, Admin service, <code>[AllowAnonymous]</code>); a result with <code>discountValue</code> and <code>discountType</code> (<code>Percentage</code> or fixed) is applied to the preview. The server applies its own discount again when the order is created (<a href="P-06-booking-payment.html">P-06</a>).</li>
+<li>Preview price (browser only): <code>calculateTotal = subtotal + previewVat + serviceCharge − systemDiscount − promoDiscount</code> (<code>stadium-seat-page.component.ts</code>); VAT and service charge follow the event settings (percentage or fixed per ticket).</li>
+<li><strong>Purchase</strong> builds <code>TicketPurchase { eventId, galleryId, blockId, levelId, numberOfSeats, pricePerSeat, hasSeats, seats ("A1,A2"), promoCode, totalCharge, vat, bookedUserDetails[] }</code> and opens <code>CompletePaymentModalComponent</code>.</li>
+</ol>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td><code>tickets/pages/stadium-seat-page</code>, <code>tickets/resolvers/venue-details.resolver.service.ts</code>, <code>shared</code> <code>SvgRenderService</code>, seat dialog template</td>
+</tr>
+<tr>
+<td>Services</td>
+<td>Event (<code>EventsController.GetEventVenueDetailsAsync</code>); Booking (<code>CapacityController</code>); Admin (<code>DiscountController</code>)</td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>EventVenueDetails</code>, <code>Capacities</code>, <code>Discounts</code></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td><code>event_venue_details:{id}</code>; hash <code>capacity</code> fields <code>level_live:*</code>, <code>level_live_seats:*</code>, key <code>level_database_seats:*</code> (<a href="../60-cross-cutting/X-25-redis.html">X-25</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/event/api/v1/events/venue-details/{eventId}</code></td>
+<td>none</td>
+<td>public GUID</td>
+<td><code>Event</code> with <code>venue.venueGalleries[].galleryBlocks[].blockLevels[]</code>, <code>eventSettings</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/booking/api/v1/capacity/level-user-portal-seats</code></td>
+<td>none on the server (portal sends the token)</td>
+<td><code>eventId</code> (long), <code>galleryId</code>, <code>blockId</code>, <code>levelId</code></td>
+<td><code>{ total, available }</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/discount/program/{programId}/{eventId}/{galleryId}</code></td>
+<td>anonymous</td>
+<td>path</td>
+<td>discount or empty</td>
+</tr>
+</tbody>
+</table>
+<p>Primary sample, <code>GET /booking/api/v1/capacity/level-user-portal-seats?eventId=2&amp;galleryId=5&amp;blockId=11&amp;levelId=31</code> (values illustrative):</p>
+<pre><code class="language-json">{ &quot;total&quot;: &quot;A1,A2,A3,A4,B1,B2&quot;, &quot;available&quot;: &quot;A1,A3,A4,B2&quot; }
+</code></pre>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>Read only. <strong>Nothing is reserved</strong> while the customer chooses; the seats are checked and locked only when the order is created (<a href="P-06-booking-payment.html">P-06</a>).</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Page</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/featured/tickets/pages/stadium-seat-page/stadium-seat-page.component.ts:78-135, 300-395, 470-545</code></td>
+</tr>
+<tr>
+<td>Resolver</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/featured/tickets/resolvers/venue-details.resolver.service.ts:18-48</code></td>
+</tr>
+<tr>
+<td>API</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web/src/app/modules/core/services/api/booking-api.service.ts:63-80, 137-140, 176-185</code></td>
+</tr>
+<tr>
+<td>Server</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/CapacityController.cs:54-66</code>; <code>.../ETP.Booking.Domain/Managers/CapacityManager.cs:352-362</code>; <code>rvl-gobcb-backend/Services/Event/ETP.Event.Domain/Managers/EventManager.cs:391-470</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>Prices in the page are a preview.</strong> The server ignores the <code>pricePerSeat</code>, <code>totalCharge</code> and <code>vat</code> sent by the portal (it only requires them to be positive) and recomputes everything from the event settings, the level price, the system discount and the promo code (<a href="P-06-booking-payment.html">P-06</a>). If the portal formula and the server formula differ, the customer sees one amount and is charged another; compare both when changing VAT or discount rules.</li>
+<li><strong>No reservation during selection.</strong> Two customers can choose the same seat; the later order fails with <code>Unavailable seats: ...</code> (<a href="P-06-booking-payment.html">P-06</a> note 4).</li>
+<li><strong>The ticket-count list can be very long.</strong> <code>seatOptions</code> offers 1 to the level's live capacity; the limit <code>AllowableMaximumSeatPerOrder</code> is enforced only by the server, so a customer can pick a number that is refused at purchase.</li>
+<li><strong>Seat proposal is simply the first free seats</strong>, not the best or consecutive ones.</li>
+<li><strong>The seat list and the discount lookup are anonymous endpoints.</strong> The seat call goes through the token interceptor (the URL is under <code>booking</code>), the discount call may not carry a token depending on the host settings; both work without one (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>).</li>
+<li><strong>Holder names and phones are validated only in the browser</strong> (letters/spaces ≤ 17, 11 digits); the server stores whatever it receives in <code>BookedUserRecords</code>. These values are later written on tickets, and the holder can still edit them before generation (<a href="P-09-ticket-details-downloads.html">P-09</a>).</li>
+<li><strong><code>eventsVenueDetails/get-level</code> is unused:</strong> <code>BookingApiService.getGalleryInformation</code> calls an Admin endpoint that needs staff roles, but nothing calls the method.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  U["Customer: user portal seats page"] -->|"HTTP, no token: events/venue-details"| EV["Event API"]
+  U -->|"HTTP + user token: capacity/level-user-portal-seats"| BK["Booking API"]
+  U -->|"HTTP: discount/program"| AD["Admin API"]
+  EV --> R[("Redis event_venue_details, level_live")]
+  BK --> R
+  U -->|"Purchase"| P6["P-06 booking and payment"]
+</div>
+<p><strong>Depends on:</strong> <a href="P-02-browse-events.html">P-02</a>, <a href="../10-admin-portal/A-09-event-level-pricing.html">A-09</a>, <a href="../10-admin-portal/A-10-capacity-adjustment.html">A-10</a>, <a href="../10-admin-portal/A-11-seat-reservation.html">A-11</a>, <a href="../10-admin-portal/A-16-discounts.html">A-16</a>, <span class="link-na" title="Not included in the site yet">S-01</span>. <strong>Affects:</strong> <a href="P-05-apply-promo-code.html">P-05</a>, <a href="P-06-booking-payment.html">P-06</a>.</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Full</strong> for browsing and the preview; the final payment is not possible locally (<a href="P-06-booking-payment.html">P-06</a>).</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>User <code>+8801700000011</code> / <code>Passw0rd!23</code> (profile complete); the <strong>1st ODI at Mirpur</strong> is on sale; the Pavilion has an active early-bird discount (10 %)</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>http://localhost:4201/en/events</code> → 1st ODI → <strong>Buy tickets</strong>; Network: <code>venue-details</code>, <code>level-user-portal-seats</code>, <code>discount/program</code></td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>— (the app does the same in <span class="link-na" title="Not included in the site yet">U-04</span>; mobile apps cannot sign in locally)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-event.postman_collection.json</code>: "GET /api/v1/events/venue-details/{eventId}"; <code>etp-booking</code>: "GET /api/v1/capacity/level-user-portal-seats"; <code>etp-admin</code>: "GET /api/v1/discount/program/{programId}/{eventId}/{galleryId}"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>CapacityManager.GetLevelUserPortalSeats</code>, <code>EventManager.GetEventVenueDetailsByEventIdAsync</code></td>
+</tr>
+<tr>
+<td>Verify</td>
+<td><code>redis-cli HGETALL capacity</code> (fields <code>level_live:{e}_{g}_{b}_{l}</code> and <code>level_live_seats:{e}_{g}_{b}_{l}</code>); compare the page's seat list with the <code>total</code>/<code>available</code> response</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="P-03-info-pages.html"><span class="pager-label">Previous</span><span>P-03 · Information pages (pricing, gallery, contact, policies)</span></a>
+  <a class="pager-next" href="P-05-apply-promo-code.html"><span class="pager-label">Next</span><span>P-05 · Apply promo code</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-18 · গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item is-active" href="A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">10 · অ্যাডমিন পোর্টাল</a><span class="sep">›</span><span>A-18</span></div>
+<h1><span class="id-chip">A-18</span> গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</p>
+<p><a href="index.html">← 10 · অ্যাডমিন পোর্টাল</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>গেট অ্যাসাইনমেন্ট।</strong> প্রতিটি ইভেন্টের জন্য অ্যাডমিন ঠিক করেন কোন টিকিট চেকাররা কোন <strong>এন্ট্রি গেট</strong>-এ কাজ করবেন, এবং প্রতিটি চেকার ইভেন্টের টিকিট তালিকা ফোনে <strong>ডাউনলোড</strong> করতে পারবে কি না। চেকার অ্যাপ কেবল সেই ইভেন্ট ও গেট দেখায় যেখানে তার ইউজারকে ডাউনলোডসহ নিয়োগ দেওয়া হয়েছে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">C-01</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">C-02</span>)। ধারণা: <span class="link-na" title="এখনো সাইটে যোগ হয়নি">Redis live capacity</span> (গেট ম্যাপ Redis-এ থাকে)।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>ইভেন্টের <strong>Ticket Checker Assign</strong> ট্যাবে (<code>/events/event-details/:id</code>, কম্পোনেন্ট <code>event-ticket-checker-gate</code>) এবং <strong>Ticket Checkers</strong> তালিকায় (<code>/ticket-checker</code>, প্রতি চেকারে) কর্মীরা। <code>TicketCheckerGateController</code> ক্লাস-লেভেলে <strong>admin ও ticket-checker authentication schemes</strong> গ্রহণ করে, রোল <code>Admin</code>, <code>EventManager</code>, <code>BCBPersonnel</code> ও <code>TicketChecker</code>; কেবল <code>GET /{eventId}</code> ও <code>POST /</code> (assign) যোগ করে <code>Roles = Admin, EventManager</code>, আর <code>event-info</code>-এর জন্য <code>ticket-checker</code> policy প্রয়োজন (§৯ দেখুন)।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<ol>
+<li>ট্যাবটি খুলুন: ইভেন্টের ভেন্যুর এন্ট্রি গেটগুলো তালিকাভুক্ত, প্রতিটির সঙ্গে তার নিয়োগকৃত চেকাররা।</li>
+<li>নাম দিয়ে চেকার খুঁজুন (<a href="A-17-ticket-checker-users.html">A-17</a>), তাদের একটি গেটে যোগ করুন, <strong>download enabled</strong> টিক দিন, সেভ করুন।</li>
+<li>চেকারকে সরাতে হলে একগুচ্ছ ব্যবহারকারীর জন্য <strong>force assign</strong> বা <strong>force unassign</strong> করুন — এমনকি তার অন্য কোথাও download access থাকলেও।</li>
+<li>চেকারের নিজের সারি থেকে প্রতি গেটে download চালু বা বন্ধ করুন, অথবা গেট থেকে চেকারকে সরান।</li>
+<li>ইভেন্ট শেষ হওয়ার পর সিস্টেম সবার জন্য download বন্ধ করে দেয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-15</span>)।</li>
+</ol>
+<h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
+<ol>
+<li><strong class="hop-tag">[HTTP + ইউজার টোকেন]</strong> <code>GET /admin/api/v1/ticket-checker-gate/{eventId}</code> → <code>GetAllByEventAsync</code>: ভেন্যু থেকে ইভেন্টের এন্ট্রি গেটগুলো (গেট <strong>নাম</strong> অনুযায়ী গ্রুপ করা: একই নামের কয়েকটি <code>BlockLevelEntryGates</code> একটি গেট হয়ে যায়, যেখানে id ও gallery নাম কমা দিয়ে জোড়া হয়), ইভেন্টের জন্য সংরক্ষিত নিয়োগের সঙ্গে যুক্ত করে।</li>
+<li>সেভ <code>POST .../ticket-checker-gate</code> দিয়ে <code>AssignTicketCheckerGate { eventId, entryGateName, entryGateId, ticketCheckerUsers[{userId, name, isEnabled}] }</code>। <code>AssignTicketCheckerGate</code>:
+   - ইভেন্টটি থাকতে হবে ("Invalid Event Id");
+   - <strong>অন্য কোনো ইভেন্টে download-enabled</strong> একজন ইউজারকে এখানে enable করা যাবে না ("Please disable the ticket checker from other event");
+   - গেটের সারি থাকলে: <strong>একই ইভেন্টের ভিন্ন একটি গেটে</strong> ইতিমধ্যে বসানো একজন ইউজারকে প্রত্যাখ্যান করা হয় ("User duplicate found"); নয়তো <code>AddOrRemoveAsync</code> গেটের ইউজার তালিকাকে পোস্ট করা তালিকার সমান করে দেয় (নতুন ইউজার যোগ হয়, <strong>তালিকায় নেই এমন ইউজার সরে যায়</strong>, <code>IsDownloadEnable</code> হালনাগাদ হয়);
+   - না থাকলে: পোস্ট করা যেকোনো ইউজার অন্য কোথাও নিয়োগ থাকলে প্রত্যাখ্যান করা হয়; নয়তো ইভেন্ট, প্রোগ্রাম ও ভেন্যুর জন্য একটি <code>TicketCheckerGate</code> তৈরি হয় এবং Redis hash <code>TicketCheckerLevelGateMap</code>-এ প্রতি এন্ট্রি-গেট id-এর জন্য একটি এন্ট্রি <code>{eventId}_{entryGateId}</code> → গেট id যুক্ত হয় (<a href="../60-cross-cutting/X-25-redis.html">X-25</a>)।</li>
+<li><code>POST .../ticket-checker-gate/force-assign</code> ও <code>.../force-unassign</code> দিয়ে <code>AssignTicketCheckerGate</code>-এর একটি তালিকা: force-assign পোস্ট করা ইউজারদের জন্য বিদ্যমান গেটে <code>IsDownloadEnable = true</code> করে, তবে আগে দেখে নেয় যে কেউ <strong>অন্য ইভেন্টে</strong> download-enabled না ("The following user(s) are already download-enabled in another event: ..."); force-unassign সেটি false করে। যে গেট বিদ্যমান নয় তা নীরবে বাদ পড়ে।</li>
+<li><code>PUT .../ticket-checker-gate/update-download-status/{userId}/{gateId}/{status}</code> একজন চেকারের ফ্ল্যাগ উল্টায়; <code>DELETE .../ticket-checker-gate/remove-user/{id}</code> একটি গেট-ইউজার সারি সরায়; <code>GET .../ticket-checker-gate/user/{userId}</code> একজন চেকারের গেট তালিকা দেয়।</li>
+<li>চেকার অ্যাপ তার নিয়োগ <code>GET .../ticket-checker-gate/event-info</code> থেকে পড়ে (policy <code>ticket-checker</code>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">C-01</span>)।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>features/events/components/event-ticket-checker-gate/*</code>, <code>services/ticket-checker-gate.service.ts</code>; <code>features/ticket-checker/*</code></td>
+</tr>
+<tr>
+<td>সার্ভিস</td>
+<td>Admin (<code>TicketCheckerGateController</code>, <code>TicketCheckerGateManager</code>, <code>TicketCheckerGateUserRepository</code>); TicketChecker (পড়ে)</td>
+</tr>
+<tr>
+<td>টেবিল</td>
+<td><code>TicketCheckerGates</code>, <code>TicketCheckerGateUsers</code> (<code>IsDownloadEnable</code>), <code>BlockLevelEntryGates</code></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td><code>TicketCheckerLevelGateMap</code> hash</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরকট">6. API কন্ট্রাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>Main errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/ticket-checker-gate/{eventId}</code></td>
+<td>roles Admin, EventManager</td>
+<td>path</td>
+<td>ইউজারসহ গেট</td>
+<td><code>Invalid Event Id</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/ticket-checker-gate</code></td>
+<td>roles Admin, EventManager</td>
+<td><code>AssignTicketCheckerGate</code></td>
+<td><code>200</code></td>
+<td><code>User duplicate found</code>, <code>Please disable the ticket checker from other event</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/api/v1/ticket-checker-gate/force-assign</code>, <code>force-unassign</code></td>
+<td>class attribute: schemes admin and ticket-checker, roles Admin, EventManager, BCBPersonnel, TicketChecker</td>
+<td><code>AssignTicketCheckerGate[]</code></td>
+<td><code>200</code></td>
+<td><code>The following user(s) are already download-enabled in another event: ...</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/ticket-checker-gate/user/{userId}</code></td>
+<td>same</td>
+<td>path</td>
+<td>গেট</td>
+<td></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/api/v1/ticket-checker-gate/update-download-status/{userId}/{gateId}/{status}</code></td>
+<td>same</td>
+<td>path</td>
+<td><code>200</code></td>
+<td></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/admin/api/v1/ticket-checker-gate/remove-user/{id}</code></td>
+<td>same</td>
+<td>path</td>
+<td><code>200</code></td>
+<td></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/api/v1/ticket-checker-gate/event-info</code></td>
+<td><code>ticket-checker</code> policy</td>
+<td>none</td>
+<td>নিয়োগকৃত ইভেন্ট ও গেট</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>প্রধান নমুনা, <code>POST /admin/api/v1/ticket-checker-gate</code> (নাম <code>AssignTicketCheckerGate</code> থেকে; id শুধু উদাহরণ):</p>
+<pre><code class="language-json">{
+  &quot;eventId&quot;: 101, &quot;entryGateName&quot;: &quot;Gate 3&quot;, &quot;entryGateId&quot;: &quot;811,812&quot;,
+  &quot;ticketCheckerUsers&quot;: [ { &quot;userId&quot;: &quot;7d3c-example-sub&quot;, &quot;name&quot;: &quot;Rahim Uddin&quot;, &quot;isEnabled&quot;: true } ]
+}
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>গেট ও গেট-ইউজার সারি; Redis গেট ম্যাপ; activity log (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>)। গেটের টিকিট তালিকা (<code>ticket_checker_tickets:*</code>) পরে তৈরি হয়, যখন চেকার ডাউনলোড করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">C-02</span>)।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Controller</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/TicketCheckerGateController.cs:37-260</code></td>
+</tr>
+<tr>
+<td>Manager</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/TicketCheckerGateManager.cs:24-232</code></td>
+</tr>
+<tr>
+<td>Gate-user repository</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Storage/Repositories/TicketCheckerGateUserRepository.cs:12-42</code></td>
+</tr>
+<tr>
+<td>Portal</td>
+<td><code>rvl-gobcb-admin-portal/src/app/features/events/services/ticket-checker-gate.service.ts:22-43</code>; <code>features/ticket-checker/services/ticket-checker.service.ts:18-25</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>আংশিক তালিকা বাকিদের সরিয়ে দেয়।</strong> <code>AddOrRemoveAsync</code> গেটের ইউজার তালিকাকে পোস্ট করা তালিকার সমান করে দেয়। <code>force-unassign</code> ও <code>force-assign</code> কেবল নির্বাচিত ইউজারদের পোস্ট করে, তাই সেই গেটের অন্য কোনো চেকার শুধু ফ্ল্যাগ মুছে পাওয়া নয়, <strong>গেট থেকে সরে যায়</strong>। গেটের সম্পূর্ণ তালিকা পাঠান।</li>
+<li><strong>প্রতি চেকারের জন্য একসময়ে একটি ইভেন্ট।</strong> একজন চেকার সর্বোচ্চ একটি ইভেন্টেই download-enabled থাকতে পারে; দ্বিতীয় ইভেন্ট প্রত্যাখ্যান করে যতক্ষণ না প্রথমটি বন্ধ বা শেষ হয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-15</span>)।</li>
+<li><strong>Redis গেট ম্যাপ un-awaited task দিয়ে লেখা হয়।</strong> লুপ <code>Split(',').ToList().ForEach(async e =&gt; ...)</code> লেখার জন্য অপেক্ষা করে না; দ্রুত পরের একটি অনুরোধ (কিংবা কোনো exception) ম্যাপটি অসম্পূর্ণ রেখে দিতে পারে, তখন চেকার-অ্যাপের sync আর গেটটি সমাধান করতে পারে না (<code>TicketsManager</code> <code>TicketCheckerLevelGateMap</code> পড়ে) <span class="badge-unconfirmed">[UNCONFIRMED: Q-27]</span>।</li>
+<li><strong>ক্লাস-লেভেলের auth বহল।</strong> ক্লাস অ্যাট্রিবিউট ticket-checker scheme ও <code>TicketChecker</code> রোল গ্রহণ করে, আর কেবল দুটি অ্যাকশন কঠোর রোল তালিকা যোগ করে। সুতরাং সাইন-ইন করা একটি <strong>চেকার</strong> টোকনও <code>report</code>, <code>export</code>, <code>force-assign</code>, <code>force-unassign</code>, <code>update-download-status</code>, <code>remove-user</code>, <code>duplicate-tickets</code> ও <code>manual-entry-tickets</code>-এ পৌঁছাতে পারে, ফলে একজন চেকার নিজের বা অন্যদের জন্য download চালু করতে পারে (<a href="../60-cross-cutting/X-15-authz-roles.html">X-15</a>)।</li>
+<li><strong>গেটগুলো নাম অনুযায়ী গ্রুপ করা</strong>, তাই ভেন্যুতে একটি এন্ট্রি গেটের নাম বদলালে (<a href="A-05-venues.html">A-05</a>) বিদ্যমান নিয়োগ একটি নতুন, নিয়োগ-বিহীন গেটে ভেঙে যায়।</li>
+<li><strong>ডুপ্লিকেট করা ইভেন্ট নিয়োগ কপি করে</strong> (<a href="A-07-events.html">A-07</a>)।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  AP["Admin portal"] -->|"HTTP + token"| AD["Admin API"]
+  AD --> G[("TicketCheckerGates / GateUsers")]
+  AD -->|"HSET TicketCheckerLevelGateMap"| R[("Redis")]
+  APP["Checker app"] -->|"GET event-info"| AD
+  APP --> TC["TicketChecker service"]
+  TC -->|"read gate map"| R
+  W["S-15"] -->|"disable download after event"| G
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="A-05-venues.html">A-05</a>, <a href="A-07-events.html">A-07</a>, <a href="A-17-ticket-checker-users.html">A-17</a>। <strong>প্রভাব ফেলে:</strong> <span class="link-na" title="এখনো সাইটে যোগ হয়নি">C-01</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">C-02</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">C-05</span>, <a href="A-19-gate-reports.html">A-19</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-14</span>।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে পরীক্ষা: অ্যাডমিন দিকের জন্য সম্পূর্ণ।</strong></p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>Seeded checker <code>…21</code>; admin <code>…01</code>; এন্ট্রি গেটসহ একটি ইভেন্ট (<code>scripts/seed/01-catalog.sql</code>)</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>http://localhost:4200/events</code> → ইভেন্ট → <strong>Ticket Checker Assign</strong>; Network: <code>POST .../ticket-checker-gate</code></td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>চেকার অ্যাপে সাইন ইন একটি পরিচিত লোকাল ঘাটতি (<code>docs/mobile-local.md</code> §8)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>: "GET /api/v1/ticket-checker-gate/{eventId}", "POST /api/v1/ticket-checker-gate"; <code>etp-ticketchecker</code>: "GET /api/v1/ticket-checker-gate/event-info" with <code>{{access_token_ticket_operator}}</code></td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td><code>TicketCheckerGateManager.AssignTicketCheckerGate</code>, <code>ForceAssignTicketCheckerGate</code></td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>SQL: <code>select "UserId","IsDownloadEnable" from etp."TicketCheckerGateUsers"</code>; <code>redis-cli HGETALL TicketCheckerLevelGateMap</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="A-17-ticket-checker-users.html"><span class="pager-label">পূর্ববর্তী</span><span>A-17 · টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+  <a class="pager-next" href="A-19-gate-reports.html"><span class="pager-label">পরবর্তী</span><span>A-19 · গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>
