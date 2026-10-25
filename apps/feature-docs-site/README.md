@@ -1,7 +1,7 @@
 # feature-docs-site
 
 Static HTML site generated from [`docs/handover/feature-docs`](../../docs/handover/feature-docs)
-(English + বাংলা, light/dark). Currently covers the admin-portal, user-portal, user-app and cross-cutting sections.
+(English + বাংলা, light/dark). Currently covers all six feature sections (10–60).
 
 ## Layout
 

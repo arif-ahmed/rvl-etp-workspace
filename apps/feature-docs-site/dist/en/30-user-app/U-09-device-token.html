@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -180,7 +199,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Server</td>
-<td><code>S-13</code> cleans up stale tokens (<span class="link-na" title="Not included in the site yet">S-13</span>)</td>
+<td><code>S-13</code> cleans up stale tokens (<a href="../50-system-initiated/S-13-device-token-cleanup.html">S-13</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -260,8 +279,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong><code>.env</code> is required for Firebase to work at all</strong> and is gitignored; every <code>dotenv.env[...]!</code> in <code>firebase_options.dart</code> will throw if the key is absent, which is caught by the initialise <code>catch</code> — so a missing key and a bad key look identical (no push).</li>
 <li><strong>The comparison in <code>firebase_repository_impl.dart:69</code> is what decides POST vs PUT</strong>; a customer who clears app storage re-POSTs the same token instead of updating it.</li>
 <li><strong>Sign-out sends DELETE with <code>userId</code> in the body</strong> (<code>:46</code>), while POST takes only <code>fcmToken</code> — asymmetric, and the server-side identity differs between the two calls <span class="badge-unconfirmed">[UNCONFIRMED: Q-62]</span>.</li>
-<li><strong>The device token is not deleted when the account is deleted</strong>, because delete-account has no UI at all (<a href="U-07-profile-settings.html">Q-61</a>) — a deleted customer's phone would keep its token until <span class="link-na" title="Not included in the site yet">S-13</span> removes it.</li>
-<li><strong>The server-side cleanup worker calls <code>Services:Admin</code> without the <code>/pushnotification</code> prefix</strong> (<span class="link-na" title="Not included in the site yet">Q-16</span>), which is a separate defect in the same area.</li>
+<li><strong>The device token is not deleted when the account is deleted</strong>, because delete-account has no UI at all (<a href="U-07-profile-settings.html">Q-61</a>) — a deleted customer's phone would keep its token until <a href="../50-system-initiated/S-13-device-token-cleanup.html">S-13</a> removes it.</li>
+<li><strong>The server-side cleanup worker calls <code>Services:Admin</code> without the <code>/pushnotification</code> prefix</strong> (<a href="../50-system-initiated/S-13-device-token-cleanup.html">Q-16</a>), which is a separate defect in the same area.</li>
 </ol>
 <h2 id="10-component-relationships">10. Component relationships</h2>
 <div class="mermaid">flowchart LR
@@ -273,7 +292,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   PN -.->|"push send"| FCM
   S13["S-13 cleanup worker"] -.-> PN
 </div>
-<p><strong>Depends on:</strong> <a href="../60-cross-cutting/X-07-user-password-login.html">X-07</a> (a signed-in user to attach the token to), <a href="U-07-profile-settings.html">U-07</a>. <strong>Affects:</strong> <a href="U-10-push-receipt.html">U-10</a>, <span class="link-na" title="Not included in the site yet">S-11</span>, <span class="link-na" title="Not included in the site yet">S-12</span>, <span class="link-na" title="Not included in the site yet">S-13</span>.</p>
+<p><strong>Depends on:</strong> <a href="../60-cross-cutting/X-07-user-password-login.html">X-07</a> (a signed-in user to attach the token to), <a href="U-07-profile-settings.html">U-07</a>. <strong>Affects:</strong> <a href="U-10-push-receipt.html">U-10</a>, <a href="../50-system-initiated/S-11-firebase-notification.html">S-11</a>, <a href="../50-system-initiated/S-12-ticket-generated-notification.html">S-12</a>, <a href="../50-system-initiated/S-13-device-token-cleanup.html">S-13</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Partial.</strong> Firebase is a dummy locally, so a real token is only obtainable against a real Firebase project — the local path exercises the code but not the delivery.</p>
 <table>

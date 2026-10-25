@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -127,7 +146,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <p><a href="index.html">← 10 · Admin portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
 </blockquote>
 <h2 id="1-name-and-purpose">1. Name and purpose</h2>
-<p><strong>System discounts.</strong> A system discount reduces the ticket price automatically, without a code, for chosen events or galleries during a period (for example an early-bird price). The admin defines name, type (percentage or fixed amount), value, start and end, and the assignments. The status switch at the start and end is done by a worker (<span class="link-na" title="Not included in the site yet">S-17</span>); the customer sees the reduced price at seat selection and in the order (<a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>).</p>
+<p><strong>System discounts.</strong> A system discount reduces the ticket price automatically, without a code, for chosen events or galleries during a period (for example an early-bird price). The admin defines name, type (percentage or fixed amount), value, start and end, and the assignments. The status switch at the start and end is done by a worker (<a href="../50-system-initiated/S-17-discount-status.html">S-17</a>); the customer sees the reduced price at seat selection and in the order (<a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>).</p>
 <h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
 <p>Staff with role <code>admin</code> (<code>DiscountController</code> allows <code>Admin</code>; one read endpoint is anonymous). Entry: program menu <strong>Promo &amp; Discount → Discount</strong> (<code>/promo-management/discount</code>, <code>/promo-management/discount/create-discount</code>, <code>/discount/edit-discount/:discountId</code>).</p>
 <h2 id="3-business-flow">3. Business flow</h2>
@@ -137,7 +156,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong class="hop-tag">[HTTP + user token]</strong> <code>GET /admin/api/v1/discount?...</code>, <code>/discount/list</code>, <code>/discount/{id}</code>; <code>GET .../discount/exists?eventIds&amp;discountId</code> returns whether other discounts already cover the events.</li>
 <li>Create <code>POST .../discount</code> (JSON <code>CreateOrUpdateDiscount {name, programId, discountType, discountValue, startDateTime, endDateTime, discountAssigns[]}</code>). <code>DiscountManager.CreateAsync</code>: validation (name required and ≤ 26, whole number for percentages, dates set and end after start, at least one assignment, program and events exist), then <code>GetDiscountStatus</code> (<code>Upcoming</code>, <code>Expired</code>, <code>Active</code> by the dates) and insert with <code>IsActive = IsPublished = (status == Active)</code>, plus the assignments.</li>
 <li>Update <code>PUT .../discount/{id}</code>, delete <code>DELETE .../discount/{id}</code>.</li>
-<li><strong>At checkout (in Booking, not through this API):</strong> <code>UserBookingOrderManager.CreateAsync</code> calls <code>DiscountRepository.GetDiscountByIdsAsync(programId, eventId, galleryId)</code>: one discount that is not deleted, <code>IsActive</code> and <code>IsPublished</code>, assigned to the program and to the event (or to the event plus the gallery). A percentage discount reduces the <strong>base price</strong> (<code>basePrice × value / 100 × seats</code>), a fixed discount subtracts <code>value × seats</code> (<span class="link-na" title="Not included in the site yet">S-17</span>).</li>
+<li><strong>At checkout (in Booking, not through this API):</strong> <code>UserBookingOrderManager.CreateAsync</code> calls <code>DiscountRepository.GetDiscountByIdsAsync(programId, eventId, galleryId)</code>: one discount that is not deleted, <code>IsActive</code> and <code>IsPublished</code>, assigned to the program and to the event (or to the event plus the gallery). A percentage discount reduces the <strong>base price</strong> (<code>basePrice × value / 100 × seats</code>), a fixed discount subtracts <code>value × seats</code> (<a href="../50-system-initiated/S-17-discount-status.html">S-17</a>).</li>
 <li><code>GET /admin/api/v1/discount/program/{programId}/{eventId}/{galleryId}</code> is anonymous and returns the matching discount; Booking used to call it through <code>IAdminClient</code> (that call is commented out in <code>UserBookingOrderManager.CreateAsync</code>).</li>
 </ol>
 <h2 id="5-components">5. Components</h2>
@@ -234,7 +253,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 }
 </code></pre>
 <h2 id="7-data-and-side-effects">7. Data and side effects</h2>
-<p>Discount rows and assignments; activity log (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>). The worker changes the flags later (<span class="link-na" title="Not included in the site yet">S-17</span>).</p>
+<p>Discount rows and assignments; activity log (<a href="../60-cross-cutting/X-24-activity-logging.html">X-24</a>). The worker changes the flags later (<a href="../50-system-initiated/S-17-discount-status.html">S-17</a>).</p>
 <h2 id="8-code-references">8. Code references</h2>
 <table>
 <thead>
@@ -264,8 +283,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </table>
 <h2 id="9-handover-notes">9. Handover notes</h2>
 <ol>
-<li><strong>Only one discount applies</strong> and <code>FirstOrDefault</code> picks it; overlapping assignments are only warned about by <code>exists</code>, not rejected at save (<span class="link-na" title="Not included in the site yet">S-17</span> note 3).</li>
-<li><strong>Pricing drift of up to two minutes</strong> at the start and end, since Booking checks the flags, not the dates (<span class="link-na" title="Not included in the site yet">S-17</span> note 1).</li>
+<li><strong>Only one discount applies</strong> and <code>FirstOrDefault</code> picks it; overlapping assignments are only warned about by <code>exists</code>, not rejected at save (<a href="../50-system-initiated/S-17-discount-status.html">S-17</a> note 3).</li>
+<li><strong>Pricing drift of up to two minutes</strong> at the start and end, since Booking checks the flags, not the dates (<a href="../50-system-initiated/S-17-discount-status.html">S-17</a> note 1).</li>
 <li><strong>A new discount in the past is saved as <code>Expired</code></strong>, and a manual <code>IsActive</code> change by an admin edit is overwritten by the next status change.</li>
 <li><strong>Fixed-amount discounts are per seat</strong>, so a discount of 200 on four seats is 800; a fixed value above the price is not capped here.</li>
 <li>The <code>discount/program/...</code> read is anonymous (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>).</li>
@@ -277,7 +296,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   W["S-17 worker"] -->|"IsActive / IsPublished"| DB
   BK["Booking: create order"] -->|"read model"| DB
 </div>
-<p><strong>Depends on:</strong> <a href="A-07-events.html">A-07</a>. <strong>Affects:</strong> <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>, <span class="link-na" title="Not included in the site yet">S-10</span>, reports (<a href="A-22-reports.html">A-22</a>).</p>
+<p><strong>Depends on:</strong> <a href="A-07-events.html">A-07</a>. <strong>Affects:</strong> <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="../50-system-initiated/S-10-vat-challan.html">S-10</a>, reports (<a href="A-22-reports.html">A-22</a>).</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full.</strong></p>
 <table>

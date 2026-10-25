@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -127,7 +146,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <p><a href="index.html">← 10 · Admin portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
 </blockquote>
 <h2 id="1-name-and-purpose">1. Name and purpose</h2>
-<p><strong>Gate reports.</strong> After and during an event the admin sees how many tickets were scanned at each gate, by which checker, how many entries were typed in manually, and which tickets were scanned more than once. The data comes from the <code>CheckedTickets</code> table, which is filled from the checker apps by <span class="link-na" title="Not included in the site yet">S-14</span>.</p>
+<p><strong>Gate reports.</strong> After and during an event the admin sees how many tickets were scanned at each gate, by which checker, how many entries were typed in manually, and which tickets were scanned more than once. The data comes from the <code>CheckedTickets</code> table, which is filled from the checker apps by <a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>.</p>
 <h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
 <p>Staff under program menu <strong>Reports → Ticket Checker</strong> (<code>/report/checker</code> <strong>Detailed Checker</strong>, <code>/report/ticket-duplicate</code> <strong>Duplicate Entry Count</strong>). The controller <code>TicketCheckerGateController</code> is the same as in <a href="A-18-gate-assignment.html">A-18</a> (admin and ticket-checker schemes, roles <code>Admin</code>, <code>EventManager</code>, <code>BCBPersonnel</code>, <code>TicketChecker</code>).</p>
 <h2 id="3-business-flow">3. Business flow</h2>
@@ -247,7 +266,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </table>
 <h2 id="9-handover-notes">9. Handover notes</h2>
 <ol>
-<li><strong>Reports lag by up to 30 minutes</strong>, since the scans are copied to the table by the worker every 30 minutes (<span class="link-na" title="Not included in the site yet">S-14</span>).</li>
+<li><strong>Reports lag by up to 30 minutes</strong>, since the scans are copied to the table by the worker every 30 minutes (<a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>).</li>
 <li><strong>"Duplicate" means a ticket number that appears in more than one row of one gate.</strong> Each worker run writes a ticket once per period (with an <code>EntryCount</code>), so a ticket scanned twice <strong>within the same period</strong> is one row with <code>EntryCount</code> 2 and is <strong>not</strong> counted as a duplicate by the SQL (<code>count(...) &gt; 1</code> over rows); a ticket scanned in two periods is. Check this definition with the business before relying on the number <span class="badge-unconfirmed">[UNCONFIRMED: Q-28]</span>.</li>
 <li><strong>Any checker token can call these endpoints</strong> (<a href="A-18-gate-assignment.html">A-18</a> note 4): the full list of scanned ticket numbers is readable by every gate user.</li>
 <li><strong>The duplicate report is raw SQL</strong> with a hard-coded table name <code>etp."CheckedTickets"</code> and an <code>Integer</code> parameter for the event id; a schema rename breaks it silently at run time.</li>
@@ -261,7 +280,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   W --> DB[("CheckedTickets")]
   AP["Admin portal reports"] -->|"HTTP + token"| AD["Admin API"] --> DB
 </div>
-<p><strong>Depends on:</strong> <span class="link-na" title="Not included in the site yet">S-14</span>, <a href="../40-checker-app/C-05-ticket-sync.html">C-05</a>, <a href="A-18-gate-assignment.html">A-18</a>. <strong>Affects:</strong> event reporting (<a href="A-22-reports.html">A-22</a>).</p>
+<p><strong>Depends on:</strong> <a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>, <a href="../40-checker-app/C-05-ticket-sync.html">C-05</a>, <a href="A-18-gate-assignment.html">A-18</a>. <strong>Affects:</strong> event reporting (<a href="A-22-reports.html">A-22</a>).</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Partial</strong> (the checker app cannot sign in locally, so scans must come from Postman or seed data).</p>
 <table>
@@ -274,7 +293,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <tbody>
 <tr>
 <td>Test data and accounts</td>
-<td>Admin <code>…01</code>; scans through the TicketChecker sync (Postman, <code>{{access_token_ticket_operator}}</code>) then wait for <span class="link-na" title="Not included in the site yet">S-14</span></td>
+<td>Admin <code>…01</code>; scans through the TicketChecker sync (Postman, <code>{{access_token_ticket_operator}}</code>) then wait for <a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a></td>
 </tr>
 <tr>
 <td>Browser</td>

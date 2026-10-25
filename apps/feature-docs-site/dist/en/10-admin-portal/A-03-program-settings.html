@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -131,7 +150,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
 <p>Staff with role <code>admin</code> or <code>event_manager</code> (the controller allows only these two). Entry: <strong>Prog. Managem.</strong> → a program → tab <strong>Program Settings</strong> (<code>/program-management/program-home/:id</code>).</p>
 <h2 id="3-business-flow">3. Business flow</h2>
-<p>The admin selects a program, changes the values and presses <strong>Update</strong>. Rules of the form: maximum orders per customer per event; maximum seats per order; "ticket selling start from" (hours before the event starts); "ticket selling stop from" (hours before the event <strong>ends</strong>); "ticket available from" (hours before the event starts, when tickets can be generated, <span class="link-na" title="Not included in the site yet">S-07</span>); limited-availability threshold; ticket-number prefix; payment gateway (DgePay or SSLCommerz); VAT and service charge (amount or percentage); VAT inclusive.</p>
+<p>The admin selects a program, changes the values and presses <strong>Update</strong>. Rules of the form: maximum orders per customer per event; maximum seats per order; "ticket selling start from" (hours before the event starts); "ticket selling stop from" (hours before the event <strong>ends</strong>); "ticket available from" (hours before the event starts, when tickets can be generated, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>); limited-availability threshold; ticket-number prefix; payment gateway (DgePay or SSLCommerz); VAT and service charge (amount or percentage); VAT inclusive.</p>
 <h2 id="4-technical-flow">4. Technical flow</h2>
 <ol>
 <li><strong class="hop-tag">[HTTP + user token]</strong> The tab loads <code>GET /admin/api/v1/program-settings/{programId}</code> and fills the form; the program dropdown comes from <code>GET /admin/api/v1/program</code>.</li>
@@ -263,7 +282,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong>The settings are copied, not referenced.</strong> Every event created through the portal gets its own <code>EventSettings</code> row at creation, so changing the program settings affects only events created afterwards; use <a href="A-08-event-settings.html">A-08</a> to change an existing event.</li>
 <li><strong>VAT lock only looks at <em>published</em> events</strong> of the program; a draft event keeps the old values until it is saved again, and the rule does not protect orders that were already placed.</li>
 <li><strong>The ticket-selling stop is measured from the event end</strong> (<code>EndDateTime</code>), unlike the start, which is measured from the event start; an event without an end date would fail in <code>EventManager</code> (<code>entity.EndDateTime.Value</code>).</li>
-<li><strong><code>TicketNumberPrefix</code> can be edited any time</strong>; new tickets use the prefix of the event's settings (<span class="link-na" title="Not included in the site yet">S-07</span>), so one event may have tickets with two prefixes if it changes in between.</li>
+<li><strong><code>TicketNumberPrefix</code> can be edited any time</strong>; new tickets use the prefix of the event's settings (<a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>), so one event may have tickets with two prefixes if it changes in between.</li>
 <li>The payment gateway is an enum number in JSON; <code>SSLCommerz</code> is supported by the form but its callbacks are inactive (<span class="link-na" title="Not included in the site yet">Appendix A</span>); choose <code>DgePay</code> unless BS23 confirms otherwise <span class="badge-unconfirmed">[UNCONFIRMED: Q-19]</span>.</li>
 </ol>
 <h2 id="10-component-relationships">10. Component relationships</h2>
@@ -275,7 +294,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   DB -.->|"read model"| EV["Event service"]
   EM["A-07 EventManager"] -->|"selling dates"| DB
 </div>
-<p><strong>Depends on:</strong> <a href="A-02-programs.html">A-02</a>. <strong>Affects:</strong> <a href="A-07-events.html">A-07</a>, <a href="A-08-event-settings.html">A-08</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>, <span class="link-na" title="Not included in the site yet">S-07</span>, <span class="link-na" title="Not included in the site yet">S-10</span>.</p>
+<p><strong>Depends on:</strong> <a href="A-02-programs.html">A-02</a>. <strong>Affects:</strong> <a href="A-07-events.html">A-07</a>, <a href="A-08-event-settings.html">A-08</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>, <a href="../50-system-initiated/S-10-vat-challan.html">S-10</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full.</strong></p>
 <table>

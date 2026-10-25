@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -174,7 +193,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Queues</td>
-<td>none from the client; the order triggers <code>OrderSuccess</code> server-side (<span class="link-na" title="Not included in the site yet">S-01</span>)</td>
+<td>none from the client; the order triggers <code>OrderSuccess</code> server-side (<a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>)</td>
 </tr>
 <tr>
 <td>Redis</td>
@@ -221,7 +240,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </table>
 <p>The full JSON for the create-order and promo requests is in <a href="../20-user-portal/P-06-booking-payment.html">P-06</a> and <a href="../20-user-portal/P-05-apply-promo-code.html">P-05</a>; the app posts the same shapes.</p>
 <h2 id="7-data-and-side-effects">7. Data and side effects</h2>
-<p><code>UserBookingOrders</code> and the seat rows are written by the Booking service; capacity is decremented through the <code>OrderSuccess</code> queue (<span class="link-na" title="Not included in the site yet">S-01</span>). The app itself writes only device state (selected seats, holder names).</p>
+<p><code>UserBookingOrders</code> and the seat rows are written by the Booking service; capacity is decremented through the <code>OrderSuccess</code> queue (<a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>). The app itself writes only device state (selected seats, holder names).</p>
 <h2 id="8-code-references">8. Code references</h2>
 <table>
 <thead>
@@ -262,7 +281,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong>No live refresh of seats</strong> (§4 note 2) — the most important app-vs-portal difference in the booking flow <span class="badge-unconfirmed">[UNCONFIRMED: Q-56]</span>.</li>
 <li><strong>The system discount comes from the Admin service</strong> (<code>admin/api/v1/discount/program/…</code>), not Booking. If the Admin service is down but Booking is up, checkout fails on this call.</li>
 <li><strong>The promo-code rules are shared with the portal</strong>, including the finding that a code's <code>IsActive</code> flag is not part of the check (<a href="../20-user-portal/P-05-apply-promo-code.html">Q-18</a>).</li>
-<li><strong>The order is created before payment.</strong> If the customer backs out of the WebView, the order exists as pending and is cancelled later by <span class="link-na" title="Not included in the site yet">S-05</span>; the app offers no "resume payment" path, unlike the portal's status polling <span class="badge-unconfirmed">[UNCONFIRMED: Q-57]</span>.</li>
+<li><strong>The order is created before payment.</strong> If the customer backs out of the WebView, the order exists as pending and is cancelled later by <a href="../50-system-initiated/S-05-pending-failed-revalidation.html">S-05</a>; the app offers no "resume payment" path, unlike the portal's status polling <span class="badge-unconfirmed">[UNCONFIRMED: Q-57]</span>.</li>
 <li><strong>Seat-holding is server-side by 12 minutes</strong>, so an abandoned checkout in the app holds those seats just as the portal does (<a href="../20-user-portal/P-04-seat-selection.html">Q-37</a>).</li>
 </ol>
 <h2 id="10-component-relationships">10. Component relationships</h2>
@@ -276,7 +295,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   BKG -.->|"[SQS: OrderSuccess]"| S1["S-01 capacity update"]
   BKG -->|"checkoutUrl"| U5["WebView payment → U-05"]
 </div>
-<p><strong>Depends on:</strong> <a href="U-02-home-browse-events.html">U-02</a> (event and venue data), <a href="../10-admin-portal/A-10-capacity-adjustment.html">A-10</a>, <a href="../10-admin-portal/A-15-promo-codes.html">A-15</a>, <a href="../10-admin-portal/A-16-discounts.html">A-16</a>. <strong>Affects:</strong> <a href="U-05-booking-webview-payment.html">U-05</a>, <span class="link-na" title="Not included in the site yet">S-01</span>.</p>
+<p><strong>Depends on:</strong> <a href="U-02-home-browse-events.html">U-02</a> (event and venue data), <a href="../10-admin-portal/A-10-capacity-adjustment.html">A-10</a>, <a href="../10-admin-portal/A-15-promo-codes.html">A-15</a>, <a href="../10-admin-portal/A-16-discounts.html">A-16</a>. <strong>Affects:</strong> <a href="U-05-booking-webview-payment.html">U-05</a>, <a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full</strong> for the reads and the promo check; <strong>Partial</strong> for payment (needs a dummy DgePay or gateway sandbox).</p>
 <table>

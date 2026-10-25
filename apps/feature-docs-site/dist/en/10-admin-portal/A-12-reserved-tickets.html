@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -134,8 +153,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <ol>
 <li>Pick an event, a level and a reservation (remaining reserved seats are shown).</li>
 <li><strong>Generate</strong> tickets for an amount (or named seats), with a ticket type (default <code>Partner Sale</code>). A <strong>test</strong> request creates only a preview of the blank ticket.</li>
-<li><strong>Sign</strong> the generated tickets (<span class="link-na" title="Not included in the site yet">S-08</span>); wait until all are signed.</li>
-<li><strong>Merge</strong> into PDFs or <strong>Zip</strong> (<span class="link-na" title="Not included in the site yet">S-09</span>); download the chunks.</li>
+<li><strong>Sign</strong> the generated tickets (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>); wait until all are signed.</li>
+<li><strong>Merge</strong> into PDFs or <strong>Zip</strong> (<a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>); download the chunks.</li>
 <li>Alternatively download the individual tickets as a zip, or email them to a recipient (<a href="../60-cross-cutting/X-21-email-ses.html">X-21</a>). The ticket's action state records what happened (<code>downloaded</code>, <code>emailed: {recipient}</code>, or a custom text).</li>
 </ol>
 <h2 id="4-technical-flow">4. Technical flow</h2>
@@ -143,7 +162,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong>Create</strong> <strong class="hop-tag">[HTTP + user token]</strong> <code>POST /ticketing/api/v1/booking-order-ticket/reserve-ticket?eventId&amp;levelId</code> with a list of <code>ReservedTicketRequest {id (reservation id), amount, hasSeats, seats, ticketType, isTest}</code>. <code>TicketManager.CreateReservationTicketsAsync</code>: reads the reservations from Booking (<strong class="hop-tag">[HTTP + user token]</strong> <code>GetReservationsCountAsync</code>); for each request: the reservation must exist, must not be <code>Locked</code> ("Ticket generation is in process already ..."), and <code>existing + amount</code> must not exceed its ticket count ("Request exceeds reserved capacity ..."); renders one blank PDF (<code>GenerateBlankReservedTicket</code>); for a <strong>test</strong> request it stores the preview URL on the reservation (<code>UpdateReservationTicketPreviewUrlAsync</code>) and stops; otherwise inserts <code>amount</code> (or one per seat) tickets with number <code>{prefix}{unique code}</code>, a <strong>consecutive number</strong> from the Redis counter <code>event_ticket_counter:{eventId}</code>, status <code>Requested</code>, <code>CreatedBy = "System"</code>, then sets the reservation status <code>Locked</code>, publishes one signing job per ticket <strong class="hop-tag">[SQS: TicketSigning]</strong> with the field <code>Complimentary</code> (the ticket type) and <code>Platform</code> and sets the reservation <code>Requested</code>.</li>
 <li><strong>Sign</strong> (again) <code>POST .../sign-reserve-ticket?eventId&amp;levelId</code> → <code>PublishBulkTicketToSign</code>: publishes signing jobs for the event's tickets still in status <code>Requested</code> (a repair path for tickets whose job was lost).</li>
 <li><strong>Read</strong> <code>GET .../reserve-ticket?eventId&amp;levelId</code> lists reserved tickets per reservation; <code>PUT .../reserve-ticket</code> with <code>ticketNumbers[]</code> and <code>action</code> sets the action state text.</li>
-<li><strong>Merge and zip</strong> <code>GET .../merge-reserved?reservationId</code>, <code>zip-reserved?reservationId</code> publish to <code>TicketProcessing</code>, progress via <code>merged-ticket-number</code>, <code>zipped-ticket-number</code> and Booking's status endpoints (<span class="link-na" title="Not included in the site yet">S-09</span>).</li>
+<li><strong>Merge and zip</strong> <code>GET .../merge-reserved?reservationId</code>, <code>zip-reserved?reservationId</code> publish to <code>TicketProcessing</code>, progress via <code>merged-ticket-number</code>, <code>zipped-ticket-number</code> and Booking's status endpoints (<a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>).</li>
 <li><strong>Download</strong> the admin must first call <code>POST .../generate-signed-token</code> (a 60 s token in the global Redis key) and <code>GET .../signed-cookie</code> (CloudFront cookie) (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>). Then <code>POST .../download-reserved?signedToken=&lt;token&gt;</code> with <code>TicketRequest {ticketNumbers[], fileName}</code> streams a <strong>zip</strong> of the tickets (front plus back page) and sets their state <code>downloaded</code>; <code>GET .../download-merged?reservationId&amp;signedToken</code> streams all merged chunks of the reservation as <code>{reservationId}.zip</code>; <code>POST .../download-test-blank-reserved?signedToken</code> streams the preview. An invalid or expired token gives "Invalid or expired token.".</li>
 <li><strong>Email</strong> <code>POST .../send-reserved</code> (<a href="../60-cross-cutting/X-21-email-ses.html">X-21</a>).</li>
 <li><code>GET .../reserved-urls?reservationId</code> lists the signed ticket URLs of a reservation; it has no <code>[Authorize]</code> and no caller in the portal, and its action calls <code>GetSignedReservedTicketUrlsAsync</code> twice (the first result is discarded).</li>
@@ -329,7 +348,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   A->>T: generate-signed-token + signed-cookie
   A->>S3: download chunks (CloudFront cookie)
 </div>
-<p><strong>Depends on:</strong> <a href="A-11-seat-reservation.html">A-11</a>, <a href="A-13-ticket-layouts.html">A-13</a>, <a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>. <strong>Affects:</strong> <span class="link-na" title="Not included in the site yet">S-08</span>, <span class="link-na" title="Not included in the site yet">S-09</span>, <a href="../60-cross-cutting/X-21-email-ses.html">X-21</a>, checker lists (<a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>).</p>
+<p><strong>Depends on:</strong> <a href="A-11-seat-reservation.html">A-11</a>, <a href="A-13-ticket-layouts.html">A-13</a>, <a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>. <strong>Affects:</strong> <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>, <a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>, <a href="../60-cross-cutting/X-21-email-ses.html">X-21</a>, checker lists (<a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>).</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Partial.</strong> Everything up to signing runs locally; signing needs the TSP (dummy), and the CloudFront cookie fails locally (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>).</p>
 <table>

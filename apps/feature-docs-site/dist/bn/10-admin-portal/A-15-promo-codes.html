@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -127,7 +146,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <p><a href="index.html">← 10 · অ্যাডমিন পোর্টাল</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
 </blockquote>
 <h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
-<p><strong>প্রোমো কোড।</strong> একটি promo code হলো ছোট একটি লেখা যা চেকআউটে গ্রাহক টাইপ করে ছাড় পান। অ্যাডমিন তার মান (শতকরা বা নির্দিষ্ট পরিমাণ), বৈধতার সময়সীমা, মোট ও প্রতি গ্রাহক ব্যবহারের সীমা, এবং এটি কোন program-এর কোন event বা gallery-তে প্রযোজ্য তা নির্ধারণ করেন। স্ট্যাটাস (<code>Upcoming</code>, <code>Active</code>, <code>Expired</code>, <code>LimitReached</code>) একটি ওয়ার্কার হালনাগাদ রাখে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-16</span>); গ্রাহকের দিকটি <a href="../20-user-portal/P-05-apply-promo-code.html">P-05</a>।</p>
+<p><strong>প্রোমো কোড।</strong> একটি promo code হলো ছোট একটি লেখা যা চেকআউটে গ্রাহক টাইপ করে ছাড় পান। অ্যাডমিন তার মান (শতকরা বা নির্দিষ্ট পরিমাণ), বৈধতার সময়সীমা, মোট ও প্রতি গ্রাহক ব্যবহারের সীমা, এবং এটি কোন program-এর কোন event বা gallery-তে প্রযোজ্য তা নির্ধারণ করেন। স্ট্যাটাস (<code>Upcoming</code>, <code>Active</code>, <code>Expired</code>, <code>LimitReached</code>) একটি ওয়ার্কার হালনাগাদ রাখে (<a href="../50-system-initiated/S-16-promo-code-status.html">S-16</a>); গ্রাহকের দিকটি <a href="../20-user-portal/P-05-apply-promo-code.html">P-05</a>।</p>
 <h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
 <p>রোল <code>admin</code> কর্মী (<code>PromoCodeController</code> কেবল <code>Admin</code> অনুমোদন করে)। প্রবেশবিন্দু: program মেনু <strong>Promo &amp; Discount → Promo</strong> (<code>/promo-management</code>, <code>/promo-management/create</code>, <code>/promo-management/edit-promo/:promoCodeId</code>)।</p>
 <h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
@@ -142,7 +161,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong class="hop-tag">[HTTP + user token]</strong> <code>GET /admin/api/v1/promo-codes?...</code> (পেজযুক্ত), <code>/promo-codes/{id}</code>; <code>GET .../promo-codes/exists?eventIds=...&amp;promoCodeId=</code> অন্য কোড ইতিমধ্যে ওই eventগুলো আধারণ করলে <code>{Success: false, Message: "A promo code is already assigned to the selected events: ..."}</code> ফেরত দেয়। ফর্ম program, event ও gallery <code>GET /program</code>, <code>GET /events/list</code>, <code>GET /events/program/{id}/events</code>, <code>POST /eventsVenueDetails/galleries/by-event-ids</code> থেকে লোড করে (<a href="A-07-events.html">A-07</a>, <a href="A-09-event-level-pricing.html">A-09</a>)।</li>
 <li>তৈরি <code>POST .../promo-codes</code> (JSON <code>CreateOrUpdatePromoCode</code>)। <code>PromoCodeManager.CreateAsync</code>: <code>CheckValidityOfPromoCode</code> (code আবশ্যক, ≤ 12, code-গুলোর মধ্যে অনন্য (<code>ExistsAsync(id, code)</code>), নাম আবশ্যক, ≤ 26, প্রতি ব্যবহারকারীর সীমা মোট সীমার বেশি নয়, শতকরা মানের জন্য পূর্ণসংখ্যা, শুরু ও শেষ দুটোই সেট ও শেষ শুরুর পরে, অন্তত একটি অ্যাসাইনমেন্ট, প্রতিটি program ও event আছে); স্ট্যাটাস হিসাব করে (<code>GetPromoCodeStatusAsync</code>: শুরুর আগে <code>Upcoming</code>, শেষের পরে <code>Expired</code>, ওই code-এর paid order মোট সীমায় পৌঁছালে <code>LimitReached</code>, নয়তো <code>Active</code>); <code>IsPublished = (status == Active)</code> রেখে code ইনসার্ট করে; অ্যাসাইনমেন্ট ইনসার্ট করে (event অ্যাসাইনমেন্ট event-গুলো যুক্ত করে; gallery অ্যাসাইনমেন্ট event, gallery ও venue-event-gallery নাম যুক্ত করে)।</li>
 <li>আপডেট <code>PUT .../promo-codes/{id}</code>: একই যাচাই, অ্যাসাইনমেন্টের তালিকা প্রতিস্থাপন করে, স্ট্যাটাস পুনরায় হিসাব করে। মুছে ফেলা <code>DELETE .../promo-codes/{id}</code>: <code>IsDeleted = true</code>।</li>
-<li>স্ট্যাটাস ওয়ার্কার <code>Status</code>, <code>IsActive</code>, <code>IsPublished</code> হালনাগাদ রাখে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-16</span>)। Booking একই টেবিল read model হিসেবে পড়ে এবং চেকআউটে নিজেই code যাচাই করে (<a href="../20-user-portal/P-05-apply-promo-code.html">P-05</a>)।</li>
+<li>স্ট্যাটাস ওয়ার্কার <code>Status</code>, <code>IsActive</code>, <code>IsPublished</code> হালনাগাদ রাখে (<a href="../50-system-initiated/S-16-promo-code-status.html">S-16</a>)। Booking একই টেবিল read model হিসেবে পড়ে এবং চেকআউটে নিজেই code যাচাই করে (<a href="../20-user-portal/P-05-apply-promo-code.html">P-05</a>)।</li>
 </ol>
 <h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
 <table>
@@ -264,7 +283,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
 <ol>
 <li><strong>"আগে থেকেই বরাদ্দ করা" শুধু পরামর্শমূলক।</strong> <code>exists</code> কল কেবল একটি বার্তা ফেরত দেয়; <code>CreateAsync</code> ওভারল্যাপিং event অ্যাসাইনমেন্ট প্রত্যাখ্যান করে না, তাই একটি event-এ দুটি code থাকতে পারে।</li>
-<li><strong>স্ট্যাটাস সেভের সময় এবং এরপর ওয়ার্কার দ্বারা হিসাব হয়</strong>, কিন্তু প্রয়োগের ধাপ নিজেই তারিখ ও ব্যবহার পুনরায় হিসাব করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-16</span> নোট 2), তাই স্ট্যাটাস ক্ষেত্রটি মূলত অ্যাডমিনের তালিকার জন্য কাজ করে।</li>
+<li><strong>স্ট্যাটাস সেভের সময় এবং এরপর ওয়ার্কার দ্বারা হিসাব হয়</strong>, কিন্তু প্রয়োগের ধাপ নিজেই তারিখ ও ব্যবহার পুনরায় হিসাব করে (<a href="../50-system-initiated/S-16-promo-code-status.html">S-16</a> নোট 2), তাই স্ট্যাটাস ক্ষেত্রটি মূলত অ্যাডমিনের তালিকার জন্য কাজ করে।</li>
 <li><strong>একটি code-এর লেখা কেবল অ-মুছা code-গুলোর মধ্যে অনন্য</strong> (<code>ExistsAsync</code>); সফট-ডিলিট করা কোড তার লেখা আটকায় কি না তা এখানে যাচাই করা হয়নি <span class="badge-unconfirmed">[UNCONFIRMED: Q-25]</span>।</li>
 <li><strong>শতকরা মান অবশ্যই পূর্ণসংখ্যা।</strong> ১০০-এর বেশি কোনো মান এখানে তালিকাভুক্ত ম্যানেজারের যাচাই দ্বারা প্রত্যাখ্যাত হয় না।</li>
 <li><strong>আপডেট অ্যাসাইনমেন্ট প্রতিস্থাপন করে</strong> (<code>AssignTo.Clear()</code> তারপর পুনরায় যোগ), তাই প্রতিটি সম্পাদনায় অ্যাসাইনমেন্টের id বদলে যায়।</li>

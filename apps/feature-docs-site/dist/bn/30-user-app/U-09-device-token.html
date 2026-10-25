@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -180,7 +199,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>সার্ভার</td>
-<td><code>S-13</code> পুরোনো টোকেন পরিষ্কার করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-13</span>)</td>
+<td><code>S-13</code> পুরোনো টোকেন পরিষ্কার করে (<a href="../50-system-initiated/S-13-device-token-cleanup.html">S-13</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -260,8 +279,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong>Firebase কাজ করতে <code>.env</code> অবশ্যই দরকার</strong> এবং এটি gitignore করা; <code>firebase_options.dart</code>-এর প্রতিটি <code>dotenv.env[...]!</code> key না থাকলে থ্রো করবে, যা ইনিশিয়ালাইজের <code>catch</code> ধরে ফেলে — তাই key না থাকা আর key ভুল থাকা দুটোই হুবহু একই রূপ (পুশ নেই)।</li>
 <li><strong><code>firebase_repository_impl.dart:69</code>-এর তুলনাই POST বনাম PUT সিদ্ধান্ত করে</strong>; যে গ্রাহক অ্যাপ স্টোরেজ মুছে দেন তিনি হালনাগাদ না করে একই টোকেন আবার POST করেন।</li>
 <li><strong>সাইন-আউটে বডিতে <code>userId</code> সহ DELETE পাঠায়</strong> (<code>:46</code>), আর POST কেবল <code>fcmToken</code> নেয় — অসমতিমূলক, এবং দুটি কলের মধ্যে সার্ভার-সাইড আইডেন্টিটি আলাদা <span class="badge-unconfirmed">[UNCONFIRMED: Q-62]</span>।</li>
-<li><strong>অ্যাকাউন্ট মুছে ফেলার সময় ডিভাইস টোকেন মোছে না</strong>, কারণ delete-account-এর কোনো UI নেইই (<a href="U-07-profile-settings.html">Q-61</a>) — মুছে ফেলা গ্রাহকের ফোনে টোকেন থেকে যায় যতক্ষণ না <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-13</span> তা সরিয়ে দেয়।</li>
-<li><strong>সার্ভার-সাইড পরিষ্কার ওয়ার্কার <code>Services:Admin</code> কল করে <code>/pushnotification</code> prefix ছাড়া</strong> (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">Q-16</span>), যা একই এলাকার একটি আলাদা ত্রুটি।</li>
+<li><strong>অ্যাকাউন্ট মুছে ফেলার সময় ডিভাইস টোকেন মোছে না</strong>, কারণ delete-account-এর কোনো UI নেইই (<a href="U-07-profile-settings.html">Q-61</a>) — মুছে ফেলা গ্রাহকের ফোনে টোকেন থেকে যায় যতক্ষণ না <a href="../50-system-initiated/S-13-device-token-cleanup.html">S-13</a> তা সরিয়ে দেয়।</li>
+<li><strong>সার্ভার-সাইড পরিষ্কার ওয়ার্কার <code>Services:Admin</code> কল করে <code>/pushnotification</code> prefix ছাড়া</strong> (<a href="../50-system-initiated/S-13-device-token-cleanup.html">Q-16</a>), যা একই এলাকার একটি আলাদা ত্রুটি।</li>
 </ol>
 <h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
 <div class="mermaid">flowchart LR
@@ -273,7 +292,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   PN -.->|"push send"| FCM
   S13["S-13 cleanup worker"] -.-> PN
 </div>
-<p><strong>নির্ভর করে:</strong> <a href="../60-cross-cutting/X-07-user-password-login.html">X-07</a> (টোকেন যার সাথে যুক্ত করা হবে এমন একজন সাইন-ইন করা ব্যবহারকারী), <a href="U-07-profile-settings.html">U-07</a>। <strong>প্রভাব ফেলে:</strong> <a href="U-10-push-receipt.html">U-10</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-11</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-12</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-13</span>।</p>
+<p><strong>নির্ভর করে:</strong> <a href="../60-cross-cutting/X-07-user-password-login.html">X-07</a> (টোকেন যার সাথে যুক্ত করা হবে এমন একজন সাইন-ইন করা ব্যবহারকারী), <a href="U-07-profile-settings.html">U-07</a>। <strong>প্রভাব ফেলে:</strong> <a href="U-10-push-receipt.html">U-10</a>, <a href="../50-system-initiated/S-11-firebase-notification.html">S-11</a>, <a href="../50-system-initiated/S-12-ticket-generated-notification.html">S-12</a>, <a href="../50-system-initiated/S-13-device-token-cleanup.html">S-13</a>।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকালভাবে টেস্টযোগ্য: আংশিক।</strong> লোকালে Firebase একটি ডামি, তাই আসল টোকেন কেবল একটি আসল Firebase প্রজেক্টের বিপরীতেই পাওয়া যায় — লোকাল পথ কোড চালায়, কিন্তু ডেলিভারি নয়।</p>
 <table>

@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -134,7 +153,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <ol>
 <li><strong>Bookings list:</strong> paged list of the customer's orders with event name, order number, status and date.</li>
 <li><strong>Booking details:</strong> the order's tickets; each ticket shows its number, holder, block/level/seat and a QR code.</li>
-<li><strong>Generate tickets:</strong> when the event's ticket-availability date has passed and the order is paid, a <strong>Generate</strong> button appears; tapping it starts the generation pipeline (<span class="link-na" title="Not included in the site yet">S-07</span>, <span class="link-na" title="Not included in the site yet">S-08</span>).</li>
+<li><strong>Generate tickets:</strong> when the event's ticket-availability date has passed and the order is paid, a <strong>Generate</strong> button appears; tapping it starts the generation pipeline (<a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>, <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>).</li>
 <li><strong>Watch generation:</strong> the app calls the generation-status endpoint while the order is <code>Requested</code>/<code>Processing</code>.</li>
 <li><strong>Use the ticket:</strong> open the PDF in a viewer, share it, or download all tickets of the order; for OneID customers, sync to the OneID wallet.</li>
 </ol>
@@ -150,7 +169,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong class="hop-tag">[HTTP + user token]</strong> <code>POST ticketing/api/v1/booking-order-ticket/sync-order-to-oneid/{publicOrderId}</code> — OneID sync, as in <a href="../20-user-portal/P-10-oneid-ticket-sync.html">P-10</a>.</li>
 <li><strong class="hop-tag">[HTTP + user token]</strong> <code>GET ticketing/api/v1/booking-order-ticket/download-invoice/{paymentId}</code> via <code>ticketBanglaApiClient</code> (<code>:193</code>) — the invoice, fetched from a <strong>second base URL</strong> (<code>ticket_bangla_api_client.dart</code>).</li>
 <li><strong>Opening and sharing:</strong> <code>openFile(fileName: '${ticket.uniqueTicketNumber}.pdf')</code> (<code>booking_details_view_model.dart:230</code>, <code>open_file</code> 3.5.10) opens the downloaded PDF; <code>SharePlus.instance.share(...)</code> (<code>:264</code>, <code>share_plus</code> 12.0.0) shares it. <code>DownloadService</code> supports <code>openFileFromNotification</code> (<code>download_service.dart:186</code>), so a download that completes in the background opens automatically.</li>
-<li><strong>QR display:</strong> the ticket QR is rendered from data the Ticketing service returns; the QR itself is the VDS-signed payload produced during signing (<span class="link-na" title="Not included in the site yet">S-08</span>).</li>
+<li><strong>QR display:</strong> the ticket QR is rendered from data the Ticketing service returns; the QR itself is the VDS-signed payload produced during signing (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>).</li>
 </ol>
 <h2 id="5-components">5. Components</h2>
 <table>
@@ -328,7 +347,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   BD -->|"sync-order-to-oneid"| OID["OneID"]
   TK -->|QR| QR["VDS QR on screen"]
 </div>
-<p><strong>Depends on:</strong> <a href="U-05-booking-webview-payment.html">U-05</a> (the orders to show), <span class="link-na" title="Not included in the site yet">S-06</span>, <span class="link-na" title="Not included in the site yet">S-07</span>. <strong>Affects:</strong> <a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a> — these tickets are what the checker validates.</p>
+<p><strong>Depends on:</strong> <a href="U-05-booking-webview-payment.html">U-05</a> (the orders to show), <a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a>, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>. <strong>Affects:</strong> <a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a> — these tickets are what the checker validates.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full</strong> for the list and details; <strong>Partial</strong> for PDF download (needs the ticket bucket, which Floci can serve) and <strong>Not locally</strong> for TSP signing and OneID.</p>
 <table>
@@ -357,11 +376,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Visual Studio debug</td>
-<td><code>TicketManager.TicketGenerateRequest</code> and the <code>TicketSigning</code> worker (<span class="link-na" title="Not included in the site yet">S-08</span>); client: <code>BookingDetailsViewModel</code> around line 230</td>
+<td><code>TicketManager.TicketGenerateRequest</code> and the <code>TicketSigning</code> worker (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>); client: <code>BookingDetailsViewModel</code> around line 230</td>
 </tr>
 <tr>
 <td>Verify</td>
-<td><code>SELECT</code> on <code>Tickets</code> for <code>SignedTicketUrl</code>; the S3 object in Floci under the ticket bucket; the merged ZIP from <span class="link-na" title="Not included in the site yet">S-09</span></td>
+<td><code>SELECT</code> on <code>Tickets</code> for <code>SignedTicketUrl</code>; the S3 object in Floci under the ticket bucket; the merged ZIP from <a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a></td>
 </tr>
 </tbody>
 </table>

@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -127,7 +146,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <p><a href="index.html">← 20 · ইউজার পোর্টাল</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
 </blockquote>
 <h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
-<p><strong>OneID টিকিট সিঙ্ক।</strong> যে গ্রাহকরা OneID দিয়ে সাইন ইন করেছেন (<a href="../60-cross-cutting/X-08-oneid-sso.html">X-08</a>) তারা তাদের সই করা টিকিট PDF নিজের OneID ওয়ালেটে জমা রাখতে পারেন। টিকিট সই হওয়ার সময় প্ল্যাটফর্ম এটি স্বয়ংক্রিয়ভাবে করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>); স্বয়ংক্রিয় আপলোড ব্যর্থ হলে গ্রাহক <strong>Sync with OneID</strong> দিয়ে হাতে পুনরায় করতে পারেন।</p>
+<p><strong>OneID টিকিট সিঙ্ক।</strong> যে গ্রাহকরা OneID দিয়ে সাইন ইন করেছেন (<a href="../60-cross-cutting/X-08-oneid-sso.html">X-08</a>) তারা তাদের সই করা টিকিট PDF নিজের OneID ওয়ালেটে জমা রাখতে পারেন। টিকিট সই হওয়ার সময় প্ল্যাটফর্ম এটি স্বয়ংক্রিয়ভাবে করে (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>); স্বয়ংক্রিয় আপলোড ব্যর্থ হলে গ্রাহক <strong>Sync with OneID</strong> দিয়ে হাতে পুনরায় করতে পারেন।</p>
 <h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
 <p>সাইন-ইন করা গ্রাহক যার প্রোফাইলের <code>sso_provider</code> হলো <code>oneid</code>, একটি <code>Generated</code> অর্ডারের টিকিট পেজে (<a href="P-09-ticket-details-downloads.html">P-09</a>); সব টিকিট সিঙ্ক না হওয়া পর্যন্ত বোতামটি দেখা যায়।</p>
 <h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
@@ -237,7 +256,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   T --> DB[("Tickets OneIdSync")]
   W["Signing worker S-08"] -.->|"automatic upload"| O
 </div>
-<p><strong>নির্ভর করে:</strong> <a href="../60-cross-cutting/X-08-oneid-sso.html">X-08</a>, <a href="P-08-ticket-generation-request.html">P-08</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>। <strong>প্রভাব ফেলে:</strong> <a href="P-07-my-bookings.html">P-07</a>।</p>
+<p><strong>নির্ভর করে:</strong> <a href="../60-cross-cutting/X-08-oneid-sso.html">X-08</a>, <a href="P-08-ticket-generation-request.html">P-08</a>, <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>। <strong>প্রভাব ফেলে:</strong> <a href="P-07-my-bookings.html">P-07</a>।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকাল টেস্টযোগ্যতা: লোকালে সম্ভব নয়</strong> (OneID ডামি; <code>/p/oneid</code>-এর ফেক OneID কেবল লগইন কভার করে, <code>docs/user-portal-local.md</code>)।</p>
 <table>

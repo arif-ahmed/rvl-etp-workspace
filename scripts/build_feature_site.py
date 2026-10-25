@@ -49,6 +49,9 @@ UI = {
         "na": "Not included in the site yet",
         "scope_note": "Included sections: {sections}. "
                       "The remaining sections can be added by re-running the build with a wider scope.",
+        "ref_overview": "Overview",
+        "ref_appendix": "Appendices",
+        "outside": "Repository file, not part of this site",
         "router_title": "Choose a language",
         "router_note": "Light / dark mode can be switched from the top bar on any page.",
     },
@@ -60,6 +63,9 @@ UI = {
         "na": "এখনো সাইটে যোগ হয়নি",
         "scope_note": "অন্তর্ভুক্ত অংশ: {sections}। "
                       "বাকি অংশগুলো পরে বিল্ড আবার চালিয়ে যোগ হবে।",
+        "ref_overview": "ওভারভিউ",
+        "ref_appendix": "পরিশিষ্ট",
+        "outside": "রিপোজিটরির ফাইল, এই সাইটের অংশ নয়",
         "router_title": "ভাষা বেছে নিন",
         "router_note": "যেকোনো পেজের উপরের বার থেকে লাইট / ডার্ক মোড বদলানো যায়।",
     },
@@ -124,6 +130,13 @@ def strip_feature_h1(text):
     return m.group(1), m.group(2), text[m.end():]
 
 
+def strip_feature_h1_root(text):
+    """Root documents use '# <nn> · <title>'; return (num, title, rest)."""
+    m = re.match(r"#\s+(\d+)\s+·\s+(.+?)\s*(?:
+|$)", text)
+    return m.group(1), m.group(2), text[m.end():]
+
+
 def readme_body(text):
     """Section README markdown before the features table, minus H1 and back-link.
 
@@ -184,7 +197,7 @@ def md_rel_to_html(rel):
     return rel[: -len(".md")] + ".html" if rel.endswith(".md") else None
 
 
-def rewrite_links(body, cur_dir, built_md, na_label):
+def rewrite_links(body, cur_dir, built_md, na_label, outside_label=""):
     def repl(m):
         href, inner = m.group(1), m.group(2)
         if href.startswith(("http://", "https://", "mailto:", "#")) or not href:
@@ -193,6 +206,8 @@ def rewrite_links(body, cur_dir, built_md, na_label):
         if not path.endswith(".md"):
             return m.group(0)
         rel = posixpath.normpath(posixpath.join(cur_dir, path))
+        if rel.startswith("../"):
+            return f'<span class="link-na" title="{html.escape(outside_label or na_label)}">{inner}</span>'
         if rel in built_md:
             target_html = md_rel_to_html(rel)
             if target_html is None:
@@ -218,7 +233,7 @@ def md_to_html(text, lang, cur_dir, built_md):
     body = UNCONFIRMED.sub(
         lambda m: '<span class="badge-unconfirmed">' + m.group(1) + "</span>", body)
     body = HOP_TAG.sub(r'<strong class="hop-tag">\1</strong>', body)
-    return rewrite_links(body, cur_dir, built_md, UI[lang]["na"])
+    return rewrite_links(body, cur_dir, built_md, UI[lang]["na"], UI[lang]["outside"])
 
 
 def convert_feature(src, lang, cur_dir, built_md):
@@ -278,7 +293,7 @@ def page(lang, title, crumb, content, sidebar, to_root, mermaid_tag, lang_toggle
 """
 
 
-def sidebar_html(sections, ui, cur_dir, active=None):
+def sidebar_html(sections, ui, cur_dir, active=None, root_docs=()):
     """sections: [(num, short_title, full_title, desc, feats, dir_name)] for one language.
 
     cur_dir: section dirname the page lives in (None = language root index).
@@ -286,6 +301,17 @@ def sidebar_html(sections, ui, cur_dir, active=None):
     active: 'sec:<dir>' marks the section link, '<dir>/<file>.html' a feature link.
     """
     parts = []
+    root_prefix = "" if cur_dir is None else "../"
+    for group, kind in (("ref_overview", "ov"), ("ref_appendix", "ap")):
+        items = [d for d in root_docs if d["kind"] == kind]
+        if not items:
+            continue
+        parts.append(f'    <div class="side-group">{html.escape(ui[group])}</div>')
+        for d in items:
+            is_on = " is-active" if active == f"root:{d['stem']}" else ""
+            parts.append(
+                f'    <a class="side-item{is_on}" href="{root_prefix}{d["stem"]}.html">'
+                f'<span class="id-chip">{d["num"]}</span><span>{html.escape(d["title"])}</span></a>')
     for num, short, _full, _desc, feats, dirname in sections:
         if cur_dir is None:
             prefix = dirname + "/"
@@ -403,7 +429,19 @@ def build(docs: Path, out: Path, assets: Path, wanted):
                 sys.exit(f"{lang}/{dirname}: README links to missing files {missing}")
             parsed[lang].append((num, short, full, desc, feats, dirname))
 
+    root_docs = {}
+    for lang in ("en", "bn"):
+        root_docs[lang] = []
+        for path in sorted((docs / lang).glob("[0-9][0-9]-*.md")):
+            m = re.match(r"#\s+(\d+)\s+·\s+(.+?)\s*$", path.read_text(encoding="utf-8"), re.M)
+            if not m:
+                sys.exit(f"{lang}/{path.name}: no '# <num> · <title>' H1")
+            num = m.group(1)
+            root_docs[lang].append({"stem": path.stem, "file": path.name, "num": num,
+                                    "title": m.group(2), "kind": "ov" if int(num) < 10 else "ap"})
+
     built_md = {"README.md"}
+    built_md.update(d["file"] for lang in root_docs for d in root_docs[lang])
     built_md.update(f"{d}/README.md" for d in section_dirs)
     for lang in ("en", "bn"):
         for _, _, _, _, feats, d in parsed[lang]:
@@ -414,25 +452,40 @@ def build(docs: Path, out: Path, assets: Path, wanted):
         ui = UI[lang]
         n_pages = 0
 
-        # ---- language root index -------------------------------------
-        section_list = ", ".join(f"{num} · {short}" for num, short, _f, _d, _fe, _d2 in parsed[lang])
-        cards = "\n".join(
-            f'    <a class="card" href="{d}/index.html">'
-            f'<span class="card-title"><span class="id-chip">{num}</span> {html.escape(short)}</span>'
-            f'<span class="card-desc">{inline_md(desc)}</span></a>'
-            for num, short, full, desc, feats, d in parsed[lang])
-        content = (f'<h1>{html.escape(ui["contents"])}</h1>\n'
-                   f'<p class="scope-note">{html.escape(ui["scope_note"].format(sections=section_list))}</p>\n'
-                   f'<div class="cards">\n{cards}\n    </div>')
-        # sidebar links from the language root are prefixed with each section dir
-        side = sidebar_html(parsed[lang], ui, cur_dir=None)
+        # ---- language root index: the README, rendered ------------------
+        readme_src = (docs / lang / "README.md").read_text(encoding="utf-8")
+        m = re.match(r"#\s+(.+?)\s*
+", readme_src)
+        home_title = m.group(1)
+        # the language toggle in the top bar replaces the "other language" link
+        rest = re.sub(r"^\[[^\]]+\]\(\.\./(?:en|bn)/README\.md\)\s*$", "", readme_src[m.end():], flags=re.M)
+        content = f"<h1>{html.escape(home_title)}</h1>
+" + md_to_html(rest, lang, "", built_md)
+        side = sidebar_html(parsed[lang], ui, cur_dir=None, root_docs=root_docs[lang])
         (out / lang / "index.html").parent.mkdir(parents=True, exist_ok=True)
         (out / lang / "index.html").write_text(
-            page(lang, ui["contents"], "", content, side, "../",
+            page(lang, home_title, "", content, side, "../",
                  mermaid_tag_tpl.format(to_root="../"), lang_toggle=False,
                  fonts_link=fonts_tag_tpl.format(to_root="../", v=fonts_v)),
             encoding="utf-8")
         n_pages += 1
+
+        # ---- root-level documents (00-03, 90-93, 99) -------------------
+        for d in root_docs[lang]:
+            src = (docs / lang / d["file"]).read_text(encoding="utf-8")
+            _num, _title, body_md = strip_feature_h1_root(src)
+            content = (f'<h1><span class="id-chip">{d["num"]}</span> {html.escape(d["title"])}</h1>
+'
+                       + md_to_html(body_md, lang, "", built_md))
+            side = sidebar_html(parsed[lang], ui, cur_dir=None, active=f"root:{d['stem']}",
+                                root_docs=root_docs[lang])
+            (out / lang / f"{d['stem']}.html").write_text(
+                page(lang, f"{d['num']} · {d['title']}",
+                     crumb_html([(ui["contents"], "index.html"), (f"{d['num']} · {d['title']}", None)]),
+                     content, side, "../", mermaid_tag_tpl.format(to_root="../"),
+                     fonts_link=fonts_tag_tpl.format(to_root="../", v=fonts_v)),
+                encoding="utf-8")
+            n_pages += 1
 
         # ---- one section at a time ------------------------------------
         for num, short, full, desc, feats, dirname in parsed[lang]:
@@ -452,7 +505,8 @@ def build(docs: Path, out: Path, assets: Path, wanted):
             content = (f'<h1><span class="id-chip">{num}</span> {html.escape(full)}</h1>\n'
                        f'{intro}\n'
                        f'<div class="cards">\n{cards}\n    </div>')
-            side = sidebar_html(parsed[lang], ui, cur_dir=dirname, active=f"sec:{dirname}")
+            side = sidebar_html(parsed[lang], ui, cur_dir=dirname, active=f"sec:{dirname}",
+                                root_docs=root_docs[lang])
             (sec_dir_out / "index.html").write_text(
                 page(lang, f"{num} · {short}", crumb_html([(ui["contents"], "../index.html"), (f"{num} · {short}", None)]),
                      content, side, to_root, mermaid_tag_tpl.format(to_root=to_root),
@@ -484,7 +538,8 @@ def build(docs: Path, out: Path, assets: Path, wanted):
                 content = (f'<h1><span class="id-chip">{fid}</span> {html.escape(title)}</h1>\n{body}\n'
                            + "\n".join(pager))
                 side = sidebar_html(parsed[lang], ui, cur_dir=dirname,
-                                    active=f"{dirname}/{f['file'][:-3]}.html")
+                                    active=f"{dirname}/{f['file'][:-3]}.html",
+                                    root_docs=root_docs[lang])
                 (sec_dir_out / (f["file"][:-3] + ".html")).write_text(
                     page(lang, f"{fid} · {title}",
                          crumb_html([(ui["contents"], "../index.html"),
@@ -537,7 +592,7 @@ def build(docs: Path, out: Path, assets: Path, wanted):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--sections", default="10-admin-portal,20-user-portal,30-user-app,40-checker-app,60-cross-cutting",
+    ap.add_argument("--sections", default="10-admin-portal,20-user-portal,30-user-app,40-checker-app,50-system-initiated,60-cross-cutting",
                     help="comma list of section dirs under docs/handover/feature-docs/<lang>/, or 'all'")
     ap.add_argument("--docs", type=Path, default=DOCS_DEFAULT, help="feature-docs source root")
     ap.add_argument("--assets", type=Path, default=ASSETS_DEFAULT,

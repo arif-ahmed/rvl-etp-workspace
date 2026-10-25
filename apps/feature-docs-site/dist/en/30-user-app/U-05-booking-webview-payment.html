@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -136,7 +155,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li>The WebView loads it and shows a progress bar while loading.</li>
 <li>The customer pays on the gateway page.</li>
 <li>On success the gateway redirects to a known host. The WebView sees that URL, calls <code>onPaymentSuccess</code>, and the app navigates to <strong>My tickets</strong>.</li>
-<li>If the customer cancels or backs out, nothing happens — the order stays pending until <span class="link-na" title="Not included in the site yet">S-05</span> expires it.</li>
+<li>If the customer cancels or backs out, nothing happens — the order stays pending until <a href="../50-system-initiated/S-05-pending-failed-revalidation.html">S-05</a> expires it.</li>
 </ol>
 <h2 id="4-technical-flow">4. Technical flow</h2>
 <ol>
@@ -149,7 +168,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
    - <strong>any other scheme is blocked</strong> with <code>NavigationDecision.prevent</code> and logged (<code>:122-125</code>) — this is what stops the gateway handing off to a bank app.</li>
 <li><code>onPaymentSuccess</code> fires a <code>ticket_booking_success</code> analytics event carrying <code>payment_success_url</code>, <code>event_id</code>, <code>gallery_id</code>, <code>block_id</code>, <code>level_id</code>, <code>number_of_seats</code>, <code>price_per_seat</code> and <code>total_charge</code> (<code>:537-551</code>), then calls <code>_navigateToMyTicketPage()</code>.</li>
 <li>That method does <strong>not</strong> open the order. It clears the back stack and goes to <code>HomeRoute(initialNavigationItemType: NavigationItemType.myTickets)</code> (<code>:556-565</code>).</li>
-<li>Server-side the order payment is completed by the DgePay callback and the <code>OrderSuccess</code> message; see <a href="../20-user-portal/P-06-booking-payment.html">P-06</a> and <span class="link-na" title="Not included in the site yet">S-01</span>.</li>
+<li>Server-side the order payment is completed by the DgePay callback and the <code>OrderSuccess</code> message; see <a href="../20-user-portal/P-06-booking-payment.html">P-06</a> and <a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>.</li>
 </ol>
 <h2 id="5-components">5. Components</h2>
 <table>
@@ -257,7 +276,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong>The success host is matched with <code>String.contains</code></strong> (<code>:113</code>), not an exact prefix. Any gateway URL containing that string — including a look-alike host — is treated as success <span class="badge-unconfirmed">[UNCONFIRMED: Q-58]</span>.</li>
 <li><strong>The fallback is the production domain</strong> <code>'ticket-bangla.com/tickets'</code> (<code>:536</code>), so a missing <code>.env</code> key makes a development build treat production as its success URL <span class="badge-unconfirmed">[UNCONFIRMED: Q-58]</span>.</li>
 <li><strong>A null <code>checkoutUrl</code> fails silently.</strong> <code>if (paymentUrl != null)</code> guards the navigation (<code>:530</code>) but there is no <code>else</code> — no toast, no error state. The customer taps pay and nothing happens, which is the same defect recorded for the portal (<a href="../20-user-portal/P-06-booking-payment.html">P-06</a>).</li>
-<li><strong>No cancel or timeout handling.</strong> Backing out of the WebView leaves the order pending until <span class="link-na" title="Not included in the site yet">S-05</span>, and the app offers no way to resume payment <span class="badge-unconfirmed">[UNCONFIRMED: Q-57]</span>.</li>
+<li><strong>No cancel or timeout handling.</strong> Backing out of the WebView leaves the order pending until <a href="../50-system-initiated/S-05-pending-failed-revalidation.html">S-05</a>, and the app offers no way to resume payment <span class="badge-unconfirmed">[UNCONFIRMED: Q-57]</span>.</li>
 <li><strong>JavaScript is unrestricted</strong> in the WebView, which the gateway requires; combined with note 2 it means any page loaded inside the WebView can trigger the success callback.</li>
 <li><strong>Non-http schemes are blocked</strong> (<code>:122-125</code>), which prevents bank-app hand-off. If a future gateway requires a custom scheme, that check must change.</li>
 <li><strong>Android WebView debugging is enabled unconditionally</strong> (<code>AndroidWebViewController.enableDebugging(true)</code>, <code>:66</code>), including in release builds.</li>
@@ -273,7 +292,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   WV -->|"navigate, clear back stack"| MT["Home → My tickets (U-06)"]
   DG -.->|"server-side callback"| BKG
 </div>
-<p><strong>Depends on:</strong> <a href="U-04-seat-selection-promo.html">U-04</a> (seats and holders), <a href="../60-cross-cutting/X-19-service-to-service.html">X-19</a> (gateway configuration), <a href="../10-admin-portal/A-03-program-settings.html">A-03</a> (which gateway a program uses). <strong>Affects:</strong> <a href="U-06-my-bookings-tickets.html">U-06</a>, <span class="link-na" title="Not included in the site yet">S-01</span>, <span class="link-na" title="Not included in the site yet">S-05</span>.</p>
+<p><strong>Depends on:</strong> <a href="U-04-seat-selection-promo.html">U-04</a> (seats and holders), <a href="../60-cross-cutting/X-19-service-to-service.html">X-19</a> (gateway configuration), <a href="../10-admin-portal/A-03-program-settings.html">A-03</a> (which gateway a program uses). <strong>Affects:</strong> <a href="U-06-my-bookings-tickets.html">U-06</a>, <a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>, <a href="../50-system-initiated/S-05-pending-failed-revalidation.html">S-05</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Partial.</strong> The order POST works locally, but the real DgePay page cannot be reached from a local build. Use a stub gateway or the dummy described below.</p>
 <table>

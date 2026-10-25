@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -264,7 +283,7 @@ tickets; a worker in Scheduler asks Booking which orders still need a notificati
 <td><code>IDgePayPaymentManager</code>, <code>ISSLCommerzPaymentManager</code>, <code>INBROpenApiManager</code></td>
 <td>from <code>PaymentSettings:*</code> / NBR settings</td>
 <td></td>
-<td>gateway credentials (<a href="../20-user-portal/P-06-booking-payment.html">P-06</a>, <span class="link-na" title="Not included in the site yet">S-10</span>)</td>
+<td>gateway credentials (<a href="../20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="../50-system-initiated/S-10-vat-challan.html">S-10</a>)</td>
 </tr>
 <tr>
 <td>Event</td>
@@ -334,7 +353,7 @@ tickets; a worker in Scheduler asks Booking which orders still need a notificati
 <td><code>IAuthProvider</code>, <code>ITspSignedTicketProvider</code></td>
 <td><code>TSP:AuthUrl</code>, <code>TSP:SignUrl</code></td>
 <td></td>
-<td>TSP client certificate (<span class="link-na" title="Not included in the site yet">S-08</span>)</td>
+<td>TSP client certificate (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>)</td>
 </tr>
 <tr>
 <td>Ticketing</td>
@@ -389,37 +408,37 @@ tickets; a worker in Scheduler asks Booking which orders still need a notificati
 <td><code>OrderSuccess</code></td>
 <td>Booking <code>UserBookingOrderManager</code>, <code>CapacityManager</code></td>
 <td>Booking <code>LevelCapacityUpdateService</code></td>
-<td><span class="link-na" title="Not included in the site yet">S-01</span></td>
+<td><a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a></td>
 </tr>
 <tr>
 <td><code>EventCapacity</code></td>
 <td>Booking <code>CapacityManager</code></td>
 <td>Booking <code>EventLiveCapacityUpdateService</code></td>
-<td><span class="link-na" title="Not included in the site yet">S-02</span></td>
+<td><a href="../50-system-initiated/S-02-event-live-capacity.html">S-02</a></td>
 </tr>
 <tr>
 <td><code>VatChallanProcessing</code></td>
 <td>Booking <code>UserBookingOrderManager</code></td>
 <td>Booking <code>VatChallanProcessingService</code></td>
-<td><span class="link-na" title="Not included in the site yet">S-10</span></td>
+<td><a href="../50-system-initiated/S-10-vat-challan.html">S-10</a></td>
 </tr>
 <tr>
 <td><code>TicketSigning</code></td>
 <td>Ticketing <code>TicketManager</code></td>
 <td>Ticketing <code>TicketGenerationService</code></td>
-<td><span class="link-na" title="Not included in the site yet">S-08</span></td>
+<td><a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a></td>
 </tr>
 <tr>
 <td><code>TicketProcessing</code></td>
 <td>Ticketing <code>TicketManager</code></td>
 <td>Utility <code>TicketProcessingService</code></td>
-<td><span class="link-na" title="Not included in the site yet">S-09</span></td>
+<td><a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a></td>
 </tr>
 <tr>
 <td><code>FirebaseNotification</code></td>
 <td>PushNotification <code>NotificationManager</code></td>
 <td>Scheduler <code>FirebaseNotificationService</code></td>
-<td><span class="link-na" title="Not included in the site yet">S-11</span></td>
+<td><a href="../50-system-initiated/S-11-firebase-notification.html">S-11</a></td>
 </tr>
 </tbody>
 </table>
@@ -483,7 +502,7 @@ tickets; a worker in Scheduler asks Booking which orders still need a notificati
 <li><strong>Forwarding couples the caller's pool to the callee's policy.</strong> A customer request that makes Booking call an Admin-only
    endpoint would fail; that is why the internal endpoints are anonymous.</li>
 <li><strong>Scheduler's <code>IEventClient</code> points at <code>Services:Admin</code></strong>, not <code>Services:Event</code>. The client's paths decide which service answers
-   (<span class="link-na" title="Not included in the site yet">S-04</span>).</li>
+   (<a href="../50-system-initiated/S-04-scheduler-capacity-update.html">S-04</a>).</li>
 <li><strong><code>Services:AppBase</code></strong> is the base URL of <code>IUserClient</code>, which calls <code>user/my-profile</code> with the forwarded token, i.e. the
    identity API <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>. Locally it is set to <code>http://localhost:4200/</code> (<code>scripts/user-secrets.example.json</code>), which is
    the admin portal, so these calls do not work locally.</li>

@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -122,12 +141,13 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   <main class="content">
 
 <h1>Contents</h1>
-<p class="scope-note">Included sections: 10 · Admin Portal, 20 · User Web Portal, 30 · User App, 40 · Checker App, 60 · Cross-cutting. The remaining sections can be added by re-running the build with a wider scope.</p>
+<p class="scope-note">Included sections: 10 · Admin Portal, 20 · User Web Portal, 30 · User App, 40 · Checker App, 50 · System-initiated, 60 · Cross-cutting. The remaining sections can be added by re-running the build with a wider scope.</p>
 <div class="cards">
     <a class="card" href="10-admin-portal/index.html"><span class="card-title"><span class="id-chip">10</span> Admin Portal</span><span class="card-desc">Features started by BCB/BS23 staff in the Angular admin portal (<code>rvl-gobcb-admin-portal</code>), Admin Cognito pool.</span></a>
     <a class="card" href="20-user-portal/index.html"><span class="card-title"><span class="id-chip">20</span> User Web Portal</span><span class="card-desc">Features started by customers in the Angular user portal (<code>rvl-gobcb-user-portal/ETP-Web</code>), User Cognito pool.</span></a>
     <a class="card" href="30-user-app/index.html"><span class="card-title"><span class="id-chip">30</span> User App</span><span class="card-desc">Features started by customers in the Flutter user app (<code>rvl-gobcb-user-app</code>), User Cognito pool.</span></a>
     <a class="card" href="40-checker-app/index.html"><span class="card-title"><span class="id-chip">40</span> Checker App</span><span class="card-desc">Features used by gate staff in the Flutter checker app (<code>rvl-gobcb-checker-app</code>), TicketChecker Cognito pool.</span></a>
+    <a class="card" href="50-system-initiated/index.html"><span class="card-title"><span class="id-chip">50</span> System-initiated</span><span class="card-desc">Work no person starts directly: background workers on timers and SQS queue consumers.</span></a>
     <a class="card" href="60-cross-cutting/index.html"><span class="card-title"><span class="id-chip">60</span> Cross-cutting</span><span class="card-desc">Concerns shared by many features: sign-in, access control, service-to-service calls, storage, messaging, logging, cache, configuration.</span></a>
     </div>
   </main>

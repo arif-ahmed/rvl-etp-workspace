@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -134,21 +153,21 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <ol>
 <li>প্রাপ্যতার তারিখের আগে বোতামটি নিষ্ক্রিয়। প্রাপ্যতার তারিখ থেকে <strong>Request tickets</strong> একটি নিশ্চিতকরণের পপ-আপ খোলে ("তৈরি হওয়ার পর টিকিটের তথ্য আর বদলানো যাবে না"; পপ-আপের লেখা ইংরেজিতে হার্ড-কোড করা, অনূদিত নয়)।</li>
 <li>নিশ্চিত করার পর অর্ডারের স্ট্যাটাস <code>Requested</code> হয়; একটি পপ-আপ জানায় তৈরি চলছে; পেজটি "চলছে" অবস্থা দেখায় এবং প্রতি ৩০ সেকেন্ডে আবার যাচাই করে।</li>
-<li>সব টিকিট সই হলে অর্ডার <code>Generated</code> হয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-06</span>); পেজটি টিকিট রিলোড করে এবং <strong>Download</strong>, <strong>Share</strong> এবং একাধিক টিকিট হলে <strong>Download all</strong> বোতামগুলো দেখায়।</li>
+<li>সব টিকিট সই হলে অর্ডার <code>Generated</code> হয় (<a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a>); পেজটি টিকিট রিলোড করে এবং <strong>Download</strong>, <strong>Share</strong> এবং একাধিক টিকিট হলে <strong>Download all</strong> বোতামগুলো দেখায়।</li>
 </ol>
 <h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
 <ol>
-<li>খসখসে টিকিট থাকে কারণ বিস্তারিতের কল সেগুলো চাহিয়া তৈরি করে: <code>GetTicketsInfo</code> কোনো সারি নেই এমন একটি <code>Paid</code> অর্ডারের সারি তৈরি করে (Redis লক <code>create_user_ticket_{publicId}</code>-এর নিচে, <code>InitiateBulkTicketForNewlyPaidOrder</code>), এর সাথে পেমেন্ট callback ও ওয়ার্কার ছাড়াও (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>)।</li>
+<li>খসখসে টিকিট থাকে কারণ বিস্তারিতের কল সেগুলো চাহিয়া তৈরি করে: <code>GetTicketsInfo</code> কোনো সারি নেই এমন একটি <code>Paid</code> অর্ডারের সারি তৈরি করে (Redis লক <code>create_user_ticket_{publicId}</code>-এর নিচে, <code>InitiateBulkTicketForNewlyPaidOrder</code>), এর সাথে পেমেন্ট callback ও ওয়ার্কার ছাড়াও (<a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>)।</li>
 <li><strong class="hop-tag">[HTTP, no token → Ticketing]</strong> পোর্টাল পাঠায় <code>PATCH {services.tickets}/ticketing/api/v1/booking-order-ticket/generate-request/{publicId}</code> ফাঁকা শরীরে (<code>BookingApiService.requestTicketsById</code>)। কন্ট্রোলার অ্যাকশনে <strong>কোনো <code>[Authorize]</code> নেই</strong> এবং ম্যানেজারও কলার যাচাই করে না; তবু পোর্টালের টোকন ইন্টারসেপ্টর ইউজার টোকেন যুক্ত করে কারণ URL-এ <code>/ticketing</code> আছে।</li>
 <li><code>TicketManager.TicketGenerateRequest</code>:</li>
 <li>Booking থেকে অর্ডার পড়ে (<strong class="hop-tag">[HTTP, no token]</strong> <code>GET .../user-booking-order/public-id/{id}</code>);</li>
 <li><code>ValidateTicketGeneration</code>: স্ট্যাটাস <code>Requested</code> বা <code>Generated</code> → <code>Request to generate ticket is already taken.</code>; <code>Paid</code> নয় → <code>Only paid order requests can generate tickets</code>; ইভেন্টের <code>TicketAvailabilityStartDateTime</code> এখনের (UTC) চেয়ে পরে → <code>You can request after ticket availability date.</code>;</li>
 <li>লেভেলের তথ্য এবং প্রোগ্রাম, ভেন্যু ও গ্যালারির <strong>প্রকাশিত টিকিট লেআউট</strong> লোড করে (<a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>);</li>
 <li>প্রতিটি টিকিটের জন্য ফাঁকা PDF আঁকে (<code>GetBlankPdf</code>) এবং টিকিট বাকেটে <code>{BlankBase}/user/{userId}/{orderId}/{ticketNumber}.pdf</code> পাথে আপলোড করে (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>); টিকিটের স্ট্যাটাস <code>Requested</code> ও লেআউটের ব্যাক-পেজ URL বসায়; সেভ করে;</li>
-<li>প্রতিটি টিকিটের জন্য প্রকাশ করে <strong class="hop-tag">[SQS: TicketSigning]</strong> একটি <code>SignedTicketGeneration</code> বার্তা (<code>UnsignedTicketUrl</code>, লেআউটের সাইজ অনুযায়ী <code>QRPosition</code>, <code>GateId</code> = লেভেলের এন্ট্রি গেট, <code>Data</code> = নাম, ফোন, তারিখ ও সময় (UTC+6), টিকিট আইডি, ইভেন্ট আইডি, গ্যালারি, ব্লক, লেভেল, এন্ট্রি গেট, মিনি গেট, আসন); সই করার ওয়ার্কার <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>;</li>
+<li>প্রতিটি টিকিটের জন্য প্রকাশ করে <strong class="hop-tag">[SQS: TicketSigning]</strong> একটি <code>SignedTicketGeneration</code> বার্তা (<code>UnsignedTicketUrl</code>, লেআউটের সাইজ অনুযায়ী <code>QRPosition</code>, <code>GateId</code> = লেভেলের এন্ট্রি গেট, <code>Data</code> = নাম, ফোন, তারিখ ও সময় (UTC+6), টিকিট আইডি, ইভেন্ট আইডি, গ্যালারি, ব্লক, লেভেল, এন্ট্রি গেট, মিনি গেট, আসন); সই করার ওয়ার্কার <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>;</li>
 <li><strong class="hop-tag">[HTTP, no token → Booking]</strong> <code>PATCH .../user-booking-order/generate-ticket-request/{publicId}</code> অর্ডারের স্ট্যাটাস <code>Requested</code> বসায়, এবং তার টিকিটসহ অর্ডারটি ফেরত দেয়।</li>
 <li>ব্রাউজার রেসপন্স থেকে টিকিট ও অর্ডারের স্ট্যাটাস হালনাগাদ করে এবং "তৈরি" পপ-আপ খোলে। এরপর থেকে <code>ngOnInit</code>-এর টাইমার (প্রতি ৩০ সে) স্ট্যাটাস <code>Requested</code> থাকা অবস্থায় <strong class="hop-tag">[HTTP + user token]</strong> <code>GET /booking/api/v1/user-booking-order/check-generated-status?id=</code> কল করে; <code>true</code> ফেরত এলে পোর্টাল টিকিটগুলো রিলোড করে (<code>details</code>)।</li>
-<li>ব্যাকগ্রাউন্ড: <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span> প্রতিটি টিকিট সই করে ও সংরক্ষণ করে (<code>SignedTicketUrl</code>); <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-06</span> সব টিকিট সই হলে অর্ডার <code>Generated</code> চিহ্নিত করে; <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-12</span> পুশ বার্তা পাঠায়।</li>
+<li>ব্যাকগ্রাউন্ড: <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a> প্রতিটি টিকিট সই করে ও সংরক্ষণ করে (<code>SignedTicketUrl</code>); <a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a> সব টিকিট সই হলে অর্ডার <code>Generated</code> চিহ্নিত করে; <a href="../50-system-initiated/S-12-ticket-generated-notification.html">S-12</a> পুশ বার্তা পাঠায়।</li>
 </ol>
 <h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
 <table>
@@ -169,7 +188,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>কিউ / ওয়ার্কার</td>
-<td>SQS <code>TicketSigning</code> → <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>; <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-06</span></td>
+<td>SQS <code>TicketSigning</code> → <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>; <a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a></td>
 </tr>
 <tr>
 <td>টেবিল</td>
@@ -260,11 +279,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </table>
 <h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
 <ol>
-<li><strong>যে কেউ public id জানে যেকোনো অর্ডারের জন্য তৈরি চালু করতে পারে:</strong> Ticketing অ্যাকশন ও Booking-এর <code>generate-ticket-request</code> অ্যাকশন দুটোই anonymous (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span> নোট 4)। প্রাপ্যতার তারিখ ও <code>Paid</code> যাচাই তবুও প্রযোজ্য।</li>
+<li><strong>যে কেউ public id জানে যেকোনো অর্ডারের জন্য তৈরি চালু করতে পারে:</strong> Ticketing অ্যাকশন ও Booking-এর <code>generate-ticket-request</code> অ্যাকশন দুটোই anonymous (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a> নোট 4)। প্রাপ্যতার তারিখ ও <code>Paid</code> যাচাই তবুও প্রযোজ্য।</li>
 <li><strong>লেখার ক্রম atomic নয়।</strong> টিকিট <code>Requested</code> চিহ্নিত ও বার্তা প্রকাশ করা হয় আগে, এরপর Booking অর্ডারটি <code>Requested</code> হয়; Booking কল ব্যর্থ হলে টিকিট ইতিমধ্যে সই হচ্ছে অথচ অর্ডার এখনো <code>Paid</code> দেখায়, আর বোতামটি আবার চাপলে প্রত্যাখ্যান হয় (<code>ValidateTicketGeneration</code> অর্ডারটি দেখে, যা এখনো <code>Paid</code>, তাই দ্বিতীয় অনুরোধ আবার ছাপে ও আবার প্রকাশ করে) <span class="badge-unconfirmed">[UNCONFIRMED: Q-40]</span>।</li>
 <li><strong>হোল্ডারের ডেটা অনুরোধের সময়ই ফ্রিজ হয়।</strong> QR পেলোডে থাকে অনুরোধের সময় সংরক্ষিত নাম ও ফোন; এরপর সম্পাদনা প্রত্যাখ্যাত হয় কারণ অর্ডার আর <code>Paid</code> নয় (<a href="P-09-ticket-details-downloads.html">P-09</a>)।</li>
 <li><strong>প্রাপ্যতার সময় দুটো ঘড়ি ব্যবহার করে।</strong> বোতামটি ব্রাউজারের ঘড়ি দিয়ে চালু হয় (<code>Date.now()</code> বনাম <code>ticketAvailabilityStartDateTime</code>, প্রতি ৩০ সে রিফ্রেশ হয়) অথচ সার্ভার UTC "এখন" দিয়ে তুলনা করে; ভুল ডিভাইস ঘড়ি বোতামটি তাড়াতাড়ি দেখাতে পারে (সার্ভার প্রত্যাখ্যান করে) বা দেরি করে।</li>
-<li><strong>অনুরোধের সময় TSP-এর সবচেয়ে ব্যস্ত মুহূর্ত।</strong> প্রাপ্যতার তারিখ এলে অনেক গ্রাহক একসাথে বোতাম চাপেন; কাজটি <code>TicketSigning</code>-এ সারিবদ্ধ হয় এবং ওয়ার্কার সই করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>); গ্রাহক কেবল অপেক্ষা করে ও পোল করে।</li>
+<li><strong>অনুরোধের সময় TSP-এর সবচেয়ে ব্যস্ত মুহূর্ত।</strong> প্রাপ্যতার তারিখ এলে অনেক গ্রাহক একসাথে বোতাম চাপেন; কাজটি <code>TicketSigning</code>-এ সারিবদ্ধ হয় এবং ওয়ার্কার সই করে (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>); গ্রাহক কেবল অপেক্ষা করে ও পোল করে।</li>
 <li><strong>অপেক্ষার অবস্থায় কোনো টাইমআউট নেই।</strong> সই করা আটকে গেলে অর্ডার <code>Requested</code> থাকে এবং পেজটি চিরকাল পোল করে; সাপোর্ট ইস্যু তালিকা বা reconciliation-এ (<a href="../10-admin-portal/A-23-reconciliation.html">A-23</a>) তা খুঁজে পায় <span class="badge-unconfirmed">[UNCONFIRMED: Q-12]</span>।</li>
 <li><strong>লেআউট অনুরোধের সময়ই পড়া হয়।</strong> পরে প্রকাশিত লেআউট ইতিমধ্যে অনুরোধ করা টিকিটগুলোকে প্রভাবিত করে না (<a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>)।</li>
 </ol>
@@ -285,7 +304,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   W->>S3: signed PDF; ticket Generated
   U->>B: GET check-generated-status every 30 s (HTTP + user token)
 </div>
-<p><strong>নির্ভর করে:</strong> <a href="P-06-booking-payment.html">P-06</a>, <a href="P-09-ticket-details-downloads.html">P-09</a> (হোল্ডারের ডেটা), <a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>, <a href="../10-admin-portal/A-07-events.html">A-07</a> (প্রাপ্যতার তারিখ)। <strong>প্রভাব ফেলে:</strong> <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-06</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-12</span>, <a href="P-09-ticket-details-downloads.html">P-09</a>।</p>
+<p><strong>নির্ভর করে:</strong> <a href="P-06-booking-payment.html">P-06</a>, <a href="P-09-ticket-details-downloads.html">P-09</a> (হোল্ডারের ডেটা), <a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>, <a href="../10-admin-portal/A-07-events.html">A-07</a> (প্রাপ্যতার তারিখ)। <strong>প্রভাব ফেলে:</strong> <a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a>, <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>, <a href="../50-system-initiated/S-12-ticket-generated-notification.html">S-12</a>, <a href="P-09-ticket-details-downloads.html">P-09</a>।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকাল টেস্টযোগ্যতা: আংশিক।</strong> সই করার জন্য TSP সার্টিফিকেট লাগে, যা লোকালে ডামি, তাই টিকিট <code>Requested</code> হয় কিন্তু সই হয় না।</p>
 <table>
@@ -314,7 +333,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Visual Studio debug</td>
-<td><code>TicketManager.TicketGenerateRequest</code>, <code>ValidateTicketGeneration</code> (Ticketing সার্ভিস); ওয়ার্কার: <code>TicketSigning</code> কনজিউমার (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>)</td>
+<td><code>TicketManager.TicketGenerateRequest</code>, <code>ValidateTicketGeneration</code> (Ticketing সার্ভিস); ওয়ার্কার: <code>TicketSigning</code> কনজিউমার (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>)</td>
 </tr>
 <tr>
 <td>যাচাই</td>

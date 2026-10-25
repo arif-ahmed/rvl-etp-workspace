@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -127,7 +146,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <p><a href="index.html">← 10 · Admin portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
 </blockquote>
 <h2 id="1-name-and-purpose">1. Name and purpose</h2>
-<p><strong>Ticket layouts.</strong> The printed ticket is a PDF template that the platform fills in: it draws text fields, the ticket number, seat data and a QR code on the template (<span class="link-na" title="Not included in the site yet">S-07</span>, <span class="link-na" title="Not included in the site yet">S-08</span>). A <strong>layout config</strong> holds up to six templates for one program, venue and gallery (single or multiple segments × user, partner, complimentary) and an optional back page. <strong>Ticket attributes</strong> decide which information fields appear on the ticket and in which order. Publishing a layout is a precondition to publishing an event (<a href="A-07-events.html">A-07</a>).</p>
+<p><strong>Ticket layouts.</strong> The printed ticket is a PDF template that the platform fills in: it draws text fields, the ticket number, seat data and a QR code on the template (<a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>, <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>). A <strong>layout config</strong> holds up to six templates for one program, venue and gallery (single or multiple segments × user, partner, complimentary) and an optional back page. <strong>Ticket attributes</strong> decide which information fields appear on the ticket and in which order. Publishing a layout is a precondition to publishing an event (<a href="A-07-events.html">A-07</a>).</p>
 <h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
 <p>Staff with roles <code>admin</code>, <code>event_manager</code>, <code>ticket_manager</code>, <code>ticket_operator</code> (<code>BCBPersonnel</code>) (<code>TicketLayoutConfigsController</code>, <code>TicketAttributesController</code>). Entry: <strong>Prog. Managem.</strong> → a program → tab <strong>Ticket Layout</strong> (<code>/program-management/program-home/:id</code>; pages <code>layoutCreate</code>, <code>layoutDetails/:id</code>, <code>configuration</code>). A second module <code>/ticket-layout</code> (<code>ticket-layout-management</code>) has the same screens but is not in the menu.</p>
 <h2 id="3-business-flow">3. Business flow</h2>
@@ -144,7 +163,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li>Publish <code>PUT .../publish/{id}</code>: fails when already published or when <strong>another layout of the same program, venue and gallery is published</strong> ("Ticket Layout Config Already Published for same gallary"). Unpublish <code>PUT .../unpublish/{id}</code>: fails when the program and venue already have <strong>any event</strong> ("... not unpublishable due to active events.") or when already unpublished.</li>
 <li>Duplicate <code>PUT .../duplicate/{id}</code>; delete <code>DELETE .../{id}</code>: refused when the program and venue have an event ("... cannot be deleted due to active events."), otherwise a soft delete of the row; the S3 files are not removed.</li>
 <li>Attributes: <code>GET /admin/api/v1/ticket-attributes/program/{programId}</code>, <code>PUT /admin/api/v1/ticket-attributes/{id}</code> (flags and priorities). One row per program is created with the program (<a href="A-02-programs.html">A-02</a>); the venue type (<code>Stadium</code>/<code>Exhibition Hall</code>) is part of it.</li>
-<li>Use: when tickets are created, Ticketing and Admin render the blank PDF by the published layout and attributes (<code>GetBlankPdf</code>, <code>BuildTicketDynamicAttributesAsync</code>, <span class="link-na" title="Not included in the site yet">S-07</span>); <code>GET .../download-backpage/{eventId}</code> serves the back page for downloads.</li>
+<li>Use: when tickets are created, Ticketing and Admin render the blank PDF by the published layout and attributes (<code>GetBlankPdf</code>, <code>BuildTicketDynamicAttributesAsync</code>, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>); <code>GET .../download-backpage/{eventId}</code> serves the back page for downloads.</li>
 </ol>
 <h2 id="5-components">5. Components</h2>
 <table>
@@ -304,7 +323,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong>Layouts must come first.</strong> A layout cannot get new files, be unpublished or be deleted once the program and venue have an event, even a draft; but an event cannot be published without a published layout for each active gallery. The working order is: venue, program-venue details, layouts (uploaded and published), then events. To change a template for a venue that already has events, there is no supported path except the database <span class="badge-unconfirmed">[UNCONFIRMED: Q-23]</span>.</li>
 <li><strong>The check is by program and venue, not by gallery</strong>, so one event blocks changes for every gallery layout of that venue and program.</li>
 <li><strong>Spelling <code>ticekt</code> is in the data</strong> (S3 keys and URLs) (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>).</li>
-<li><strong>Layout and ticket size drive the QR position</strong> (<code>[900, 650, 650]</code> default and vertical, A4 and horizontal differ) in Ticketing (<span class="link-na" title="Not included in the site yet">S-08</span>); a template whose QR area does not match the size produces unreadable tickets.</li>
+<li><strong>Layout and ticket size drive the QR position</strong> (<code>[900, 650, 650]</code> default and vertical, A4 and horizontal differ) in Ticketing (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>); a template whose QR area does not match the size produces unreadable tickets.</li>
 <li><strong>Event publish needs a <em>published</em> layout for every <em>active</em> gallery</strong> of the event (<a href="A-07-events.html">A-07</a>); a gallery added to the venue later without a layout blocks publishing.</li>
 <li><strong>Two portals paths</strong> (<code>/program-management</code> and the unlinked <code>/ticket-layout</code>) call the same endpoints; keep only one when refactoring.</li>
 <li>A partial upload (file stored, preview generation failed) leaves the file URL set without a preview; the manager deletes the old preview first, then uploads.</li>
@@ -317,7 +336,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   DB -.->|"read"| TK["Ticketing: blank PDF + QR position"]
   EM["A-07 publish"] -->|"needs published layout"| DB
 </div>
-<p><strong>Depends on:</strong> <a href="A-02-programs.html">A-02</a>, <a href="A-05-venues.html">A-05</a>, <a href="A-06-program-venue-mapping.html">A-06</a>. <strong>Affects:</strong> <a href="A-07-events.html">A-07</a>, <span class="link-na" title="Not included in the site yet">S-07</span>, <span class="link-na" title="Not included in the site yet">S-08</span>, <a href="A-12-reserved-tickets.html">A-12</a>.</p>
+<p><strong>Depends on:</strong> <a href="A-02-programs.html">A-02</a>, <a href="A-05-venues.html">A-05</a>, <a href="A-06-program-venue-mapping.html">A-06</a>. <strong>Affects:</strong> <a href="A-07-events.html">A-07</a>, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>, <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>, <a href="A-12-reserved-tickets.html">A-12</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full.</strong></p>
 <table>

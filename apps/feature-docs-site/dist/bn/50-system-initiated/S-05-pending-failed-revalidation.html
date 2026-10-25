@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S-05 · পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="../10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+    <a class="side-section" href="../20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+    <a class="side-section" href="../30-user-app/index.html">30 · ইউজার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+    <a class="side-section" href="../40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+    <a class="side-item" href="../40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+    <a class="side-item" href="../40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+    <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+    <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+    <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item is-active" href="S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">50 · সিস্টেম-চালিত</a><span class="sep">›</span><span>S-05</span></div>
+<h1><span class="id-chip">S-05</span> পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</p>
+<p><a href="index.html">← 50 · System-initiated</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই।</strong> প্রতি ২ মিনিটে Scheduler Booking সার্ভিসকে কল করে, যা (ক) সাম্প্রতিক পেন্ডিং অর্ডারগুলো পেমেন্ট গেটওয়ে DgePay-এর কাছে পুনরায় যাচাই করে পরিশোধিতগুলো চিহ্নিত করে, এবং (খ) ১২ মিনিটের বেশি সময় ধরে <code>Pending</code> বা <code>Failed</code> থাকা অর্ডার বাতিল করে। এতে যেসব গ্রাহক পেমেন্ট করেছেন কিন্তু তাঁদের callback আসেনি, এবং যেসব অর্ডার অসমাপ্ত রয়ে গেছে — সবই আড়াল থাকে। ধারণাগুলো: <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ব্যাকগ্রাউন্ড ওয়ার্কার</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">টোকেন ফরওয়ার্ডিং</span> (এখানে: কোনো টোকেন নেই), <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ডিস্ট্রিবিউটেড লক</span>।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>Scheduler-এর একটি টাইমার (<code>PendingOrFailedBookingStatusUpdateService</code>); কোনো টোকেন ছাড়াই Booking-এর <code>PUT /booking/api/v1/user-booking-order/update-status</code> কল করে <strong class="hop-tag">[HTTP, no token / internal]</strong>।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<p>একটি অর্ডার <code>Pending</code> হিসেবে তৈরি হয় এবং গ্রাহকের পেমেন্টের সময় ১২ মিনিট থাকে। DgePay callback না এলে প্ল্যাটফর্ম তৈরির ৭ থেকে ১০ মিনিটের মধ্যে DgePay-এর কাছে লেনদেনের স্ট্যাটাস জিজ্ঞেস করে এবং পরিশোধিত হলে অর্ডার সম্পূর্ণ করে। ১২ মিনিট পরেও যে অর্ডার <code>Pending</code> বা <code>Failed</code> থাকে তা বাতিল হয়।</p>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<ol>
+<li><strong class="hop-tag">[Worker: ১ মিনিট স্টার্ট ডিলে, তারপর প্রতি ২ মিনিটে; RedLock <code>pending_cancel_booking_status_updater</code>, মেয়াদ ২ মিনিট, অপেক্ষা নেই; ত্রুটির পর অতিরিক্ত ২ মিনিট]</strong> <code>PendingOrFailedBookingStatusUpdateTaskManager</code> হিসাব করে <code>cutoffTime = UtcNow - 12 min</code> এবং কল করে <code>IBookingClient.UpdatePendingOrFailedBookingStatusToCancelAsync</code> → <code>PUT /booking/api/v1/user-booking-order/update-status</code>, বডি <code>{ "CutoffTime": "&lt;UTC time&gt;" }</code>।</li>
+<li>এই endpoint (কোনো <code>[Authorize]</code> নেই; মন্তব্য বলছে "don't expose to gateway") <strong>সমান্তরালে দুটি টাস্ক</strong> শুরু করে, প্রতিটি নিজস্ব DI scope-এ:
+   - <strong><code>RevaildateRecentPendingBookingsAsync</code></strong>: স্ট্যাটাস <code>Pending</code> এবং <code>cutoff + 2 min</code> থেকে <code>cutoff + 5 min</code>-এর মধ্যে তৈরি অর্ডার লোড করে (অর্থাৎ ১০ থেকে ৭ মিনিট আগে)। প্রতিটির জন্য <code>dgePayPaymentManager.GetPaymentStatus(PaymentTransactionId)</code> DgePay-কে জিজ্ঞেস করে; গেটওয়ে <code>Paid</code> বললে অর্ডার <code>Paid</code> হয়, পেমেন্ট তথ্য সংরক্ষিত হয়, একটি <code>OrderSuccess</code> মেসেজ প্রকাশিত হয় <strong class="hop-tag">[SQS: OrderSuccess]</strong> (<a href="S-01-level-capacity-update.html">S-01</a>) এবং পরিবর্তনটি সেভ হয়। যেকোনো এক্সেপশন সেই অর্ডারটি নীরবে এড়িয়ে যায়।
+   - <strong><code>CancelBookingAsync</code></strong>: <code>cutoff</code>-এর আগে তৈরি, স্ট্যাটাস <code>Pending</code> বা <code>Failed</code> অর্ডার লোড করে। প্রতিটির জন্য DgePay-এর স্ট্যাটাস জিজ্ঞেস করে, ফেরত পাওয়া পেমেন্ট তথ্য সংরক্ষণ করে, <code>Cancelled</code> এবং <code>CancelledAt = now</code> সেট করে এবং সেভ করে। গেটওয়েের পরিশোধিত/ব্যর্থ ফলাফল <strong>বিস্মৃত</strong> করা হয় (<code>var (_, paymentInfo)</code>)।</li>
+<li>দুটি টাস্ক একসঙ্গে অপেক্ষা করা হয় এবং endpoint <code>true</code> ফেরত দেয়।</li>
+</ol>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Services</td>
+<td>Scheduler (টাইমার), Booking (লজিক)</td>
+</tr>
+<tr>
+<td>External</td>
+<td>DgePay <code>check_transaction_status</code> (<a href="../20-user-portal/P-06-booking-payment.html">P-06</a>)</td>
+</tr>
+<tr>
+<td>Queue</td>
+<td><code>OrderSuccess</code></td>
+</tr>
+<tr>
+<td>Tables</td>
+<td><code>UserBookingOrder</code> (<code>Status</code>, <code>PaymentInfo</code>, <code>CancelledAt</code>)</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>লক <code>pending_cancel_booking_status_updater</code>; DgePay auth টোকেন ক্যাশ <code>dgepay_auth_token</code></td>
+</tr>
+<tr>
+<td>Code</td>
+<td><code>Services/Scheduler/ETP.Scheduler.Service/Workers/*/PendingOrFailedBookingStatusUpdate*.cs</code>, <code>Core/ETP.Core/ServiceClient/BookingClient/BookingClient.cs:196</code>, <code>Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs:392-417</code>, <code>Services/Booking/ETP.Booking.Domain/Managers/UserBookingOrderManager.cs:1044-1140</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>মেথড</th>
+<th>পাথ</th>
+<th>Auth</th>
+<th>রিকোয়েস্ট</th>
+<th>রেসপন্স</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PUT</td>
+<td><code>/booking/api/v1/user-booking-order/update-status</code></td>
+<td>none</td>
+<td><code>UpdateBookingStatusRequest { cutoffTime }</code></td>
+<td><code>true</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-json">{ &quot;CutoffTime&quot;: &quot;2026-10-22T10:48:00Z&quot; }
+</code></pre>
+<p>(Scheduler প্রপার্টিটি <code>CutoffTime</code> হিসেবে পাঠায়; মানটি উদাহরণমূলক)। অর্ডারের স্ট্যাটাস: <code>Pending</code>, <code>Paid</code>, <code>Failed</code>, <code>Cancelled</code>, এবং পরের <code>Requested</code>, <code>Generated</code>।</p>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<ul>
+<li><code>UserBookingOrder</code>: স্ট্যাটাস <code>Paid</code> বা <code>Cancelled</code>, <code>PaymentInfo</code>, <code>CancelledAt</code>।</li>
+<li>পরিশোধিত পাওয়া অর্ডারের জন্য <code>OrderSuccess</code> কিউ মেসেজ।</li>
+<li>লকড আসন এখানে <strong>মুক্ত</strong> করা হয় না; সেগুলো ১২ মিনিটের নিয়মে মেয়াদোত্তীর্ণ হয় (<a href="S-03-locked-capacity-refresh.html">S-03</a>)।</li>
+</ul>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Worker loop</td>
+<td><code>rvl-gobcb-backend/Services/Scheduler/ETP.Scheduler.Service/Workers/BackgroundServices/PendingOrFailedBookingStatusUpdateService.cs:26-52</code></td>
+</tr>
+<tr>
+<td>Task manager</td>
+<td><code>rvl-gobcb-backend/Services/Scheduler/ETP.Scheduler.Service/Workers/TaskManagers/PendingOrFailedBookingStatusUpdateTaskManager.cs:24-39</code></td>
+</tr>
+<tr>
+<td>Client</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/ServiceClient/BookingClient/BookingClient.cs:196-210</code></td>
+</tr>
+<tr>
+<td>Endpoint</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Service/Api/UserBookingOrderController.cs:392-417</code></td>
+</tr>
+<tr>
+<td>Revalidate and cancel</td>
+<td><code>rvl-gobcb-backend/Services/Booking/ETP.Booking.Domain/Managers/UserBookingOrderManager.cs:1044-1112</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>বাতিল করার সময় গেটওয়ের ফলাফল উপেক্ষা করা হয়।</strong> <code>CancelBookingAsync</code> DgePay-কে জিজ্ঞেস করে কিন্তু স্ট্যাটাস ছুঁড়ে দেয় এবং ১২ মিনিটের পুরনো প্রতিটি <code>Pending</code> বা <code>Failed</code> অর্ডারকে <code>Cancelled</code> সেট করে। যে গ্রাহক ৭-১০ মিনিটের যাচাই-উইন্ডোর পরে পেমেন্ট করেছেন (অথবা যার যাচাই ব্যর্থ হয়েছে), তার শেষ পর্যন্ত বাতিল অর্ডার ও সফল পেমেন্ট দুটোই থাকতে পারে। এটি হাতে মিলিয়ে সমন্বয় করা হয় কি না, রিপোজিটরিতে দেখা যায় না <span class="badge-unconfirmed">[UNCONFIRMED: Q-11]</span>।</li>
+<li><strong>পুনঃযাচাই-র উইন্ডো মাত্র ৩ মিনিট চওড়া</strong> (তৈরির ৭ থেকে ১০ মিনিট পরে) এবং প্রতি ২ মিনিটে চলে, তাই একটি অর্ডার এক বা দুইবার দেখা হয়; গেটওয়ের ত্রুটি হলে সেটি নীরবে এড়িয়ে যায় (<code>catch { continue; }</code>)।</li>
+<li><strong>দেরি আসা callback-ও উপেক্ষা করা হয়</strong>: DgePay callback ১২ মিনিটের পুরনো অর্ডার হালনাগাদ করে না (<a href="S-01-level-capacity-update.html">S-01</a> নোট ৩)।</li>
+<li><strong>Endpoint অ্যানোনিমাস ও ব্যয়বহুল।</strong> যে কেউ এটিতে পৌঁছাতে পারে সে যেকোনো <code>cutoffTime</code> দিয়ে একটি বাতিল রান চালু করতে পারে (যেমন বর্তমান সময়, যা প্রতিটি <code>Pending</code> বা <code>Failed</code> অর্ডার বাতিল করবে — কয়েক সেকেন্ড আগে তৈরি হওয়াগুলোও, যতক্ষণ DgePay উত্তর দেয়)। এটি গেটওয়ের মাধ্যমে প্রকাশ করা উচিত নয় (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a> বিভাগ C; architecture §2.3 B)।</li>
+<li>দুটি টাস্ক সমান্তরালে চলে এবং কোনো একই অর্ডারে দুটোই স্পর্শ করতে পারে কেবল যদি তার তৈরির সময় উভয় পরিসরে পড়ে, যা পরিসরগুলো আটকায়; দুটির মধ্যে কোনো লক নেই।</li>
+<li><code>Failed</code> অর্ডার ১২ মিনিট পর বাতিল হয়, কিন্তু <code>Failed</code> স্ট্যাটাস callback বা bypass হ্যান্ডলার থেকে আসতে পারে (<a href="../20-user-portal/P-06-booking-payment.html">P-06</a>)।</li>
+<li><strong>বাতিল করা নির্ভর করে DgePay পৌঁছানোর ওপর।</strong> স্ট্যাটাস বদলানোর আগে <code>GetPaymentStatus</code> চলে; DgePay ডাউন থাকলে বা non-200 উত্তর দিলে (২ বার রিট্রাই, ৩ সেকেন্ড ব্যবধানে, ৫ সেকেন্ড টাইমআউট) এক্সেপশন অর্ডারটি এড়িয়ে যায়, এবং সেটি পরের সফল রান পর্যন্ত <code>Pending</code> থাকে।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">sequenceDiagram
+  participant S as Scheduler worker
+  participant B as Booking API
+  participant G as DgePay
+  participant Q as OrderSuccess queue
+  participant DB as Booking DB
+  S->>B: PUT update-status (HTTP, no token) every 2 min
+  par revalidate 7-10 min old Pending
+    B->>G: check transaction status
+    B->>DB: status = Paid
+    B->>Q: LevelCapacityUpdate
+  and cancel Pending/Failed older than 12 min
+    B->>G: check transaction status (result ignored)
+    B->>DB: status = Cancelled
+  end
+</div>
+<p><strong>নির্ভর করে:</strong> অর্ডার তৈরি ও পেমেন্ট (<a href="../20-user-portal/P-06-booking-payment.html">P-06</a>)। <strong>প্রভাব ফেলে:</strong> <a href="S-01-level-capacity-update.html">S-01</a>, <a href="S-06-booking-status-generated.html">S-06</a>, আমার বুকিং (<a href="../20-user-portal/P-07-my-bookings.html">P-07</a>)।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালে টেস্টযোগ্যতা: আংশিক।</strong> ওয়ার্কার ও endpoint চলে; DgePay লোকালে ডামি (<code>docs/local-dev.md</code>), তাই <code>GetPaymentStatus</code> সফল হতে পারে না (যেকোনো non-200 উত্তরে এটি <code>ArgumentException("Unknown error occurred in DGePay")</code> ছুঁড়ে)। যেহেতু কলটি <code>try { ... } catch { continue; }</code>-এর ভেতরে, পুনঃযাচাই কিছুই করে না এবং <code>CancelBookingAsync</code>-ও প্রতিটি অর্ডার এড়িয়ে যায়, তাই লোকালে অর্ডার <code>Pending</code> থাকে (নোট ৭ দেখুন)।</p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td><code>pwsh ./scripts/Seed-EtpData.ps1</code>; বুকিং প্রবাহ থেকে একটি <code>Pending</code> অর্ডার</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td>ইউজার পোর্টাল: একটি বুকিং শুরু করে পেমেন্ট না করে; ১২ মিনিট পর "my bookings" দেখুন</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>লোকালে নয় (পরিচিত লগইন ঘাটতি)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-booking.postman_collection.json</code>: "PUT /api/v1/user-booking-order/update-status" <code>{"CutoffTime": "&lt;time&gt;"}</code> দিয়ে (কোনো টোকেন লাগে না)</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>ব্রেকপয়েন্ট: <code>PendingOrFailedBookingStatusUpdateTaskManager.ExecuteAsync</code> (Scheduler), তারপর <code>UserBookingOrderManager.RevaildateRecentPendingBookingsAsync</code> ও <code>CancelBookingAsync</code> (Booking); দুটি সার্ভিসই চালু করুন</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>বুকিং অর্ডার টেবিলে SQL: <code>Status</code>, <code>CancelledAt</code>; দুটি সার্ভিসের Aspire লগ</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="S-04-scheduler-capacity-update.html"><span class="pager-label">পূর্ববর্তী</span><span>S-04 · শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+  <a class="pager-next" href="S-06-booking-status-generated.html"><span class="pager-label">পরবর্তী</span><span>S-06 · বুকিং স্ট্যাটাস → Generated</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/vendor/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

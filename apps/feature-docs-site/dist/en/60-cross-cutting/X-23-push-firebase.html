@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -132,8 +151,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <ul>
 <li><strong>Register, replace, delete a token:</strong> the user app, on start-up and token refresh (<a href="../30-user-app/U-09-device-token.html">U-09</a>).</li>
 <li><strong>Send to all:</strong> Admin service when an admin publishes an event (<a href="../10-admin-portal/A-07-events.html">A-07</a>).</li>
-<li><strong>Clean up old tokens:</strong> Scheduler worker (<span class="link-na" title="Not included in the site yet">S-13</span>).</li>
-<li><strong>Deliver:</strong> Scheduler <code>FirebaseNotificationService</code> (<span class="link-na" title="Not included in the site yet">S-11</span>).</li>
+<li><strong>Clean up old tokens:</strong> Scheduler worker (<a href="../50-system-initiated/S-13-device-token-cleanup.html">S-13</a>).</li>
+<li><strong>Deliver:</strong> Scheduler <code>FirebaseNotificationService</code> (<a href="../50-system-initiated/S-11-firebase-notification.html">S-11</a>).</li>
 </ul>
 <h2 id="3-business-flow">3. Business flow</h2>
 <p>When an event is published, every user who has the app installed sees "New Event Available!" with the event name. Users who never opened the app after installing, or who revoked notification permission, have no token and receive nothing.</p>
@@ -321,11 +340,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <ol>
 <li><strong>No authentication on the whole service.</strong> <code>UseAuthentication()</code> and <code>UseAuthorization()</code> are commented out in <code>Program.cs</code>, and the controllers carry no <code>[Authorize]</code>. Anyone who can reach <code>/pushnotification/...</code> can add or delete tokens, read the tokens of any <code>userId</code> (<code>GET device-token/{userId}</code>), trigger <code>send-to-all</code>, and run <code>cleanup</code>. The architecture document records the same facts (§9 items 3 and 6); whether the ingress exposes it is open <span class="badge-unconfirmed">[UNCONFIRMED: Q-04]</span>.</li>
 <li><strong>The user id in a token registration is taken from the body</strong>, not from a token, so a client can register a token under another user's id.</li>
-<li><strong>Delivery is fire-and-forget.</strong> The worker deletes each message even when Firebase failed or returned partial failures (<code>SendEachForMulticastAsync</code> counts as success when at least one token succeeded). Invalid tokens are not removed on failure; they are only removed by the age-based cleanup (<span class="link-na" title="Not included in the site yet">S-13</span>).</li>
+<li><strong>Delivery is fire-and-forget.</strong> The worker deletes each message even when Firebase failed or returned partial failures (<code>SendEachForMulticastAsync</code> counts as success when at least one token succeeded). Invalid tokens are not removed on failure; they are only removed by the age-based cleanup (<a href="../50-system-initiated/S-13-device-token-cleanup.html">S-13</a>).</li>
 <li><strong>No distributed lock is needed</strong> here: the queue is the coordination point (contrast the lock-based workers, <span class="link-na" title="Not included in the site yet">explainer</span>).</li>
 <li><code>send-to-users</code>, <code>send-to-user</code> and the Admin client's matching methods exist, but this review found no caller of them in the five repositories; the only live sender is event publish <span class="badge-unconfirmed">[UNCONFIRMED: Q-08]</span>. Order and ticket pushes are not sent (customers get the <code>ticket_generated</code> message through the external service, <a href="X-22-sms-notification.html">X-22</a>).</li>
 <li><code>FirebaseBulkNotificationRequest</code> and <code>FirebaseOptions.ServerKey</code> are unused (<span class="link-na" title="Not included in the site yet">Appendix A</span>).</li>
-<li>The Scheduler's daily token cleanup appears not to reach <code>device-token/cleanup</code>; it calls <code>Services:Admin</code> without the <code>pushnotification/</code> prefix (<span class="link-na" title="Not included in the site yet">S-13</span>, <span class="badge-unconfirmed">[UNCONFIRMED: Q-16]</span>). Until that is confirmed, assume stale tokens are not removed.</li>
+<li>The Scheduler's daily token cleanup appears not to reach <code>device-token/cleanup</code>; it calls <code>Services:Admin</code> without the <code>pushnotification/</code> prefix (<a href="../50-system-initiated/S-13-device-token-cleanup.html">S-13</a>, <span class="badge-unconfirmed">[UNCONFIRMED: Q-16]</span>). Until that is confirmed, assume stale tokens are not removed.</li>
 <li>Locally Firebase is dummy: Scheduler logs Firebase warnings and the app registers no real token (<code>docs/local-dev.md</code>, <code>docs/mobile-local.md</code> §8 "Known gaps").</li>
 </ol>
 <h2 id="10-component-relationships">10. Component relationships</h2>

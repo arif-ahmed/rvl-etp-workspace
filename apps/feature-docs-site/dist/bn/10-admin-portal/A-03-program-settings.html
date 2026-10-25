@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -131,7 +150,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
 <p>রোল <code>admin</code> বা <code>event_manager</code>-এর কর্মী (কন্ট্রোলার কেবল এই দুটিকেই অনুমোদন করে)। প্রবেশবিন্দু: <strong>Prog. Managem.</strong> → একটি program → ট্যাব <strong>Program Settings</strong> (<code>/program-management/program-home/:id</code>)।</p>
 <h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
-<p>অ্যাডমিন একটি program বেছে নেন, মান বদলান এবং <strong>Update</strong> চাপেন। ফর্মের নিয়মগুলো: প্রতি ইভেন্টে প্রতি গ্রাহকের সর্বোচ্চ অর্ডার; প্রতি অর্ডারে সর্বোচ্চ আসন; "ticket selling start from" (ইভেন্ট শুরুর কত ঘণ্টা আগে); "ticket selling stop from" (ইভেন্ট <strong>শেষ</strong> হওয়ার কত ঘণ্টা আগে); "ticket available from" (ইভেন্ট শুরুর কত ঘণ্টা আগে, যখন টিকিট জেনারেট করা যায়, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>); limited-availability থ্রেশহোল্ড; টিকিট-নম্বরের প্রিফিক্স; পেমেন্ট gateway (DgePay বা SSLCommerz); VAT ও সার্ভিস চার্জ (পরিমাণ বা শতকরা); VAT inclusive।</p>
+<p>অ্যাডমিন একটি program বেছে নেন, মান বদলান এবং <strong>Update</strong> চাপেন। ফর্মের নিয়মগুলো: প্রতি ইভেন্টে প্রতি গ্রাহকের সর্বোচ্চ অর্ডার; প্রতি অর্ডারে সর্বোচ্চ আসন; "ticket selling start from" (ইভেন্ট শুরুর কত ঘণ্টা আগে); "ticket selling stop from" (ইভেন্ট <strong>শেষ</strong> হওয়ার কত ঘণ্টা আগে); "ticket available from" (ইভেন্ট শুরুর কত ঘণ্টা আগে, যখন টিকিট জেনারেট করা যায়, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>); limited-availability থ্রেশহোল্ড; টিকিট-নম্বরের প্রিফিক্স; পেমেন্ট gateway (DgePay বা SSLCommerz); VAT ও সার্ভিস চার্জ (পরিমাণ বা শতকরা); VAT inclusive।</p>
 <h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
 <ol>
 <li><strong class="hop-tag">[HTTP + user token]</strong> ট্যাবটি <code>GET /admin/api/v1/program-settings/{programId}</code> লোড করে ফর্ম পূরণ করে; program ড্রপডাউন আসে <code>GET /admin/api/v1/program</code> থেকে।</li>
@@ -263,7 +282,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong>সেটিংস কপি হয়, রেফারেন্স হয় না।</strong> পোর্টাল দিয়ে তৈরি প্রতিটি ইভেন্ট তৈরির সময় নিজস্ব <code>EventSettings</code> সারি পায়, তাই program settings বদলালে কেবল এরপর তৈরি ইভেন্টগুলো প্রভাবিত হয়; বিদ্যমান কোনো ইভেন্ট বদলাতে <a href="A-08-event-settings.html">A-08</a> ব্যবহার করুন।</li>
 <li><strong>VAT লক শুধু program-এর <em>প্রকাশিত</em> ইভেন্টগুলো দেখে</strong>; একটি খসড়া ইভেন্ট পুনরায় সেভ না হওয়া পর্যন্ত পুরনো মান ধরে রাখে, এবং এই নিয়ম ইতিমধ্যে দেওয়া অর্ডারগুলোকে রক্ষা করে না।</li>
 <li><strong>টিকিট-বিক্রির শেষ মাপা হয় ইভেন্টের শেষ থেকে</strong> (<code>EndDateTime</code>), যেখানে শুরু মাপা হয় ইভেন্ট শুরু থেকে; শেষের তারিখ না থাকা ইভেন্ট <code>EventManager</code>-এ ব্যর্থ হবে (<code>entity.EndDateTime.Value</code>)।</li>
-<li><strong><code>TicketNumberPrefix</code> যেকোনো সময় সম্পাদনা করা যায়</strong>; নতুন টিকিট ইভেন্টের settings-এর প্রিফিক্স ব্যবহার করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>), তাই মাঝে পরিবর্তন হলে একটি ইভেন্টের টিকিটে দুটি প্রিফিক্স থাকতে পারে।</li>
+<li><strong><code>TicketNumberPrefix</code> যেকোনো সময় সম্পাদনা করা যায়</strong>; নতুন টিকিট ইভেন্টের settings-এর প্রিফিক্স ব্যবহার করে (<a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>), তাই মাঝে পরিবর্তন হলে একটি ইভেন্টের টিকিটে দুটি প্রিফিক্স থাকতে পারে।</li>
 <li>পেমেন্ট gateway JSON-এ একটি enum সংখ্যা; <code>SSLCommerz</code> ফর্মে সমর্থিত, কিন্তু তার callback নিষ্ক্রিয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">Appendix A</span>); BS23 অন্য কিছু নিশ্চিত না করলে <code>DgePay</code> বেছে নিন <span class="badge-unconfirmed">[UNCONFIRMED: Q-19]</span>।</li>
 </ol>
 <h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
@@ -275,7 +294,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   DB -.->|"read model"| EV["Event service"]
   EM["A-07 EventManager"] -->|"selling dates"| DB
 </div>
-<p><strong>নির্ভর করে:</strong> <a href="A-02-programs.html">A-02</a>। <strong>প্রভাব ফেলে:</strong> <a href="A-07-events.html">A-07</a>, <a href="A-08-event-settings.html">A-08</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-10</span>।</p>
+<p><strong>নির্ভর করে:</strong> <a href="A-02-programs.html">A-02</a>। <strong>প্রভাব ফেলে:</strong> <a href="A-07-events.html">A-07</a>, <a href="A-08-event-settings.html">A-08</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>, <a href="../50-system-initiated/S-10-vat-challan.html">S-10</a>।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকালে টেস্টযোগ্যতা: সম্পূর্ণ।</strong></p>
 <table>

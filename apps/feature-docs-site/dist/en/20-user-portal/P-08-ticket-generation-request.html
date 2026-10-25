@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -134,21 +153,21 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <ol>
 <li>Before the availability date the button is inactive. From the availability date on, <strong>Request tickets</strong> opens a confirmation pop-up ("Once generated, the ticket details cannot be changed"; the pop-up text is hard-coded in English, not translated).</li>
 <li>After confirmation the order status becomes <code>Requested</code>; a pop-up says generation is in progress; the page shows the "in progress" state and re-checks every 30 seconds.</li>
-<li>When every ticket is signed the order becomes <code>Generated</code> (<span class="link-na" title="Not included in the site yet">S-06</span>); the page reloads the tickets and shows the <strong>Download</strong>, <strong>Share</strong> and, for more than one ticket, <strong>Download all</strong> buttons.</li>
+<li>When every ticket is signed the order becomes <code>Generated</code> (<a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a>); the page reloads the tickets and shows the <strong>Download</strong>, <strong>Share</strong> and, for more than one ticket, <strong>Download all</strong> buttons.</li>
 </ol>
 <h2 id="4-technical-flow">4. Technical flow</h2>
 <ol>
-<li>Draft tickets exist because the details call creates them on demand: <code>GetTicketsInfo</code> creates the rows of a <code>Paid</code> order that has none (<code>InitiateBulkTicketForNewlyPaidOrder</code>, under the Redis lock <code>create_user_ticket_{publicId}</code>), in addition to the payment callback and the worker (<span class="link-na" title="Not included in the site yet">S-07</span>).</li>
+<li>Draft tickets exist because the details call creates them on demand: <code>GetTicketsInfo</code> creates the rows of a <code>Paid</code> order that has none (<code>InitiateBulkTicketForNewlyPaidOrder</code>, under the Redis lock <code>create_user_ticket_{publicId}</code>), in addition to the payment callback and the worker (<a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>).</li>
 <li><strong class="hop-tag">[HTTP, no token → Ticketing]</strong> The portal sends <code>PATCH {services.tickets}/ticketing/api/v1/booking-order-ticket/generate-request/{publicId}</code> with an empty body (<code>BookingApiService.requestTicketsById</code>). The controller action has <strong>no <code>[Authorize]</code></strong> and the manager does not check the caller; the portal's token interceptor still attaches the user token because the URL contains <code>/ticketing</code>.</li>
 <li><code>TicketManager.TicketGenerateRequest</code>:</li>
 <li>reads the order from Booking (<strong class="hop-tag">[HTTP, no token]</strong> <code>GET .../user-booking-order/public-id/{id}</code>);</li>
 <li><code>ValidateTicketGeneration</code>: status <code>Requested</code> or <code>Generated</code> → <code>Request to generate ticket is already taken.</code>; not <code>Paid</code> → <code>Only paid order requests can generate tickets</code>; the event's <code>TicketAvailabilityStartDateTime</code> later than now (UTC) → <code>You can request after ticket availability date.</code>;</li>
 <li>loads the level info and the <strong>published ticket layout</strong> of the program, venue and gallery (<a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>);</li>
 <li>for each ticket, draws the blank PDF (<code>GetBlankPdf</code>) and uploads it to the ticket bucket under <code>{BlankBase}/user/{userId}/{orderId}/{ticketNumber}.pdf</code> (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>); sets the ticket status <code>Requested</code> and the layout's back-page URL; saves;</li>
-<li>for each ticket publishes <strong class="hop-tag">[SQS: TicketSigning]</strong> a <code>SignedTicketGeneration</code> message (<code>UnsignedTicketUrl</code>, <code>QRPosition</code> by layout size, <code>GateId</code> = the level's entry gate, <code>Data</code> = name, phone, date and time (UTC+6), ticket id, event id, gallery, block, level, entry gate, mini gate, seat); the signing worker is <span class="link-na" title="Not included in the site yet">S-08</span>;</li>
+<li>for each ticket publishes <strong class="hop-tag">[SQS: TicketSigning]</strong> a <code>SignedTicketGeneration</code> message (<code>UnsignedTicketUrl</code>, <code>QRPosition</code> by layout size, <code>GateId</code> = the level's entry gate, <code>Data</code> = name, phone, date and time (UTC+6), ticket id, event id, gallery, block, level, entry gate, mini gate, seat); the signing worker is <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>;</li>
 <li><strong class="hop-tag">[HTTP, no token → Booking]</strong> <code>PATCH .../user-booking-order/generate-ticket-request/{publicId}</code> sets the order status <code>Requested</code>, and returns the order with its tickets.</li>
 <li>The browser updates the ticket statuses and the order status from the response and opens the "generation" pop-up. From now on <code>ngOnInit</code>'s timer (every 30 s) calls <strong class="hop-tag">[HTTP + user token]</strong> <code>GET /booking/api/v1/user-booking-order/check-generated-status?id=</code> while the status is <code>Requested</code>; when it returns <code>true</code> the portal reloads the tickets (<code>details</code>).</li>
-<li>Background: <span class="link-na" title="Not included in the site yet">S-08</span> signs and stores each ticket (<code>SignedTicketUrl</code>); <span class="link-na" title="Not included in the site yet">S-06</span> marks the order <code>Generated</code> when all its tickets are signed; <span class="link-na" title="Not included in the site yet">S-12</span> sends the push message.</li>
+<li>Background: <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a> signs and stores each ticket (<code>SignedTicketUrl</code>); <a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a> marks the order <code>Generated</code> when all its tickets are signed; <a href="../50-system-initiated/S-12-ticket-generated-notification.html">S-12</a> sends the push message.</li>
 </ol>
 <h2 id="5-components">5. Components</h2>
 <table>
@@ -169,7 +188,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Queues / workers</td>
-<td>SQS <code>TicketSigning</code> → <span class="link-na" title="Not included in the site yet">S-08</span>; <span class="link-na" title="Not included in the site yet">S-06</span></td>
+<td>SQS <code>TicketSigning</code> → <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>; <a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a></td>
 </tr>
 <tr>
 <td>Tables</td>
@@ -260,11 +279,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </table>
 <h2 id="9-handover-notes">9. Handover notes</h2>
 <ol>
-<li><strong>Anyone can trigger generation for any order</strong> whose public id they know: the Ticketing action and the Booking <code>generate-ticket-request</code> action are anonymous (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>, <span class="link-na" title="Not included in the site yet">S-07</span> note 4). The availability-date and <code>Paid</code> checks still apply.</li>
+<li><strong>Anyone can trigger generation for any order</strong> whose public id they know: the Ticketing action and the Booking <code>generate-ticket-request</code> action are anonymous (<a href="../60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a> note 4). The availability-date and <code>Paid</code> checks still apply.</li>
 <li><strong>Order of the writes is not atomic.</strong> Tickets are marked <code>Requested</code> and messages are published before the Booking order is set to <code>Requested</code>; if the Booking call fails the tickets are already being signed while the order still shows <code>Paid</code>, and pressing the button again is refused (<code>ValidateTicketGeneration</code> looks at the order, which is still <code>Paid</code>, so a second request re-prints and re-publishes) <span class="badge-unconfirmed">[UNCONFIRMED: Q-40]</span>.</li>
 <li><strong>Holder data is frozen at request time.</strong> The QR payload contains the name and phone as stored when the request is made; editing is refused afterwards because the order is no longer <code>Paid</code> (<a href="P-09-ticket-details-downloads.html">P-09</a>).</li>
 <li><strong>Availability time uses two clocks.</strong> The button is enabled by the browser's clock (<code>Date.now()</code> against <code>ticketAvailabilityStartDateTime</code>, refreshed every 30 s) while the server compares with UTC now; a wrong device clock can show the button early (server refuses) or late.</li>
-<li><strong>Request time is the TSP's busiest moment.</strong> When the availability date arrives many customers press the button together; the work is queued in <code>TicketSigning</code> and signed by the worker (<span class="link-na" title="Not included in the site yet">S-08</span>); the customer only waits and polls.</li>
+<li><strong>Request time is the TSP's busiest moment.</strong> When the availability date arrives many customers press the button together; the work is queued in <code>TicketSigning</code> and signed by the worker (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>); the customer only waits and polls.</li>
 <li><strong>No timeout on the waiting state.</strong> If signing stalls, the order stays <code>Requested</code> and the page keeps polling for ever; support finds it in the issue list or reconciliation (<a href="../10-admin-portal/A-23-reconciliation.html">A-23</a>) <span class="badge-unconfirmed">[UNCONFIRMED: Q-12]</span>.</li>
 <li><strong>Layout is read at request time.</strong> A layout published later does not affect tickets already requested (<a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>).</li>
 </ol>
@@ -285,7 +304,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   W->>S3: signed PDF; ticket Generated
   U->>B: GET check-generated-status every 30 s (HTTP + user token)
 </div>
-<p><strong>Depends on:</strong> <a href="P-06-booking-payment.html">P-06</a>, <a href="P-09-ticket-details-downloads.html">P-09</a> (holder data), <a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>, <a href="../10-admin-portal/A-07-events.html">A-07</a> (availability date). <strong>Affects:</strong> <span class="link-na" title="Not included in the site yet">S-06</span>, <span class="link-na" title="Not included in the site yet">S-08</span>, <span class="link-na" title="Not included in the site yet">S-12</span>, <a href="P-09-ticket-details-downloads.html">P-09</a>.</p>
+<p><strong>Depends on:</strong> <a href="P-06-booking-payment.html">P-06</a>, <a href="P-09-ticket-details-downloads.html">P-09</a> (holder data), <a href="../10-admin-portal/A-13-ticket-layouts.html">A-13</a>, <a href="../10-admin-portal/A-07-events.html">A-07</a> (availability date). <strong>Affects:</strong> <a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a>, <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>, <a href="../50-system-initiated/S-12-ticket-generated-notification.html">S-12</a>, <a href="P-09-ticket-details-downloads.html">P-09</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Partial.</strong> Signing needs the TSP certificate, which is a dummy locally, so tickets reach <code>Requested</code> but are not signed.</p>
 <table>
@@ -314,7 +333,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Visual Studio debug</td>
-<td><code>TicketManager.TicketGenerateRequest</code>, <code>ValidateTicketGeneration</code> (Ticketing service); worker: <code>TicketSigning</code> consumer (<span class="link-na" title="Not included in the site yet">S-08</span>)</td>
+<td><code>TicketManager.TicketGenerateRequest</code>, <code>ValidateTicketGeneration</code> (Ticketing service); worker: <code>TicketSigning</code> consumer (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>)</td>
 </tr>
 <tr>
 <td>Verify</td>

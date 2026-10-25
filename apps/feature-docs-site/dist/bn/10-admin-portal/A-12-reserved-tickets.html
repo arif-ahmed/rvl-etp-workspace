@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -134,8 +153,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <ol>
 <li>একটি event, একটি level ও একটি রিজার্ভেশন বাছুন (অবশিষ্ট reserved আসন দেখানো হয়)।</li>
 <li>একটি পরিমাণের (অথবা নির্দিষ্ট আসনের) জন্য একটি টিকিট ধরন নিয়ে (ডিফল্ট <code>Partner Sale</code>) <strong>Generate</strong> করুন। একটি <strong>test</strong> রিকোয়েস্ট কেবল ফাঁকা টিকিটের একটি প্রিভিউ তৈরি করে।</li>
-<li>তৈরি টিকিটগুলো <strong>Sign</strong> করান (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>); সব সাইন না হওয়া পর্যন্ত অপেক্ষা করুন।</li>
-<li>PDF-তে <strong>Merge</strong> বা <strong>Zip</strong> করুন (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-09</span>); চাংগগুলো ডাউনলোড করুন।</li>
+<li>তৈরি টিকিটগুলো <strong>Sign</strong> করান (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>); সব সাইন না হওয়া পর্যন্ত অপেক্ষা করুন।</li>
+<li>PDF-তে <strong>Merge</strong> বা <strong>Zip</strong> করুন (<a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>); চাংগগুলো ডাউনলোড করুন।</li>
 <li>বিকল্পে আলাদা টিকিটগুলো একটি zip হিসেবে ডাউনলোড করুন, বা একজন প্রাপককে ইমেইল করুন (<a href="../60-cross-cutting/X-21-email-ses.html">X-21</a>)। টিকিটের action state রেকর্ড করে কী ঘটেছে (<code>downloaded</code>, <code>emailed: {recipient}</code>, বা একটি কাস্টম লেখা)।</li>
 </ol>
 <h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
@@ -143,7 +162,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong>তৈরি</strong> <strong class="hop-tag">[HTTP + user token]</strong> <code>ReservedTicketRequest {id (reservation id), amount, hasSeats, seats, ticketType, isTest}</code>-এর একটি তালিকা সহ <code>POST /ticketing/api/v1/booking-order-ticket/reserve-ticket?eventId&amp;levelId</code>। <code>TicketManager.CreateReservationTicketsAsync</code>: Booking থেকে রিজার্ভেশন পড়ে (<strong class="hop-tag">[HTTP + user token]</strong> <code>GetReservationsCountAsync</code>); প্রতিটি রিকোয়েস্টের জন্য: রিজার্ভেশন থাকতে হবে, <code>Locked</code> হওয়া চলবে না ("Ticket generation is in process already ..."), এবং <code>existing + amount</code> তার টিকিট সংখ্যা বেশি হতে পারবে না ("Request exceeds reserved capacity ..."); একটি ফাঁকা PDF রেন্ডার করে (<code>GenerateBlankReservedTicket</code>); একটি <strong>test</strong> রিকোয়েস্টে রিজার্ভেশনে প্রিভিউ URL সংরক্ষণ করে (<code>UpdateReservationTicketPreviewUrlAsync</code>) এবং থেমে যায়; নয়তে <code>amount</code> সংখ্যক (অথবা প্রতি আসনে একটি) টিকিট ইনসার্ট করে, নম্বর <code>{prefix}{unique code}</code>, Redis কাউন্টার <code>event_ticket_counter:{eventId}</code> থেকে একটি <strong>ধারাবাহিক নম্বর</strong>, স্ট্যাটাস <code>Requested</code>, <code>CreatedBy = "System"</code>, তারপর রিজার্ভেশনের স্ট্যাটাস <code>Locked</code> সেট করে, প্রতি টিকিটে একটি করে সাইনিং কাজ প্রকাশ করে <strong class="hop-tag">[SQS: TicketSigning]</strong> <code>Complimentary</code> (টিকিট ধরন) ও <code>Platform</code> ফিল্ড সহ, এবং রিজার্ভেশনকে <code>Requested</code> সেট করে।</li>
 <li><strong>সাইন</strong> (আবার) <code>POST .../sign-reserve-ticket?eventId&amp;levelId</code> → <code>PublishBulkTicketToSign</code>: ইভেন্টের যেসব টিকিট এখনো <code>Requested</code> স্ট্যাটাসে আছে তাদের জন্য সাইনিং কাজ প্রকাশ করে (যেসব টিকিটের কাজ হারিয়ে গেছে তার জন্য একটি মেরামত-পথ)।</li>
 <li><strong>পড়া</strong> <code>GET .../reserve-ticket?eventId&amp;levelId</code> প্রতি রিজার্ভেশনে রিজার্ভড টিকিট তালিকাভুক্ত করে; <code>ticketNumbers[]</code> ও <code>action</code> সহ <code>PUT .../reserve-ticket</code> action state-এর লেখা সেট করে।</li>
-<li><strong>মার্জ ও zip</strong> <code>GET .../merge-reserved?reservationId</code>, <code>zip-reserved?reservationId</code> <code>TicketProcessing</code>-এ প্রকাশ করে, অগ্রগতি <code>merged-ticket-number</code>, <code>zipped-ticket-number</code> ও Booking-এর স্ট্যাটাস এন্ডপয়েন্টের মাধ্যমে জানা যায় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-09</span>)।</li>
+<li><strong>মার্জ ও zip</strong> <code>GET .../merge-reserved?reservationId</code>, <code>zip-reserved?reservationId</code> <code>TicketProcessing</code>-এ প্রকাশ করে, অগ্রগতি <code>merged-ticket-number</code>, <code>zipped-ticket-number</code> ও Booking-এর স্ট্যাটাস এন্ডপয়েন্টের মাধ্যমে জানা যায় (<a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>)।</li>
 <li><strong>ডাউনলোড</strong> করতে অ্যাডমিনকে আগে <code>POST .../generate-signed-token</code> (গ্লোবাল Redis key-তে একটি ৬০ সেকেন্ডের টোকেন) এবং <code>GET .../signed-cookie</code> (CloudFront cookie) কল করতে হয় (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>)। তারপর <code>TicketRequest {ticketNumbers[], fileName}</code> সহ <code>POST .../download-reserved?signedToken=&lt;token&gt;</code> টিকিটগুলোর একটি <strong>zip</strong> (ফ্রন্ট প্লাস ব্যাক পেজ) স্ট্রিম করে এবং তাদের স্ট্যাটাস <code>downloaded</code> করে; <code>GET .../download-merged?reservationId&amp;signedToken</code> রিজার্ভেশনের সব মার্জ করা চাংগ <code>{reservationId}.zip</code> হিসেবে স্ট্রিম করে; <code>POST .../download-test-blank-reserved?signedToken</code> প্রিভিউ স্ট্রিম করে। অবৈধ বা মেয়াদোত্তীর্ণ টোকেনে "Invalid or expired token." ফেরত হয়।</li>
 <li><strong>ইমেইল</strong> <code>POST .../send-reserved</code> (<a href="../60-cross-cutting/X-21-email-ses.html">X-21</a>)।</li>
 <li><code>GET .../reserved-urls?reservationId</code> একটি রিজার্ভেশনের সাইন করা টিকিটের URL তালিকাভুক্ত করে; এতে কোনো <code>[Authorize]</code> নেই ও পোর্টালে কোনো কলকারী নেই, এবং এর অ্যাকশন <code>GetSignedReservedTicketUrlsAsync</code> দুইবার কল করে (প্রথম ফলাফল বিস্থৃত হয়)।</li>
@@ -329,7 +348,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   A->>T: generate-signed-token + signed-cookie
   A->>S3: download chunks (CloudFront cookie)
 </div>
-<p><strong>নির্ভর করে:</strong> <a href="A-11-seat-reservation.html">A-11</a>, <a href="A-13-ticket-layouts.html">A-13</a>, <a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>। <strong>প্রভাব ফেলে:</strong> <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-09</span>, <a href="../60-cross-cutting/X-21-email-ses.html">X-21</a>, চেকারের তালিকা (<a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>)।</p>
+<p><strong>নির্ভর করে:</strong> <a href="A-11-seat-reservation.html">A-11</a>, <a href="A-13-ticket-layouts.html">A-13</a>, <a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>। <strong>প্রভাব ফেলে:</strong> <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>, <a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>, <a href="../60-cross-cutting/X-21-email-ses.html">X-21</a>, চেকারের তালিকা (<a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>)।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকালে টেস্টযোগ্যতা: আংশিক।</strong> সাইনিং পর্যন্ত সবকিছু লোকালে চলে; সাইনিংয়ের জন্য TSP লাগে (dummy), আর CloudFront cookie লোকালে ব্যর্থ হয় (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>)।</p>
 <table>

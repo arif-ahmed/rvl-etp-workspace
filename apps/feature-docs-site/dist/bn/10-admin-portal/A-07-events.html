@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -146,7 +165,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
    - <strong>Program settings একটি নতুন <code>EventSettings</code> সারিতে কপি হয়</strong> (সীমা, বিক্রির ঘণ্টা, প্রিফিক্স, VAT, সার্ভিস চার্জ, gateway) (<a href="A-03-program-settings.html">A-03</a>); <code>IsVatInclusive</code> ইভেন্টেও সেট হয়।
    - ইনসার্ট; কভার <code>eventcover/{id}/...</code>-এ এবং প্রতিটি ব্যানার <code>eventsegmentcover/...</code>-এ আপলোড করা হয় (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>)।
    - <code>GenerateEventVenueDetails(programId, eventId)</code> program-এর venue ডিটেইলস সারি ইভেন্টে কপি করে (<a href="A-09-event-level-pricing.html">A-09</a>)।
-   - <strong class="hop-tag">[HTTP + user token]</strong> <code>IBookingClient.CreateCapacity(list)</code> Booking-এ প্রতি level-এর জন্য একটি <code>Capacities</code> সারি তৈরি করে (<code>TicketingCapacity</code> = level-এর বসার ধারণক্ষমতা, থাকলে আসন), তারপর <code>GetEventLiveCapacity</code> Redis-এ <code>event_live:{id}</code> সিড করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-02</span>)।</li>
+   - <strong class="hop-tag">[HTTP + user token]</strong> <code>IBookingClient.CreateCapacity(list)</code> Booking-এ প্রতি level-এর জন্য একটি <code>Capacities</code> সারি তৈরি করে (<code>TicketingCapacity</code> = level-এর বসার ধারণক্ষমতা, থাকলে আসন), তারপর <code>GetEventLiveCapacity</code> Redis-এ <code>event_live:{id}</code> সিড করে (<a href="../50-system-initiated/S-02-event-live-capacity.html">S-02</a>)।</li>
 <li><strong>আপডেট</strong> <code>PUT /admin/api/v1/events/{id}</code> (multipart):
    - <strong>প্রকাশিত নয়:</strong> <code>CheckValidityOfUpdateEvent</code> (venue আছে, নাম, তারিখ, segment নিয়ম সহ "Concert segments cannot have team IDs."), তারপর ইভেন্ট ও তার segment আপডেট হয়।
    - <strong>প্রকাশিত:</strong> বৈধতা যাচাই <strong>বাদ দেওয়া হয়</strong> এবং কেবল এই ফিল্ডগুলো বদলায়: ইভেন্টের শেষ সময়, VAT-inclusive ফ্ল্যাগ, কভার ছবি, প্রতিটি segment-এর শেষ সময়, ব্যানার ও দল।
@@ -331,7 +350,7 @@ segments[0].bannerImageFile=&lt;file&gt;
 </table>
 <h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
 <ol>
-<li><strong>সার্ভিসগুলোর মধ্যে তৈরি atomic নয়।</strong> আগে ইভেন্টটি সেভ হয়; এরপর HTTP-তে Booking-এর <code>CreateCapacity</code> কল হয়। সেটি ব্যর্থ হলে ইভেন্টটি ক্যাপাসিটি সারি ছাড়াই তৈরি হয়ে থাকে, আর API একটি ত্রুটি ফেরত দেয়, ফলে পুনরায় চেষ্টা করলে দ্বিতীয় একটি ইভেন্ট তৈরি হয়। কোনো ইভেন্ট "আসন নেই" দেখালে Booking-এর <code>Capacity</code> সারি দেখুন (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-01</span>)।</li>
+<li><strong>সার্ভিসগুলোর মধ্যে তৈরি atomic নয়।</strong> আগে ইভেন্টটি সেভ হয়; এরপর HTTP-তে Booking-এর <code>CreateCapacity</code> কল হয়। সেটি ব্যর্থ হলে ইভেন্টটি ক্যাপাসিটি সারি ছাড়াই তৈরি হয়ে থাকে, আর API একটি ত্রুটি ফেরত দেয়, ফলে পুনরায় চেষ্টা করলে দ্বিতীয় একটি ইভেন্ট তৈরি হয়। কোনো ইভেন্ট "আসন নেই" দেখালে Booking-এর <code>Capacity</code> সারি দেখুন (<a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>)।</li>
 <li><strong>প্রকাশিত ইভেন্ট আপডেটে বৈধতা যাচাই এড়িয়ে যায়</strong>, তাই তার শেষ সময় শুরুর সময়ের আগে সেট করা যায়, আর segment-এর শেষ সময় যাচাই ছাড়াই বদলানো যায় (প্রকাশিত ইভেন্টে কেবল শেষ সময় ও দল গ্রহণ করা হয়)।</li>
 <li><strong>Settings একটি কপি</strong>, তৈরির সময় নেওয়া। পরে program settings বদলালে তা বিদ্যমান ইভেন্টে পৌঁছায় না; <a href="A-08-event-settings.html">A-08</a> ব্যবহার করুন।</li>
 <li><strong>Null শেষ তারিখ।</strong> DTO-তে <code>EndDateTime</code> nullable, তৈরির যাচাই null শেষ প্রত্যাখ্যান করে না, কিন্তু তারিখ হিসাব <code>EndDateTime.Value</code> ডিরেফারেন্স করে; সবসময় একটি শেষ সময় পাঠান।</li>
@@ -357,7 +376,7 @@ segments[0].bannerImageFile=&lt;file&gt;
   AD->>R: clear event caches, reset ticket counter
   AD->>PN: send-to-all (HTTP + token)
 </div>
-<p><strong>নির্ভর করে:</strong> <a href="A-02-programs.html">A-02</a>, <a href="A-03-program-settings.html">A-03</a>, <a href="A-04-teams.html">A-04</a>, <a href="A-05-venues.html">A-05</a>, <a href="A-06-program-venue-mapping.html">A-06</a>, <a href="A-13-ticket-layouts.html">A-13</a>। <strong>প্রভাব ফেলে:</strong> গ্রাহক-মুখী সবকিছু (<a href="../20-user-portal/P-02-browse-events.html">P-02</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>), <a href="A-08-event-settings.html">A-08</a> থেকে <a href="A-12-reserved-tickets.html">A-12</a>, রিপোর্ট, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>।</p>
+<p><strong>নির্ভর করে:</strong> <a href="A-02-programs.html">A-02</a>, <a href="A-03-program-settings.html">A-03</a>, <a href="A-04-teams.html">A-04</a>, <a href="A-05-venues.html">A-05</a>, <a href="A-06-program-venue-mapping.html">A-06</a>, <a href="A-13-ticket-layouts.html">A-13</a>। <strong>প্রভাব ফেলে:</strong> গ্রাহক-মুখী সবকিছু (<a href="../20-user-portal/P-02-browse-events.html">P-02</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>), <a href="A-08-event-settings.html">A-08</a> থেকে <a href="A-12-reserved-tickets.html">A-12</a>, রিপোর্ট, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকালে টেস্টযোগ্যতা: সম্পূর্ণ</strong>, পুশ ছাড়া (dummy Firebase)।</p>
 <table>

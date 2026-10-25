@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -143,12 +162,12 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong class="hop-tag">[HTTP + user token]</strong> Save <code>POST /booking/api/v1/seat-reservation</code> with <code>SeatReservation</code>. <code>SeatReservationManager.CreateAsync</code>:
    - validate: ids greater than 0, <code>NumberOfSeats &gt; 0</code>, a release needs the parent <code>ReservationId</code>, the gallery, block and level must be active (<code>gallery_or_block_or_level_inactive</code>), and for a release the parent must exist ("Selected Reservation is not found."), the released amount must be below the reserved amount ("Released Number of seats must be less than reserved seats."), and the parent must not be <code>Locked</code> ("Can't release right now. Reservation is in ticket process.");
    - take the lock <code>level_booking_{event}_{gallery}_{block}_{level}</code> (expiry 30 s, wait 15 s) (<a href="../60-cross-cutting/X-25-redis.html">X-25</a>);
-   - for a <strong>release</strong>, or a <strong>new reservation</strong> (no parent), call <code>CapacityManager.BookLevelCapacity(... isIncrease = (action == Released), orderType = Admin, capacityAction = Reservation)</code>: Redis live capacity is decremented (reserve) or incremented (release) at once, the live seat list is updated, and <code>OrderSuccess</code> and <code>EventCapacity</code> messages are published (<span class="link-na" title="Not included in the site yet">S-01</span>, <span class="link-na" title="Not included in the site yet">S-02</span>);
+   - for a <strong>release</strong>, or a <strong>new reservation</strong> (no parent), call <code>CapacityManager.BookLevelCapacity(... isIncrease = (action == Released), orderType = Admin, capacityAction = Reservation)</code>: Redis live capacity is decremented (reserve) or incremented (release) at once, the live seat list is updated, and <code>OrderSuccess</code> and <code>EventCapacity</code> messages are published (<a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>, <a href="../50-system-initiated/S-02-event-live-capacity.html">S-02</a>);
    - insert the <code>SeatReservation</code> row: <code>PublicId</code>, <code>ReservationNumber</code> (unique code), <code>Status = Draft</code>, <code>Type</code>, <code>ReservationCategory</code>, <code>ReleaseCategory</code>, seats, <code>RemainingReservedSeat</code>, <code>MergeStatus</code>/<code>ZipStatus = None</code>, <code>CreatedBy</code>;
    - when releasing against a parent reservation number, <code>ReduceRemainingReservedSeatAsync</code> lowers the parent's remaining count; a fully released parent is set to <code>Closed</code>;
    - delete <code>event_total_online_ticket:{eventId}</code>.</li>
 <li>Bulk: <code>POST /booking/api/v1/seat-reservation/event/{eventId}?percentage=65</code> (admin policy) reserves <code>ceil(percentage % of TotalCapacity)</code> seats on <strong>every level</strong> of the event, one reservation per level (percentage 0 to 100).</li>
-<li>Status updates used by other features: <code>PATCH .../update-reservation-status/{publicId}</code>, <code>update-merge-status</code>, <code>update-zip-status</code>, <code>GET .../merge-status/{publicId}</code>, <code>zip-status/{publicId}</code> (<span class="link-na" title="Not included in the site yet">S-09</span>).</li>
+<li>Status updates used by other features: <code>PATCH .../update-reservation-status/{publicId}</code>, <code>update-merge-status</code>, <code>update-zip-status</code>, <code>GET .../merge-status/{publicId}</code>, <code>zip-status/{publicId}</code> (<a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>).</li>
 </ol>
 <h2 id="5-components">5. Components</h2>
 <table>
@@ -270,7 +289,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <h2 id="9-handover-notes">9. Handover notes</h2>
 <ol>
 <li><strong>No authorization on create and read.</strong> Reserving or releasing seats needs no token on the server, only the summary and bulk endpoints do.</li>
-<li><strong>Reservation reduces online capacity at once, in Redis</strong>, and the database follows by queue (<span class="link-na" title="Not included in the site yet">S-01</span>); two parallel reservations on one level are serialised by the 15-second lock.</li>
+<li><strong>Reservation reduces online capacity at once, in Redis</strong>, and the database follows by queue (<a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>); two parallel reservations on one level are serialised by the 15-second lock.</li>
 <li><strong>The bulk endpoint has no caller in the portal</strong> that this review found, and its default <code>65 %</code> is an unexplained constant (<code>CreateBulk(long eventId, int percentage = 65)</code>); keep it out of the interface unless the business confirms its use <span class="badge-unconfirmed">[UNCONFIRMED: Q-22]</span>.</li>
 <li><strong><code>ReservationStatusUpdateService</code> is not registered</strong>: the Booking worker class that would move <code>Requested</code> reservations to <code>Generated</code> exists but nothing hosts it (<span class="link-na" title="Not included in the site yet">Appendix A</span>); statuses move through the explicit PATCH calls.</li>
 <li><strong>Release categories decide the accounting</strong>: <code>ToOnline</code> increases online capacity again; the other three keep the seats out of online sale and record how they were used. A report that sums reserved and released seats must account for this (<a href="A-22-reports.html">A-22</a>).</li>
@@ -289,7 +308,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   BK->>DB: insert SeatReservation (Draft)
   Note over A,BK: A-12 later generates tickets for the reservation
 </div>
-<p><strong>Depends on:</strong> <a href="A-07-events.html">A-07</a>, <a href="A-09-event-level-pricing.html">A-09</a>. <strong>Affects:</strong> <a href="A-12-reserved-tickets.html">A-12</a>, <span class="link-na" title="Not included in the site yet">S-01</span>, <span class="link-na" title="Not included in the site yet">S-09</span>, seat availability (<a href="../20-user-portal/P-04-seat-selection.html">P-04</a>).</p>
+<p><strong>Depends on:</strong> <a href="A-07-events.html">A-07</a>, <a href="A-09-event-level-pricing.html">A-09</a>. <strong>Affects:</strong> <a href="A-12-reserved-tickets.html">A-12</a>, <a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>, <a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>, seat availability (<a href="../20-user-portal/P-04-seat-selection.html">P-04</a>).</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full.</strong></p>
 <table>

@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item is-active" href="C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -154,7 +173,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
        _checkerEvent.ticketCheckerGateId != _ticketCheckerGateId) return false;</code>
    so an admin who unassigns or moves the checker stops the scan loop at the next tick, within 90 seconds. The <code>onGetOfflineData</code> body is effectively empty — its only statement is commented out (<code>:145-148</code>), so a cached assignment is not used for this decision.</li>
 <li><strong>Failure is non-destructive</strong>: <code>loadData</code> catches, and because <code>notSynced</code> is only flipped to <code>isSynced: true</code> after a successful call (<code>:131-134</code>), unsent scans remain unsent and are retried on the next tick. <span class="badge-unconfirmed">[UNCONFIRMED: Q-76]</span> — <code>_lastSyncTime</code> is set unconditionally at <code>:129</code>, so after a failed sync it can show a time that never actually synced.</li>
-<li>Server-side, the counters live in Redis and are flushed to the database by <span class="link-na" title="Not included in the site yet">S-14</span>.</li>
+<li>Server-side, the counters live in Redis and are flushed to the database by <a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>.</li>
 </ol>
 <h2 id="5-components">5. Components</h2>
 <table>
@@ -187,7 +206,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Queues / workers</td>
-<td><span class="link-na" title="Not included in the site yet">S-14</span> moves Redis → database</td>
+<td><a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a> moves Redis → database</td>
 </tr>
 <tr>
 <td>Local DB</td>
@@ -221,7 +240,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tbody>
 </table>
 <h2 id="7-data-and-side-effects">7. Data and side effects</h2>
-<p>Local: <code>isSynced</code> flips to <code>true</code> for rows whose upload succeeded, and the server's counts are written over the local values. Server: Redis counters for the synced tickets, later persisted by <span class="link-na" title="Not included in the site yet">S-14</span>. The gate report (<a href="../10-admin-portal/A-19-gate-reports.html">A-19</a>) is only as complete as this sync.</p>
+<p>Local: <code>isSynced</code> flips to <code>true</code> for rows whose upload succeeded, and the server's counts are written over the local values. Server: Redis counters for the synced tickets, later persisted by <a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>. The gate report (<a href="../10-admin-portal/A-19-gate-reports.html">A-19</a>) is only as complete as this sync.</p>
 <h2 id="8-code-references">8. Code references</h2>
 <table>
 <thead>
@@ -257,7 +276,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Server worker</td>
-<td><span class="link-na" title="Not included in the site yet">S-14</span></td>
+<td><a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a></td>
 </tr>
 </tbody>
 </table>
@@ -270,7 +289,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong><code>onGetOfflineData</code> is effectively disabled for this check</strong> (<code>:145-148</code>, body commented out), so an offline sync attempt cannot validate the assignment and will simply fail on the network call.</li>
 <li><strong>The in-memory <code>_scannedTicket</code> map is the source of truth for "unsynced"</strong>, and it is rebuilt from the database in <code>_getTicketList()</code> (<code>:166-184</code>) filtered on <code>isScannedFromOurApp</code>. A row created without that flag would never sync.</li>
 <li><strong>Manual entries go out as <code>-1</code></strong> (<a href="C-02-offline-ticket-download.html">Q-68</a>) — confirm with BS23 how the server aggregates a negative count before reporting on it.</li>
-<li><strong><code>isSynced</code> has no expiry</strong>, matching the related server-side flag finding (<span class="link-na" title="Not included in the site yet">Q-17</span>).</li>
+<li><strong><code>isSynced</code> has no expiry</strong>, matching the related server-side flag finding (<a href="../50-system-initiated/S-14-checked-ticket-sync.html">Q-17</a>).</li>
 </ol>
 <h2 id="10-component-relationships">10. Component relationships</h2>
 <div class="mermaid">flowchart LR
@@ -286,7 +305,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   S14["S-14 Redis→DB worker"] -.-> RD
   RD -.-> A19["A-19 gate reports"]
 </div>
-<p><strong>Depends on:</strong> <a href="C-02-offline-ticket-download.html">C-02</a>, <a href="C-03-qr-scan-validation.html">C-03</a>, <a href="C-04-manual-entry.html">C-04</a>. <strong>Affects:</strong> <span class="link-na" title="Not included in the site yet">S-14</span>, <a href="../10-admin-portal/A-19-gate-reports.html">A-19</a>.</p>
+<p><strong>Depends on:</strong> <a href="C-02-offline-ticket-download.html">C-02</a>, <a href="C-03-qr-scan-validation.html">C-03</a>, <a href="C-04-manual-entry.html">C-04</a>. <strong>Affects:</strong> <a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>, <a href="../10-admin-portal/A-19-gate-reports.html">A-19</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full.</strong></p>
 <table>

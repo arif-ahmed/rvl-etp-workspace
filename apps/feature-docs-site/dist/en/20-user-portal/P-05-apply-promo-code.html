@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -209,7 +228,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </code></pre>
 <p>Failure example (HTTP 400): <code>{ "title": "This promo code has expired. Please use a valid code.", "status": 400 }</code>.</p>
 <h2 id="7-data-and-side-effects">7. Data and side effects</h2>
-<p>None; a check only. The usage counters are derived by counting orders, not stored on the code (<span class="link-na" title="Not included in the site yet">S-16</span> note on counting).</p>
+<p>None; a check only. The usage counters are derived by counting orders, not stored on the code (<a href="../50-system-initiated/S-16-promo-code-status.html">S-16</a> note on counting).</p>
 <h2 id="8-code-references">8. Code references</h2>
 <table>
 <thead>
@@ -247,7 +266,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong>Pending orders do not count.</strong> Orders still <code>Pending</code> (not yet paid) are not counted against the limits, so the limits can be exceeded while payments are in flight.</li>
 <li><strong>A refused purchase still holds the seats for a while.</strong> In <code>CreateAsync</code> the seats are locked in Redis (<code>BookLevelCapacity</code>, 12-minute lock) <em>before</em> the promo code is validated; if the code is rejected at that moment the order is not created but the lock stays until it expires after 12 minutes, so those seats look unavailable to others for that time <span class="badge-unconfirmed">[UNCONFIRMED: Q-37]</span>. The recomputed discount can also differ from the preview (<a href="P-04-seat-selection.html">P-04</a> note 1).</li>
 <li><strong>Case-sensitive, exact match.</strong> <code>bcbwelcome10</code> does not match <code>BCBWELCOME10</code>.</li>
-<li><strong>The "active" flag of a code is not part of the check;</strong> only the start and end dates are used (<span class="link-na" title="Not included in the site yet">S-16</span>); a promo code that staff unpublish in the admin portal still works until it is deleted or expires <span class="badge-unconfirmed">[UNCONFIRMED: Q-18]</span>.</li>
+<li><strong>The "active" flag of a code is not part of the check;</strong> only the start and end dates are used (<a href="../50-system-initiated/S-16-promo-code-status.html">S-16</a>); a promo code that staff unpublish in the admin portal still works until it is deleted or expires <span class="badge-unconfirmed">[UNCONFIRMED: Q-18]</span>.</li>
 <li><strong>The portal hides the reason</strong> for usage-limit and per-user-limit refusals (it shows "invalid" for them), although the server returns precise messages.</li>
 </ol>
 <h2 id="10-component-relationships">10. Component relationships</h2>

@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -143,12 +162,12 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong class="hop-tag">[HTTP + user token]</strong> সেভ <code>SeatReservation</code> সহ <code>POST /booking/api/v1/seat-reservation</code>। <code>SeatReservationManager.CreateAsync</code>:
    - যাচাই: id 0-এর বেশি, <code>NumberOfSeats &gt; 0</code>, release-এর জন্য প্যারেন্ট <code>ReservationId</code> আবশ্যক, gallery, block ও level সক্রিয় হতে হবে (<code>gallery_or_block_or_level_inactive</code>), এবং release-এর জন্য প্যারেন্ট থাকতে হবে ("Selected Reservation is not found."), release করা পরিমাণ reserved পরিমাণের কম হতে হবে ("Released Number of seats must be less than reserved seats."), এবং প্যারেন্ট <code>Locked</code> হওয়া চলবে না ("Can't release right now. Reservation is in ticket process.");
    - লক নেয় <code>level_booking_{event}_{gallery}_{block}_{level}</code> (মেয়াদ ৩০ সে, অপেক্ষা ১৫ সে) (<a href="../60-cross-cutting/X-25-redis.html">X-25</a>);
-   - একটি <strong>release</strong>, বা একটি <strong>নতুন রিজার্ভেশন</strong> (প্যারেন্ট নেই) হলে <code>CapacityManager.BookLevelCapacity(... isIncrease = (action == Released), orderType = Admin, capacityAction = Reservation)</code> কল করে: Redis live ক্যাপাসিটি সঙ্গে সঙ্গে হ্রাস পায় (reserve) বা বাড়ে (release), live আসনের তালিকা আপডেট হয়, এবং <code>OrderSuccess</code> ও <code>EventCapacity</code> বার্তা প্রকাশ হয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-01</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-02</span>);
+   - একটি <strong>release</strong>, বা একটি <strong>নতুন রিজার্ভেশন</strong> (প্যারেন্ট নেই) হলে <code>CapacityManager.BookLevelCapacity(... isIncrease = (action == Released), orderType = Admin, capacityAction = Reservation)</code> কল করে: Redis live ক্যাপাসিটি সঙ্গে সঙ্গে হ্রাস পায় (reserve) বা বাড়ে (release), live আসনের তালিকা আপডেট হয়, এবং <code>OrderSuccess</code> ও <code>EventCapacity</code> বার্তা প্রকাশ হয় (<a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>, <a href="../50-system-initiated/S-02-event-live-capacity.html">S-02</a>);
    - <code>SeatReservation</code> সারি ইনসার্ট করে: <code>PublicId</code>, <code>ReservationNumber</code> (অনন্য কোড), <code>Status = Draft</code>, <code>Type</code>, <code>ReservationCategory</code>, <code>ReleaseCategory</code>, আসন, <code>RemainingReservedSeat</code>, <code>MergeStatus</code>/<code>ZipStatus = None</code>, <code>CreatedBy</code>;
    - প্যারেন্ট রিজার্ভেশন নম্বরের বিপরীতে release করলে <code>ReduceRemainingReservedSeatAsync</code> প্যারেন্টের অবশিষ্ট সংখ্যা কমায়; সম্পূর্ণ release হওয়া প্যারেন্টকে <code>Closed</code> করে দেয়;
    - <code>event_total_online_ticket:{eventId}</code> মুছে ফেলে।</li>
 <li>বাল্ক: <code>POST /booking/api/v1/seat-reservation/event/{eventId}?percentage=65</code> (admin policy) ইভেন্টের <strong>প্রতিটি</strong> level-এ <code>TotalCapacity</code>-এর <code>ceil(percentage %)</code> আসন সংরক্ষণ করে, প্রতি level-এ একটি করে রিজার্ভেশন (শতকরা ০ থেকে ১০০)।</li>
-<li>অন্য ফিচার ব্যবহার করে এমন স্ট্যাটাস আপডেট: <code>PATCH .../update-reservation-status/{publicId}</code>, <code>update-merge-status</code>, <code>update-zip-status</code>, <code>GET .../merge-status/{publicId}</code>, <code>zip-status/{publicId}</code> (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-09</span>)।</li>
+<li>অন্য ফিচার ব্যবহার করে এমন স্ট্যাটাস আপডেট: <code>PATCH .../update-reservation-status/{publicId}</code>, <code>update-merge-status</code>, <code>update-zip-status</code>, <code>GET .../merge-status/{publicId}</code>, <code>zip-status/{publicId}</code> (<a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>)।</li>
 </ol>
 <h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
 <table>
@@ -270,7 +289,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
 <ol>
 <li><strong>তৈরি ও পড়ায় কোনো অথরাইজেশন নেই।</strong> আসন সংরক্ষণ বা release করতে সার্ভারে কোনো টোকেন লাগে না, শুধু summary ও bulk এন্ডপয়েন্টে লাগে।</li>
-<li><strong>রিজার্ভেশন অনলাইন ক্যাপাসিটি সঙ্গে সঙ্গে, Redis-এ কমায়</strong>, আর ডেটাবেস কিউ-র মাধ্যমে অনুসরণ করে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-01</span>); একটি level-এ দুটি সমান্তরাল রিজার্ভেশন ১৫-সেকেন্ডের লক দিয়ে সিরিয়ালাইজ হয়।</li>
+<li><strong>রিজার্ভেশন অনলাইন ক্যাপাসিটি সঙ্গে সঙ্গে, Redis-এ কমায়</strong>, আর ডেটাবেস কিউ-র মাধ্যমে অনুসরণ করে (<a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>); একটি level-এ দুটি সমান্তরাল রিজার্ভেশন ১৫-সেকেন্ডের লক দিয়ে সিরিয়ালাইজ হয়।</li>
 <li><strong>এই পর্যালোচনায় বাল্ক এন্ডপয়েন্টের পোর্টালে কোনো কলকারী পাওয়া যায়নি</strong>, এবং এর ডিফল্ট <code>65 %</code> একটি ব্যাখ্যাহীন ধ্রুব (<code>CreateBulk(long eventId, int percentage = 65)</code>); ব্যবসা ব্যবহার নিশ্চিত না করা পর্যন্ত এটি ইন্টারফেসে রাখবেন না <span class="badge-unconfirmed">[UNCONFIRMED: Q-22]</span>।</li>
 <li><strong><code>ReservationStatusUpdateService</code> নিবন্ধিত নয়</strong>: <code>Requested</code> রিজার্ভেশনগুলো <code>Generated</code>-এ নেওয়ার Booking ওয়ার্কার ক্লাসটি বিদ্যমান, কিন্তু কোথাও তা হোস্ট করে না (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">Appendix A</span>); স্ট্যাটাস সুনির্দিষ্ট PATCH কলের মাধ্যমে বদলায়।</li>
 <li><strong>Release ক্যাটাগরি হিসাব নির্ধারণ করে</strong>: <code>ToOnline</code> আবার অনলাইন ক্যাপাসিটি বাড়ায়; বাকি তিনটি আসন অনলাইন বিক্রির বাইরে রাখে এবং কীভাবে ব্যবহৃত হয়েছে তা রেকর্ড করে। reserved ও released আসন যোগ করা যেকোনো রিপোর্টে এই বিষয় বিবেচনা করতে হবে (<a href="A-22-reports.html">A-22</a>)।</li>
@@ -289,7 +308,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   BK->>DB: insert SeatReservation (Draft)
   Note over A,BK: A-12 later generates tickets for the reservation
 </div>
-<p><strong>নির্ভর করে:</strong> <a href="A-07-events.html">A-07</a>, <a href="A-09-event-level-pricing.html">A-09</a>। <strong>প্রভাব ফেলে:</strong> <a href="A-12-reserved-tickets.html">A-12</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-01</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-09</span>, আসনের উপলব্ধতা (<a href="../20-user-portal/P-04-seat-selection.html">P-04</a>)।</p>
+<p><strong>নির্ভর করে:</strong> <a href="A-07-events.html">A-07</a>, <a href="A-09-event-level-pricing.html">A-09</a>। <strong>প্রভাব ফেলে:</strong> <a href="A-12-reserved-tickets.html">A-12</a>, <a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>, <a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>, আসনের উপলব্ধতা (<a href="../20-user-portal/P-04-seat-selection.html">P-04</a>)।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকালে টেস্টযোগ্যতা: সম্পূর্ণ।</strong></p>
 <table>

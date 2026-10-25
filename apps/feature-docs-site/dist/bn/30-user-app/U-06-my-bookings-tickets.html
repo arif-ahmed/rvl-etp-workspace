@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -134,7 +153,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <ol>
 <li><strong>বুকিং তালিকা:</strong> গ্রাহকের অর্ডারের পেজযুক্ত তালিকা, যেখানে ইভেন্টের নাম, অর্ডার নম্বর, স্ট্যাটাস ও তারিখ থাকে।</li>
 <li><strong>বুকিং বিস্তারিত:</strong> অর্ডারের টিকিটগুলো; প্রতিটি টিকিটে তার নম্বর, হোল্ডার, ব্লক/লেভেল/সিট এবং একটি QR কোড দেখা যায়।</li>
-<li><strong>টিকিট তৈরি:</strong> ইভেন্টের টিকিট-availability তারিখ পেরিয়ে গেলে এবং অর্ডার পরিশোধিত হলে একটি <strong>Generate</strong> বাটন আসে; ট্যাপ করলে তৈরির পাইপলাইন শুরু হয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>)।</li>
+<li><strong>টিকিট তৈরি:</strong> ইভেন্টের টিকিট-availability তারিখ পেরিয়ে গেলে এবং অর্ডার পরিশোধিত হলে একটি <strong>Generate</strong> বাটন আসে; ট্যাপ করলে তৈরির পাইপলাইন শুরু হয় (<a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>, <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>)।</li>
 <li><strong>তৈরির অবস্থা দেখা:</strong> অর্ডার <code>Requested</code>/<code>Processing</code> থাকাকালীন অ্যাপ তৈরির স্ট্যাটাস এন্ডপয়েন্ট কল করে।</li>
 <li><strong>টিকিট ব্যবহার:</strong> একটি ভিউয়ারে PDF খুলুন, শেয়ার করুন, বা অর্ডারের সব টিকিট ডাউনলোড করুন; OneID গ্রাহকদের জন্য OneID ওয়ালেটে সিঙ্ক করুন।</li>
 </ol>
@@ -150,7 +169,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong class="hop-tag">[HTTP + ইউজার টোকেন]</strong> <code>POST ticketing/api/v1/booking-order-ticket/sync-order-to-oneid/{publicOrderId}</code> — OneID সিঙ্ক, যেমন <a href="../20-user-portal/P-10-oneid-ticket-sync.html">P-10</a>।</li>
 <li><strong class="hop-tag">[HTTP + ইউজার টোকেন]</strong> <code>ticketBanglaApiClient</code>-এর মাধ্যমে <code>GET ticketing/api/v1/booking-order-ticket/download-invoice/{paymentId}</code> (<code>:193</code>) — ইনভয়েস, একটি <strong>দ্বিতীয় base URL</strong> থেকে ফেচ করা হয় (<code>ticket_bangla_api_client.dart</code>)।</li>
 <li><strong>খোলা ও শেয়ার:</strong> <code>openFile(fileName: '${ticket.uniqueTicketNumber}.pdf')</code> (<code>booking_details_view_model.dart:230</code>, <code>open_file</code> 3.5.10) ডাউনলোড করা PDF খোলে; <code>SharePlus.instance.share(...)</code> (<code>:264</code>, <code>share_plus</code> 12.0.0) শেয়ার করে। <code>DownloadService</code> <code>openFileFromNotification</code> সমর্থন করে (<code>download_service.dart:186</code>), তাই ব্যাকগ্রাউন্ডে শেষ হওয়া ডাউনলোড নিজে থেকেই খুলে যায়।</li>
-<li><strong>QR দেখানো:</strong> টিকিটের QR Ticketing সার্ভিস যে ডেটা ফেরত দেয় তা থেকে রেন্ডার হয়; QR নিজেই সাইনিং-এর সময় তৈরি VDS-সাইন করা payload (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>)।</li>
+<li><strong>QR দেখানো:</strong> টিকিটের QR Ticketing সার্ভিস যে ডেটা ফেরত দেয় তা থেকে রেন্ডার হয়; QR নিজেই সাইনিং-এর সময় তৈরি VDS-সাইন করা payload (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>)।</li>
 </ol>
 <h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
 <table>
@@ -328,7 +347,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   BD -->|"sync-order-to-oneid"| OID["OneID"]
   TK -->|QR| QR["VDS QR on screen"]
 </div>
-<p><strong>নির্ভর করে:</strong> <a href="U-05-booking-webview-payment.html">U-05</a> (যে অর্ডারগুলো দেখাতে হবে), <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-06</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>। <strong>প্রভাব ফেলে:</strong> <a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a> — চেকার যে টিকিটগুলো যাচাই করে সেগুলো এগুলোই।</p>
+<p><strong>নির্ভর করে:</strong> <a href="U-05-booking-webview-payment.html">U-05</a> (যে অর্ডারগুলো দেখাতে হবে), <a href="../50-system-initiated/S-06-booking-status-generated.html">S-06</a>, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>। <strong>প্রভাব ফেলে:</strong> <a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a> — চেকার যে টিকিটগুলো যাচাই করে সেগুলো এগুলোই।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকালভাবে টেস্টযোগ্য:</strong> তালিকা ও বিস্তারিতের জন্য <strong>সম্পূর্ণ</strong>; PDF ডাউনলোডের জন্য <strong>আংশিক</strong> (টিকিট বাকেট দরকার, যা Floci সার্ভ করতে পারে) এবং TSP সাইনিং ও OneID-এর জন্য <strong>লোকালভাবে সম্ভব নয়</strong>।</p>
 <table>
@@ -357,11 +376,11 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Visual Studio ডিবাগ</td>
-<td><code>TicketManager.TicketGenerateRequest</code> ও <code>TicketSigning</code> ওয়ার্কার (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>); ক্লায়েন্ট: <code>BookingDetailsViewModel</code> প্রায় ২৩০ নম্বর লাইনে</td>
+<td><code>TicketManager.TicketGenerateRequest</code> ও <code>TicketSigning</code> ওয়ার্কার (<a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>); ক্লায়েন্ট: <code>BookingDetailsViewModel</code> প্রায় ২৩০ নম্বর লাইনে</td>
 </tr>
 <tr>
 <td>যাচাই</td>
-<td><code>SignedTicketUrl</code>-এর জন্য <code>Tickets</code> টেবিলে <code>SELECT</code>; টিকিট বাকেটের নিচে Floci-তে S3 অবজেক্ট; <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-09</span>-এর মার্জ করা ZIP</td>
+<td><code>SignedTicketUrl</code>-এর জন্য <code>Tickets</code> টেবিলে <code>SELECT</code>; টিকিট বাকেটের নিচে Floci-তে S3 অবজেক্ট; <a href="../50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>-এর মার্জ করা ZIP</td>
 </tr>
 </tbody>
 </table>

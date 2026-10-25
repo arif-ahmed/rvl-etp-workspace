@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -127,7 +146,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <p><a href="index.html">← 10 · Admin portal</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
 </blockquote>
 <h2 id="1-name-and-purpose">1. Name and purpose</h2>
-<p><strong>Promo codes.</strong> A promo code is a short text the customer enters at checkout to get a discount. The admin defines its value (percentage or fixed amount), validity period, total and per-customer usage limits, and which events or galleries of a program it applies to. The status (<code>Upcoming</code>, <code>Active</code>, <code>Expired</code>, <code>LimitReached</code>) is kept up to date by a worker (<span class="link-na" title="Not included in the site yet">S-16</span>); the customer side is <a href="../20-user-portal/P-05-apply-promo-code.html">P-05</a>.</p>
+<p><strong>Promo codes.</strong> A promo code is a short text the customer enters at checkout to get a discount. The admin defines its value (percentage or fixed amount), validity period, total and per-customer usage limits, and which events or galleries of a program it applies to. The status (<code>Upcoming</code>, <code>Active</code>, <code>Expired</code>, <code>LimitReached</code>) is kept up to date by a worker (<a href="../50-system-initiated/S-16-promo-code-status.html">S-16</a>); the customer side is <a href="../20-user-portal/P-05-apply-promo-code.html">P-05</a>.</p>
 <h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
 <p>Staff with role <code>admin</code> (<code>PromoCodeController</code> allows only <code>Admin</code>). Entry: program menu <strong>Promo &amp; Discount → Promo</strong> (<code>/promo-management</code>, <code>/promo-management/create</code>, <code>/promo-management/edit-promo/:promoCodeId</code>).</p>
 <h2 id="3-business-flow">3. Business flow</h2>
@@ -142,7 +161,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li><strong class="hop-tag">[HTTP + user token]</strong> <code>GET /admin/api/v1/promo-codes?...</code> (paged), <code>/promo-codes/{id}</code>; <code>GET .../promo-codes/exists?eventIds=...&amp;promoCodeId=</code> returns <code>{Success: false, Message: "A promo code is already assigned to the selected events: ..."}</code> when other codes already cover the events. The form loads programs, events and galleries from <code>GET /program</code>, <code>GET /events/list</code>, <code>GET /events/program/{id}/events</code>, <code>POST /eventsVenueDetails/galleries/by-event-ids</code> (<a href="A-07-events.html">A-07</a>, <a href="A-09-event-level-pricing.html">A-09</a>).</li>
 <li>Create <code>POST .../promo-codes</code> (JSON <code>CreateOrUpdatePromoCode</code>). <code>PromoCodeManager.CreateAsync</code>: <code>CheckValidityOfPromoCode</code> (code required, ≤ 12, unique among codes (<code>ExistsAsync(id, code)</code>), name required, ≤ 26, limit per user not above the total limit, whole number for percentage values, start and end set and end after start, at least one assignment, each program and event exists); computes the status (<code>GetPromoCodeStatusAsync</code>: <code>Upcoming</code> before start, <code>Expired</code> after end, <code>LimitReached</code> when paid orders with the code reach the total limit, else <code>Active</code>); inserts the code with <code>IsPublished = (status == Active)</code>; inserts the assignments (event assignments link events; gallery assignments link events, galleries and the venue-event-gallery names).</li>
 <li>Update <code>PUT .../promo-codes/{id}</code>: same validation, replaces the assignment list, recomputes the status. Delete <code>DELETE .../promo-codes/{id}</code>: <code>IsDeleted = true</code>.</li>
-<li>The status worker keeps <code>Status</code>, <code>IsActive</code>, <code>IsPublished</code> current (<span class="link-na" title="Not included in the site yet">S-16</span>). Booking reads the same tables as read models and validates a code at checkout itself (<a href="../20-user-portal/P-05-apply-promo-code.html">P-05</a>).</li>
+<li>The status worker keeps <code>Status</code>, <code>IsActive</code>, <code>IsPublished</code> current (<a href="../50-system-initiated/S-16-promo-code-status.html">S-16</a>). Booking reads the same tables as read models and validates a code at checkout itself (<a href="../20-user-portal/P-05-apply-promo-code.html">P-05</a>).</li>
 </ol>
 <h2 id="5-components">5. Components</h2>
 <table>
@@ -264,7 +283,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <h2 id="9-handover-notes">9. Handover notes</h2>
 <ol>
 <li><strong>"Already assigned" is advisory.</strong> The <code>exists</code> call only returns a message; <code>CreateAsync</code> does not reject overlapping event assignments, so two codes can cover one event.</li>
-<li><strong>Status is computed at save time and then by the worker</strong>, but the apply step recomputes dates and usage itself (<span class="link-na" title="Not included in the site yet">S-16</span> note 2), so the status field mainly serves the admin list.</li>
+<li><strong>Status is computed at save time and then by the worker</strong>, but the apply step recomputes dates and usage itself (<a href="../50-system-initiated/S-16-promo-code-status.html">S-16</a> note 2), so the status field mainly serves the admin list.</li>
 <li><strong>A code's text is unique only among non-deleted codes</strong> (<code>ExistsAsync</code>); whether a soft-deleted code blocks its text is not checked here <span class="badge-unconfirmed">[UNCONFIRMED: Q-25]</span>.</li>
 <li><strong>Percentage values must be whole numbers.</strong> A value above 100 is not rejected by the manager's checks listed here.</li>
 <li><strong>Update replaces assignments</strong> (<code>AssignTo.Clear()</code> then re-add), so assignment ids change on every edit.</li>

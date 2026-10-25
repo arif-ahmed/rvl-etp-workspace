@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
     <div class="side-group">Features</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
@@ -146,7 +165,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
    - <strong>The program settings are copied into a new <code>EventSettings</code> row</strong> (limits, selling hours, prefix, VAT, service charge, gateway) (<a href="A-03-program-settings.html">A-03</a>); <code>IsVatInclusive</code> is also set on the event.
    - Insert; upload the cover to <code>eventcover/{id}/...</code> and each banner to <code>eventsegmentcover/...</code> (<a href="../60-cross-cutting/X-20-file-storage.html">X-20</a>).
    - <code>GenerateEventVenueDetails(programId, eventId)</code> copies the program's venue-detail rows into the event (<a href="A-09-event-level-pricing.html">A-09</a>).
-   - <strong class="hop-tag">[HTTP + user token]</strong> <code>IBookingClient.CreateCapacity(list)</code> creates a <code>Capacities</code> row per level in Booking (<code>TicketingCapacity</code> = the level's seating capacity, seats if any), then <code>GetEventLiveCapacity</code> seeds <code>event_live:{id}</code> in Redis (<span class="link-na" title="Not included in the site yet">S-02</span>).</li>
+   - <strong class="hop-tag">[HTTP + user token]</strong> <code>IBookingClient.CreateCapacity(list)</code> creates a <code>Capacities</code> row per level in Booking (<code>TicketingCapacity</code> = the level's seating capacity, seats if any), then <code>GetEventLiveCapacity</code> seeds <code>event_live:{id}</code> in Redis (<a href="../50-system-initiated/S-02-event-live-capacity.html">S-02</a>).</li>
 <li><strong>Update</strong> <code>PUT /admin/api/v1/events/{id}</code> (multipart):
    - <strong>Not published:</strong> <code>CheckValidityOfUpdateEvent</code> (venue exists, name, dates, segment rules incl. "Concert segments cannot have team IDs."), then the event and its segments are updated.
    - <strong>Published:</strong> the validity check is <strong>skipped</strong> and only these fields change: event end time, VAT-inclusive flag, cover image, each segment's end time, banner and teams.
@@ -331,7 +350,7 @@ segments[0].bannerImageFile=&lt;file&gt;
 </table>
 <h2 id="9-handover-notes">9. Handover notes</h2>
 <ol>
-<li><strong>Creation is not atomic across services.</strong> The event is saved first; the Booking <code>CreateCapacity</code> call happens afterwards over HTTP. If it fails, the event exists without capacity rows, and the API returns an error, so a retry creates a second event. Check Booking <code>Capacity</code> rows when an event "has no seats" (<span class="link-na" title="Not included in the site yet">S-01</span>).</li>
+<li><strong>Creation is not atomic across services.</strong> The event is saved first; the Booking <code>CreateCapacity</code> call happens afterwards over HTTP. If it fails, the event exists without capacity rows, and the API returns an error, so a retry creates a second event. Check Booking <code>Capacity</code> rows when an event "has no seats" (<a href="../50-system-initiated/S-01-level-capacity-update.html">S-01</a>).</li>
 <li><strong>A published event skips validation on update</strong>, so its end time can be set before its start time, and the segment end can be changed without checks (only end times and teams are accepted for published events).</li>
 <li><strong>Settings are a copy</strong> taken at creation. Later changes to the program settings do not reach existing events; use <a href="A-08-event-settings.html">A-08</a>.</li>
 <li><strong>Null end date.</strong> <code>EndDateTime</code> is nullable in the DTO, the create check does not reject a null end, but the date computation dereferences <code>EndDateTime.Value</code>; always send an end time.</li>
@@ -357,7 +376,7 @@ segments[0].bannerImageFile=&lt;file&gt;
   AD->>R: clear event caches, reset ticket counter
   AD->>PN: send-to-all (HTTP + token)
 </div>
-<p><strong>Depends on:</strong> <a href="A-02-programs.html">A-02</a>, <a href="A-03-program-settings.html">A-03</a>, <a href="A-04-teams.html">A-04</a>, <a href="A-05-venues.html">A-05</a>, <a href="A-06-program-venue-mapping.html">A-06</a>, <a href="A-13-ticket-layouts.html">A-13</a>. <strong>Affects:</strong> everything customer-facing (<a href="../20-user-portal/P-02-browse-events.html">P-02</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>), <a href="A-08-event-settings.html">A-08</a> to <a href="A-12-reserved-tickets.html">A-12</a>, reports, <span class="link-na" title="Not included in the site yet">S-07</span>.</p>
+<p><strong>Depends on:</strong> <a href="A-02-programs.html">A-02</a>, <a href="A-03-program-settings.html">A-03</a>, <a href="A-04-teams.html">A-04</a>, <a href="A-05-venues.html">A-05</a>, <a href="A-06-program-venue-mapping.html">A-06</a>, <a href="A-13-ticket-layouts.html">A-13</a>. <strong>Affects:</strong> everything customer-facing (<a href="../20-user-portal/P-02-browse-events.html">P-02</a>, <a href="../20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="../20-user-portal/P-06-booking-payment.html">P-06</a>), <a href="A-08-event-settings.html">A-08</a> to <a href="A-12-reserved-tickets.html">A-12</a>, reports, <a href="../50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
 <p><strong>Local testability: Full</strong> except the push (dummy Firebase).</p>
 <table>

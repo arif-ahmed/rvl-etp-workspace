@@ -90,6 +90,25 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
     <a class="side-item" href="../40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
     <a class="side-item" href="../40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
     <a class="side-item" href="../40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+    <a class="side-section" href="../50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
     <a class="side-section" href="../60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
     <div class="side-group">ফিচারসমূহ</div>
     <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
@@ -136,7 +155,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <li>নাম দিয়ে চেকার খুঁজুন (<a href="A-17-ticket-checker-users.html">A-17</a>), তাদের একটি গেটে যোগ করুন, <strong>download enabled</strong> টিক দিন, সেভ করুন।</li>
 <li>চেকারকে সরাতে হলে একগুচ্ছ ব্যবহারকারীর জন্য <strong>force assign</strong> বা <strong>force unassign</strong> করুন — এমনকি তার অন্য কোথাও download access থাকলেও।</li>
 <li>চেকারের নিজের সারি থেকে প্রতি গেটে download চালু বা বন্ধ করুন, অথবা গেট থেকে চেকারকে সরান।</li>
-<li>ইভেন্ট শেষ হওয়ার পর সিস্টেম সবার জন্য download বন্ধ করে দেয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-15</span>)।</li>
+<li>ইভেন্ট শেষ হওয়ার পর সিস্টেম সবার জন্য download বন্ধ করে দেয় (<a href="../50-system-initiated/S-15-gate-download-status-cleanup.html">S-15</a>)।</li>
 </ol>
 <h2 id="4-পরযকতগত-পরবহ">4. প্রযুক্তিগত প্রবাহ</h2>
 <ol>
@@ -286,7 +305,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
 <ol>
 <li><strong>আংশিক তালিকা বাকিদের সরিয়ে দেয়।</strong> <code>AddOrRemoveAsync</code> গেটের ইউজার তালিকাকে পোস্ট করা তালিকার সমান করে দেয়। <code>force-unassign</code> ও <code>force-assign</code> কেবল নির্বাচিত ইউজারদের পোস্ট করে, তাই সেই গেটের অন্য কোনো চেকার শুধু ফ্ল্যাগ মুছে পাওয়া নয়, <strong>গেট থেকে সরে যায়</strong>। গেটের সম্পূর্ণ তালিকা পাঠান।</li>
-<li><strong>প্রতি চেকারের জন্য একসময়ে একটি ইভেন্ট।</strong> একজন চেকার সর্বোচ্চ একটি ইভেন্টেই download-enabled থাকতে পারে; দ্বিতীয় ইভেন্ট প্রত্যাখ্যান করে যতক্ষণ না প্রথমটি বন্ধ বা শেষ হয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-15</span>)।</li>
+<li><strong>প্রতি চেকারের জন্য একসময়ে একটি ইভেন্ট।</strong> একজন চেকার সর্বোচ্চ একটি ইভেন্টেই download-enabled থাকতে পারে; দ্বিতীয় ইভেন্ট প্রত্যাখ্যান করে যতক্ষণ না প্রথমটি বন্ধ বা শেষ হয় (<a href="../50-system-initiated/S-15-gate-download-status-cleanup.html">S-15</a>)।</li>
 <li><strong>Redis গেট ম্যাপ un-awaited task দিয়ে লেখা হয়।</strong> লুপ <code>Split(',').ToList().ForEach(async e =&gt; ...)</code> লেখার জন্য অপেক্ষা করে না; দ্রুত পরের একটি অনুরোধ (কিংবা কোনো exception) ম্যাপটি অসম্পূর্ণ রেখে দিতে পারে, তখন চেকার-অ্যাপের sync আর গেটটি সমাধান করতে পারে না (<code>TicketsManager</code> <code>TicketCheckerLevelGateMap</code> পড়ে) <span class="badge-unconfirmed">[UNCONFIRMED: Q-27]</span>।</li>
 <li><strong>ক্লাস-লেভেলের auth বহল।</strong> ক্লাস অ্যাট্রিবিউট ticket-checker scheme ও <code>TicketChecker</code> রোল গ্রহণ করে, আর কেবল দুটি অ্যাকশন কঠোর রোল তালিকা যোগ করে। সুতরাং সাইন-ইন করা একটি <strong>চেকার</strong> টোকনও <code>report</code>, <code>export</code>, <code>force-assign</code>, <code>force-unassign</code>, <code>update-download-status</code>, <code>remove-user</code>, <code>duplicate-tickets</code> ও <code>manual-entry-tickets</code>-এ পৌঁছাতে পারে, ফলে একজন চেকার নিজের বা অন্যদের জন্য download চালু করতে পারে (<a href="../60-cross-cutting/X-15-authz-roles.html">X-15</a>)।</li>
 <li><strong>গেটগুলো নাম অনুযায়ী গ্রুপ করা</strong>, তাই ভেন্যুতে একটি এন্ট্রি গেটের নাম বদলালে (<a href="A-05-venues.html">A-05</a>) বিদ্যমান নিয়োগ একটি নতুন, নিয়োগ-বিহীন গেটে ভেঙে যায়।</li>
@@ -302,7 +321,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   TC -->|"read gate map"| R
   W["S-15"] -->|"disable download after event"| G
 </div>
-<p><strong>নির্ভর করে:</strong> <a href="A-05-venues.html">A-05</a>, <a href="A-07-events.html">A-07</a>, <a href="A-17-ticket-checker-users.html">A-17</a>। <strong>প্রভাব ফেলে:</strong> <a href="../40-checker-app/C-01-assigned-event-gate.html">C-01</a>, <a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>, <a href="../40-checker-app/C-05-ticket-sync.html">C-05</a>, <a href="A-19-gate-reports.html">A-19</a>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-14</span>।</p>
+<p><strong>নির্ভর করে:</strong> <a href="A-05-venues.html">A-05</a>, <a href="A-07-events.html">A-07</a>, <a href="A-17-ticket-checker-users.html">A-17</a>। <strong>প্রভাব ফেলে:</strong> <a href="../40-checker-app/C-01-assigned-event-gate.html">C-01</a>, <a href="../40-checker-app/C-02-offline-ticket-download.html">C-02</a>, <a href="../40-checker-app/C-05-ticket-sync.html">C-05</a>, <a href="A-19-gate-reports.html">A-19</a>, <a href="../50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
 <p><strong>লোকালভাবে পরীক্ষা: অ্যাডমিন দিকের জন্য সম্পূর্ণ।</strong></p>
 <table>
