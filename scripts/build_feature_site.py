@@ -76,6 +76,16 @@ if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'d
 document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>"""
 
+# root router: forward straight into the site (remembered language, else
+# browser language, else English); location.replace keeps the router out of
+# the back-button history. Cards below remain as the no-JS fallback.
+ROUTER_REDIRECT = """<script>
+(function(){var d='en';try{var s=localStorage.getItem('fd-lang');
+if(s)d=s;else if((navigator.language||'').toLowerCase().indexOf('bn')===0)d='bn';}
+catch(e){}
+location.replace(d+'/index.html');})();
+</script>"""
+
 
 # --------------------------------------------------------------------------
 # parsing helpers
@@ -469,6 +479,7 @@ def build(docs: Path, out: Path, assets: Path, wanted):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GoBCB Feature Docs</title>
 {THEME_BOOT}
+{ROUTER_REDIRECT}
 {fonts_link}
 <link rel="stylesheet" href="assets/site.css?v={css_v}">
 </head>
@@ -481,8 +492,8 @@ def build(docs: Path, out: Path, assets: Path, wanted):
 <div class="router-wrap">
   <h1>{UI['en']['router_title']} · {UI['bn']['router_title']}</h1>
   <div class="router-cards">
-    <a class="router-card" href="en/">English<small>Read the feature documentation in English</small></a>
-    <a class="router-card" href="bn/">বাংলা<small>বাংলায় ফিচার ডকুমেন্টেশন পড়ুন</small></a>
+    <a class="router-card" href="en/index.html">English<small>Read the feature documentation in English</small></a>
+    <a class="router-card" href="bn/index.html">বাংলা<small>বাংলায় ফিচার ডকুমেন্টেশন পড়ুন</small></a>
   </div>
   <p class="router-note">{UI['en']['router_note']}<br/>{UI['bn']['router_note']}</p>
 </div>

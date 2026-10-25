@@ -439,3 +439,6 @@ portal-local/
 
 # Generated local mobile app copies (scripts/Setup-MobileApps.ps1)
 mobile-local/
+
+# ZCode agent session artifacts
+.zcode/

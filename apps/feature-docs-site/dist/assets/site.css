@@ -256,7 +256,7 @@ html[lang="bn"] .side-group { text-transform: none; letter-spacing: 0.02em; }
 }
 .content h3 { margin: 26px 0 10px; font-size: 1.08em; }
 
-.content p { margin: 10px 0; overflow-wrap: anywhere; }
+.content p { margin: 10px 0; overflow-wrap: break-word; }
 
 .content h2, .content h3 { position: relative; }
 .hlink {
@@ -298,7 +298,11 @@ h2:hover .hlink, h3:hover .hlink { opacity: 1; }
 .content tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface) 60%, var(--bg)); }
 .content tbody tr:hover { background: var(--accent-soft); }
 
-.content td code, .content th code { overflow-wrap: anywhere; }
+/* break-word (not anywhere): anywhere lets the auto table layout shrink the
+   value column to nothing, which shreds identifiers mid-word and inflates the
+   label column; break-word keeps min-content = whole word, so wide tables
+   scroll (overflow-x above) instead of wrapping mid-identifier */
+.content td code, .content th code { overflow-wrap: break-word; }
 
 /* hop tags like [HTTP + user token] in the technical-flow table */
 .hop-tag {

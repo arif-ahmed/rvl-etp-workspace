@@ -9,8 +9,14 @@
 if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
 document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
+<script>
+(function(){var d='en';try{var s=localStorage.getItem('fd-lang');
+if(s)d=s;else if((navigator.language||'').toLowerCase().indexOf('bn')===0)d='bn';}
+catch(e){}
+location.replace(d+'/index.html');})();
+</script>
 <link rel="stylesheet" href="assets/vendor/fonts/fonts.css?v=047d486c">
-<link rel="stylesheet" href="assets/site.css?v=8faa95ce">
+<link rel="stylesheet" href="assets/site.css?v=4b5420b6">
 </head>
 <body>
 <header class="topbar">
@@ -21,8 +27,8 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 <div class="router-wrap">
   <h1>Choose a language · ভাষা বেছে নিন</h1>
   <div class="router-cards">
-    <a class="router-card" href="en/">English<small>Read the feature documentation in English</small></a>
-    <a class="router-card" href="bn/">বাংলা<small>বাংলায় ফিচার ডকুমেন্টেশন পড়ুন</small></a>
+    <a class="router-card" href="en/index.html">English<small>Read the feature documentation in English</small></a>
+    <a class="router-card" href="bn/index.html">বাংলা<small>বাংলায় ফিচার ডকুমেন্টেশন পড়ুন</small></a>
   </div>
   <p class="router-note">Light / dark mode can be switched from the top bar on any page.<br/>যেকোনো পেজের উপরের বার থেকে লাইট / ডার্ক মোড বদলানো যায়।</p>
 </div>
