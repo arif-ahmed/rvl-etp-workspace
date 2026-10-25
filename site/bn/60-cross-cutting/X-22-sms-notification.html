@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-22 · SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=c419a007">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item is-active" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">60 · ক্রস-কাটিং</a><span class="sep">›</span><span>X-22</span></div>
+<h1><span class="id-chip">X-22</span> SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</p>
+<p><a href="index.html">← 60 · ক্রস-কাটিং</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস।</strong> ব্যাকএন্ড নিজে SMS পাঠায় না। এটি <code>INotificationClient</code> দিয়ে একটি <strong>বাহ্যিক নোটিফিকেশন সার্ভিসে</strong> (<code>Notification:Endpoint</code>, এই রিপোজিটরির অংশ নয় <span class="badge-unconfirmed">[UNCONFIRMED: Q-05]</span>) JSON পোস্ট করে। সেই সার্ভিসই SMS এবং "টিকিট তৈরি" ও "সমস্যা সমাধান" ব্যবহারকারী-নোটিফিকেশন পাঠায়। আরেকটি বাহ্যিক API, <strong>Serverless API</strong>, ব্যবহার করা হয় আইডি দিয়ে ব্যবহারকারীর নাম ও ফোন খুঁজতে। একে পুশ নোটিফিকেশনের সঙ্গে গুলিয়ে ফেলবেন না (<a href="X-23-push-firebase.html">X-23</a>), যা প্ল্যাটফর্ম নিজেই Firebase-এর মাধ্যমে পাঠায়।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<table>
+<thead>
+<tr>
+<th>মেসেজ</th>
+<th>কী ট্রিগার করে</th>
+<th>অ্যাক্টর</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ব্যবহারকারীর নাম ও পাসওয়ার্ডসহ "account created" SMS</td>
+<td>অ্যাডমিন একটি admin, agent বা checker ব্যবহারকারী তৈরি করেন (<a href="X-05-admin-provisioning.html">X-05</a>)</td>
+<td>অ্যাডমিন ব্যবহারকারী</td>
+</tr>
+<tr>
+<td>নতুন পাসওয়ার্ডসহ "password changed" SMS</td>
+<td>অ্যাডমিন কোনো ব্যবহারকারীর পাসওয়ার্ড রিসেট করেন (<a href="X-02-admin-forgot-password.html">X-02</a>, <a href="X-05-admin-provisioning.html">X-05</a>)</td>
+<td>অ্যাডমিন ব্যবহারকারী বা ব্যবহারকারী নিজে</td>
+</tr>
+<tr>
+<td><code>ticket_generated</code> নোটিফিকেশন</td>
+<td>টিকিট তৈরি হওয়ার পর Scheduler-এর ওয়ার্কার (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-12</span>)</td>
+<td>সিস্টেম</td>
+</tr>
+<tr>
+<td><code>issue_resolved</code> নোটিফিকেশন</td>
+<td>অ্যাডমিন কোনো সমস্যাকে Resolved চিহ্নিত করেন, <strong>শুধু user issues-এর লেগ্যাসি Admin কপিতে</strong></td>
+<td>অ্যাডমিন ব্যবহারকারী</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<p>অ্যাকাউন্ট তৈরি বা রিসেট হলে কর্মীরা SMS-এ তাদের ক্রেডেনশিয়াল পান। গ্রাহকদের জানানো হয় তাদের টিকিট প্রস্তুত। সাপোর্টের কোনো সমস্যা সমাধান হলে গ্রাহকদের জানানোর কথা ছিল, কিন্তু §9-এর নোটটি দেখুন।</p>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<p><code>NotificationClient</code> (<code>Core/ETP.Core/ServiceClient/NotificationClient/NotificationClient.cs</code>) পাঠায় <strong class="hop-tag">[HTTP, static key]</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th><code>Notification:Endpoint</code>-এর Path</th>
+<th>বডির ধরন</th>
+<th>কী কাজে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SendSMSAsync</code></td>
+<td><code>POST /notification/send-message</code></td>
+<td><code>SMSNotification</code></td>
+<td>ক্রেডেনশিয়াল SMS</td>
+</tr>
+<tr>
+<td><code>SendTicketGeneratedNotification</code></td>
+<td><code>POST /notification/request</code></td>
+<td><code>TicketGeneratedNotification</code></td>
+<td>টিকিট প্রস্তুত</td>
+</tr>
+<tr>
+<td><code>SendIssueResolvedNotification</code></td>
+<td><code>POST /notification/request</code></td>
+<td><code>IssueResolvedNotification</code></td>
+<td>সমস্যা সমাধান</td>
+</tr>
+</tbody>
+</table>
+<p>ক্লায়েন্ট প্রতিটি কলে <code>Authorization</code>-কে <code>Notification:Authorization</code>-এর মানে সেট করে এবং সাময়িক HTTP এরর ৩বার exponential back-off সহ রিট্রাই করে (Admin-এর রেজিস্ট্রেশন; Booking ও Scheduler একই ক্লায়েন্ট রেজিস্টার করে)। সফল না হওয়া স্ট্যাটাস <code>ArgumentException</code> ছুঁড়ে, ফলে কলকারী অপারেশনটি ব্যর্থ হয়।</p>
+<p>Admin, Booking ও Scheduler-এ রেজিস্টার করা। কলাররা: <code>AdminUserProvider</code>, <code>AgentUserProvider</code>, <code>TicketCheckerUserProvider</code> (তিনটিই Admin), <code>UserIssueManager</code> (Admin), এবং <code>SendNotificationAfterGeneratedTicketServiceTaskManager</code> (Scheduler)। Booking-এ <code>UserBookingOrderManager</code> ও <code>InitiateUserTicketGenerationTaskManager</code>-এর মধ্যে <code>notificationClient.SendSMSAsync</code> কলগুলো <strong>কমেন্ট করা</strong>।</p>
+<p><strong>Serverless API</strong> (<code>IServerlessClient</code>, <code>Serverless:BaseUrl</code>, <code>Serverless:Authorization</code>): <code>GET user/get-bulk-users?user_ids=...</code> ব্যবহারকারী রেকর্ড (<code>CognitoUser</code>) ফেরত দেয়। ব্যবহার করে Admin (user issues, raffle draw), Booking (orders list ও detail, ticket-generation ও VAT ওয়ার্কার) এবং UserIssue (report issue)। একই API-তে অ্যাডমিন পোর্টালের OTP কলগুলো <a href="X-01-admin-login.html">X-01</a>-এ আছে।</p>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>সার্ভিস</td>
+<td>Admin, Booking, Scheduler, UserIssue (শুধু Serverless)</td>
+</tr>
+<tr>
+<td>বাইরের</td>
+<td>Notification service <span class="badge-unconfirmed">[UNCONFIRMED: Q-05]</span>, Serverless API <span class="badge-unconfirmed">[UNCONFIRMED: Q-03]</span></td>
+</tr>
+<tr>
+<td>কোড</td>
+<td><code>Core/ETP.Core/ServiceClient/NotificationClient/*</code>, <code>Core/ETP.Core/ServiceClient/ServerlessClient/*</code>, <code>Core/ETP.Core/Models/Notification.cs</code></td>
+</tr>
+<tr>
+<td>কনফিগ</td>
+<td><code>Notification:Endpoint</code>, <code>Notification:Authorization</code>, <code>Serverless:BaseUrl</code>, <code>Serverless:Authorization</code> (<a href="X-26-configuration.html">X-26</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<p>এগুলো এমন কল যা ব্যাকএন্ড <strong>করে</strong>; এদের জন্য ব্যাকএন্ড কোনো এন্ডপয়েন্ট প্রকাশ করে না।</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>{Notification:Endpoint}/notification/send-message</code></td>
+<td>static <code>Authorization</code></td>
+<td><code>SMSNotification</code></td>
+<td>শুধু স্ট্যাটাস</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>{Notification:Endpoint}/notification/request</code></td>
+<td>static <code>Authorization</code></td>
+<td><code>TicketGeneratedNotification</code> বা <code>IssueResolvedNotification</code></td>
+<td>শুধু স্ট্যাটাস</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>{Serverless:BaseUrl}/user/get-bulk-users?user_ids=</code></td>
+<td>static <code>Authorization</code></td>
+<td>—</td>
+<td><code>CognitoUser</code>-এর তালিকা</td>
+</tr>
+</tbody>
+</table>
+<p>প্রপার্টির নাম <code>[JsonPropertyName]</code> দিয়ে নির্দিষ্ট (snake_case) — প্ল্যাটফর্মের নিজস্ব API-র camelCase নয়।</p>
+<pre><code class="language-json">{ &quot;message_destination&quot;: &quot;+8801700000000&quot;, &quot;message_type&quot;: &quot;sms&quot;, &quot;the_message&quot;: &quot;Your account has been created successfully. Your user name is ... and password is ...&quot; }
+</code></pre>
+<pre><code class="language-json">{
+  &quot;notification_type&quot;: &quot;ticket_generated&quot;,
+  &quot;user_id&quot;: &quot;&lt;cognito sub&gt;&quot;,
+  &quot;notification_data&quot;: {
+    &quot;order_id&quot;: &quot;&lt;order number&gt;&quot;, &quot;ticket_id&quot;: &quot;T1,T2&quot;, &quot;program_event&quot;: &quot;&lt;event name&gt;&quot;,
+    &quot;event_venue&quot;: &quot;&lt;venue&gt;&quot;, &quot;seating_gallery&quot;: &quot;&lt;gallery&gt;&quot;, &quot;seating_block&quot;: &quot;&lt;block&gt;&quot;,
+    &quot;seating_level&quot;: &quot;&lt;level&gt;&quot;, &quot;entry_gate&quot;: &quot;&lt;gate&gt;&quot;, &quot;mini_gate&quot;: &quot;&lt;mini gate&gt;&quot;
+  }
+}
+</code></pre>
+<p>মানগুলো placeholder; প্রপার্টির নাম <code>Notification.cs</code> ও <code>SMSNotification.cs</code> থেকে। <code>ticket_id</code> হলো কমা দিয়ে যুক্ত টিকিট নম্বর। <code>issue_resolved</code> বডিতে <code>notification_data</code>-তে <code>order_id</code> ও <code>issue_id</code> থাকে।</p>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<ul>
+<li>নিজস্ব কোনো ডেটাবেস লেখা নেই।</li>
+<li>অ্যাকাউন্ট তৈরি ও রিসেটের সময় SMS-এর লেখায় <strong>প্লেইন-টেক্সট পাসওয়ার্ড</strong> থাকে (§9 দেখুন)।</li>
+<li>স্বাভাবিক রিকোয়েস্ট লগিং ছাড়া ব্যাকএন্ড মেসেজগুলো লগ বা সংরক্ষণ করে না, এবং অ্যাক্টিভিটি লগ সেগুলো কভার করে না (<a href="X-24-activity-logging.html">X-24</a>)।</li>
+</ul>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/ServiceClient/NotificationClient/NotificationClient.cs</code></td>
+</tr>
+<tr>
+<td>মডেল</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/Models/Notification.cs</code>, <code>.../NotificationClient/Models/SMSNotification.cs</code></td>
+</tr>
+<tr>
+<td>ক্রেডেনশিয়াল SMS</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Integration/Services/AdminUserProvider.cs:79-86, 235-243, 570-579</code>; <code>AgentUserProvider.cs:74, 197</code>; <code>TicketCheckerUserProvider.cs:70, 193</code></td>
+</tr>
+<tr>
+<td>টিকিট-প্রস্তুত নোটিফিকেশন</td>
+<td><code>rvl-gobcb-backend/Services/Scheduler/ETP.Scheduler.Service/Workers/TaskManagers/SendNotificationAfterGeneratedTicketServiceTaskManager.cs:76-97</code></td>
+</tr>
+<tr>
+<td>সমস্যা সমাধান</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Domain/Managers/UserIssueManager.cs:199-217</code></td>
+</tr>
+<tr>
+<td>রেজিস্ট্রেশন</td>
+<td><code>Services/Admin/ETP.Admin.Service/Configurations/DependencyConfig.cs:131-137</code>; <code>Services/Booking/ETP.Booking.Service/Configuration/DependencyConfig.cs:163</code>; <code>Services/Scheduler/ETP.Scheduler.Service/Configurations/DependencyConfig.cs:107</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>পাসওয়ার্ড SMS-এ প্লেটেক্সটে যায়</strong> (<code>... password is {password}</code>), আর নোটিফিকেশন সার্ভিসটি বাইরের ও নিশ্চিত নয়। কর্মী অ্যাকাউন্টের ক্রেডেনশিয়াল পৌঁছানোর ডিজাইন এটিই; ঝুঁকি-সংক্রান্ত নোট দেখুন <a href="X-05-admin-provisioning.html">X-05</a> ও <a href="X-02-admin-forgot-password.html">X-02</a>-এ।</li>
+<li><strong>"Issue resolved" শুধু লেগ্যাসি Admin কপি থেকে পাঠানো হয়।</strong> চালু সাপোর্ট ফিচারটি হলো UserIssue সার্ভিস (<code>/userissue/...</code>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">A-24</span>); তার ম্যানেজার <code>INotificationClient</code> কল করে না। তাই বর্তমান ক্লায়েন্টগুলোর সঙ্গে অ্যাডমিন পোর্টালে কোনো সমস্যা সমাধান করলে <strong>কোনো</strong> নোটিফিকেশন যায় না <span class="badge-unconfirmed">[UNCONFIRMED: Q-05]</span>। দেখুন <span class="link-na" title="এখনো সাইটে যোগ হয়নি">অ্যাপেন্ডিক্স A</span>।</li>
+<li>গ্রাহকদের কাছে SMS (অর্ডার বা টিকিট SMS) লেখা হয়েছিল, কিন্তু Booking-এ কমেন্ট করা; গ্রাহকরা শুধু <code>ticket_generated</code> নোটিফিকেশন পান।</li>
+<li>লোকাল রানে দুটি এন্ডপয়েন্টই <code>https://*.invalid/</code>-এ সেট করা, তাই প্রতিটি SMS বা নোটিফিকেশন কল কানেকশন এরর দিয়ে ব্যর্থ হয়। অ্যাডমিন ব্যবহারকারী তৈরির ক্ষেত্রে এর মানে <strong>Cognito ব্যবহারকারী তৈরি হয়, কিন্তু এরপর রিকোয়েস্টটি ব্যর্থ হয়</strong> (SMS পাঠানো হয় <code>AdminCreateUser</code>/<code>AdminSetUserPassword</code>-এর পরে), ফলে এমন একটি অ্যাকাউন্ট থেকে যায় যার পাসওয়ার্ড অ্যাডমিনের কাছে নেই।</li>
+<li>Scheduler ওয়ার্কারটি প্রতিটি বুকিংয়ের জন্য ব্যর্থ send ধরে ও লগ করে, তাই একই রানের ভেতরে রিট্রাই হয় না; পরে রিট্রাই হবে কি না তা নির্ভর করে ওয়ার্কারের নিজস্ব বুকিং ফিল্টারের ওপর (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-12</span>)।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  AD["Admin (user providers)"] -->|"HTTP, static key"| NS["Notification service (external)"]
+  SCH["Scheduler worker"] -->|"HTTP, static key"| NS
+  NS --> SMS["SMS / user notification"]
+  AD -->|"HTTP, static key"| SL["Serverless API (external)"]
+  BK["Booking"] -->|"HTTP, static key"| SL
+  UI["UserIssue"] -->|"HTTP, static key"| SL
+</div>
+<p><strong>নির্ভর করে:</strong> অ্যাকাউন্ট প্রোভিশনিং (<a href="X-05-admin-provisioning.html">X-05</a>), টিকিট জেনারেশন (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-07</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>)। <strong>প্রভাব ফেলে:</strong> কর্মী অনবোর্ডিং, গ্রাহকের টিকিট-প্রস্তুত বার্তা।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালে পরীক্ষাযোগ্যতা: লোকালে নয়।</strong> নোটিফিকেশন ও Serverless এন্ডপয়েন্ট হলো <code>https://notification.invalid/</code> ও <code>https://serverless.invalid/</code> (<code>scripts/user-secrets.example.json</code>); কোনো stub তাদের প্রতিস্থাপন করে না (<code>docs/local-dev.md</code>-এ এগুলো ডামি হিসেবে তালিকাভুক্ত)।</p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>অ্যাডমিন লগইন (<a href="X-01-admin-login.html">X-01</a>)</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td>অ্যাডমিন পোর্টাল → Users → ব্যবহারকারী যোগ করুন: Cognito ব্যবহারকারী তৈরি হওয়ার পর রিকোয়েস্টটি ব্যর্থ হয় (§9 নোট 4)</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/services/etp-admin.postman_collection.json</code>-এর create-user রিকোয়েস্ট; লোকালে SMS ধাপে 500 আশা করুন</td>
+</tr>
+<tr>
+<td>Visual Studio ডিবাগ</td>
+<td><code>NotificationClient.SendSMSAsync</code>-এ ব্রেকপয়েন্ট; payload পরীক্ষা করতে user-secrets-এর মাধ্যমে সাময়িকভাবে <code>Notification:Endpoint</code>-কে একটি লোকাল লিসেনারের দিকে ইঙ্গুত করুন (সাবমডিউলের বাইরে)</td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>Aspire লগ (Admin) ব্যর্থ POST দেখায়; payload-এর আকার নিশ্চিত করতে উপরের মতো একটি লোকাল HTTP লিসেনার ব্যবহার করুন</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-21-email-ses.html"><span class="pager-label">পূর্ববর্তী</span><span>X-21 · ইমেইল (SES)</span></a>
+  <a class="pager-next" href="X-23-push-firebase.html"><span class="pager-label">পরবর্তী</span><span>X-23 · পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

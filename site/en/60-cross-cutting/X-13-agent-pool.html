@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-13 · Agent pool and offline-sold tickets · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=c419a007">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item is-active" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">60 · Cross-cutting</a><span class="sep">›</span><span>X-13</span></div>
+<h1><span class="id-chip">X-13</span> Agent pool and offline-sold tickets</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</p>
+<p><a href="index.html">← 60 · Cross-cutting</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Agent pool.</strong> Seller agents (offline ticket sellers) have accounts in a fourth Cognito pool, <strong>Agent</strong>. Their only API records
+that pre-printed <strong>partner-sale</strong> tickets were sold, optionally with the buyer's phone number. No client in the five
+repositories signs in with the Agent pool or calls this API <span class="badge-unconfirmed">[UNCONFIRMED: Q-07]</span>.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Actor</td>
+<td>Seller agent (account created in the admin portal, <span class="link-na" title="Not included in the site yet">A-26</span>)</td>
+</tr>
+<tr>
+<td>Client</td>
+<td>Unknown <span class="badge-unconfirmed">[UNCONFIRMED: Q-07]</span></td>
+</tr>
+<tr>
+<td>Cognito pool</td>
+<td>Agent</td>
+</tr>
+<tr>
+<td>Role / program scope</td>
+<td>Backend adds role <code>agent</code> to tokens of this pool (<a href="X-14-authz-pool-policies.html">X-14</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>Partner tickets are generated for a partner reservation in the admin portal (<span class="link-na" title="Not included in the site yet">A-11</span>,
+   <span class="link-na" title="Not included in the site yet">A-12</span>); their ticket type is <code>Partner Sale</code>.</li>
+<li>An agent sells some of them offline and records the sale with the ticket numbers (scanned QR or typed) and the buyer's
+   phone/ID (max 20 characters).</li>
+<li>The platform refuses tickets that are not partner-sale tickets, that were already recorded, or whose event has passed its
+   ticket-selling stop time.</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>From → To</th>
+<th>Hop</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Agent client → Ticketing <code>POST /ticketing/api/v1/offline-sold-ticket</code></td>
+<td><strong class="hop-tag">[HTTP + user token]</strong> (Agent pool)</td>
+<td><code>Policy = agent</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Ticketing → database</td>
+<td><strong class="hop-tag">[Shared table]</strong></td>
+<td>Reject numbers already in <code>OfflineSoldTickets</code>; load <code>Tickets</code> where <code>TicketNumber</code> in list and <code>TicketType == "Partner Sale"</code>; any missing → 400 "Invalid QR || …"</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Ticketing → Event <code>GET /event/api/v1/events/{eventId}</code> per distinct event</td>
+<td><strong class="hop-tag">[HTTP + user token]</strong> (token forwarding)</td>
+<td>Reject if <code>TicketSellingStopDateTime &lt; UtcNow</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Ticketing → database</td>
+<td>—</td>
+<td>Insert one <code>OfflineSoldTickets</code> row per ticket (<code>UserId</code> = agent's <code>sub</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Service</td>
+<td>Ticketing: <code>OfflineTicketSoldController</code> → <code>OfflineSoldTicketManager</code> → <code>TicketRepository</code>, <code>OfflineSoldTicketRepository</code>; <code>IEventClient</code></td>
+</tr>
+<tr>
+<td>Service</td>
+<td>Event (event details)</td>
+</tr>
+<tr>
+<td>AWS</td>
+<td>Cognito Agent pool</td>
+</tr>
+<tr>
+<td>Data</td>
+<td><code>etp."Tickets"</code> (read), <code>etp."OfflineSoldTickets"</code> (write)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request DTO</th>
+<th>Response</th>
+<th>Main errors (400)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/ticketing/api/v1/offline-sold-ticket</code></td>
+<td><code>Policy = agent</code></td>
+<td><code>OfflineSoldTicketCreateRequest { TicketNumbers: string[], TicketHolderIdentification?: string }</code></td>
+<td><code>{ "message": "Offline sold tickets created successfully." }</code></td>
+<td>"The following ticket is already sold: …", "Invalid QR || This ticket can not be sold: …", "Phone no must not exceed 20 characters.", "Ticket requests are no longer available as the ticket selling period of … has ended."</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-json">// POST /ticketing/api/v1/offline-sold-ticket
+{ &quot;ticketNumbers&quot;: [&quot;BDI-000123&quot;, &quot;BDI-000124&quot;], &quot;ticketHolderIdentification&quot;: &quot;+8801711111111&quot; }
+
+// 200
+{ &quot;message&quot;: &quot;Offline sold tickets created successfully.&quot; }
+</code></pre>
+<p>Ticket numbers above are illustrative of the shape; real numbers use the program's ticket prefix (<span class="link-na" title="Not included in the site yet">A-03</span>).</p>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>One <code>OfflineSoldTickets</code> row per ticket (event, gallery/block/level, reservation id and public id, ticket number, holder id,
+agent id, <code>CreatedAt</code>). Nothing else changes: the ticket itself and its reservation are not updated.</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Controller</td>
+<td><code>rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service/Api/OfflineTicketSoldController.cs:30-41</code></td>
+</tr>
+<tr>
+<td>Manager</td>
+<td><code>rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Domain/Managers/OfflineSoldTicketManager.cs:21-132</code></td>
+</tr>
+<tr>
+<td>Partner-sale filter</td>
+<td><code>rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Storage/Repositories/TicketRepository.cs:36-40</code></td>
+</tr>
+<tr>
+<td>Entity</td>
+<td><code>rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Storage/Models/OfflineSoldTicket.cs</code></td>
+</tr>
+<tr>
+<td>Agent pool scheme</td>
+<td><code>rvl-gobcb-backend/Core/ETP.Core/Configuration/DefaultAuthenticationConfig.cs:173-214</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>No known client.</strong> Neither portal nor app uses the Agent pool; the architecture document also lists the client as not
+   found <span class="badge-unconfirmed">[UNCONFIRMED: Q-07]</span>.</li>
+<li><strong>Agent account management is anonymous</strong> in the Admin service (<a href="X-05-admin-provisioning.html">X-05</a>, <a href="X-18-endpoints-without-auth.html">X-18</a>).</li>
+<li><strong>No read API.</strong> Nothing in the backend reads <code>OfflineSoldTickets</code> back (no report, no admin screen) <span class="badge-unconfirmed">[UNCONFIRMED: Q-07]</span>.</li>
+<li><strong>Token forwarding to Event:</strong> the Event endpoint has no <code>[Authorize]</code>, so the forwarded Agent token is not checked there.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  AG["Agent client<br/>(unknown)"] -->|"HTTP + user token (Agent pool)"| TK["Ticketing"]
+  TK -->|"HTTP + user token<br/>events/{id}"| EV["Event"]
+  TK -->|"read Partner Sale tickets"| T[("Tickets")]
+  TK -->|"insert"| OST[("OfflineSoldTickets")]
+</div>
+<p><strong>Depends on:</strong> <span class="link-na" title="Not included in the site yet">A-26</span>, <span class="link-na" title="Not included in the site yet">A-11</span>, <span class="link-na" title="Not included in the site yet">A-12</span>.
+<strong>Affects:</strong> nothing that reads it back (see notes).</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Partial.</strong> The endpoint and Agent-pool login work locally; no <code>Partner Sale</code> tickets and no agent-sold
+tickets are seeded (<code>docs/local-dev.md</code> §7, "What this does not cover"), so a successful call needs a partner reservation
+created first (<span class="link-na" title="Not included in the site yet">A-11</span>).</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>Agent-pool user <code>+8801700000031</code> / <code>Passw0rd!23</code> (<code>floci/seed-users.ps1</code>)</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td>Not applicable</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td>Not applicable</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/etp-login-all-pools.postman_collection.json</code> "Agent pool" → "Login as agent" (<code>access_token_agent</code>); <code>postman/services/etp-ticketing.postman_collection.json</code> folder "OfflineTicketSold", "POST /api/v1/offline-sold-ticket"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>Attach to <code>ETP.Ticketing.Service</code>; breakpoint at <code>OfflineSoldTicketManager.cs:21</code></td>
+</tr>
+<tr>
+<td>Verify</td>
+<td><code>select "TicketNumber","UserId","TicketHolderIdentification" from etp."OfflineSoldTickets" order by "Id" desc;</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-12-checker-login.html"><span class="pager-label">Previous</span><span>X-12 · Checker login</span></a>
+  <a class="pager-next" href="X-14-authz-pool-policies.html"><span class="pager-label">Next</span><span>X-14 · Authorization layer 1: pool schemes and policies</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-26 · কনফিগারেশন ও সিক্রেট · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=c419a007">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item is-active" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">60 · ক্রস-কাটিং</a><span class="sep">›</span><span>X-26</span></div>
+<h1><span class="id-chip">X-26</span> কনফিগারেশন ও সিক্রেট</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> কনফিগারেশন ও সিক্রেট</p>
+<p><a href="index.html">← 60 · ক্রস-কাটিং</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p><strong>কনফিগারেশন ও সিক্রেট।</strong> প্রতিটি সার্ভিস নিজের সেটিংস পড়ে অবাগত .NET কনফিগারেশন সিস্টেম থেকে (<code>appsettings.json</code>, environment variables, user secrets)। রিপোজিটরিতে শুধু <strong>placeholder</strong> থাকে (<code>[see User Secrets]</code>); আসল মান প্রতিটি environment-এ আলাদাভাবে দেওয়া হয়। প্রায় প্রতিটি অন্য ফিচার একটি <code>Section:Key</code> নামের দিকে ইঙ্গুত করে, তাই এই ফাইলটি ব্যাখ্যা করে কোন environment-এর মান কোথা থেকে আসে এবং কোন key-গুলো গুরুত্বপূর্ণ।</p>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<p>লোকালে কোনো সার্ভিস চালু করা একজন ডেভেলপার, কিংবা কোনো environment বিল্ড ও ডিপ্লয় করা CodeBuild। কোনো end user এতে জড়িত নয়।</p>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<p>কিছু নেই। এটি সিদ্ধান্ত নেয় যে প্ল্যাটফর্মের ডিপ্লয় করা একটি কপি কোন ডেটাবেস, Redis, AWS অ্যাকাউন্ট, পেমেন্ট gateway ও পাশের সার্ভিসের URL-এর সঙ্গে কথা বলবে।</p>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<p><strong>প্রতিটি environment অনুযায়ী মান কোথা থেকে আসে</strong></p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>উৎস</th>
+<th>সার্ভিসে কীভাবে পৌঁছায়</th>
+<th>প্রমাণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>লোকাল (ওয়ার্কস্পেস)</td>
+<td><code>scripts/user-secrets.example.json</code> → <code>scripts/Set-EtpSecrets.ps1</code> → প্রতি সার্ভিসে <code>dotnet user-secrets</code>; Aspire environment variable যোগ করে (<code>ConnectionStrings__*</code>, <code>Services__*</code>, <code>Cache__Redis__*</code>, <code>DistributedLock__Redis__*</code>, <code>ASPNETCORE_URLS</code>)</td>
+<td>ASP.NET Core কনফিগারেশনের ক্রম: <code>appsettings.json</code>, user secrets, environment variables</td>
+<td><code>docs/local-dev.md</code> Step 4; <code>aspire/Etp.AppHost/AppHost.cs:76-98</code></td>
+</tr>
+<tr>
+<td>Dev ও Test</td>
+<td>SSM Parameter Store <code>/rvl/&lt;env&gt;/&lt;service&gt;-service-appsettings</code></td>
+<td><code>buildspec-dev.yml</code> ও <code>buildspec-test.yaml</code> <strong>সোর্স ট্রি-তে সার্ভিসের <code>appsettings.json</code> বদলে দেয় এবং Docker ইমেজে বেক করে</strong> (<code>mv appsettings_N.json Services/...</code>)</td>
+<td><code>rvl-gobcb-backend/buildspec-dev.yml</code> pre_build ও build স্টেজ; <code>deployment/k8s/development/*.yaml</code>-এ <code>envFrom</code> ও secret volume কমেন্ট করা</td>
+</tr>
+<tr>
+<td>Stage ও Prod</td>
+<td>একই SSM প্যারামিটার</td>
+<td><code>buildspec-prod.yaml</code>, <code>buildspec-stage.yaml</code> প্রতি সার্ভিসের জন্য একটি Kubernetes secret তৈরি করে (<code>kubectl create secret generic &lt;svc&gt;-appsettings --from-file=appsettings.json=...</code>); ডিপ্লয়মেন্ট সেটিকে read-only হিসেবে <code>/app/appsettings.json</code>-এ মাউন্ট করে</td>
+<td><code>buildspec-prod.yaml:122-135</code>; <code>deployment/k8s/production/admin_service.yaml:80-90</code></td>
+</tr>
+</tbody>
+</table>
+<p>আর্কিটেকচার ডকুমেন্ট (§2.3, §6) SSM → Kubernetes secret-এর পথটি বর্ণনা করে; কোড দেখায় যে Stage ও Prod-এর ক্ষেত্রে এটি সত্য, আর Dev ও Test-এ ব্যবহৃত হয় ইমেজে বেক করা ফাইল।</p>
+<p><strong>ফ্রন্ট এন্ড</strong></p>
+<table>
+<thead>
+<tr>
+<th>ক্লায়েন্ট</th>
+<th>কনফিগ ফাইল</th>
+<th>CI-তে উৎস</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>অ্যাডমিন পোর্টাল</td>
+<td><code>src/environments/environment.ts</code> ও <code>environment.prod.ts</code>, <strong>git-এ খালি</strong></td>
+<td><code>/rvl/&lt;env&gt;/admin-portal/environment.prod.ts</code> (SSM), buildspec দিয়ে লেখা হয় (<code>rvl-gobcb-admin-portal/buildspec-dev.yml:7, 28-31</code>; <code>buildspec-prod.yaml:14, 27-28</code>)</td>
+</tr>
+<tr>
+<td>ইউজার পোর্টাল</td>
+<td>git-এ <code>src/environments/</code> ফোল্ডার নেই</td>
+<td><code>/rvl/&lt;env&gt;/user-portal/environment.ts</code> (SSM) (<code>docs/user-portal-local.md</code>)</td>
+</tr>
+<tr>
+<td>ইউজার অ্যাপ, চেকার অ্যাপ</td>
+<td><code>env/.env.&lt;flavor&gt;</code> (<code>dev</code>, <code>test</code>, <code>staging</code>, <code>prod</code>), git-এ নেই; <code>env/README.md</code>-তে <code>API_BASE_URL</code>, <code>API_TOKEN</code> তালিকাভুক্ত</td>
+<td>বিল্ড তৈরি করে; কোনো আবশ্যক key অনুপস্থিত থাকলে অ্যাপ চালু হতে চায় না (<code>docs/mobile-local.md</code> §5)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>সার্ভিস পরিচয় ও রাউটিং।</strong> <code>Application:ServiceName</code> (<code>admin</code>, <code>booking</code>, <code>event</code>, <code>platform</code>, <code>PushNotification</code>, <code>scheduler</code>, <code>ticketChecker</code>, <code>ticketing</code>, <code>userAuth</code>, <code>utility</code>) <code>GlobalRoutePrefixConvention</code>-এর মাধ্যমে URL প্রিফিক্স হয় (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">explainer</span>)। UserIssue-এর git-এ <code>appsettings.json</code> নেই, তাই লোকালে Aspire <code>Application__ServiceName=userissue</code> সেট করে (<code>AppHost.cs:85</code>); ক্লাউডে এটি SSM ফাইল থেকে আসে।</p>
+<p><strong>Key মানচিত্র</strong> (এই ডকুমেন্টে ব্যবহৃত সেকশন; সম্পূর্ণ লোকাল তালিকা <code>scripts/user-secrets.example.json</code>):</p>
+<table>
+<thead>
+<tr>
+<th>সেকশন</th>
+<th>কী রাখে</th>
+<th>কোথায় বর্ণিত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ConnectionStrings:&lt;Service&gt;</code></td>
+<td>প্রতিটি কনটেক্সটের জন্য একটি PostgreSQL কানেকশন স্ট্রিং</td>
+<td><a href="X-24-activity-logging.html">X-24</a>, <span class="badge-unconfirmed">[UNCONFIRMED: Q-02]</span></td>
+</tr>
+<tr>
+<td><code>Services:&lt;Name&gt;</code></td>
+<td>পাশের সার্ভিসের base URL (লক্ষ্য করুন <code>Services:AppBase</code>)</td>
+<td><a href="X-19-service-to-service.html">X-19</a></td>
+</tr>
+<tr>
+<td><code>AWS:Region</code>, <code>AccessKey</code>, <code>SecretAccessKey</code></td>
+<td>S3, SQS, SES, Cognito-এর জন্য static AWS ক্রেডেনশিয়াল</td>
+<td><a href="X-20-file-storage.html">X-20</a>, <a href="X-19-service-to-service.html">X-19</a></td>
+</tr>
+<tr>
+<td><code>AWS:Bucket:*</code>, <code>AWS:Ticket:*</code></td>
+<td>মিডিয়া ও টিকিট বাকেট, টিকিট পাথের base</td>
+<td><a href="X-20-file-storage.html">X-20</a></td>
+</tr>
+<tr>
+<td><code>AWS:CognitoPool:{Admin,User,TicketChecker,Agent}:{PoolId,Authority,ClientId,Metadata}</code></td>
+<td>Cognito pool</td>
+<td><a href="X-14-authz-pool-policies.html">X-14</a></td>
+</tr>
+<tr>
+<td><code>AWS:Queue:*</code></td>
+<td>SQS কিউয়ের নাম</td>
+<td><a href="X-19-service-to-service.html">X-19</a></td>
+</tr>
+<tr>
+<td><code>Cache:Redis:*</code>, <code>DistributedLock:Redis:*</code></td>
+<td>Redis</td>
+<td><a href="X-25-redis.html">X-25</a></td>
+</tr>
+<tr>
+<td><code>PaymentSettings:*</code></td>
+<td>DgePay ও SSLCommerz ক্রেডেনশিয়াল, redirect URL</td>
+<td><span class="link-na" title="এখনো সাইটে যোগ হয়নি">P-06</span></td>
+</tr>
+<tr>
+<td><code>Notification:*</code>, <code>Serverless:*</code></td>
+<td>বাহ্যিক নোটিফিকেশন ও ব্যবহারকারী API</td>
+<td><a href="X-22-sms-notification.html">X-22</a></td>
+</tr>
+<tr>
+<td><code>TSP:*</code>, <code>OneIdSettings:*</code></td>
+<td>signing provider, OneID</td>
+<td><span class="link-na" title="এখনো সাইটে যোগ হয়নি">S-08</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">P-10</span></td>
+</tr>
+<tr>
+<td><code>CloudfrontTicketValidator:*</code></td>
+<td>CloudFront সাইনিং key ধরানো S3 অবজেক্ট</td>
+<td><a href="X-20-file-storage.html">X-20</a></td>
+</tr>
+<tr>
+<td><code>FirebasePushNotificationConfig:*</code></td>
+<td>Firebase service-account ফিল্ড (Scheduler)</td>
+<td><a href="X-23-push-firebase.html">X-23</a></td>
+</tr>
+<tr>
+<td><code>CORS:AllowedOrigins</code></td>
+<td>অনুমোদিত ব্রাউজার origin (commit করা মান: localhost 4200/4201)</td>
+<td>সব সার্ভিস</td>
+</tr>
+<tr>
+<td><code>GallerySettings</code></td>
+<td>অ্যাডমিন ভেন্যু গ্যালারি সেটিংস</td>
+<td><span class="link-na" title="এখনো সাইটে যোগ হয়নি">A-05</span></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>কোড</td>
+<td>প্রতিটি সার্ভিসের <code>Program.cs</code> ও <code>appsettings.json</code>; <code>Core/ETP.Core/Options/*</code> (typed option, যেমন <code>AwsOptions</code>)</td>
+</tr>
+<tr>
+<td>পাইপলাইন</td>
+<td><code>rvl-gobcb-backend/buildspec-{dev,test,stage,prod}.y*ml</code>, <code>deployment/k8s/&lt;env&gt;/*.yaml</code>; ফ্রন্ট এন্ডের <code>buildspec-*.y*ml</code></td>
+</tr>
+<tr>
+<td>AWS</td>
+<td>SSM Parameter Store, CodeBuild, ECR, EKS secret</td>
+</tr>
+<tr>
+<td>ওয়ার্কস্পেস</td>
+<td><code>scripts/user-secrets.example.json</code>, <code>scripts/Set-EtpSecrets.ps1</code>, <code>scripts/Clear-EtpSecrets.ps1</code>, <code>aspire/Etp.AppHost</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<p>কিছু নেই।</p>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>রানটাইমে কিছু নেই। বিল্ড সময়ে: Dev ও Test-এর Docker ইমেজে আসল <code>appsettings.json</code> থাকে।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Placeholder সেটিংস</td>
+<td><code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/appsettings.json</code> (এবং প্রতিটি সার্ভিস)</td>
+</tr>
+<tr>
+<td>SSM ও ইমেজ বেক (Dev)</td>
+<td><code>rvl-gobcb-backend/buildspec-dev.yml</code></td>
+</tr>
+<tr>
+<td>SSM ও secret (Prod)</td>
+<td><code>rvl-gobcb-backend/buildspec-prod.yaml:122-135</code>, <code>rvl-gobcb-backend/deployment/k8s/production/admin_service.yaml:80-90</code></td>
+</tr>
+<tr>
+<td>লোকাল মান</td>
+<td><code>scripts/user-secrets.example.json</code>, <code>scripts/Set-EtpSecrets.ps1</code></td>
+</tr>
+<tr>
+<td>Aspire override</td>
+<td><code>aspire/Etp.AppHost/AppHost.cs:76-98</code></td>
+</tr>
+<tr>
+<td>SSM থেকে ফ্রন্ট এন্ডের env</td>
+<td><code>rvl-gobcb-admin-portal/buildspec-dev.yml:7-31</code>, <code>rvl-gobcb-admin-portal/buildspec-prod.yaml:14-28</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>commit করা <code>appsettings.json</code> ফাইলগুলো অসম্পূর্ণ টেমপ্লেট।</strong> উদাহরণ হিসেবে Admin-এর ফাইলে <code>Notification</code>, <code>Serverless</code>, <code>CloudfrontTicketValidator</code> বা <code>AWS:Ticket</code> সেকশন নেই, যদিও কোডের ওগুলো দরকার। সম্পূর্ণ key set জানতে <code>scripts/user-secrets.example.json</code> ব্যবহার করুন (কোড থেকে লোকাল সেটআপের জন্য লেখা) এবং SSM প্যারামিটারগুলো, যেগুলো এই পর্যালোচনায় দেখা যায় না <span class="badge-unconfirmed">[UNCONFIRMED: Q-06]</span>।</li>
+<li><strong>Dev ও Test ইমেজে secret বেক করে।</strong> তৈরি ইমেজে আসল <code>appsettings.json</code> থাকে (ডেটাবেস, AWS key, gateway secret), আর buildspec-গুলো Admin ফাইলটি বিল্ড লগে <code>cat</code> করে। ইমেজ pull করতে পারা বা CodeBuild লগ পড়তে পারা যেকোনো ব্যক্তি সেগুলো দেখতে পায়। অ্যাডমিন পোর্টালের Dev buildspec-ও environment ফাইলটি তার লগে ছাপে (<code>cat src/environments/environment.prod.ts</code>)।</li>
+<li><strong>AWS অ্যাক্সেস একটি static key pair</strong>, কনফিগারেশনে (<code>AWS:AccessKey</code>, <code>AWS:SecretAccessKey</code>), S3, SQS, SES, Cognito ও MassTransit bus-এর জন্য ব্যবহৃত; কোডে role-based অ্যাক্সেস নেই (আর্কিটেকচার §2.3)। এটি রোটেট করতে হলে সব ১১টি SSM প্যারামিটার আপডেট করে আবার ডিপ্লয় করতে হবে।</li>
+<li><strong>মনে রাখার মতো টাইপো ও ড্রিফট</strong>: <code>ticekt</code> পাথ (<a href="X-20-file-storage.html">X-20</a>); Postman environment region <code>ap-southeast-1</code> সেট করে যখন কিছু ডকুমেন্ট <code>us-east-1</code> বলে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">অ্যাপেন্ডিক্স D</span>)।</li>
+<li><strong>Key অনুপস্থিত থাকলে ব্যর্থতা স্টার্ট-আপে বা প্রথম ব্যবহারে ঘটে।</strong> অনেক key <code>configuration["..."]!</code> দিয়ে পড়া হয়, তাই অনুপস্থিত key প্রথম ব্যবহারের জায়গায় null reference বা <code>ArgumentNullException</code> হিসেবে দেখা দেয়, স্পষ্ট বার্তা হিসেবে নয়। Redis keyগুলো স্টার্টেই যাচাই হয় (<code>DistributedLockConfig</code> একটি <code>ConfigurationErrorsException</code> ছুঁড়ে)।</li>
+<li>git-এর লোকাল <code>CORS:AllowedOrigins</code>-এ শুধু <code>localhost</code> পোর্ট আছে; আসল origin SSM ফাইলে।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  SSM["SSM Parameter Store /rvl/env/..."] -->|"CodeBuild Dev, Test"| IMG["Docker image (appsettings baked in)"]
+  SSM -->|"CodeBuild Stage, Prod"| SEC["Kubernetes secret"] -->|"mounted /app/appsettings.json"| POD["Service pod"]
+  IMG --> POD
+  US["user secrets + Aspire env"] --> LOC["Local service"]
+  SSM2["SSM environment.ts"] -->|"CodeBuild"| FE["Admin / user portal build"]
+</div>
+<p><strong>নির্ভর করে:</strong> কিছু নেই। <strong>প্রভাব ফেলে:</strong> প্রতিটি ফিচার।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালে পরীক্ষাযোগ্যতা: সম্পূর্ণ।</strong></p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td><code>pwsh ./scripts/Set-EtpSecrets.ps1</code> (Floci seeding-এর পর) secret লেখে; <code>-DryRun</code> JSON ছাপে (<code>docs/local-dev.md</code> Step 4)</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td><code>http://localhost:4200/</code> তৈরি করা <code>environment.ts</code>-এর প্রভাব দেখায় (API base URL)</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td>git-ignored <code>mobile-local/</code> কপিতে <code>env/.env.dev</code> (<code>pwsh ./scripts/Setup-MobileApps.ps1</code>)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/</code>-এর environment ফাইলগুলোতে <code>base_url</code> ও টোকেন থাকে (<span class="link-na" title="এখনো সাইটে যোগ হয়নি">অ্যাপেন্ডিক্স D</span> দেখুন)</td>
+</tr>
+<tr>
+<td>Visual Studio ডিবাগ</td>
+<td>IDE থেকে একটি সার্ভিস চালু করুন; সেও একই user secret পড়ে (<code>docs/local-dev.md</code> §6.1)</td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td><code>dotnet user-secrets list --project rvl-gobcb-backend/Services/Admin/ETP.Admin.Service</code></td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-25-redis.html"><span class="pager-label">পূর্ববর্তী</span><span>X-25 · Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+  <span class="empty"></span>
+</div>
+  </main>
+</div>
+<script src="../../assets/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

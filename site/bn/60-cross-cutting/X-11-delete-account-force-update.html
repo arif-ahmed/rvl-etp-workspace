@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-11 · অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=c419a007">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · ক্রস-কাটিং</a>
+    <div class="side-group">ফিচারসমূহ</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+    <a class="side-item is-active" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+    <a class="side-item" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">সূচিপত্র</a><span class="sep">›</span><a href="index.html">60 · ক্রস-কাটিং</a><span class="sep">›</span><span>X-11</span></div>
+<h1><span class="id-chip">X-11</span> অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</p>
+<p><a href="index.html">← 60 · ক্রস-কাটিং</a> · <a href="../index.html">সূচিপত্র</a> · <span class="link-na" title="এখনো সাইটে যোগ হয়নি">ওপেন কোয়ারি</span></p>
+</blockquote>
+<h2 id="1-নম-ও-উদদশয">1. নাম ও উদ্দেশ্য</h2>
+<p>identity API-এর উপর নির্ভরশীল দুটি অ্যাপ-সাইড নিয়ন্ত্রণ:</p>
+<ul>
+<li><strong>অ্যাকাউন্ট মুছে ফেলা</strong> (শুধু user app): গ্রাহক তার GoBCB প্রোফাইল মুছে ফেলেন এবং সাইন-আউট হয়ে যান।</li>
+<li><strong>force update</strong> (user app ও checker app): অ্যাপ শুরু হওয়ার সময় নিজের ভার্সনটিকে প্রকাশিত ন্যূনতম ভার্সনের সঙ্গে তুলনা করে এবং
+  গ্রাহক আপডেট করা পর্যন্ত ব্যবহার আটকে দেয়।</li>
+</ul>
+<h2 id="2-টরগর-ও-অযকটর">2. ট্রিগার ও অ্যাক্টর</h2>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>মান</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>অ্যাক্টর</td>
+<td>গ্রাহক (অ্যাকাউন্ট মুছে ফেলা, force update); গেট কর্মী (checker app-এ force update)</td>
+</tr>
+<tr>
+<td>ক্লায়েন্ট ও স্ক্রিন</td>
+<td>User app Profile → Delete account (<code>ProfileViewModel.onDeleteAccount</code>); splash screen (<code>SplashViewModel._checkAppVersion</code>)। Checker app: splash (<a href="X-12-checker-login.html">X-12</a>)</td>
+</tr>
+<tr>
+<td>Cognito pool</td>
+<td>User (অ্যাকাউন্ট মুছে ফেলা); কোনোটিই নয় (ভার্সন যাচাই)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-বযবসযক-পরবহ">3. ব্যবসায়িক প্রবাহ</h2>
+<p><strong>অ্যাকাউন্ট মুছে ফেলা:</strong> গ্রাহক নিশ্চিত করেন; প্রোফাইল মুছে যায়, অ্যাপ সাইন-আউট হয় এবং লগইন স্ক্রিন খোলে।
+<strong>Force update:</strong> প্রকাশিত ভার্সন ইনস্টল করা ভার্সনের চেয়ে নতুন হলে একটি বন্ধ করা যায় না এমন "Update required" শিট এবং একটি
+"Update now" বোতাম store লিঙ্ক খোলে; অ্যাপ splash screen পেরিয়ে এগোতে পারে না।</p>
+<h2 id="4-করগর-পরবহ">4. কারিগরি প্রবাহ</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>থেকে → পর্যন্ত</th>
+<th>লাফ</th>
+<th>কী ঘটে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>App → identity <code>DELETE user/delete-my-profile</code></td>
+<td><strong class="hop-tag">[HTTP + user token]</strong> (<code>ProfileApiClient</code>)</td>
+<td>প্রোফাইল মুছে যায় (identity API)</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>App</td>
+<td><code>AuthRepositoryImpl.deleteUser</code></td>
+<td><code>signOut()</code>, analytics <code>delete_user</code>, লোকাল ডেটা মোছে</td>
+</tr>
+<tr>
+<td>V1</td>
+<td>App → identity <code>GET user/allowed-app-version</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong> (<code>AuthApiClient</code>)</td>
+<td>রেসপন্স <code>{ message, status, data: { up: { android, ios }, tc: { android, ios } } }</code>, প্রতিটি <code>{ version, buildNumber, appLink }</code></td>
+</tr>
+<tr>
+<td>V2</td>
+<td>App</td>
+<td><code>AppVersionMapper</code></td>
+<td>User app পড়ে <code>data.up.&lt;platform&gt;</code>; checker app পড়ে নিজের এন্ট্রি (<code>tc</code> = ticket checker, <a href="X-12-checker-login.html">X-12</a> দেখুন)</td>
+</tr>
+<tr>
+<td>V3</td>
+<td>App</td>
+<td><code>AppInfo.isUpdateRequired</code></td>
+<td>ডট-সেপারেটেড ভার্সনের অংশগুলো তুলনা করে; remote ও local ভার্সনের অংশের সংখ্যা আলাদা হলে আপডেট প্রয়োজন</td>
+</tr>
+</tbody>
+</table>
+<p><code>AWSAmplifyService.deleteUser()</code> (Cognito self-delete) আছে কিন্তু কোথাও কোথাও বলা হয় না; অ্যাপ Cognito ব্যবহারকারীকে মুছে ফেলে না।</p>
+<h2 id="5-কমপননট">5. কম্পোনেন্ট</h2>
+<table>
+<thead>
+<tr>
+<th>ধরন</th>
+<th>কম্পোনেন্ট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ক্লায়েন্ট</td>
+<td>User app <code>ProfileViewModel</code>, <code>AuthRepositoryImpl</code>, <code>AuthApiServiceImpl.deleteUser</code>, <code>SplashViewModel</code>, <code>AppRepositoryImpl.getAppInfo</code>, <code>AppVersionMapper</code>, <code>domain/lib/model/app_info.dart</code></td>
+</tr>
+<tr>
+<td>বাহ্যিক</td>
+<td>Identity API <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-কনটরযকট">6. API কন্ট্র্যাক্ট</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path (identity API)</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>প্রধান ত্রুটি</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DELETE</td>
+<td><code>user/delete-my-profile</code></td>
+<td><code>Bearer</code> (User pool)</td>
+<td>—</td>
+<td>পড়া হয় না</td>
+<td>পুনরায় ছুঁড়ে দেওয়া <code>BaseException</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>user/allowed-app-version</code></td>
+<td>static header key</td>
+<td>—</td>
+<td><code>AppVersionResponse</code></td>
+<td><code>version</code> বা <code>buildNumber</code> অনুপস্থিত থাকলে mapper ছুঁড়ে দেয় "Version response is null"; splash সেটি ধরে ফেলে এগিয়ে যায়</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-json">// GET {identity}/user/allowed-app-version  (shape from AppVersionResponse)
+{
+  &quot;message&quot;: &quot;…&quot;,
+  &quot;status&quot;: &quot;…&quot;,
+  &quot;data&quot;: {
+    &quot;up&quot;: { &quot;android&quot;: { &quot;version&quot;: &quot;1.4.0&quot;, &quot;buildNumber&quot;: 40, &quot;appLink&quot;: &quot;https://play.google.com/…&quot; },
+            &quot;ios&quot;:     { &quot;version&quot;: &quot;1.4.0&quot;, &quot;buildNumber&quot;: 40, &quot;appLink&quot;: &quot;https://apps.apple.com/…&quot; } },
+    &quot;tc&quot;: { &quot;android&quot;: { &quot;version&quot;: &quot;1.1.0&quot;, &quot;buildNumber&quot;: 11, &quot;appLink&quot;: &quot;…&quot; },
+            &quot;ios&quot;:     { &quot;version&quot;: &quot;1.1.0&quot;, &quot;buildNumber&quot;: 11, &quot;appLink&quot;: &quot;…&quot; } }
+  }
+}
+</code></pre>
+<h2 id="7-ডট-ও-পরশবপরতকরয">7. ডেটা ও পার্শ্বপ্রতিক্রিয়া</h2>
+<p>Identity API: প্রোফাইল মোছে। গ্রাহকের মালিকানাধীন GoBCB ডেটা (<code>etp</code> স্কিমায় orders, tickets, issues) মুছে ফেলা হয় নাকি রাখা হয়,
+তা কোনো GoBCB সার্ভিস সামলায় না <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>।</p>
+<h2 id="8-কড-রফরনস">8. কোড রেফারেন্স</h2>
+<table>
+<thead>
+<tr>
+<th>কী</th>
+<th>কোথায়</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>অ্যাকাউন্ট মুছে ফেলা</td>
+<td><code>rvl-gobcb-user-app/lib/presentation/feature/profile/profile_view_model.dart:385-393</code>, <code>data/lib/repository/auth_repository_impl.dart:247-252</code>, <code>data/lib/remote/api_service/auth_api_service/auth_api_service_impl.dart:294-300</code></td>
+</tr>
+<tr>
+<td>ভার্সন যাচাই</td>
+<td><code>rvl-gobcb-user-app/lib/presentation/feature/splash/splash_view_model.dart</code>, <code>data/lib/repository/app_repository_impl.dart:88-115</code>, <code>data/lib/mapper/app_version_mapper.dart</code>, <code>domain/lib/model/app_info.dart:22</code></td>
+</tr>
+<tr>
+<td>রেসপন্স মডেল</td>
+<td><code>rvl-gobcb-user-app/data/lib/remote/response/app_version_response.dart</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-হযনডওভর-নট">9. হ্যান্ডওভার নোট</h2>
+<ol>
+<li><strong>পোর্টালে <code>IdentityApiService</code>-এ <code>deleteUserProfile()</code> এবং তার effect আছে</strong>, কিন্তু এটি শুরু করে এমন কোনো পোর্টাল স্ক্রিন পাওয়া যায়নি;
+   অ্যাকাউন্ট মুছে ফেলা একটি অ্যাপ ফিচার।</li>
+<li><strong>প্রোফাইল মুছে ফেললে Cognito ব্যবহারকারী মোছে না</strong> — অ্যাপ কোডে (Amplify-এর <code>deleteUser()</code> অব্যবহৃত)। identity API এটি করে কি না
+   জানা নেই <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>।</li>
+<li><strong>ভার্সন যাচাই ব্যর্থতা উপেক্ষা করা হয়</strong> (অ্যাপ চলতে থাকে), তাই identity API না পৌঁছালেও স্টার্ট-আপ আটকায় না।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  APP["User app<br/>splash / profile"] -->|"HTTP, static key<br/>allowed-app-version"| ID["Identity API"]
+  APP -->|"HTTP + user token<br/>delete-my-profile"| ID
+  APP -->|"signOut"| CG["Cognito User pool"]
+</div>
+<p><strong>নির্ভর করে:</strong> <a href="X-07-user-password-login.html">X-07</a>। <strong>প্রভাব ফেলে:</strong> <span class="link-na" title="এখনো সাইটে যোগ হয়নি">U-01</span>, <span class="link-na" title="এখনো সাইটে যোগ হয়নি">U-07</span>।</p>
+<h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
+<p><strong>লোকালভাবে পরীক্ষা: লোকালভাবে সম্ভব নয়।</strong> <code>/identity</code>-এর উত্তর <code>scripts/mobile-gateway.js</code> 503 দেয়; splash error ধরে ফেলে এগিয়ে যায়,
+তাই force-update শিট লোকালে কখনো আসে না। অ্যাকাউন্ট মুছে ফেলার জন্য সাইন-ইন করা ব্যবহারকারী লাগে (জানা ঘাটতি ১)।</p>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>বিবরণ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>টেস্ট ডেটা ও অ্যাকাউন্ট</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ব্রাউজার</td>
+<td>প্রযোজ্য নয়</td>
+</tr>
+<tr>
+<td>এমুলেটর</td>
+<td><code>pwsh ./scripts/Setup-MobileApps.ps1 -App user -Run</code>; <code>flutter run</code> লগে ভার্সন কল ব্যর্থ হওয়া এবং অ্যাপ onboarding/Home-এ এগোনো দেখা যায়</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>কোনো collection-ই identity API কভার করে না</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>প্রযোজ্য নয়; <code>SplashViewModel._checkAppVersion</code>-এ ধাপে ধাপে যেতে Flutter DevTools ব্যবহার করুন (<code>flutter run</code> যে URL দেখায়)</td>
+</tr>
+<tr>
+<td>যাচাই</td>
+<td>ডিপ্লয় করা environment-এ: identity API-তে বেশি <code>version</code> প্রকাশ করে অ্যাপ শুরু করুন</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-10-user-session.html"><span class="pager-label">পূর্ববর্তী</span><span>X-10 · গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+  <a class="pager-next" href="X-12-checker-login.html"><span class="pager-label">পরবর্তী</span><span>X-12 · চেকার লগইন</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>

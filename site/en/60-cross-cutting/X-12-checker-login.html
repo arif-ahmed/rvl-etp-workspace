@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X-12 · Checker login · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../../assets/site.css?v=c419a007">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <a class="side-section" href="index.html">60 · Cross-cutting</a>
+    <div class="side-group">Features</div>
+    <a class="side-item" href="X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+    <a class="side-item" href="X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+    <a class="side-item" href="X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+    <a class="side-item" href="X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+    <a class="side-item" href="X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+    <a class="side-item" href="X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+    <a class="side-item" href="X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+    <a class="side-item" href="X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+    <a class="side-item" href="X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+    <a class="side-item" href="X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+    <a class="side-item" href="X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+    <a class="side-item is-active" href="X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+    <a class="side-item" href="X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+    <a class="side-item" href="X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+    <a class="side-item" href="X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+    <a class="side-item" href="X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+    <a class="side-item" href="X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+    <a class="side-item" href="X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+    <a class="side-item" href="X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+    <a class="side-item" href="X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+    <a class="side-item" href="X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+    <a class="side-item" href="X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+    <a class="side-item" href="X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+    <a class="side-item" href="X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+    <a class="side-item" href="X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+    <a class="side-item" href="X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">60 · Cross-cutting</a><span class="sep">›</span><span>X-12</span></div>
+<h1><span class="id-chip">X-12</span> Checker login</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> চেকার লগইন</p>
+<p><a href="index.html">← 60 · Cross-cutting</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+</blockquote>
+<h2 id="1-name-and-purpose">1. Name and purpose</h2>
+<p><strong>Checker login.</strong> Gate staff sign in to the checker app with the phone number and password that the admin portal created for
+them (<a href="X-05-admin-provisioning.html">X-05</a>, <span class="link-na" title="Not included in the site yet">A-17</span>). The app uses the
+<strong>TicketChecker</strong> Cognito pool. Before signing in it checks that the installed app version is still allowed.</p>
+<h2 id="2-trigger-and-actor">2. Trigger and actor</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Actor</td>
+<td>Gate staff (ticket checker)</td>
+</tr>
+<tr>
+<td>Client and screen</td>
+<td>Checker app <code>/splash</code> → <code>/signIn</code> (<code>SignInViewModel.signInUser</code>) → <code>/eventPage</code></td>
+</tr>
+<tr>
+<td>Cognito pool</td>
+<td>TicketChecker</td>
+</tr>
+<tr>
+<td>Role / program scope</td>
+<td>Backend adds role <code>ticket-checker</code> to every token of this pool (<a href="X-14-authz-pool-policies.html">X-14</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-business-flow">3. Business flow</h2>
+<ol>
+<li>On start the splash screen checks the version and, if a session exists, opens the event page directly.</li>
+<li>Otherwise the checker types the phone number (without <code>+880</code>) and password.</li>
+<li>The app checks the version again; if an update is required, a blocking "Update required" sheet appears.</li>
+<li>On success the event page opens and loads the assigned event and gate (<span class="link-na" title="Not included in the site yet">C-01</span>).</li>
+<li>"Sign out" is on the event page.</li>
+</ol>
+<h2 id="4-technical-flow">4. Technical flow</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>From → To</th>
+<th>Hop</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>App → identity <code>GET user/allowed-app-version</code></td>
+<td><strong class="hop-tag">[HTTP, static key]</strong> (<code>AuthApiClient</code>, header <code>Authorization: &lt;AUTH_API_TOKEN or empty&gt;</code>)</td>
+<td>Reads <code>data.tc.android</code> / <code>data.tc.ios</code> (<code>tc</code> = this app; the user app reads <code>up</code>)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>App → Cognito (TicketChecker pool)</td>
+<td>Amplify Flutter <code>Amplify.Auth.signIn("+880…", password)</code></td>
+<td>If not fully signed in (any challenge), the session is <code>null</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>App → Admin, TicketChecker services</td>
+<td><strong class="hop-tag">[HTTP + user token]</strong> (<code>TicketApiClient</code>, <code>Bearer &lt;accessToken&gt;</code> from <code>fetchAuthSession</code>)</td>
+<td>First call: <code>GET /admin/api/v1/ticket-checker-gate/event-info</code> (<span class="link-na" title="Not included in the site yet">C-01</span>)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Sign out</td>
+<td><code>Amplify.Auth.signOut()</code> from the event page</td>
+<td>Local</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-components">5. Components</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td>Checker app <code>SplashViewModel</code>, <code>SignInViewModel</code>, <code>AuthRepositoryImpl</code>, <code>AWSAmplifyService</code>, <code>AuthApiClient</code>, <code>TicketApiClient</code>, <code>EventPageViewModel</code> (sign out)</td>
+</tr>
+<tr>
+<td>AWS</td>
+<td>Cognito TicketChecker pool (<code>AMPLIFY_CONFIG</code>)</td>
+</tr>
+<tr>
+<td>External</td>
+<td>Identity API (app version only) <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-api-contracts">6. API contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Request</th>
+<th>Response</th>
+<th>Main errors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>{AUTH_API_BASE_URL}/user/allowed-app-version</code></td>
+<td>static header key</td>
+<td>—</td>
+<td><code>AppVersionResponse</code> (see <a href="X-11-delete-account-force-update.html">X-11</a>)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Cognito <code>InitiateAuth</code> via Amplify</td>
+<td>public client</td>
+<td>phone, password</td>
+<td>tokens</td>
+<td>"Incorrect username or password."</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-data-and-side-effects">7. Data and side effects</h2>
+<p>Amplify token storage on the device. Nothing is written by the backend at login.</p>
+<h2 id="8-code-references">8. Code references</h2>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sign-in and version gate</td>
+<td><code>rvl-gobcb-checker-app/lib/presentation/feature/sign_in/sign_in_view_model.dart</code> (<code>signInUser</code>)</td>
+</tr>
+<tr>
+<td>Splash</td>
+<td><code>rvl-gobcb-checker-app/lib/presentation/feature/splash/splash_view_model.dart</code></td>
+</tr>
+<tr>
+<td>Cognito login</td>
+<td><code>rvl-gobcb-checker-app/data/lib/service/aws_amplify_service.dart:35-62</code></td>
+</tr>
+<tr>
+<td>API clients</td>
+<td><code>rvl-gobcb-checker-app/data/lib/remote/api_client/auth_api_client.dart</code>, <code>ticket_api_client.dart</code></td>
+</tr>
+<tr>
+<td>Version mapping (<code>tc</code>)</td>
+<td><code>rvl-gobcb-checker-app/data/lib/mapper/app_version_mapper.dart:9-11</code></td>
+</tr>
+<tr>
+<td>Required env keys</td>
+<td><code>rvl-gobcb-checker-app/lib/main/main.dart:14-18</code> (<code>VDS_CERTIFICATE</code>, <code>AMPLIFY_CONFIG</code>, <code>API_BASE_URL</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-handover-notes">9. Handover notes</h2>
+<ol>
+<li><strong>Debug builds log the password.</strong> <code>AWSAmplifyService.login</code> logs <code>username</code> and <code>password</code> with <code>Logger.debug</code>; logging is
+   enabled only when <code>kDebugMode</code> is true (<code>main.dart</code>). Do not share debug-build logs.</li>
+<li><strong><code>AUTH_API_BASE_URL</code> is not in the required list</strong> of the checker app; if it is missing the version check cannot run.</li>
+<li><strong>No password change or reset in the app.</strong> Checkers get new passwords from an admin ("Set Password" in
+   <span class="link-na" title="Not included in the site yet">A-17</span>); the backend also has <code>PUT /admin/api/v1/ticket-checker/change-password</code>
+   (body with the checker's access token), which no client calls.</li>
+<li><strong>Disabled accounts:</strong> disabling a checker in the admin portal calls <code>AdminUserGlobalSignOut</code>; the app keeps working
+   offline with already downloaded tickets until it next needs the server (<span class="link-na" title="Not included in the site yet">C-02</span>).</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  APP["Checker app<br/>splash / sign-in"] -->|"HTTP, static key<br/>allowed-app-version"| ID["Identity API"]
+  APP -->|"Amplify sign-in"| CG["Cognito TicketChecker pool"]
+  APP -->|"HTTP + user token"| ADM["Admin<br/>ticket-checker-gate/event-info"]
+  APP -->|"HTTP + user token"| TC["TicketChecker<br/>tickets/sync-tickets"]
+</div>
+<p><strong>Depends on:</strong> <a href="X-05-admin-provisioning.html">X-05</a>, <span class="link-na" title="Not included in the site yet">A-17</span>, <span class="link-na" title="Not included in the site yet">A-18</span>.
+<strong>Affects:</strong> all <code>C-xx</code> features.</p>
+<h2 id="11-developer-test-guide">11. Developer test guide</h2>
+<p><strong>Local testability: Not locally (sign-in), Partial (backend).</strong> Amplify Flutter cannot be pointed at Floci, so the app cannot
+sign in locally (<code>docs/mobile-local.md</code> §8, known gap 1). The checker's backend calls can be tested with a Floci token.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test data and accounts</td>
+<td>TicketChecker-pool user <code>+8801700000021</code> / <code>Passw0rd!23</code>; seeded gates and gate staff for this user (<code>docs/local-dev.md</code> §7, "Match day")</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td>Not applicable</td>
+</tr>
+<tr>
+<td>Emulator</td>
+<td><code>pwsh ./scripts/Setup-MobileApps.ps1 -App checker -Run</code>: the sign-in screen opens; sign-in fails against real Cognito</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><code>postman/etp-login-all-pools.postman_collection.json</code> folder "Ticketchecker pool", "Login as ticket_checker" → <code>access_token_ticket_checker</code>; then <code>postman/services/etp-ticketchecker.postman_collection.json</code> "POST /api/v1/tickets/sync-tickets"</td>
+</tr>
+<tr>
+<td>Visual Studio debug</td>
+<td>Attach to <code>ETP.Admin.Service</code>; breakpoint in <code>OnTokenValidated</code> of the <code>ticket-checker</code> scheme (<code>DefaultAuthenticationConfig.cs:156</code>) and call <code>GET /admin/api/v1/ticket-checker-gate/event-info</code></td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>200 from <code>event-info</code> with the checker token; 401/403 with an Admin-pool token</td>
+</tr>
+</tbody>
+</table>
+<div class="pager">
+  <a href="X-11-delete-account-force-update.html"><span class="pager-label">Previous</span><span>X-11 · Delete account and app force-update</span></a>
+  <a class="pager-next" href="X-13-agent-pool.html"><span class="pager-label">Next</span><span>X-13 · Agent pool and offline-sold tickets</span></a>
+</div>
+  </main>
+</div>
+<script src="../../assets/mermaid.min.js"></script>
+<script src="../../assets/site.js?v=5e440112"></script>
+</body>
+</html>
