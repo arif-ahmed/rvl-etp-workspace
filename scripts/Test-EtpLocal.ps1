@@ -29,7 +29,7 @@ foreach ($n in $ports.Keys) {
 }
 
 # login + protected call
-$env:AWS_ENDPOINT_URL = 'http://localhost:4566'; $env:AWS_REGION = 'us-east-1'
+$env:AWS_ENDPOINT_URL = 'http://localhost:4566'; $env:AWS_REGION = 'ap-southeast-1'
 $env:AWS_ACCESS_KEY_ID = 'test'; $env:AWS_SECRET_ACCESS_KEY = 'test'; $env:AWS_PAGER = ''
 $pool = aws cognito-idp list-user-pools --max-results 60 --query "UserPools[?Name=='etp-admin'].Id | [0]" --output text 2>$null
 $client = if ($pool -and $pool -ne 'None') { aws cognito-idp list-user-pool-clients --user-pool-id $pool --query "UserPoolClients[?ClientName=='etp-local'].ClientId | [0]" --output text 2>$null }
@@ -42,7 +42,7 @@ if ($pool -and $pool -ne 'None' -and $client -and $client -ne 'None') {
     Check 'protected endpoint without token -> 401' ($noTok -eq 401) "HTTP $noTok"
     if ($token -and $token -ne 'None') {
         $withTok = Get-Status $url @{ Authorization = "Bearer $token"; 'X-Program-Id' = '1' }
-        Check 'protected endpoint with token -> 200' ($withTok -eq 200) "HTTP $withTok. 401: re-run ./scripts/Set-EtpSecrets.ps1 and restart the AppHost. 403: Floci seeded in the wrong region (must be us-east-1)"
+        Check 'protected endpoint with token -> 200' ($withTok -eq 200) "HTTP $withTok. 401: re-run ./scripts/Set-EtpSecrets.ps1 and restart the AppHost. 403: Floci seeded in the wrong region (must be ap-southeast-1)"
     }
 }
 if ($script:fail) { Write-Host "`n$($script:fail) check(s) failed. See docs/local-dev.md, Troubleshooting." -ForegroundColor Red; exit 1 }

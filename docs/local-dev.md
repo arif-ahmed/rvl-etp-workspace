@@ -164,7 +164,7 @@ Floci stands in for AWS so you need no real AWS keys. Its web console is http://
 - **HTTPS for login.** The backend only accepts HTTPS Cognito metadata, so a small proxy container (`etp-floci-tls`, `https://localhost:4567`) fronts Floci for
   the Cognito URLs. It needs a certificate, which `setup-https.ps1` creates, so **run it before the first `docker compose up -d`** in `floci/`.
   AWS calls (S3, SQS, the CLI) still go to `http://localhost:4566`.
-- **Region `us-east-1`.** The AWS SDK signs requests to a custom endpoint for `us-east-1`, so everything must be created there. The scripts already do.
+- **Region `ap-southeast-1` (Singapore).** Everything in Floci must be created in this one region, to match the real AWS deployment. The seed scripts, the CLI and the services must all use it.
 - **Seed once.** Seeding creates the bucket, queues and Cognito pools. Do not delete the Floci volume afterwards unless you want to start over.
 
 ```bash
@@ -208,12 +208,12 @@ Test accounts for the Admin pool (password for all: `Passw0rd!23`, username = ph
 
 ```powershell
 # PowerShell 7
-$env:AWS_ACCESS_KEY_ID = "test"; $env:AWS_SECRET_ACCESS_KEY = "test"; $env:AWS_REGION = "us-east-1"
+$env:AWS_ACCESS_KEY_ID = "test"; $env:AWS_SECRET_ACCESS_KEY = "test"; $env:AWS_REGION = "ap-southeast-1"
 ```
 
 ```bash
 # Git Bash
-export AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_REGION=ap-southeast-1
 ```
 
 Check: `aws --endpoint-url http://localhost:4566 s3 ls` lists the bucket `etp-local`. This setup was tested with Floci 2.3.0 (pinned in `floci/docker-compose.yml`).
@@ -594,7 +594,7 @@ To start again, go back to [Part 3](#3-first-time-setup).
 | `docker version` shows no Server / containers fail to start | Docker Desktop is not running. Start it and wait for the whale icon to be steady |
 | `port is already allocated` (5432, 6379, 4566, 8000) | Another program owns the port: `pwsh -c "Get-NetTCPConnection -LocalPort 5432 -State Listen"` shows which. Stop it (a native Postgres/Redis, LocalStack) |
 | Every request fails with `The MetadataAddress or Authority must use HTTPS` | The Cognito URLs in your secrets are `http://`. Run `pwsh ./floci/setup-https.ps1`, `docker compose -f floci/docker-compose.yml up -d`, then `pwsh ./scripts/Set-EtpSecrets.ps1` and restart the AppHost |
-| Valid token still gets **401** `The signature key was not found`, or **403**, or logs `User pool ... does not exist` | Floci was seeded in a different region. The AWS SDK signs requests to a custom endpoint for `us-east-1`, so Floci must hold everything in `us-east-1` (the seed scripts do this). If your pool IDs start with `ap-southeast-1_`, they are from an older setup: re-run `pwsh ./floci/seed.ps1` and `pwsh ./floci/seed-users.ps1`, then `pwsh ./scripts/Set-EtpSecrets.ps1`, and restart the AppHost |
+| Valid token still gets **401** `The signature key was not found`, or **403**, or logs `User pool ... does not exist` | Floci was seeded in a different region. Floci must hold everything in `ap-southeast-1` (the seed scripts should do this). If your pool IDs start with `ap-southeast-1_`, they are from an older setup: re-run `pwsh ./floci/seed.ps1` and `pwsh ./floci/seed-users.ps1`, then `pwsh ./scripts/Set-EtpSecrets.ps1`, and restart the AppHost |
 | `etp-floci-tls` keeps restarting, or https://localhost:4567 does not answer | The certificate files are missing. Run `pwsh ./floci/setup-https.ps1`, then `docker compose -f floci/docker-compose.yml up -d` again |
 | Service **Finished** right after start | It crashed; read its console log. *Redis/Postgres connection* error: infra is down, run `docker compose up -d` (`docker compose ps` to check) and restart the AppHost. *`[see User Secrets]`/FormatException*: secrets not applied, re-run `pwsh ./scripts/Set-EtpSecrets.ps1`. `UserIssue` NullReference on `Application:ServiceName`: re-run the script |
 | `password authentication failed for user "etp"` | The Postgres volume was created with another password. `docker compose down -v` and start again |

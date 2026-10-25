@@ -26,7 +26,7 @@ $root   = Split-Path $PSScriptRoot -Parent
 $src    = Join-Path $root 'rvl-gobcb-user-portal\ETP-Web'
 $dst    = Join-Path $root 'portal-local\user-portal'
 $floci  = 'http://localhost:4566'
-$env:AWS_ACCESS_KEY_ID = 'test'; $env:AWS_SECRET_ACCESS_KEY = 'test'; $env:AWS_REGION = 'us-east-1'; $env:AWS_PAGER = ''
+$env:AWS_ACCESS_KEY_ID = 'test'; $env:AWS_SECRET_ACCESS_KEY = 'test'; $env:AWS_REGION = 'ap-southeast-1'; $env:AWS_PAGER = ''
 
 function Invoke-Aws { $out = & aws --endpoint-url $floci @args; if ($LASTEXITCODE) { throw "aws $($args -join ' ') failed" }; $out }
 function Write-Text($path, $text) { [IO.File]::WriteAllText($path, $text, (New-Object Text.UTF8Encoding $false)) }
@@ -59,7 +59,7 @@ $envTs = @"
 export const environment = {
   production: false,
   aws: {
-    region: 'us-east-1',
+    region: 'ap-southeast-1',
     userPoolId: '$poolId',
     userPoolWebClientId: '$clientId',
     oauth: {

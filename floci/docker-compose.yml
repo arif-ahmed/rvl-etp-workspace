@@ -39,7 +39,7 @@ services:
       - "4500:4500"   # console + API on the same origin; open http://localhost:4500
     environment:
       FLOCI_ENDPOINT: http://floci:4566   # compose network name, not localhost
-      AWS_REGION: us-east-1
+      AWS_REGION: ap-southeast-1
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
       # Do NOT set PORT: it is the dev-server port and moves the server off 4500.

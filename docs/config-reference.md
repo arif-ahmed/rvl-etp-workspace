@@ -142,7 +142,7 @@ File `portal-local/admin-portal/src/environments/environment.ts` (+ identical `e
 ```ts
 export const environment = {
   production: false,
-  aws: { region: 'us-east-1', userPoolId: '<etp-admin pool id>', userPoolWebClientId: '<etp-local client id>' },
+  aws: { region: 'ap-southeast-1', userPoolId: '<etp-admin pool id>', userPoolWebClientId: '<etp-local client id>' },
   services: {
     admin: '/p/admin', booking: '/p/booking', ticketing: '/p/ticketing',
     userissue: '/p/userissue', userissuehub: '/p/userissue',
@@ -188,7 +188,7 @@ copy is generated. Generated file `portal-local/user-portal/src/environments/env
 export const environment = {
   production: false,
   aws: {
-    region: 'us-east-1',
+    region: 'ap-southeast-1',
     userPoolId: '<etp-user pool id>',
     userPoolWebClientId: '<etp-local client id>',
     oauth: {
@@ -274,7 +274,7 @@ FIREBASE_IOS_BUNDLE_ID='com.ticketbangla.gobcbticket'
 {"UserAgent":"aws-amplify-cli/2.0","Version":"1.0","auth":{"plugins":{"awsCognitoAuthPlugin":
 {"UserAgent":"aws-amplify/cli","Version":"0.1.0","IdentityManager":{"Default":{}},
 "CognitoUserPool":{"Default":{"PoolId":"<etp-user pool id>","AppClientId":"<etp-local client id>",
-"Region":"us-east-1"}},"Auth":{"Default":{"authenticationFlowType":"USER_PASSWORD_AUTH"}}}}}}
+"Region":"ap-southeast-1"}},"Auth":{"Default":{"authenticationFlowType":"USER_PASSWORD_AUTH"}}}}}}
 ```
 
 | Key | Purpose |
