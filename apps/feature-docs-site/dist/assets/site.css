@@ -155,29 +155,61 @@ html[data-theme="dark"] .icon-sun { display: block; }
   max-width: 980px;
 }
 
-/* ---------- sidebar nav ---------- */
+/* ---------- sidebar nav (collapsible groups) ---------- */
 
-.side-section {
-  display: block;
-  padding: 8px 10px;
+.side-nav { display: flex; flex-direction: column; gap: 4px; }
+
+.side-sec-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
   border-radius: 8px;
+}
+.side-sec-head:hover { background: var(--surface-2); }
+
+.side-chevron {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.side-chevron:hover { background: var(--accent-soft); color: var(--accent); }
+.side-chevron svg { width: 13px; height: 13px; transition: transform 0.15s ease; }
+.side-sec.is-open > .side-sec-head .side-chevron svg { transform: rotate(90deg); }
+
+.side-sec-title {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 2px;
   font-weight: 700;
   color: var(--text);
 }
-/* extra top spacing separates consecutive section blocks in the sidebar */
-.sidebar .side-section + .side-section, .sidebar .side-group + .side-section { margin-top: 20px; }
-.side-section:hover { background: var(--surface-2); text-decoration: none; }
-.side-section.is-active { background: var(--accent-soft); color: var(--accent); }
+.side-sec-title:hover { text-decoration: none; }
+.side-sec-title.is-active { color: var(--accent); }
 
-.side-group {
-  margin: 16px 10px 6px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.side-count {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
   color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.6;
 }
-html[lang="bn"] .side-group { text-transform: none; letter-spacing: 0.02em; }
+.side-sec.is-open > .side-sec-head .side-count { background: var(--accent-soft); color: var(--accent); }
+
+.side-sec-body { display: none; padding: 2px 0 8px 8px; }
+.side-sec.is-open > .side-sec-body { display: block; }
 
 .side-item {
   display: flex;
@@ -395,6 +427,7 @@ pre code { background: none; padding: 0; font-size: 13px; line-height: 1.6; }
 .card .card-title { display: flex; gap: 8px; align-items: center; font-weight: 700; }
 .card .card-desc { color: var(--text-muted); font-size: 14px; }
 .card .card-desc p { margin: 0; }
+.card .card-count { margin-top: auto; font-size: 12px; font-weight: 600; color: var(--accent); }
 
 /* ---------- prev / next ---------- */
 

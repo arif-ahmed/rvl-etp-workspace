@@ -10,13 +10,10 @@ if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'d
 document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
 <script>
-(function(){var d='en';try{var s=localStorage.getItem('fd-lang');
-if(s)d=s;else if((navigator.language||'').toLowerCase().indexOf('bn')===0)d='bn';}
-catch(e){}
-location.replace(d+'/index.html');})();
+(function(){location.replace('en/index.html');})();
 </script>
 <link rel="stylesheet" href="assets/vendor/fonts/fonts.css?v=047d486c">
-<link rel="stylesheet" href="assets/site.css?v=0baff1bf">
+<link rel="stylesheet" href="assets/site.css?v=5ded2c9a">
 </head>
 <body>
 <header class="topbar">
@@ -32,6 +29,6 @@ location.replace(d+'/index.html');})();
   </div>
   <p class="router-note">Light / dark mode can be switched from the top bar on any page.<br/>যেকোনো পেজের উপরের বার থেকে লাইট / ডার্ক মোড বদলানো যায়।</p>
 </div>
-<script src="assets/site.js?v=5e440112"></script>
+<script src="assets/site.js?v=d7ce93f0"></script>
 </body>
 </html>

@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>00 · প্ল্যাটফর্ম প্রাইমার · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../assets/site.css?v=5ded2c9a">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav class="side-nav">
+    <div class="side-sec is-open" data-dir="ov">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="true" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">ওভারভিউ</span>
+        <span class="side-count">৪</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item is-active" href="00-platform-primer.html"><span class="id-chip">00</span><span>প্ল্যাটফর্ম প্রাইমার</span></a>
+        <a class="side-item" href="01-system-map.html"><span class="id-chip">01</span><span>সিস্টেম ম্যাপ</span></a>
+        <a class="side-item" href="02-traceability-matrix.html"><span class="id-chip">02</span><span>ট্রেসেবিলিটি ম্যাট্রিক্স</span></a>
+        <a class="side-item" href="03-component-reverse-index.html"><span class="id-chip">03</span><span>কম্পোনেন্ট রিভার্স ইনডেক্স</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="ap">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">পরিশিষ্ট</span>
+        <span class="side-count">৫</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="90-appendix-a-legacy.html"><span class="id-chip">90</span><span>অ্যাপেন্ডিক্স A — লেগ্যাসি, অব্যবহৃত ও নিষ্ক্রিয় কোড</span></a>
+        <a class="side-item" href="91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — এন্ডপয়েন্ট ইনডেক্স</span></a>
+        <a class="side-item" href="92-appendix-c-coverage.html"><span class="id-chip">92</span><span>অ্যাপেন্ডিক্স C — কভারেজ</span></a>
+        <a class="side-item" href="93-appendix-d-local-test-reference.html"><span class="id-chip">93</span><span>অ্যাপেন্ডিক্স D — লোকাল টেস্ট রেফারেন্স</span></a>
+        <a class="side-item" href="99-open-queries.html"><span class="id-chip">99</span><span>ওপেন কোয়ারি</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="10-admin-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+        <span class="side-count">৩১</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+        <a class="side-item" href="10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+        <a class="side-item" href="10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+        <a class="side-item" href="10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+        <a class="side-item" href="10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+        <a class="side-item" href="10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+        <a class="side-item" href="10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+        <a class="side-item" href="10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+        <a class="side-item" href="10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+        <a class="side-item" href="10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+        <a class="side-item" href="10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+        <a class="side-item" href="10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+        <a class="side-item" href="10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+        <a class="side-item" href="10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+        <a class="side-item" href="10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+        <a class="side-item" href="10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+        <a class="side-item" href="10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+        <a class="side-item" href="10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+        <a class="side-item" href="10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+        <a class="side-item" href="10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+        <a class="side-item" href="10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+        <a class="side-item" href="10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+        <a class="side-item" href="10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+        <a class="side-item" href="10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+        <a class="side-item" href="10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+        <a class="side-item" href="10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+        <a class="side-item" href="10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="20-user-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+        <span class="side-count">১৩</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+        <a class="side-item" href="20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+        <a class="side-item" href="20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+        <a class="side-item" href="20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+        <a class="side-item" href="20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+        <a class="side-item" href="20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+        <a class="side-item" href="20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+        <a class="side-item" href="20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+        <a class="side-item" href="20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+        <a class="side-item" href="20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+        <a class="side-item" href="20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+        <a class="side-item" href="20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+        <a class="side-item" href="20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="30-user-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="30-user-app/index.html">30 · ইউজার অ্যাপ</a>
+        <span class="side-count">১০</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+        <a class="side-item" href="30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+        <a class="side-item" href="30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+        <a class="side-item" href="30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+        <a class="side-item" href="30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+        <a class="side-item" href="30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+        <a class="side-item" href="30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+        <a class="side-item" href="30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+        <a class="side-item" href="30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+        <a class="side-item" href="30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="40-checker-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+        <span class="side-count">৬</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+        <a class="side-item" href="40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+        <a class="side-item" href="40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+        <a class="side-item" href="40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+        <a class="side-item" href="40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+        <a class="side-item" href="40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="50-system-initiated">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+        <span class="side-count">১৭</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+        <a class="side-item" href="50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+        <a class="side-item" href="50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+        <a class="side-item" href="50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+        <a class="side-item" href="50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+        <a class="side-item" href="50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+        <a class="side-item" href="50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+        <a class="side-item" href="50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+        <a class="side-item" href="50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+        <a class="side-item" href="50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+        <a class="side-item" href="50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="60-cross-cutting">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+        <span class="side-count">২৬</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+        <a class="side-item" href="60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+        <a class="side-item" href="60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+        <a class="side-item" href="60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+        <a class="side-item" href="60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+        <a class="side-item" href="60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+        <a class="side-item" href="60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+        <a class="side-item" href="60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+        <a class="side-item" href="60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+      </div>
+    </div>
+    </nav>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="index.html">সূচিপত্র</a><span class="sep">›</span><span>00 · প্ল্যাটফর্ম প্রাইমার</span></div>
+<h1><span class="id-chip">00</span> প্ল্যাটফর্ম প্রাইমার</h1>
+<p><a href="index.html">সূচিপত্রে ফিরে যান</a></p>
+<p>এই পৃষ্ঠায় প্রতিটি ফিচার ফাইল যে পটভূমি ধরে নেয় তা দেওয়া আছে: service-গুলো কী, একটি request কীভাবে service-এ পৌঁছায়, error দেখতে কেমন হয়, এবং কোড যে microservice-ধারণাগুলোর উপর নির্ভর করে সেগুলো। ধারণাগুলো নিচে <strong>explainer box</strong> (📦)-তে ব্যাখ্যা করা হয়েছে; ফিচার ফাইলগুলো সেগুলো পুনরাবৃত্ত না করে এখানে লিঙ্ক দেয়।</p>
+<h2 id="1-এক-বকয-পলযটফরম">1. এক বাক্যে প্ল্যাটফর্ম</h2>
+<p>GoBCB বাংলাদেশ ক্রিকেট বোর্ডের ইভেন্টের টিকিট বিক্রি ও যাচাই করে। কর্মকর্তারা <strong>admin portal</strong>-এ <strong>program</strong> (একটি সিরিজ বা টুর্নামেন্ট), <strong>venue</strong> (স্টেডিয়াম → গ্যালারি → ব্লক → লেভেল), দাম ও ক্যাপাসিটিসহ <strong>event</strong> (ম্যাচ), প্রমোশন ও টিকিট লেআউট সেট করেন। গ্রাহকরা <strong>user web portal</strong> বা <strong>user app</strong>-এ ঘুরে দেখেন ও কেনেন, <strong>DgePay</strong>-এর মাধ্যমে টাকা দেন, এবং QR কোডসহ ডিজিটালি সই করা PDF টিকিট পান। Gate-এর কর্মকর্তারা <strong>checker app</strong> দিয়ে অফলাইনে QR কোড স্ক্যান করেন। Backend হলো একটি repository-তে থাকা ASP.NET Core 8 web API-এর ("service") সংগ্রহ, যা Amazon EKS-এ API Gateway-এর পিছনে চলে (দেখুন <span class="link-na" title="রিপোজিটরির ফাইল, এই সাইটের অংশ নয়"><code>gobcb-aws-architecture.md</code></span> §0–§4)।</p>
+<h2 id="2-backend-service">2. Backend service</h2>
+<p>সব service <code>rvl-gobcb-backend/Services/&lt;Name&gt;/</code>-এ আছে, প্রতিটি ভাগ করা <code>ETP.&lt;Name&gt;.Service</code> (controller, <code>Program.cs</code>, worker), <code>.Domain</code> (manager = ব্যবসায়িক লজিক), <code>.Storage</code> (EF Core <code>DbContext</code>, repository) এবং কয়েকটির জন্য <code>.Client</code> (টাইপ করা HTTP client, অন্য service ব্যবহার করে) ও <code>.Integration</code>। সাধারণ কোড <code>rvl-gobcb-backend/Core/</code>-এ (<code>ETP.Core</code>, <code>ETP.Core.Web</code>, …)।</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Path prefix</th>
+<th>Local port</th>
+<th>এটি কী করে (controller ও worker থেকে)</th>
+<th>DB connection key</th>
+<th>Background worker</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Admin</td>
+<td><code>/admin</code></td>
+<td>5101</td>
+<td>মূল ডেটা ও back office: program, venue, event, settings, promo code, discount, ticket layout, কর্মকর্তা ব্যবহারকারী (Cognito), gate assignment, raffle, notice, সাইট কনটেন্ট, activity log। <code>/admin/chathub</code> রাখে (legacy, দেখুন Appendix A)</td>
+<td><code>ConnectionStrings:Admin</code></td>
+<td><code>CheckedTicketService</code>, <code>PromoCodeStatusUpdateService</code>, <code>SystemDiscountStatusUpdateService</code>, <code>GateCheckerDownloadStatusCleanupService</code></td>
+</tr>
+<tr>
+<td>Booking</td>
+<td><code>/booking</code></td>
+<td>5102</td>
+<td>ক্যাপাসিটি ও আসন, booking order, payment (DgePay), promo code প্রয়োগ, আসন সংরক্ষণ, ক্যাপাসিটি সমন্বয়, বিক্রয় রিপোর্ট, VAT challan</td>
+<td><code>ConnectionStrings:Booking</code></td>
+<td><code>BookingStatusUpdateService</code>, <code>InitiateUserTicketGenerationService</code>, <code>LevelCapacityUpdateService</code>, <code>RefreshLockedCapacityService</code>, <code>EventLiveCapacityUpdateService</code>, <code>VatChallanProcessingService</code></td>
+</tr>
+<tr>
+<td>Event</td>
+<td><code>/event</code></td>
+<td>5103</td>
+<td>portal ও app-এর জন্য program, event, venue detail, landing image, header/footer ও ticket pricing-এর public, read-only দৃশ্য</td>
+<td><code>ConnectionStrings:Event</code></td>
+<td>none</td>
+</tr>
+<tr>
+<td>Ticketing</td>
+<td><code>/ticketing</code></td>
+<td>5108</td>
+<td>টিকিট: generation, signing (TSP), PDF, download, share, invoice, reserved ticket, OneID sync, offline-sold ticket</td>
+<td><code>ConnectionStrings:Booking</code> (sic)</td>
+<td><code>TicketGenerationService</code></td>
+</tr>
+<tr>
+<td>TicketChecker</td>
+<td><code>/ticketChecker</code></td>
+<td>5107</td>
+<td>checker app-এর sync endpoint (scan আসে, scan যায়)</td>
+<td><code>ConnectionStrings:TicketChecker</code></td>
+<td>none</td>
+</tr>
+<tr>
+<td>UserIssue</td>
+<td><code>/userissue</code></td>
+<td>5110</td>
+<td>গ্রাহকের সমস্যা ও support chat; SignalR hub <code>/userissue/chathub</code> রাখে</td>
+<td><code>ConnectionStrings:UserIssue</code></td>
+<td>none</td>
+</tr>
+<tr>
+<td>PushNotification</td>
+<td><code>/PushNotification</code></td>
+<td>5105</td>
+<td>device token ও push send API (queue-তে লেখে)</td>
+<td><code>ConnectionStrings:PushNotification</code></td>
+<td>none</td>
+</tr>
+<tr>
+<td>Scheduler</td>
+<td><code>/scheduler</code></td>
+<td>5106</td>
+<td>শুধু worker: Firebase-এ push delivery, payment revalidation, ticket-generated notice, capacity reconcile, device-token cleanup</td>
+<td>none</td>
+<td><code>FirebaseNotificationService</code>, <code>PendingOrFailedBookingStatusUpdateService</code>, <code>SendNotificationAfterGeneratedTicketService</code>, <code>CapacityUpdateService</code>, <code>DeviceTokenCleanupService</code></td>
+</tr>
+<tr>
+<td>Utility</td>
+<td><code>/utility</code></td>
+<td>5111</td>
+<td>শুধু worker: reserved ticket merge/zip করে</td>
+<td>none</td>
+<td><code>TicketProcessingService</code></td>
+</tr>
+<tr>
+<td>Platform</td>
+<td><code>/platform</code></td>
+<td>5104</td>
+<td>Stub (শুধু একটি টেমপ্লেট <code>WeatherForecastController</code>)</td>
+<td>none</td>
+<td>none</td>
+</tr>
+<tr>
+<td>UserAuth</td>
+<td><code>/userAuth</code></td>
+<td>5109</td>
+<td>Stub (কোনো controller নেই; শুধু <code>/health</code>)</td>
+<td>none</td>
+<td>none</td>
+</tr>
+</tbody>
+</table>
+<p>উৎস: <code>Services/*/ETP.*.Service/Program.cs</code> ও <code>Configuration(s)/DependencyConfig.cs</code> (hosted service ও connection string), <code>Services/*/ETP.*.Service/appsettings.json</code> (<code>Application:ServiceName</code>, যা path prefix; UserIssue-এর কোনো <code>appsettings.json</code> নেই এবং তার prefix <code>userissue</code> আসে hub mapping ও client থেকে)। Local port আসে <code>aspire/README.md</code> থেকে।</p>
+<h2 id="3-client">3. Client</h2>
+<table>
+<thead>
+<tr>
+<th>Client</th>
+<th>Repository</th>
+<th>Tech</th>
+<th>যেভাবে sign in করে</th>
+<th>কাকে কল করে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Admin portal</td>
+<td><code>rvl-gobcb-admin-portal</code></td>
+<td>Angular</td>
+<td>Admin pool (Serverless API থেকে SMS OTP-এর পর)</td>
+<td>Admin, Booking, Ticketing, UserIssue; OTP-এর জন্য Serverless API</td>
+</tr>
+<tr>
+<td>User web portal</td>
+<td><code>rvl-gobcb-user-portal/ETP-Web</code></td>
+<td>Angular 19</td>
+<td>User pool, অথবা Cognito-র মাধ্যমে OneID</td>
+<td>Event, Booking, Ticketing, Admin (public endpoint), UserIssue; identity API</td>
+</tr>
+<tr>
+<td>User app</td>
+<td><code>rvl-gobcb-user-app</code></td>
+<td>Flutter</td>
+<td>User pool, অথবা Cognito-র মাধ্যমে OneID</td>
+<td>Event, Booking, Ticketing, UserIssue, PushNotification, Admin; identity API</td>
+</tr>
+<tr>
+<td>Checker app</td>
+<td><code>rvl-gobcb-checker-app</code></td>
+<td>Flutter</td>
+<td>TicketChecker pool</td>
+<td>Admin (<code>ticket-checker-gate/event-info</code>), TicketChecker (<code>tickets/sync-tickets</code>); app version-এর জন্য identity API</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Identity API</strong> (user portal-এ <code>services.identity</code>, app-গুলোতে <code>AUTH_API_BASE_URL</code>) গ্রাহকের registration, OTP, profile ও app version সামলায়। এর source পাঁচটি repository-র কোনোটিতেই নেই <span class="badge-unconfirmed">[UNCONFIRMED: Q-01]</span>।</p>
+<h2 id="4-একট-request-কভব-service-এ-পছয">4. একটি request কীভাবে service-এ পৌঁছায়</h2>
+<div class="mermaid">flowchart LR
+  C["Client<br/>portal or app"] -->|"HTTPS + Bearer token"| R53["Route 53"] --> APIGW["API Gateway"] --> NLB["Network Load Balancer"]
+  NLB --> ING["nginx ingress<br/>class nginx-second<br/>routes by path prefix"]
+  ING -->|"/admin/..."| ADM["Admin pod"]
+  ING -->|"/booking/..."| BKG["Booking pod"]
+  ING -->|"/event, /ticketing, /ticketchecker,<br/>/scheduler, /userissue, /pushnotification"| OTH["other pods"]
+  C -.->|"WebSocket, token in query string"| CHAT["chat.gobcbticket.com.bd<br/>(separate public ingress)"] -.-> UI["UserIssue pod<br/>/userissue/chathub"]
+</div>
+<p>এই চিত্রের hosting অংশ (API Gateway, NLB, ingress) আসে architecture document §1 ও §4.1 থেকে। API Gateway token-ও যাচাই করে কি না, সেটি সেখানে জানানো আছে কিন্তু যাচাই করা হয়নি (architecture Q1/Q1b)। Service-গুলো সবসময় নিজেরাই token যাচাই করে।</p>
+<p><a id="explainer-path-prefix-routing"></a></p>
+<blockquote>
+<p>📦 <strong>Explainer: path-prefix routing</strong></p>
+<p>Monolith-এ প্রতিটি controller একটি host-এর নিচে থাকে। এখানে প্রতিটি service আলাদা process, কিন্তু client এখনো <strong>একটি API host</strong> ব্যবহার করে। Path-এর প্রথম segment ঠিক করে কোন service request পাবে: <code>/booking/api/v1/user-booking-order</code> যায় Booking-এর কাছে, <code>/event/api/v1/events/list</code> যায় Event-এর কাছে।</p>
+<p>কাজ করার জন্য দুটি জিনিস:
+1. <strong>কোডে</strong>, <code>Core/ETP.Core/Conventions/GlobalRoutePrefixConvention.cs</code> প্রতিটি controller route-এর আগে <code>Application:ServiceName</code> যোগ করে (প্রতিটি <code>Program.cs</code>-এ registered, যেমন <code>Services/Booking/ETP.Booking.Service/Program.cs:51</code>)। তাই Booking controller-এর <code>[Route("api/v1/user-booking-order")]</code> আসলে <code>/booking/api/v1/user-booking-order</code>-এ serve হয়, এমনকি service-কে সরাসরি তার নিজের port-এ কল করলেও।
+2. <strong>Cluster-এ</strong>, প্রতি service-এর জন্য একটি nginx ingress <code>/&lt;prefix&gt;/...</code> অপরিবর্তিত সেই service-এ পাঠায় (architecture §4.1)।</p>
+<p>আপনার জন্য পরিণতি: service স্থানীয়ভাবে কল করলে (<code>http://localhost:5102</code>) prefix রাখতেই হবে: <code>http://localhost:5102/booking/api/v1/...</code>। Swagger <code>/&lt;prefix&gt;/swagger</code>-এ আছে।</p>
+</blockquote>
+<h2 id="5-request-ও-response-এর-রত">5. Request ও response-এর রীতি</h2>
+<table>
+<thead>
+<tr>
+<th>বিষয়</th>
+<th>কোড কী করে</th>
+<th>উৎস</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JSON property-এর নাম</td>
+<td>প্রতিটি service-এ camelCase। Booking, Event, Ticketing, TicketChecker, Scheduler, Utility, PushNotification, Platform ও UserAuth স্পষ্টভাবে <code>PropertyNamingPolicy = CamelCase</code> দেয়; Admin ও UserIssue ASP.NET Core-এর default ব্যবহার করে, যেটিও camelCase</td>
+<td><code>Services/*/ETP.*.Service/Program.cs</code> (<code>AddJsonOptions</code>)</td>
+</tr>
+<tr>
+<td>Enum</td>
+<td>যেসব service <code>AddJsonOptions</code> কল করে সেখানে string (<code>JsonStringEnumConverter</code>); <strong>সংখ্যা</strong> Admin ও UserIssue-এ, যারা converter register করে না</td>
+<td>একই</td>
+</tr>
+<tr>
+<td>Null</td>
+<td>Response থেকে বাদ (<code>WhenWritingNull</code>) যেসব service <code>AddJsonOptions</code> কল করে সেখানে; Admin ও UserIssue সেগুলো রাখে</td>
+<td>একই</td>
+</tr>
+<tr>
+<td>Error</td>
+<td><code>ErrorResponseExceptionFilter</code> exception-কে <code>ProblemDetails</code>-এ রূপান্তর করে (নিচে দেখুন)</td>
+<td><code>Core/ETP.Core.Web/Filters/ErrorResponseExceptionFilter.cs</code></td>
+</tr>
+<tr>
+<td>Id</td>
+<td>বেশিরভাগ table-এ <code>long Id</code>। অনেকের সাথে public string/Guid id-ও আছে (যেমন <code>Event.EventId</code>, order-এর <code>PublicId</code>), এবং endpoint একটি বা অন্যটি গ্রহণ করে — এ কারণেই <code>events/{eventId}</code> ও <code>events/EventLongId/{id}</code>-এর মতো জোড়া রয়েছে</td>
+<td><code>Services/Admin/ETP.Admin.Storage/Models/Event.cs</code></td>
+</tr>
+<tr>
+<td>সময়</td>
+<td>Server-side তুলনায় <code>DateTime.UtcNow</code> ব্যবহার করা হয়</td>
+<td>যেমন <code>UserBookingOrderManager.cs:1135-1193</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Error response।</strong> Controller exception ছুঁড়ে; filter exception-এর ধরনকে একটি status code ও <code>ProblemDetails</code> body-তে মানচিত্র করে:</p>
+<table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>Status</th>
+<th>Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ArgumentException</code> (ও subclass)</td>
+<td>400</td>
+<td><code>{ "status": 400, "title": "&lt;exception message&gt;" }</code></td>
+</tr>
+<tr>
+<td><code>ApiException</code></td>
+<td>400</td>
+<td>exception-এর নিজের <code>Details</code> (<code>ProblemDetails</code>)</td>
+</tr>
+<tr>
+<td><code>UnauthorizedAccessException</code></td>
+<td>403</td>
+<td><code>{ "status": 403, "title": "Unauthorized access", "detail": "&lt;message&gt;" }</code></td>
+</tr>
+<tr>
+<td>যেকোনো অন্য</td>
+<td>500</td>
+<td><code>{ "status": 500, "title": "An unexpected error occurred." }</code> (Development-এ আসল message)</td>
+</tr>
+</tbody>
+</table>
+<p>Development environment-এ একটি <code>stackTrace</code> field যোগ হয়। Authentication ব্যর্থতা (token না থাকা বা invalid) কখনো filter-এ পৌঁছায় না: JWT handler খালি body সহ <strong>401</strong> দেয়; ভুল pool-এর বা role-এর বিপরীতে একটি valid token <strong>403</strong> দেয়।</p>
+<pre><code class="language-json">{
+  &quot;status&quot;: 400,
+  &quot;title&quot;: &quot;Invalid promo code. Please enter a valid code.&quot;
+}
+</code></pre>
+<h2 id="6-explainer-box">6. Explainer box</h2>
+<p><a id="explainer-token-forwarding"></a></p>
+<blockquote>
+<p>📦 <strong>Explainer: token forwarding (একটি service কীভাবে কারো জন্য অন্যকে কল করে)</strong></p>
+<p>গ্রাহকের request যখন Booking-এ পৌঁছায় এবং Booking-কে Event থেকে ডেটা দরকার, তখন Booking HTTP-তে Event কে কল করে। এই code base-এ সেই কল <strong>গ্রাহকের নিজের Cognito access token</strong> বহন করে, কোনো service identity নয়।</p>
+<ul>
+<li>প্রতিটি service টাইপ করা <code>HttpClient</code> register করে (যেমন <code>Services/Admin/ETP.Admin.Service/Configurations/DependencyConfig.cs:123</code>-এ <code>services.AddHttpClient&lt;IEventClient, EventClient&gt;</code>) <code>Services:&lt;Name&gt;</code> থেকে একটি base URL সহ।</li>
+<li>Client pipeline-এ <code>DelegatedBearerAuthenticationHandler</code> আছে (<code>Core/ETP.Core.Web/Security/DelegatedBearerAuthenticationHandler.cs</code>)। এটি সেই access token পড়ে যা JWT handler বর্তমান ব্যবহারকারীর claim হিসেবে রেখেছে (<code>Core/ETP.Core/Configuration/DefaultAuthenticationConfig.cs</code>-এ <code>OnTokenValidated</code>) এবং outgoing request-এর <code>Authorization: Bearer</code>-এ কপি করে।</li>
+<li>Downstream service সেই token নিজের <strong>নিজস্ব</strong> policy দিয়ে আবার যাচাই করে। Booking যদি এমন Admin endpoint কল করে যা Admin pool চায়, কিন্তু caller একজন গ্রাহক, তাহলে downstream কল 401/403 দিয়ে ব্যর্থ হয়।</li>
+<li>Retry: বেশিরভাগ client Polly ব্যবহার করে exponential backoff-এ ৩ বার retry করে।</li>
+<li><strong>কোনো ব্যবহারকারী নেই, তাই token নেই।</strong> একটি background worker-এর কোনো HTTP request নেই, তাই handler কোনো token পায় না এবং কিছু পাঠায়ও না। তাই worker যে endpoint কল করে সেগুলোতে <code>[Authorize]</code> নেই (দেখুন <a href="60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>)।</li>
+</ul>
+<p>Hop ট্যাগ: <strong class="hop-tag">[HTTP + user token]</strong> ও <strong class="hop-tag">[HTTP, no token]</strong>। বিস্তারিত: <a href="60-cross-cutting/X-19-service-to-service.html">X-19</a>।</p>
+</blockquote>
+<p><a id="explainer-queue-driven"></a></p>
+<blockquote>
+<p>📦 <strong>Explainer: queue-driven processing (SQS)</strong></p>
+<p>কিছু কাজ ব্যবহারকারীর request-এর ভেতরে করতে খুব ধীর বা খুব গুরুত্বপূর্ণ: TSP দিয়ে টিকিট সই করা, শত শত PDF merge করা, NBR-এর কাছে VAT রেকর্ড করা, push message পাঠানো, ক্যাপাসিটি পুনরায় হিসাব। Request একটি Amazon SQS queue-তে <strong>message publish</strong> করে ফিরে আসে; কোনো service-এর একটি <strong>worker</strong> পরে queue পড়ে কাজটি করে।</p>
+<ul>
+<li>Publish করা: <code>Core/ETP.Core/Queue/Services/SqsPublisher.cs</code> queue-এর URL তার <strong>নাম</strong> থেকে বের করে (<code>AWS:Queue:&lt;Key&gt;</code> হিসেবে configured), message-কে JSON হিসেবে serialize করে ও পাঠায়। যদি queue নাম <code>fifo</code> দিয়ে শেষ হয়, তবে message থেকে <code>MessageGroupId</code> ও <code>MessageDeduplicationId</code>-ও দেয়।</li>
+<li>Consume করা: একটি <code>BackgroundService</code> লুপ চালায়, <code>ReceiveMessageAsync</code> কল করে, কাজ করে, এবং শুধু সফল হলে message মুছে ফেলে। ব্যর্থ message আবার দৃশ্যমান হয় ও পুনরায় চেষ্টা হয়।</li>
+<li>Message-এ শুধু business id থাকে। কোনো user token নেই এবং কোনো sender check নেই: queue-তে পাঠানোর IAM permission যার আছে, সে যে কোনো কাজ enqueue করতে পারে (architecture §2.3 C)।</li>
+<li>ব্যবহৃত queue key: <code>OrderSuccess</code>, <code>EventCapacity</code>, <code>VatChallanProcessing</code> (Booking), <code>TicketSigning</code> (Ticketing), <code>TicketProcessing</code> (Utility), <code>FirebaseNotification</code> (Scheduler)।</li>
+<li>কিছু service-এ MassTransit registered আছে কিন্তু কোনো consumer বা publisher সেটি ব্যবহার করে না (দেখুন <a href="90-appendix-a-legacy.html">Appendix A</a>)।</li>
+</ul>
+<p>Hop ট্যাগ: <strong class="hop-tag">[SQS: Key]</strong>। <a href="50-system-initiated/index.html">50-system-initiated</a>-এর ফিচার ফাইলগুলো প্রতিটি consumer বর্ণনা করে।</p>
+</blockquote>
+<p><a id="explainer-background-workers"></a></p>
+<blockquote>
+<p>📦 <strong>Explainer: background worker (service-এর ভেতরে timer)</strong></p>
+<p>HTTP request-এর উত্তর দেওয়ার পাশাপাশি কয়েকটি service timer-এর উপর <strong>hosted service</strong> (<code>BackgroundService</code>) চালায়, যা <code>services.AddHostedService&lt;...&gt;()</code> দিয়ে registered। প্যাটার্ন সব জায়গায় এক (<code>Services/Admin/ETP.Admin.Service/Workers/BackgroundServices/CheckedTicketService.cs</code>):</p>
+<ol>
+<li>start-up-এর প্রায় এক মিনিট পরে অপেক্ষা;</li>
+<li>চিরকাল লুপ: Redis lock নিতে চেষ্টা করে, আর lock পেলে একটি DI scope তৈরি করে একটি <strong>TaskManager</strong> (<code>Workers/TaskManagers/*</code>) চালায় যেটি আসল লজিক ধারণ করে;</li>
+<li>একটি <strong>hard-coded</strong> interval-এ ঘুমায় (৩০ সেকেন্ড থেকে ১ দিন), error-এর পরে আরও বেশি।</li>
+</ol>
+<p>Interval কোডের constant, configuration নয়। কোনো service-এর প্রতিটি replica (pod) একই worker চালায়, তাই lock-টি গুরুত্বপূর্ণ (পরের box)। Hop ট্যাগ: <strong class="hop-tag">[Worker: interval, lock]</strong>।</p>
+</blockquote>
+<p><a id="explainer-distributed-locks"></a></p>
+<blockquote>
+<p>📦 <strong>Explainer: distributed lock (RedLock)</strong></p>
+<p>Production-এ প্রতিটি service কয়েকটি pod হিসেবে চলতে পারে। সমন্বয় ছাড়া প্রতিটি pod-এর worker একই সময়ে একই order নিয়োগ করত। কোড Redis-এ <strong>RedLock</strong> (<code>RedLockNet</code>) ব্যবহার করে: কোনো কাজ চালানোর আগে worker একটি নামকরা lock চায় (যেমন <code>checked_ticket</code>, মেয়াদ ২০ মিনিট)। কেবল lock যে pod পায় সেই কাজ করে; বাকিরা cycle এড়িয়ে লগ করে <code>Could NOT acquire lock ... Skipping this cycle</code> (এটি স্বাভাবিক message, স্থানীয়ভাবেও দেখা যায়)।</p>
+<p>একই ব্যবস্থা সেই ব্যবসায়িক কাজগুলো রক্ষা করে যেগুলো ওভারল্যাপ হতে পারে না, যেমন প্রতি গ্রাহকে একসময়ে একটি booking (<code>UserBookingOrderManager.cs:68</code>-এ <code>user_booking:{userId}</code>) এবং প্রতি level-এ ক্যাপাসিটি পরিবর্তন।</p>
+<p>সেটআপ: <code>Core/ETP.Core/Configuration/DistributedLockConfig.cs</code> (key <code>DistributedLock:Redis:*</code>)। Lock-এর নাম ও মেয়াদ <a href="60-cross-cutting/X-25-redis.html">X-25</a>-এ তালিকাভুক্ত।</p>
+</blockquote>
+<p><a id="explainer-shared-database"></a></p>
+<blockquote>
+<p>📦 <strong>Explainer: একটি database, shared table ও read model</strong></p>
+<p>পাঠ্যবিদ্যার microservice-এর একটি private database থাকে। এই code base এমনভাবে কাজ করে না:</p>
+<ul>
+<li>প্রতিটি <code>DbContext</code> একই <strong>schema <code>etp</code></strong> ব্যবহার করে (প্রতিটি <code>*DbContext.cs</code>-এ <code>DefaultSchema = "etp"</code>), এবং প্রতিটি service-এর নিজস্ব connection-string key আছে (<code>ConnectionStrings:Admin</code>, <code>:Booking</code>, …)। Ticketing <code>ConnectionStrings:Booking</code> ব্যবহার করে। স্থানীয়ভাবে সব key একটি database-এর দিকে ইঙ্গিত করে, <code>etp_local</code> (<code>scripts/user-secrets.example.json</code>)।</li>
+<li>একটি table সেই service-এর <strong>owned</strong>, যার migration সেটি তৈরি করে। অন্য service-গুলো একই table নিজের <code>DbContext</code>-এ <code>ExcludeFromMigrations</code> দিয়ে আবার map করে ও সরাসরি পড়ে (কখনো লেখেও)। উদাহরণ: Booking, Admin-এর <code>PromoCodes</code>, <code>Discounts</code>, <code>EventVenueDetails</code>, <code>Events</code> excluded table হিসেবে map করে (<code>Services/Booking/ETP.Booking.Storage/DbContexts/BookingDbContext.cs:86-140</code>)।</li>
+<li><strong>Event</strong> service প্রায় কিছুই own করে না: এটি Admin ও Booking-এর table-গুলোর উপর একটি public, read-only দৃশ্য (<code>Services/Event/ETP.Event.Storage/DbContexts/EventDbContext.cs</code>)।</li>
+</ul>
+<p>আপনার জন্য এর অর্থ: Admin-এ কোনো column বদলালে Booking, Ticketing বা Event ভাঙতে পারে, যদিও সেগুলো আলাদা করে compile হয়। কোনো table বদলানোর আগে সব <code>*DbContext.cs</code> ফাইলে সেই নাম খুঁজুন। আমরা যে brief পেয়েছি তাতে লেখা "one schema per service"; কোড বলছে সবার জন্য এক schema। Production layout এখনো খোলা: <span class="badge-unconfirmed">[UNCONFIRMED: Q-02]</span>।</p>
+<p>Hop ট্যাগ: <strong class="hop-tag">[Shared table]</strong>।</p>
+</blockquote>
+<p><a id="explainer-redis-live-capacity"></a></p>
+<blockquote>
+<p>📦 <strong>Explainer: live আসন গণনা হিসেবে Redis</strong></p>
+<p>বিক্রির সময় আসনের availability প্রতি সেকেন্ডে বদলায়, তাই Booking Redis-এ <strong>live গণনা</strong> রাখে (<code>level_live</code>, <code>level_locked</code>, <code>event_live</code>, <code>level_live_seats</code>-এর মতো key family; <code>Core/ETP.Core/Constant/AppConstant.cs:64-104</code>-এ constant) এবং database-কে ধীর, durable copy হিসেবে দেখে। Order আগে Redis-এ ক্যাপাসিটি lock করে; queue worker (<a href="50-system-initiated/S-01-level-capacity-update.html">S-01</a>, <a href="50-system-initiated/S-02-event-live-capacity.html">S-02</a>) ও timer (<a href="50-system-initiated/S-03-locked-capacity-refresh.html">S-03</a>) database ও Redis-কে আবার মেলান। checker app-এর gate-scan গণনাও একইভাবে কাজ করে (<a href="40-checker-app/C-05-ticket-sync.html">C-05</a>, <a href="50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>)।</p>
+<p>পরিণতি: বিক্রির সময় Redis flush হলে live সংখ্যা পরবর্তী worker cycle থেকে database থেকে পুনরায় তৈরি হয়; স্থানীয়ভাবে <code>scripts/Seed-EtpData.ps1</code> এই কারণেই cache মুছে দেয়। বিস্তারিত: <a href="60-cross-cutting/X-25-redis.html">X-25</a>।</p>
+</blockquote>
+<h2 id="7-explainer-index">7. Explainer index</h2>
+<table>
+<thead>
+<tr>
+<th>ধারণা</th>
+<th>Box</th>
+<th>যে ফিচারগুলো প্রথমে এর উপর নির্ভর করে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Path-prefix routing</td>
+<td><a href="#explainer-path-prefix-routing">link</a></td>
+<td>প্রতিটি ফিচার</td>
+</tr>
+<tr>
+<td>Token forwarding</td>
+<td><a href="#explainer-token-forwarding">link</a></td>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="10-admin-portal/A-07-events.html">A-07</a>, <a href="60-cross-cutting/X-19-service-to-service.html">X-19</a></td>
+</tr>
+<tr>
+<td>Queue-driven processing</td>
+<td><a href="#explainer-queue-driven">link</a></td>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="10-admin-portal/A-12-reserved-tickets.html">A-12</a>, সব <code>S-xx</code></td>
+</tr>
+<tr>
+<td>Background worker</td>
+<td><a href="#explainer-background-workers">link</a></td>
+<td>সব <code>S-xx</code></td>
+</tr>
+<tr>
+<td>Distributed lock</td>
+<td><a href="#explainer-distributed-locks">link</a></td>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="10-admin-portal/A-10-capacity-adjustment.html">A-10</a>, সব <code>S-xx</code></td>
+</tr>
+<tr>
+<td>একটি database, shared table</td>
+<td><a href="#explainer-shared-database">link</a></td>
+<td><a href="20-user-portal/P-05-apply-promo-code.html">P-05</a>, <a href="20-user-portal/P-02-browse-events.html">P-02</a>, <a href="10-admin-portal/A-15-promo-codes.html">A-15</a></td>
+</tr>
+<tr>
+<td>Redis live আসন গণনা</td>
+<td><a href="#explainer-redis-live-capacity">link</a></td>
+<td><a href="20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="40-checker-app/C-05-ticket-sync.html">C-05</a></td>
+</tr>
+</tbody>
+</table>
+  </main>
+</div>
+<script src="../assets/vendor/mermaid.min.js"></script>
+<script src="../assets/site.js?v=d7ce93f0"></script>
+</body>
+</html>

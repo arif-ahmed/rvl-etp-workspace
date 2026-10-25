@@ -1,0 +1,1565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · Traceability matrix · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../assets/site.css?v=5ded2c9a">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav class="side-nav">
+    <div class="side-sec is-open" data-dir="ov">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="true" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">Overview</span>
+        <span class="side-count">4</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="00-platform-primer.html"><span class="id-chip">00</span><span>Platform primer</span></a>
+        <a class="side-item" href="01-system-map.html"><span class="id-chip">01</span><span>System map</span></a>
+        <a class="side-item is-active" href="02-traceability-matrix.html"><span class="id-chip">02</span><span>Traceability matrix</span></a>
+        <a class="side-item" href="03-component-reverse-index.html"><span class="id-chip">03</span><span>Component reverse index</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="ap">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">Appendices</span>
+        <span class="side-count">5</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="90-appendix-a-legacy.html"><span class="id-chip">90</span><span>Appendix A — Legacy, unused and dormant code</span></a>
+        <a class="side-item" href="91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — Endpoint index</span></a>
+        <a class="side-item" href="92-appendix-c-coverage.html"><span class="id-chip">92</span><span>Appendix C — Coverage</span></a>
+        <a class="side-item" href="93-appendix-d-local-test-reference.html"><span class="id-chip">93</span><span>Appendix D — Local test reference</span></a>
+        <a class="side-item" href="99-open-queries.html"><span class="id-chip">99</span><span>Open queries</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="10-admin-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="10-admin-portal/index.html">10 · Admin Portal</a>
+        <span class="side-count">31</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+        <a class="side-item" href="10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+        <a class="side-item" href="10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+        <a class="side-item" href="10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+        <a class="side-item" href="10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+        <a class="side-item" href="10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+        <a class="side-item" href="10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+        <a class="side-item" href="10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+        <a class="side-item" href="10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+        <a class="side-item" href="10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+        <a class="side-item" href="10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+        <a class="side-item" href="10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+        <a class="side-item" href="10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+        <a class="side-item" href="10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+        <a class="side-item" href="10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+        <a class="side-item" href="10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+        <a class="side-item" href="10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+        <a class="side-item" href="10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+        <a class="side-item" href="10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+        <a class="side-item" href="10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+        <a class="side-item" href="10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+        <a class="side-item" href="10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+        <a class="side-item" href="10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+        <a class="side-item" href="10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+        <a class="side-item" href="10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+        <a class="side-item" href="10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+        <a class="side-item" href="10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+        <a class="side-item" href="10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+        <a class="side-item" href="10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+        <a class="side-item" href="10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+        <a class="side-item" href="10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="20-user-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="20-user-portal/index.html">20 · User Web Portal</a>
+        <span class="side-count">13</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+        <a class="side-item" href="20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+        <a class="side-item" href="20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+        <a class="side-item" href="20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+        <a class="side-item" href="20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+        <a class="side-item" href="20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+        <a class="side-item" href="20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+        <a class="side-item" href="20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+        <a class="side-item" href="20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+        <a class="side-item" href="20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+        <a class="side-item" href="20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+        <a class="side-item" href="20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+        <a class="side-item" href="20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="30-user-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="30-user-app/index.html">30 · User App</a>
+        <span class="side-count">10</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
+        <a class="side-item" href="30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
+        <a class="side-item" href="30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
+        <a class="side-item" href="30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
+        <a class="side-item" href="30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
+        <a class="side-item" href="30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
+        <a class="side-item" href="30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
+        <a class="side-item" href="30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
+        <a class="side-item" href="30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
+        <a class="side-item" href="30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="40-checker-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="40-checker-app/index.html">40 · Checker App</a>
+        <span class="side-count">6</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
+        <a class="side-item" href="40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
+        <a class="side-item" href="40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
+        <a class="side-item" href="40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
+        <a class="side-item" href="40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
+        <a class="side-item" href="40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="50-system-initiated">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="50-system-initiated/index.html">50 · System-initiated</a>
+        <span class="side-count">17</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+        <a class="side-item" href="50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+        <a class="side-item" href="50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+        <a class="side-item" href="50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+        <a class="side-item" href="50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+        <a class="side-item" href="50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+        <a class="side-item" href="50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+        <a class="side-item" href="50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+        <a class="side-item" href="50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+        <a class="side-item" href="50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+        <a class="side-item" href="50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="60-cross-cutting">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="60-cross-cutting/index.html">60 · Cross-cutting</a>
+        <span class="side-count">26</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+        <a class="side-item" href="60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+        <a class="side-item" href="60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+        <a class="side-item" href="60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+        <a class="side-item" href="60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+        <a class="side-item" href="60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+        <a class="side-item" href="60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+        <a class="side-item" href="60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+        <a class="side-item" href="60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+        <a class="side-item" href="60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+        <a class="side-item" href="60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+        <a class="side-item" href="60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+        <a class="side-item" href="60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+        <a class="side-item" href="60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+        <a class="side-item" href="60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+        <a class="side-item" href="60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+        <a class="side-item" href="60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+        <a class="side-item" href="60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+        <a class="side-item" href="60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+      </div>
+    </div>
+    </nav>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="index.html">Contents</a><span class="sep">›</span><span>02 · Traceability matrix</span></div>
+<h1><span class="id-chip">02</span> Traceability matrix</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> ট্রেসেবিলিটি ম্যাট্রিক্স</p>
+<p><a href="index.html">← Contents</a> · <a href="91-appendix-b-endpoint-index.html">Endpoint index</a> · <a href="03-component-reverse-index.html">Reverse index</a></p>
+</blockquote>
+<p>Every business feature, and the technical things it touches. Three tables:</p>
+<ol>
+<li><strong>§2 Feature → service</strong> — which backend service implements each feature</li>
+<li><strong>§3 Feature → endpoint</strong> — which HTTP endpoint each screen calls</li>
+<li><strong>§4 Feature → state</strong> — which queue, Redis key, table and external system each feature touches</li>
+</ol>
+<p>Use §2 and §3 when you have a screen and want to know where its behaviour lives. Use §4 and the <a href="03-component-reverse-index.html">reverse index</a> when you have a table, queue or Redis key and want to know who writes it.</p>
+<h2 id="1-conventions">1. Conventions</h2>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Service</strong></td>
+<td>The backend service that owns the behaviour</td>
+</tr>
+<tr>
+<td><strong>Endpoint</strong></td>
+<td>The primary external path; <code>—</code> means the feature makes no HTTP call</td>
+</tr>
+<tr>
+<td><strong>Queue</strong></td>
+<td>The SQS queue it produces to or consumes from; <code>—</code> means none</td>
+</tr>
+<tr>
+<td><strong>Redis</strong></td>
+<td>The keys it reads or writes; <code>—</code> means none</td>
+</tr>
+<tr>
+<td><strong>Store</strong></td>
+<td>The table, bucket or external store it writes</td>
+</tr>
+<tr>
+<td><strong>Ext</strong></td>
+<td>An external system it depends on</td>
+</tr>
+</tbody>
+</table>
+<p>A feature may span several rows when it genuinely does. Where a cell says <em>same as above</em>, the two features share the same component.</p>
+<h2 id="2-feature-service">2. Feature → service</h2>
+<h3 id="21-admin-portal-31-features">2.1 Admin portal (31 features)</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Feature</th>
+<th>Service</th>
+<th>Also touches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="10-admin-portal/A-01-program-selection.html">A-01</a></td>
+<td>Program selection</td>
+<td>Admin</td>
+<td>Cognito (session), localStorage</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-02-programs.html">A-02</a></td>
+<td>Programs</td>
+<td>Admin</td>
+<td>Cognito</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-03-program-settings.html">A-03</a></td>
+<td>Program settings</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-04-teams.html">A-04</a></td>
+<td>Teams</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-05-venues.html">A-05</a></td>
+<td>Venues</td>
+<td>Admin</td>
+<td>S3 (venue media)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-06-program-venue-mapping.html">A-06</a></td>
+<td>Program–venue mapping</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-07-events.html">A-07</a></td>
+<td>Events</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-08-event-settings.html">A-08</a></td>
+<td>Event settings override</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-09-event-level-pricing.html">A-09</a></td>
+<td>Event venue details and pricing</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-10-capacity-adjustment.html">A-10</a></td>
+<td>Capacity adjustment</td>
+<td><strong>Booking</strong></td>
+<td>Redis</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-11-seat-reservation.html">A-11</a></td>
+<td>Seat reservation</td>
+<td><strong>Booking</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-12-reserved-tickets.html">A-12</a></td>
+<td>Reserved ticket generation</td>
+<td><strong>Booking</strong>, Ticketing</td>
+<td><code>TicketProcessing</code> queue</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-13-ticket-layouts.html">A-13</a></td>
+<td>Ticket layouts</td>
+<td>Admin</td>
+<td>S3 (layout files)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-14-ticket-pricing-content.html">A-14</a></td>
+<td>Ticket-pricing content</td>
+<td>Admin</td>
+<td><strong>Not read by the customer pricing page</strong></td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-15-promo-codes.html">A-15</a></td>
+<td>Promo codes</td>
+<td>Admin</td>
+<td>Scheduler (<a href="50-system-initiated/S-16-promo-code-status.html">S-16</a>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-16-discounts.html">A-16</a></td>
+<td>System discounts</td>
+<td>Admin</td>
+<td>Scheduler (<a href="50-system-initiated/S-17-discount-status.html">S-17</a>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-17-ticket-checker-users.html">A-17</a></td>
+<td>Checker accounts</td>
+<td>Admin</td>
+<td>Cognito (checker pool)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-18-gate-assignment.html">A-18</a></td>
+<td>Gate assignment</td>
+<td>Admin</td>
+<td>Redis (<code>TicketCheckerLevelGateMap</code>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-19-gate-reports.html">A-19</a></td>
+<td>Gate reports</td>
+<td>Admin, Booking</td>
+<td>Scheduler (<a href="50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-20-raffle-draw.html">A-20</a></td>
+<td>Raffle draw</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-21-dashboard.html">A-21</a></td>
+<td>Dashboard</td>
+<td>Admin, Booking</td>
+<td>Redis (live capacity)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-22-reports.html">A-22</a></td>
+<td>Reports</td>
+<td>Booking</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-23-reconciliation.html">A-23</a></td>
+<td>Reconciliation</td>
+<td>Booking, Ticketing</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-24-user-issues-admin.html">A-24</a></td>
+<td>User issues (admin)</td>
+<td>Admin, UserIssue</td>
+<td>SignalR, external notification (<a href="99-open-queries.html">Q-05</a>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-25-admin-users.html">A-25</a></td>
+<td>Admin users</td>
+<td>Admin</td>
+<td>Cognito (admin pool)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-26-agent-users.html">A-26</a></td>
+<td>Agent users</td>
+<td>Admin</td>
+<td>Cognito (agent pool)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-27-activity-log.html">A-27</a></td>
+<td>Activity log</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-28-media-configuration.html">A-28</a></td>
+<td>Media configuration</td>
+<td>Admin</td>
+<td>S3</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-29-content-editor.html">A-29</a></td>
+<td>Content editor</td>
+<td>Admin</td>
+<td><strong>HTML stored unsanitised</strong> (<a href="99-open-queries.html">Q-33</a>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-30-header-footer-social.html">A-30</a></td>
+<td>Header/footer and social</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-31-general-notices.html">A-31</a></td>
+<td>General notices</td>
+<td>Admin</td>
+<td><strong>Not read by the portal</strong> (<a href="99-open-queries.html">Q-35</a>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-user-portal-13-features">2.2 User portal (13 features)</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Feature</th>
+<th>Service</th>
+<th>Also touches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="20-user-portal/P-01-home-content.html">P-01</a></td>
+<td>Home content</td>
+<td>Event, Admin</td>
+<td>Redis (published list)</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-02-browse-events.html">P-02</a></td>
+<td>Browse events</td>
+<td>Event</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-03-info-pages.html">P-03</a></td>
+<td>Information pages</td>
+<td>Event</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-04-seat-selection.html">P-04</a></td>
+<td>Seat selection</td>
+<td>Booking</td>
+<td>Redis (live seats)</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-05-apply-promo-code.html">P-05</a></td>
+<td>Promo code</td>
+<td>Booking</td>
+<td>Redis (seat lock)</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a></td>
+<td>Booking and payment</td>
+<td>Booking</td>
+<td><strong>DgePay</strong>, Redis</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-07-my-bookings.html">P-07</a></td>
+<td>My bookings</td>
+<td>Booking</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-08-ticket-generation-request.html">P-08</a></td>
+<td>Ticket generation request</td>
+<td>Ticketing</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-09-ticket-details-downloads.html">P-09</a></td>
+<td>Ticket details and downloads</td>
+<td>Ticketing</td>
+<td>S3, SES</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-10-oneid-ticket-sync.html">P-10</a></td>
+<td>OneID ticket sync</td>
+<td>Ticketing</td>
+<td><strong>OneID</strong></td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-11-profile.html">P-11</a></td>
+<td>Profile</td>
+<td><strong>Identity API</strong> (external)</td>
+<td>— (<a href="99-open-queries.html">Q-01</a>)</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-12-issues-chat.html">P-12</a></td>
+<td>Issues and chat</td>
+<td>UserIssue</td>
+<td>SignalR; <strong>REST fallback has no auth</strong> (<a href="99-open-queries.html">Q-46</a>)</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-13-language-switch.html">P-13</a></td>
+<td>Language switch</td>
+<td>— (client only)</td>
+<td>localStorage; <strong>DB content never translated</strong> (<a href="99-open-queries.html">Q-44</a>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-user-app-10-features">2.3 User app (10 features)</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Feature</th>
+<th>Service</th>
+<th>Also touches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="30-user-app/U-01-splash-onboarding.html">U-01</a></td>
+<td>Splash and version gate</td>
+<td><strong>Identity API</strong> (external)</td>
+<td>— (<a href="99-open-queries.html">Q-51</a>, <a href="99-open-queries.html">Q-52</a>)</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-02-home-browse-events.html">U-02</a></td>
+<td>Home and browse</td>
+<td>Event</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-03-info-pages.html">U-03</a></td>
+<td>Information pages</td>
+<td>Event</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-04-seat-selection-promo.html">U-04</a></td>
+<td>Seat selection and promo</td>
+<td>Booking, <strong>Admin</strong> (discounts)</td>
+<td>Redis; <strong>no polling</strong> (<a href="99-open-queries.html">Q-56</a>)</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-05-booking-webview-payment.html">U-05</a></td>
+<td>Booking and WebView payment</td>
+<td>Booking</td>
+<td><strong>DgePay</strong> via WebView; <strong>success inferred from the URL</strong> (<a href="99-open-queries.html">Q-58</a>)</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-06-my-bookings-tickets.html">U-06</a></td>
+<td>My bookings and tickets</td>
+<td>Booking, Ticketing</td>
+<td>S3, <strong>no polling</strong> (<a href="99-open-queries.html">Q-54</a>)</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-07-profile-settings.html">U-07</a></td>
+<td>Profile and settings</td>
+<td><strong>Identity API</strong> (external)</td>
+<td><code>delete-my-profile</code> <strong>unreachable</strong> (<a href="99-open-queries.html">Q-61</a>)</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-08-issues-chat.html">U-08</a></td>
+<td>Issues and chat</td>
+<td>UserIssue</td>
+<td>SignalR first, REST fallback</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-09-device-token.html">U-09</a></td>
+<td>Device token</td>
+<td>PushNotification</td>
+<td><strong>Service has no auth</strong> (<a href="99-open-queries.html">Q-62</a>)</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-10-push-receipt.html">U-10</a></td>
+<td>Receiving push</td>
+<td>— (Firebase SDK)</td>
+<td><strong>No tap navigation, no receipt</strong> (<a href="99-open-queries.html">Q-64</a>, <a href="99-open-queries.html">Q-65</a>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-checker-app-6-features">2.4 Checker app (6 features)</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Feature</th>
+<th>Service</th>
+<th>Also touches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="40-checker-app/C-01-assigned-event-gate.html">C-01</a></td>
+<td>Assigned event and gate</td>
+<td><strong>Admin</strong></td>
+<td>SharedPreferences cache</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-02-offline-ticket-download.html">C-02</a></td>
+<td>Ticket download</td>
+<td>TicketChecker</td>
+<td>Local SQLite (drift)</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a></td>
+<td>QR scan validation</td>
+<td><strong>none</strong> (local crypto)</td>
+<td>Method channel; <strong>Android only</strong> (<a href="99-open-queries.html">Q-72</a>)</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-04-manual-entry.html">C-04</a></td>
+<td>Manual entry</td>
+<td><strong>none</strong></td>
+<td>Local SQLite; <strong>no signature check</strong> (<a href="99-open-queries.html">Q-75</a>)</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-05-ticket-sync.html">C-05</a></td>
+<td>Scan sync</td>
+<td>TicketChecker</td>
+<td>Redis <code>ticketCheckerDbSync</code> (<a href="99-open-queries.html">Q-17</a>)</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-06-manual-ticket-validation.html">C-06</a></td>
+<td>Signature-only validation</td>
+<td><strong>none</strong></td>
+<td>Method channel; diagnostic only (<a href="99-open-queries.html">Q-77</a>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="25-system-initiated-17-features">2.5 System-initiated (17 features)</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Feature</th>
+<th>Service</th>
+<th>Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="50-system-initiated/S-01-level-capacity-update.html">S-01</a></td>
+<td>Level capacity update</td>
+<td>Booking</td>
+<td><code>OrderSuccess</code> queue</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-02-event-live-capacity.html">S-02</a></td>
+<td>Event live capacity</td>
+<td>Booking</td>
+<td><code>EventCapacity</code> queue</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-03-locked-capacity-refresh.html">S-03</a></td>
+<td>Locked-capacity refresh</td>
+<td>Booking</td>
+<td>Timer + RedLock</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-04-scheduler-capacity-update.html">S-04</a></td>
+<td>Scheduler capacity reconcile</td>
+<td>Scheduler</td>
+<td>Timer</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-05-pending-failed-revalidation.html">S-05</a></td>
+<td>Payment revalidation</td>
+<td>Scheduler</td>
+<td>Timer (7–10 min)</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-06-booking-status-generated.html">S-06</a></td>
+<td>Booking → Generated</td>
+<td>Ticketing</td>
+<td>Timer</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a></td>
+<td>Initiate ticket generation</td>
+<td>Booking</td>
+<td>Timer (15 min loop)</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-08-ticket-signing.html">S-08</a></td>
+<td>Ticket signing (TSP)</td>
+<td>Ticketing</td>
+<td><code>TicketSigning</code> queue</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-09-ticket-merge-zip.html">S-09</a></td>
+<td>Reserved ticket merge/zip</td>
+<td>Utility</td>
+<td><code>TicketProcessing</code> queue</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-10-vat-challan.html">S-10</a></td>
+<td>VAT challan (NBR)</td>
+<td>Scheduler</td>
+<td><code>VatChallanProcessing</code> queue</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-11-firebase-notification.html">S-11</a></td>
+<td>Push delivery to FCM</td>
+<td>Scheduler</td>
+<td><code>FirebaseNotification</code> queue</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-12-ticket-generated-notification.html">S-12</a></td>
+<td>Ticket-generated notification</td>
+<td>Scheduler</td>
+<td>Timer</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-13-device-token-cleanup.html">S-13</a></td>
+<td>Device-token cleanup</td>
+<td>Scheduler</td>
+<td>Daily timer — <strong>may miss its target</strong> (<a href="99-open-queries.html">Q-16</a>)</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-14-checked-ticket-sync.html">S-14</a></td>
+<td>Checked-ticket sync</td>
+<td>Admin</td>
+<td>Timer + Redis flag (<a href="99-open-queries.html">Q-17</a>)</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-15-gate-download-status-cleanup.html">S-15</a></td>
+<td>Gate download cleanup</td>
+<td>Admin</td>
+<td>Timer</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-16-promo-code-status.html">S-16</a></td>
+<td>Promo-code status</td>
+<td>Admin</td>
+<td>Timer</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-17-discount-status.html">S-17</a></td>
+<td>Discount status</td>
+<td>Admin</td>
+<td>Timer, reads Booking via HTTP</td>
+</tr>
+</tbody>
+</table>
+<h3 id="26-cross-cutting-26-features">2.6 Cross-cutting (26 features)</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Feature</th>
+<th>Service</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="60-cross-cutting/X-01-admin-login.html">X-01</a></td>
+<td>Admin login</td>
+<td>Cognito + Serverless API</td>
+<td><a href="99-open-queries.html">Q-03</a></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-02-admin-forgot-password.html">X-02</a></td>
+<td>Admin forgot password</td>
+<td>Cognito + notification</td>
+<td><a href="99-open-queries.html">Q-05</a></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-03-admin-change-password-logout.html">X-03</a></td>
+<td>Admin change password</td>
+<td>Admin</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-04-admin-session.html">X-04</a></td>
+<td>Admin session</td>
+<td>Admin, Cognito</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-05-admin-provisioning.html">X-05</a></td>
+<td>Staff provisioning</td>
+<td>Admin, Cognito</td>
+<td><a href="60-cross-cutting/X-13-agent-pool.html">X-13</a></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-06-user-registration.html">X-06</a></td>
+<td>Customer registration</td>
+<td><strong>Identity API</strong></td>
+<td><a href="99-open-queries.html">Q-01</a></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-07-user-password-login.html">X-07</a></td>
+<td>Customer login</td>
+<td><strong>Identity API</strong>, Cognito</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-08-oneid-sso.html">X-08</a></td>
+<td>OneID SSO</td>
+<td><strong>Identity API</strong>, OneID</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-09-user-forgot-password.html">X-09</a></td>
+<td>Customer password reset</td>
+<td><strong>Identity API</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-10-user-session.html">X-10</a></td>
+<td>Customer session</td>
+<td>Cognito, identity API</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-11-delete-account-force-update.html">X-11</a></td>
+<td>Delete account, force update</td>
+<td><strong>Identity API</strong></td>
+<td><strong>The app has no UI for delete</strong> (<a href="99-open-queries.html">Q-61</a>)</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-12-checker-login.html">X-12</a></td>
+<td>Checker login</td>
+<td>Cognito</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-13-agent-pool.html">X-13</a></td>
+<td>Agent pool</td>
+<td>Ticketing, Cognito</td>
+<td><strong>No client</strong> (<a href="99-open-queries.html">Q-07</a>)</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-14-authz-pool-policies.html">X-14</a></td>
+<td>Pool schemes and policies</td>
+<td>all services</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-15-authz-roles.html">X-15</a></td>
+<td>Staff roles</td>
+<td>all services</td>
+<td>~2 min cache (<a href="99-open-queries.html">Q-32</a>)</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-16-authz-program-scope.html">X-16</a></td>
+<td>Program scope</td>
+<td>all services</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-17-authz-client-side.html">X-17</a></td>
+<td>Client-side authorization</td>
+<td>portals</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a></td>
+<td><strong>Endpoints without auth</strong></td>
+<td>several</td>
+<td>Read before assuming protection (<a href="99-open-queries.html">Q-04</a>)</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-19-service-to-service.html">X-19</a></td>
+<td>Service-to-service</td>
+<td>all</td>
+<td><a href="99-open-queries.html">Q-02</a></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-20-file-storage.html">X-20</a></td>
+<td>S3, CloudFront</td>
+<td>all</td>
+<td><a href="99-open-queries.html">Q-06</a>, <a href="99-open-queries.html">Q-50</a></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-21-email-ses.html">X-21</a></td>
+<td>Email (SES)</td>
+<td>Ticketing</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-22-sms-notification.html">X-22</a></td>
+<td>SMS</td>
+<td>external service</td>
+<td><a href="99-open-queries.html">Q-05</a></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-23-push-firebase.html">X-23</a></td>
+<td>Push (Firebase)</td>
+<td>PushNotification, Scheduler</td>
+<td><strong>No auth</strong> (<a href="99-open-queries.html">Q-62</a>)</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-24-activity-logging.html">X-24</a></td>
+<td>Activity logging</td>
+<td>all</td>
+<td><a href="99-open-queries.html">Q-02</a></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-25-redis.html">X-25</a></td>
+<td>Redis</td>
+<td>all</td>
+<td><a href="99-open-queries.html">Q-03</a></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-26-configuration.html">X-26</a></td>
+<td>Configuration and secrets</td>
+<td>all</td>
+<td><a href="99-open-queries.html">Q-07</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-feature-endpoint">3. Feature → endpoint</h2>
+<p>The primary endpoint each screen calls. Full list in the <a href="91-appendix-b-endpoint-index.html">endpoint index</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Endpoint</th>
+<th>Auth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="10-admin-portal/A-01-program-selection.html">A-01</a></td>
+<td><code>GET /admin/api/v1/program</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-02-programs.html">A-02</a></td>
+<td><code>POST /admin/api/v1/program</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-03-program-settings.html">A-03</a></td>
+<td><code>/admin/api/v1/program-settings</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-04-teams.html">A-04</a></td>
+<td><code>/admin/api/v1/teams</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-05-venues.html">A-05</a></td>
+<td><code>/admin/api/v1/venues</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-06-program-venue-mapping.html">A-06</a></td>
+<td><code>/admin/api/v1/programVenueDetails</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-07-events.html">A-07</a></td>
+<td><code>/admin/api/v1/events</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-08-event-settings.html">A-08</a></td>
+<td><code>/admin/api/v1/event-settings</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-09-event-level-pricing.html">A-09</a></td>
+<td><code>/admin/api/v1/eventsVenueDetails</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-10-capacity-adjustment.html">A-10</a></td>
+<td><code>/booking/api/v1/event-capacity-adjustment</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-11-seat-reservation.html">A-11</a></td>
+<td><code>/booking/api/v1/seat-reservation</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-12-reserved-tickets.html">A-12</a></td>
+<td><code>/booking/api/v1/seat-reservation</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-13-ticket-layouts.html">A-13</a></td>
+<td><code>/admin/api/v1/ticket-layout</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-14-ticket-pricing-content.html">A-14</a></td>
+<td><code>POST /admin/api/v1/ticket-pricing</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-15-promo-codes.html">A-15</a></td>
+<td><code>/admin/api/v1/promo-codes</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-16-discounts.html">A-16</a></td>
+<td><code>/admin/api/v1/discount</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-17-ticket-checker-users.html">A-17</a></td>
+<td><code>/admin/api/v1/ticket-checker</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-18-gate-assignment.html">A-18</a></td>
+<td><code>/admin/api/v1/ticket-checker-gate</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-19-gate-reports.html">A-19</a></td>
+<td><code>/booking/api/v1/report</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-20-raffle-draw.html">A-20</a></td>
+<td><code>/admin/api/v1/raffle-draw</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-21-dashboard.html">A-21</a></td>
+<td><code>/admin/api/v1/dashboard</code>, <code>/booking/api/v1/dashboard</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-22-reports.html">A-22</a></td>
+<td><code>/booking/api/v1/report</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-23-reconciliation.html">A-23</a></td>
+<td><code>GET /booking/api/v1/user-booking-order/admin/reconciliation/…</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-24-user-issues-admin.html">A-24</a></td>
+<td><code>/userissue/api/v1/user-issue</code>, <code>/admin/api/v1/user-issue</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-25-admin-users.html">A-25</a></td>
+<td><code>/admin/api/v1/admin-users</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-26-agent-users.html">A-26</a></td>
+<td><code>/admin/api/v1/agent-users</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-27-activity-log.html">A-27</a></td>
+<td><code>/admin/api/v1/activity-log</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-28-media-configuration.html">A-28</a></td>
+<td><code>/admin/api/v1/landing-page-image</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-29-content-editor.html">A-29</a></td>
+<td>Redis-published content (no endpoint)</td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-30-header-footer-social.html">A-30</a></td>
+<td><code>/admin/api/v1/header-footer</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-31-general-notices.html">A-31</a></td>
+<td><code>/admin/api/v1/general-notice</code></td>
+<td>admin</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-01-home-content.html">P-01</a></td>
+<td><code>GET /event/api/v1/landing-page-image/public</code></td>
+<td><strong>none</strong></td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-02-browse-events.html">P-02</a></td>
+<td><code>GET /event/api/v1/events/list</code></td>
+<td><strong>none</strong></td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-03-info-pages.html">P-03</a></td>
+<td><code>GET /event/api/v1/ticket-pricing/program-pricing</code></td>
+<td><strong>none</strong></td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-04-seat-selection.html">P-04</a></td>
+<td><code>GET /booking/api/v1/capacity/level-user-portal-seats</code></td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-05-apply-promo-code.html">P-05</a></td>
+<td><code>/booking/api/v1/user-booking-order</code> (apply step)</td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a></td>
+<td><code>POST /booking/api/v1/user-booking-order</code></td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-07-my-bookings.html">P-07</a></td>
+<td><code>/booking/api/v1/user-booking-order</code> (list)</td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-08-ticket-generation-request.html">P-08</a></td>
+<td><code>PATCH /ticketing/api/v1/booking-order-ticket/generate-request/{id}</code></td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-09-ticket-details-downloads.html">P-09</a></td>
+<td><code>/ticketing/api/v1/booking-order-ticket</code></td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-10-oneid-ticket-sync.html">P-10</a></td>
+<td><code>…/sync-order-to-oneid</code></td>
+<td>user; <strong>no owner check</strong> (<a href="99-open-queries.html">Q-41</a>)</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-11-profile.html">P-11</a></td>
+<td><code>GET</code>/<code>PUT user/my-profile</code></td>
+<td>identity API (<a href="99-open-queries.html">Q-01</a>)</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-12-issues-chat.html">P-12</a></td>
+<td><code>POST /userissue/api/v1/user-issue</code>, SignalR hub</td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-13-language-switch.html">P-13</a></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-01-splash-onboarding.html">U-01</a></td>
+<td><code>GET user/allowed-app-version</code></td>
+<td>identity API</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-02-home-browse-events.html">U-02</a></td>
+<td><code>/event/api/v1/…</code></td>
+<td><strong>none</strong></td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-03-info-pages.html">U-03</a></td>
+<td><code>/event/api/v1/…</code></td>
+<td><strong>none</strong></td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-04-seat-selection-promo.html">U-04</a></td>
+<td><code>/booking/api/v1/capacity/…</code>, <code>/admin/api/v1/discount/program/…</code></td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-05-booking-webview-payment.html">U-05</a></td>
+<td><code>POST /booking/api/v1/user-booking-order</code>, DgePay WebView</td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-06-my-bookings-tickets.html">U-06</a></td>
+<td><code>/booking/api/v1/user-booking-order/…</code>, <code>/ticketing/api/v1/booking-order-ticket</code></td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-07-profile-settings.html">U-07</a></td>
+<td><code>GET user/my-profile?user_id=…</code></td>
+<td>identity API (<a href="99-open-queries.html">Q-59</a>)</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-08-issues-chat.html">U-08</a></td>
+<td><code>/userissue/api/v1/user-issue</code>, SignalR + REST fallback</td>
+<td>user</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-09-device-token.html">U-09</a></td>
+<td><code>/pushnotification/api/v1/device-token</code></td>
+<td><strong>none</strong> (<a href="99-open-queries.html">Q-62</a>)</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-10-push-receipt.html">U-10</a></td>
+<td>— (Firebase SDK only)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-01-assigned-event-gate.html">C-01</a></td>
+<td><code>GET /admin/api/v1/ticket-checker-gate/event-info</code></td>
+<td>checker</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-02-offline-ticket-download.html">C-02</a></td>
+<td><code>POST /ticketChecker/api/v1/tickets/sync-tickets</code></td>
+<td>checker</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a></td>
+<td>— (Method channel <code>certificate/methods</code>)</td>
+<td>local</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-04-manual-entry.html">C-04</a></td>
+<td>—</td>
+<td>local</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-05-ticket-sync.html">C-05</a></td>
+<td><code>POST /ticketChecker/api/v1/tickets/sync-tickets</code></td>
+<td>checker</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-06-manual-ticket-validation.html">C-06</a></td>
+<td>— (Method channel)</td>
+<td>local</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-feature-state">4. Feature → state</h2>
+<h3 id="41-queue-ownership">4.1 Queue ownership</h3>
+<p>Every message, its producer and its consumer. <strong>There is no dead-letter handling in code for any of them</strong>, and the retry counter never advances (<a href="99-open-queries.html">Q-09</a>).</p>
+<table>
+<thead>
+<tr>
+<th>Queue</th>
+<th>Produced by</th>
+<th>Consumed by</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OrderSuccess</code></td>
+<td>Booking (paid order)</td>
+<td>Ticketing <code>TicketGenerationService</code></td>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a></td>
+</tr>
+<tr>
+<td><code>EventCapacity</code></td>
+<td>Booking (seat change)</td>
+<td>Booking <code>LevelCapacityUpdateService</code>, <code>EventLiveCapacityUpdateService</code></td>
+<td><a href="50-system-initiated/S-01-level-capacity-update.html">S-01</a>, <a href="50-system-initiated/S-02-event-live-capacity.html">S-02</a></td>
+</tr>
+<tr>
+<td><code>VatChallanProcessing</code></td>
+<td>Booking (<code>Paid</code> callback)</td>
+<td>Scheduler <code>VatChallanProcessingService</code></td>
+<td><a href="50-system-initiated/S-10-vat-challan.html">S-10</a>, <a href="20-user-portal/P-06-booking-payment.html">P-06</a></td>
+</tr>
+<tr>
+<td><code>TicketSigning</code></td>
+<td>Ticketing (PDF ready)</td>
+<td>Ticketing</td>
+<td><a href="50-system-initiated/S-08-ticket-signing.html">S-08</a></td>
+</tr>
+<tr>
+<td><code>TicketProcessing</code></td>
+<td>Ticketing (reserved)</td>
+<td>Utility <code>TicketProcessingService</code></td>
+<td><a href="50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>, <a href="10-admin-portal/A-12-reserved-tickets.html">A-12</a></td>
+</tr>
+<tr>
+<td><code>FirebaseNotification</code></td>
+<td>PushNotification</td>
+<td>Scheduler <code>FirebaseNotificationService</code></td>
+<td><a href="50-system-initiated/S-11-firebase-notification.html">S-11</a>, <a href="60-cross-cutting/X-23-push-firebase.html">X-23</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-redis-key-ownership">4.2 Redis key ownership</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Written by</th>
+<th>Read by</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>level_live:{e}_{g}_{b}_{l}</code></td>
+<td>Booking (seat lock)</td>
+<td>Booking, Event (public view)</td>
+<td><a href="20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="50-system-initiated/S-02-event-live-capacity.html">S-02</a></td>
+</tr>
+<tr>
+<td><code>level_live_seats:{e}_{g}_{b}_{l}</code></td>
+<td>Booking</td>
+<td>Booking</td>
+<td><a href="20-user-portal/P-04-seat-selection.html">P-04</a>, <a href="30-user-app/U-04-seat-selection-promo.html">U-04</a></td>
+</tr>
+<tr>
+<td><code>level_locked:{e}_{g}_{b}_{l}</code></td>
+<td>Booking (12-min lock)</td>
+<td>Booking, refresh worker</td>
+<td><a href="20-user-portal/P-05-apply-promo-code.html">P-05</a>, <a href="50-system-initiated/S-03-locked-capacity-refresh.html">S-03</a>, <a href="50-system-initiated/S-05-pending-failed-revalidation.html">S-05</a></td>
+</tr>
+<tr>
+<td><code>capacity</code> (hash)</td>
+<td>Booking</td>
+<td>Booking, Event</td>
+<td><a href="10-admin-portal/A-21-dashboard.html">A-21</a>, <a href="60-cross-cutting/X-25-redis.html">X-25</a></td>
+</tr>
+<tr>
+<td><code>refresh</code> (set)</td>
+<td>Booking</td>
+<td>Refresh worker — <strong>key mismatch</strong> (<a href="99-open-queries.html">Q-10</a>)</td>
+<td><a href="50-system-initiated/S-03-locked-capacity-refresh.html">S-03</a></td>
+</tr>
+<tr>
+<td><code>capacity/*</code>, <code>capacityAction</code></td>
+<td>Admin (adjustment)</td>
+<td>Booking, Event</td>
+<td><a href="10-admin-portal/A-10-capacity-adjustment.html">A-10</a></td>
+</tr>
+<tr>
+<td><code>TicketCheckerLevelGateMap</code></td>
+<td>Admin (gate assignment)</td>
+<td>TicketChecker (sync)</td>
+<td><a href="10-admin-portal/A-18-gate-assignment.html">A-18</a>, <a href="40-checker-app/C-05-ticket-sync.html">C-05</a></td>
+</tr>
+<tr>
+<td><code>ticketCheckerDbSync</code></td>
+<td>Admin (<a href="50-system-initiated/S-14-checked-ticket-sync.html">S-14</a>)</td>
+<td>TicketChecker</td>
+<td><strong>No expiry</strong> (<a href="99-open-queries.html">Q-17</a>)</td>
+</tr>
+<tr>
+<td>Published-content keys</td>
+<td>Admin (content publish)</td>
+<td>Event (public read)</td>
+<td><a href="20-user-portal/P-01-home-content.html">P-01</a>, <a href="10-admin-portal/A-29-content-editor.html">A-29</a></td>
+</tr>
+<tr>
+<td><code>signedToken</code> (CloudFront)</td>
+<td>Admin (<code>generate-signed-token</code>)</td>
+<td><strong>nothing in the backend</strong></td>
+<td><a href="60-cross-cutting/X-20-file-storage.html">X-20</a>, <a href="99-open-queries.html">Q-50</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-local-client-state">4.3 Local (client) state</h3>
+<table>
+<thead>
+<tr>
+<th>Store</th>
+<th>Client</th>
+<th>Written by</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>drift <code>qrTable</code> (SQLite)</td>
+<td>Checker app</td>
+<td><a href="40-checker-app/C-02-offline-ticket-download.html">C-02</a> download; <a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a>/<a href="40-checker-app/C-04-manual-entry.html">C-04</a> scans</td>
+<td>No migration story (<a href="99-open-queries.html">Q-70</a>)</td>
+</tr>
+<tr>
+<td>SharedPreferences <code>event-list</code></td>
+<td>Checker app</td>
+<td><a href="40-checker-app/C-01-assigned-event-gate.html">C-01</a></td>
+<td>—</td>
+</tr>
+<tr>
+<td>SharedPreferences <code>selectedLanguage</code></td>
+<td>User portal</td>
+<td><a href="20-user-portal/P-13-language-switch.html">P-13</a></td>
+<td>Read directly by the payment redirect</td>
+</tr>
+<tr>
+<td>localStorage <code>globalProgramId</code></td>
+<td>Admin portal</td>
+<td><a href="10-admin-portal/A-01-program-selection.html">A-01</a></td>
+<td>Program scope (<a href="60-cross-cutting/X-16-authz-program-scope.html">X-16</a>)</td>
+</tr>
+<tr>
+<td><code>.env</code> <code>VDS_CERTIFICATE</code></td>
+<td>Checker app</td>
+<td>— (build-time)</td>
+<td><a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a>, <a href="40-checker-app/C-06-manual-ticket-validation.html">C-06</a> — rotation is an app release (<a href="99-open-queries.html">Q-73</a>)</td>
+</tr>
+<tr>
+<td><code>.env</code> <code>PAYMENT_SUCCESS_URL</code></td>
+<td>User app</td>
+<td>— (build-time)</td>
+<td><a href="30-user-app/U-05-booking-webview-payment.html">U-05</a> — <strong>falls back to production</strong> (<a href="99-open-queries.html">Q-58</a>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44-external-systems-by-feature">4.4 External systems by feature</h3>
+<table>
+<thead>
+<tr>
+<th>External</th>
+<th>Used by</th>
+<th>Query</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Identity API</strong></td>
+<td><a href="60-cross-cutting/X-06-user-registration.html">X-06</a>, <a href="60-cross-cutting/X-07-user-password-login.html">X-07</a>, <a href="60-cross-cutting/X-08-oneid-sso.html">X-08</a>, <a href="60-cross-cutting/X-09-user-forgot-password.html">X-09</a>, <a href="60-cross-cutting/X-11-delete-account-force-update.html">X-11</a>, <a href="20-user-portal/P-11-profile.html">P-11</a>, <a href="30-user-app/U-01-splash-onboarding.html">U-01</a>, <a href="30-user-app/U-07-profile-settings.html">U-07</a></td>
+<td><a href="99-open-queries.html">Q-01</a></td>
+</tr>
+<tr>
+<td><strong>DgePay</strong></td>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a>, <a href="30-user-app/U-05-booking-webview-payment.html">U-05</a>, <a href="50-system-initiated/S-05-pending-failed-revalidation.html">S-05</a>, <a href="50-system-initiated/S-10-vat-challan.html">S-10</a></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>TSP (VDS)</strong></td>
+<td><a href="50-system-initiated/S-08-ticket-signing.html">S-08</a>, <a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a>, <a href="40-checker-app/C-06-manual-ticket-validation.html">C-06</a></td>
+<td><a href="99-open-queries.html">Q-06</a>, <a href="99-open-queries.html">Q-13</a></td>
+</tr>
+<tr>
+<td><strong>OneID</strong></td>
+<td><a href="60-cross-cutting/X-08-oneid-sso.html">X-08</a>, <a href="20-user-portal/P-10-oneid-ticket-sync.html">P-10</a></td>
+<td><a href="99-open-queries.html">Q-06</a></td>
+</tr>
+<tr>
+<td><strong>NBR VAT</strong></td>
+<td><a href="50-system-initiated/S-10-vat-challan.html">S-10</a></td>
+<td><a href="99-open-queries.html">Q-06</a></td>
+</tr>
+<tr>
+<td><strong>Firebase</strong></td>
+<td><a href="30-user-app/U-09-device-token.html">U-09</a>, <a href="30-user-app/U-10-push-receipt.html">U-10</a>, <a href="50-system-initiated/S-11-firebase-notification.html">S-11</a></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>External notification service</strong></td>
+<td><a href="60-cross-cutting/X-02-admin-forgot-password.html">X-02</a>, <a href="60-cross-cutting/X-05-admin-provisioning.html">X-05</a>, <a href="60-cross-cutting/X-22-sms-notification.html">X-22</a>, <a href="50-system-initiated/S-12-ticket-generated-notification.html">S-12</a>, <a href="10-admin-portal/A-24-user-issues-admin.html">A-24</a></td>
+<td><a href="99-open-queries.html">Q-05</a></td>
+</tr>
+<tr>
+<td><strong>SES</strong></td>
+<td><a href="60-cross-cutting/X-21-email-ses.html">X-21</a>, <a href="50-system-initiated/S-09-ticket-merge-zip.html">S-09</a></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>S3 / CloudFront</strong></td>
+<td><a href="60-cross-cutting/X-20-file-storage.html">X-20</a>, <a href="10-admin-portal/A-05-venues.html">A-05</a>, <a href="10-admin-portal/A-13-ticket-layouts.html">A-13</a>, <a href="10-admin-portal/A-28-media-configuration.html">A-28</a>, <a href="20-user-portal/P-09-ticket-details-downloads.html">P-09</a>, <a href="30-user-app/U-06-my-bookings-tickets.html">U-06</a></td>
+<td><a href="99-open-queries.html">Q-50</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-gaps-in-the-matrix">5. Gaps in the matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Gap</th>
+<th>What is missing</th>
+<th>Query</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Identity API endpoints</strong></td>
+<td>Not in the repository, so they appear in no service's route table</td>
+<td><a href="99-open-queries.html">Q-01</a></td>
+</tr>
+<tr>
+<td><strong>OneID endpoints</strong></td>
+<td>Configured under <code>[see User Secrets]</code>; locally a dummy</td>
+<td><a href="99-open-queries.html">Q-06</a></td>
+</tr>
+<tr>
+<td><strong>Agent client</strong></td>
+<td>The endpoint exists, the client does not</td>
+<td><a href="99-open-queries.html">Q-07</a></td>
+</tr>
+<tr>
+<td><strong>Notification templates</strong></td>
+<td>The external service holds the text and channel choice</td>
+<td><a href="99-open-queries.html">Q-05</a></td>
+</tr>
+<tr>
+<td><strong>CloudFront token consumer</strong></td>
+<td>Nothing in the backend reads <code>signedToken</code></td>
+<td><a href="99-open-queries.html">Q-50</a></td>
+</tr>
+<tr>
+<td><strong>Table ownership</strong></td>
+<td>Several tables are mapped <code>ExcludeFromMigrations</code> by more than one service, so "which service owns this table" is not always answerable</td>
+<td><a href="99-open-queries.html">Q-02</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-component-relationships">6. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  FEAT["Feature file<br/>A/P/U/C/S/X"] --> SVC["Service"]
+  FEAT --> EP["Endpoint"]
+  FEAT --> Q["Queue"]
+  FEAT --> R["Redis key"]
+  FEAT --> T["Table / bucket"]
+  FEAT --> X["External system"]
+  SVC --> EP
+  SVC --> Q & R & T
+  Q --> SVC
+  R --> SVC
+  T --> SVC
+  X -.->|"outside the workspace"| N["?"]
+</div>
+<p><strong>Depends on:</strong> <a href="01-system-map.html">01 · System map</a>, <a href="91-appendix-b-endpoint-index.html">91 · Endpoint index</a>. <strong>Affects:</strong> <a href="03-component-reverse-index.html">03 · Component reverse index</a>, <a href="92-appendix-c-coverage.html">92 · Coverage</a>.</p>
+  </main>
+</div>
+<script src="../assets/vendor/mermaid.min.js"></script>
+<script src="../assets/site.js?v=d7ce93f0"></script>
+</body>
+</html>

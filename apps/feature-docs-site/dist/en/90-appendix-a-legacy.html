@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>90 · Appendix A — Legacy, unused and dormant code · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../assets/site.css?v=5ded2c9a">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav class="side-nav">
+    <div class="side-sec" data-dir="ov">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">Overview</span>
+        <span class="side-count">4</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="00-platform-primer.html"><span class="id-chip">00</span><span>Platform primer</span></a>
+        <a class="side-item" href="01-system-map.html"><span class="id-chip">01</span><span>System map</span></a>
+        <a class="side-item" href="02-traceability-matrix.html"><span class="id-chip">02</span><span>Traceability matrix</span></a>
+        <a class="side-item" href="03-component-reverse-index.html"><span class="id-chip">03</span><span>Component reverse index</span></a>
+      </div>
+    </div>
+    <div class="side-sec is-open" data-dir="ap">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="true" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">Appendices</span>
+        <span class="side-count">5</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item is-active" href="90-appendix-a-legacy.html"><span class="id-chip">90</span><span>Appendix A — Legacy, unused and dormant code</span></a>
+        <a class="side-item" href="91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — Endpoint index</span></a>
+        <a class="side-item" href="92-appendix-c-coverage.html"><span class="id-chip">92</span><span>Appendix C — Coverage</span></a>
+        <a class="side-item" href="93-appendix-d-local-test-reference.html"><span class="id-chip">93</span><span>Appendix D — Local test reference</span></a>
+        <a class="side-item" href="99-open-queries.html"><span class="id-chip">99</span><span>Open queries</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="10-admin-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="10-admin-portal/index.html">10 · Admin Portal</a>
+        <span class="side-count">31</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+        <a class="side-item" href="10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+        <a class="side-item" href="10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+        <a class="side-item" href="10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+        <a class="side-item" href="10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+        <a class="side-item" href="10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+        <a class="side-item" href="10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+        <a class="side-item" href="10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+        <a class="side-item" href="10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+        <a class="side-item" href="10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+        <a class="side-item" href="10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+        <a class="side-item" href="10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+        <a class="side-item" href="10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+        <a class="side-item" href="10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+        <a class="side-item" href="10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+        <a class="side-item" href="10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+        <a class="side-item" href="10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+        <a class="side-item" href="10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+        <a class="side-item" href="10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+        <a class="side-item" href="10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+        <a class="side-item" href="10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+        <a class="side-item" href="10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+        <a class="side-item" href="10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+        <a class="side-item" href="10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+        <a class="side-item" href="10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+        <a class="side-item" href="10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+        <a class="side-item" href="10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+        <a class="side-item" href="10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+        <a class="side-item" href="10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+        <a class="side-item" href="10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+        <a class="side-item" href="10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="20-user-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="20-user-portal/index.html">20 · User Web Portal</a>
+        <span class="side-count">13</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+        <a class="side-item" href="20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+        <a class="side-item" href="20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+        <a class="side-item" href="20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+        <a class="side-item" href="20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+        <a class="side-item" href="20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+        <a class="side-item" href="20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+        <a class="side-item" href="20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+        <a class="side-item" href="20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+        <a class="side-item" href="20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+        <a class="side-item" href="20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+        <a class="side-item" href="20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+        <a class="side-item" href="20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="30-user-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="30-user-app/index.html">30 · User App</a>
+        <span class="side-count">10</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
+        <a class="side-item" href="30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
+        <a class="side-item" href="30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
+        <a class="side-item" href="30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
+        <a class="side-item" href="30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
+        <a class="side-item" href="30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
+        <a class="side-item" href="30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
+        <a class="side-item" href="30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
+        <a class="side-item" href="30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
+        <a class="side-item" href="30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="40-checker-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="40-checker-app/index.html">40 · Checker App</a>
+        <span class="side-count">6</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
+        <a class="side-item" href="40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
+        <a class="side-item" href="40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
+        <a class="side-item" href="40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
+        <a class="side-item" href="40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
+        <a class="side-item" href="40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="50-system-initiated">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="50-system-initiated/index.html">50 · System-initiated</a>
+        <span class="side-count">17</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+        <a class="side-item" href="50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+        <a class="side-item" href="50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+        <a class="side-item" href="50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+        <a class="side-item" href="50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+        <a class="side-item" href="50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+        <a class="side-item" href="50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+        <a class="side-item" href="50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+        <a class="side-item" href="50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+        <a class="side-item" href="50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+        <a class="side-item" href="50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="60-cross-cutting">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="60-cross-cutting/index.html">60 · Cross-cutting</a>
+        <span class="side-count">26</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+        <a class="side-item" href="60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+        <a class="side-item" href="60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+        <a class="side-item" href="60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+        <a class="side-item" href="60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+        <a class="side-item" href="60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+        <a class="side-item" href="60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+        <a class="side-item" href="60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+        <a class="side-item" href="60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+        <a class="side-item" href="60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+        <a class="side-item" href="60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+        <a class="side-item" href="60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+        <a class="side-item" href="60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+        <a class="side-item" href="60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+        <a class="side-item" href="60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+        <a class="side-item" href="60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+        <a class="side-item" href="60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+        <a class="side-item" href="60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+        <a class="side-item" href="60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+      </div>
+    </div>
+    </nav>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="index.html">Contents</a><span class="sep">›</span><span>90 · Appendix A — Legacy, unused and dormant code</span></div>
+<h1><span class="id-chip">90</span> Appendix A — Legacy, unused and dormant code</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> লেগ্যাসি, অব্যবহৃত ও নিষ্ক্রিয় কোড</p>
+<p><a href="index.html">← Contents</a> · <a href="99-open-queries.html">Open queries</a></p>
+</blockquote>
+<p>BS23 built more than the product that shipped. This page lists the code that is <strong>still in the repository but is not part of the live product</strong> — duplicate services, test controllers, dead endpoints, unused settings records and template leftovers. It exists so that RVL can decide what to delete, and so that nobody later mistakes a dormant endpoint for a live one.</p>
+<p><strong>How this page was built.</strong> Every item below was found by searching the five repositories for controllers, managers, records and routes that have no caller in any client and no reachable path from a live screen. Nothing here is inferred from the architecture document.</p>
+<h2 id="1-how-to-read-the-status-column">1. How to read the Status column</h2>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dead</strong></td>
+<td>No caller anywhere in the five repositories</td>
+<td>Delete, after confirming no external consumer</td>
+</tr>
+<tr>
+<td><strong>Legacy</strong></td>
+<td>A live, parallel copy of a feature that was reimplemented elsewhere</td>
+<td>Delete the old copy once the new one is proven</td>
+</tr>
+<tr>
+<td><strong>Dormant</strong></td>
+<td>Reachable but has no caller; may be intentional for an upcoming release</td>
+<td>Ask BS23</td>
+</tr>
+<tr>
+<td><strong>Stub</strong></td>
+<td>A template project with no implementation</td>
+<td>Delete or replace</td>
+</tr>
+<tr>
+<td><strong>Inert</strong></td>
+<td>Data exists but nothing reads or writes it</td>
+<td>Ask BS23</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-duplicate-services">2. Duplicate services</h2>
+<h3 id="21-the-issue-chat-rest-api-exists-twice-both-unauthenticated">2.1 The issue-chat REST API exists twice — both unauthenticated</h3>
+<p><strong>Status: Legacy (must be fixed before deletion).</strong></p>
+<p><code>Admin</code> and <code>UserIssue</code> each implement the full support-chat REST surface, on the <strong>same route prefix</strong> <code>api/v1/user-issue-chat</code>, with the same eight endpoints:</p>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Admin (legacy)</th>
+<th>UserIssue (live)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST send</code></td>
+<td><code>:24</code></td>
+<td><code>:52</code></td>
+</tr>
+<tr>
+<td><code>GET {id}/messages</code></td>
+<td><code>:43</code></td>
+<td><code>:32</code></td>
+</tr>
+<tr>
+<td><code>GET {id}/unread</code></td>
+<td><code>:64</code></td>
+<td><code>:87</code></td>
+</tr>
+<tr>
+<td><code>GET {id}/unread/count</code></td>
+<td><code>:83</code></td>
+<td><code>:70</code> (<code>unread-count</code>)</td>
+</tr>
+<tr>
+<td><code>POST {id}/mark-read</code></td>
+<td><code>:102</code></td>
+<td><code>:104</code></td>
+</tr>
+<tr>
+<td><code>GET {id}/last</code></td>
+<td><code>:120</code></td>
+<td><code>:120</code></td>
+</tr>
+<tr>
+<td><code>GET {id}/recent</code></td>
+<td><code>:141</code></td>
+<td><code>:141</code></td>
+</tr>
+<tr>
+<td><code>GET message/{id}/attachment/download</code></td>
+<td><code>:159</code></td>
+<td><code>:157</code></td>
+</tr>
+</tbody>
+</table>
+<p>Files:
+- <code>rvl-gobcb-backend/Services/Admin/ETP.Admin.Service/Api/UserIssueChatController.cs</code>
+- <code>rvl-gobcb-backend/Services/UserIssue/ETP.UserIssue.Service/Api/ReportIssueChatController.cs</code></p>
+<p><strong>Neither carries <code>[Authorize]</code></strong> — zero occurrences in either file. Because <code>senderId</code>, <code>senderName</code> and <code>senderType</code> are client-supplied form fields, an anonymous caller can post into any issue thread labelled <code>ADMIN</code>. <strong>This is the top security finding of the handover</strong> (<a href="99-open-queries.html">Q-46</a>).</p>
+<p>There are also <strong>two SignalR hubs</strong> with the same class name, and both <em>are</em> authorized with <code>[Authorize(AuthenticationSchemes = AuthScheme.User + "," + AuthScheme.Admin)]</code>:
+- <code>Services/Admin/ETP.Admin.Service/Hubs/UserIssueChatHub.cs:12-13</code>
+- <code>Services/UserIssue/ETP.UserIssue.Service/Hubs/UserIssueChatHub.cs:13-14</code></p>
+<p>Note the near-identical but <strong>not identical</strong> route spelling (<code>unread/count</code> vs <code>unread-count</code>) — a client written against one copy will not work against the other.</p>
+<p><strong>The legacy Admin copy is also the only place the "issue resolved" notification is implemented.</strong> Its manager calls <code>INotificationClient</code>; the live <code>UserIssue</code> manager does not. So resolving an issue in the admin portal currently sends <strong>no</strong> notification to the customer (<a href="60-cross-cutting/X-22-sms-notification.html">X-22</a> note 2, <a href="20-user-portal/P-12-issues-chat.html">P-12</a> note 11). <strong>Before deleting the legacy copy, port that notification across.</strong></p>
+<p>See <a href="10-admin-portal/A-24-user-issues-admin.html">A-24</a> and <a href="20-user-portal/P-12-issues-chat.html">P-12</a>.</p>
+<h3 id="22-both-services-register-the-same-hub-route">2.2 Both services register the same hub route</h3>
+<p><code>Program.cs</code> in each service maps its hub to a path. Confirm which one the deployed gateway routes to before removing either — a mismatch here breaks the chat silently.</p>
+<h2 id="3-test-and-template-controllers-left-in-the-services">3. Test and template controllers left in the services</h2>
+<table>
+<thead>
+<tr>
+<th>Controller</th>
+<th>Service</th>
+<th>Routes</th>
+<th>Auth</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TestingController</code></td>
+<td>TicketChecker</td>
+<td><code>GET api/v1/testing/re-initiate-data</code>, <code>POST api/v1/testing/sync-data</code></td>
+<td><strong>none</strong></td>
+<td><strong>Dead, and dangerous</strong></td>
+</tr>
+<tr>
+<td><code>WeatherForecastController</code></td>
+<td>TicketChecker</td>
+<td><code>api/[controller]</code></td>
+<td>none</td>
+<td><strong>Stub</strong></td>
+</tr>
+<tr>
+<td><code>TestTicketGeneratorController</code></td>
+<td>Ticketing</td>
+<td><code>api/TestTicketGenerator</code></td>
+<td><strong>none</strong></td>
+<td><strong>Dead</strong></td>
+</tr>
+<tr>
+<td><code>TestController</code></td>
+<td>UserAuth</td>
+<td><code>/health</code> only</td>
+<td>none</td>
+<td><strong>Stub</strong></td>
+</tr>
+<tr>
+<td><code>Platform</code> service</td>
+<td>Platform</td>
+<td>template <code>WeatherForecastController</code></td>
+<td>none</td>
+<td><strong>Stub</strong></td>
+</tr>
+</tbody>
+</table>
+<p><code>TestingController</code> is the one to deal with first: <code>re-initiate-data</code> and <code>sync-data</code> <strong>re-initialise and re-sync ticket data</strong>, and neither is authorized. Any caller who can reach the service can trigger a full data re-sync. Whether the ingress exposes <code>/ticketChecker/api/v1/testing/*</code> is a deployment question (<a href="99-open-queries.html">Q-04</a>).</p>
+<p><code>TestTicketGeneratorController</code> publishes to the ticket-generation queue directly — it can create tickets without an order.</p>
+<h2 id="4-dead-endpoints-in-live-services">4. Dead endpoints in live services</h2>
+<p>Endpoints with no caller in any client. They are listed so nobody builds on them assuming they work.</p>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Service</th>
+<th>Status</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET api/v1/user-issue-chat/*</code> (whole surface)</td>
+<td>Admin</td>
+<td>Legacy</td>
+<td>See §2.1</td>
+</tr>
+<tr>
+<td><code>POST push-notification/send-to-users</code>, <code>send-to-user</code></td>
+<td>PushNotification</td>
+<td>Dormant</td>
+<td>No caller found; the only live sender is event publish (<a href="99-open-queries.html">Q-08</a>)</td>
+</tr>
+<tr>
+<td><code>POST api/v1/offline-sold-ticket</code></td>
+<td>Ticketing</td>
+<td>Dormant</td>
+<td>The whole agent feature has no client (<a href="99-open-queries.html">Q-07</a>, <a href="60-cross-cutting/X-13-agent-pool.html">X-13</a>)</td>
+</tr>
+<tr>
+<td><code>POST booking/api/v1/user-booking-order/payment-status-bypass</code></td>
+<td>Booking</td>
+<td>Dormant</td>
+<td>Marks an order paid without a gateway call; not called by any client. <strong>It is the reason a bypass can skip the VAT record</strong> (<a href="99-open-queries.html">Q-15</a>)</td>
+</tr>
+<tr>
+<td><code>POST api/v1/seat-reservation</code> bulk (<code>CreateBulk</code>, default 65 %)</td>
+<td>Booking</td>
+<td>Dormant</td>
+<td>No portal caller; unexplained constant (<a href="99-open-queries.html">Q-22</a>, <a href="10-admin-portal/A-11-seat-reservation.html">A-11</a>)</td>
+</tr>
+<tr>
+<td><code>GET api/v1/currency</code></td>
+<td>Admin</td>
+<td>Dormant</td>
+<td>One route; no caller found</td>
+</tr>
+<tr>
+<td><code>GET api/v1/portal-users</code></td>
+<td>Admin</td>
+<td>Dormant</td>
+<td>One route; no caller found</td>
+</tr>
+<tr>
+<td><code>GET api/v1/system-settings</code></td>
+<td>Admin</td>
+<td>Dormant</td>
+<td>One route; no caller found</td>
+</tr>
+<tr>
+<td><code>GET api/v1/social-media-settings</code></td>
+<td>Admin</td>
+<td>Legacy</td>
+<td>The record is written but the portal reads <code>HeaderFooters</code> instead (<a href="99-open-queries.html">Q-34</a>, <a href="10-admin-portal/A-30-header-footer-social.html">A-30</a>)</td>
+</tr>
+<tr>
+<td>SSLCommerz callback handler</td>
+<td>Booking</td>
+<td>Dormant</td>
+<td>Supported by the enum and the form; the handler does nothing (<a href="99-open-queries.html">Q-19</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-inert-data">5. Inert data</h2>
+<p>Data that exists in the schema but which nothing in the five repositories reads or writes in a meaningful way.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Where</th>
+<th>Status</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SocialMediaSettings</code></td>
+<td>Admin — model, migration <code>20250226115506</code>, manager, controller</td>
+<td>Legacy</td>
+<td>Superseded by <code>HeaderFooters</code>; the portal reads only the latter (<a href="99-open-queries.html">Q-34</a>)</td>
+</tr>
+<tr>
+<td><code>OfflineSoldTickets</code></td>
+<td>Ticketing</td>
+<td>Inert</td>
+<td>Written by the agent endpoint, <strong>read by nothing</strong> — no report, no admin screen (<a href="60-cross-cutting/X-13-agent-pool.html">X-13</a> note 3)</td>
+</tr>
+<tr>
+<td><code>GeneralNotices</code></td>
+<td>Admin writes them; <strong>nothing in the user portal reads them</strong></td>
+<td>Inert</td>
+<td><code>EventApiService.getAllGeneralNotices</code> exists with no caller; the home-page strip shows something else (<a href="99-open-queries.html">Q-35</a>, <a href="20-user-portal/P-01-home-content.html">P-01</a>)</td>
+</tr>
+<tr>
+<td><code>Ticket-pricing</code> content page</td>
+<td>Admin (<code>POST /admin/api/v1/ticket-pricing</code>)</td>
+<td>Inert</td>
+<td>The customer pricing page calls <code>program-pricing</code> (live prices), not this content (<a href="99-open-queries.html">Q-33</a>, <a href="20-user-portal/P-03-info-pages.html">P-03</a>, <a href="10-admin-portal/A-14-ticket-pricing-content.html">A-14</a>)</td>
+</tr>
+<tr>
+<td><code>checkNumber</code> beyond zero/non-zero</td>
+<td>checker app</td>
+<td>Inert</td>
+<td>An <code>IntColumn</code>, but the platform only needs "never scanned" vs "scanned" (<a href="40-checker-app/C-02-offline-ticket-download.html">C-02</a> note 5)</td>
+</tr>
+<tr>
+<td><code>send-to-users</code>, <code>send-to-user</code></td>
+<td>PushNotification</td>
+<td>Dormant</td>
+<td>See §4</td>
+</tr>
+<tr>
+<td><code>'Pending'</code> issue status</td>
+<td>UserIssue enum</td>
+<td>Inert</td>
+<td>The enum is <code>{Open, Resolved}</code> only; the leftover branch in the portal can never trigger (<a href="20-user-portal/P-12-issues-chat.html">P-12</a> note 9)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-template-leftovers-in-the-clients">6. Template leftovers in the clients</h2>
+<table>
+<thead>
+<tr>
+<th>Leftover</th>
+<th>Where</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Route enum names <code>movieList</code>, <code>movieDetails</code>, <code>movieSearch</code>, <code>movieBookmark</code></td>
+<td><code>rvl-gobcb-checker-app/…/navigation/route_path.dart</code></td>
+<td>From a movie-ticket template. <code>movieList</code>/<code>movieDetails</code>/<code>movieBookmark</code> have no screen; <code>movieSearch</code> is dead too (<a href="99-open-queries.html">Q-67</a>, <a href="40-checker-app/C-01-assigned-event-gate.html">C-01</a> note 6)</td>
+</tr>
+<tr>
+<td><code>status.ps1</code></td>
+<td>workspace root</td>
+<td>A helper left by the previous team; not referenced by any build</td>
+</tr>
+<tr>
+<td><code>gobcb_architecture_diagram.png</code></td>
+<td>workspace root</td>
+<td>Useful as context; the text version is <code>architecture/gobcb-aws-architecture.md</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-comments-and-code-that-says-one-thing-and-does-another">7. Comments and code that says one thing and does another</h2>
+<p>Not dead code, but a place where a comment will mislead you.</p>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+<th>The comment says</th>
+<th>The code does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>onGetOfflineData</code> callback</td>
+<td><code>qr_page_view_model.dart:145-148</code></td>
+<td>That a cached assignment can be used offline</td>
+<td>The body is <strong>entirely commented out</strong>, so no cached value is ever returned (<a href="40-checker-app/C-05-ticket-sync.html">C-05</a> note 5)</td>
+</tr>
+<tr>
+<td>Manual-entry length check</td>
+<td><code>manual_entry_view_model.dart:27-30</code></td>
+<td>(a commented block)</td>
+<td><code>if (ticketId.length &lt; 13)</code> is commented out, so the field accepts any length (<a href="40-checker-app/C-04-manual-entry.html">C-04</a> note 3)</td>
+</tr>
+<tr>
+<td>"If we know this ticket is already checked…"</td>
+<td><code>qr_page_view_model.dart:210-220</code></td>
+<td>That already-checked tickets are not sent</td>
+<td>That is what happens — <strong>no row is written</strong>, deliberately (<a href="40-checker-app/C-04-manual-entry.html">C-04</a> note 2)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-what-to-do-with-all-this">8. What to do with all this</h2>
+<p>Suggested order:</p>
+<ol>
+<li><strong>Secure first, delete later.</strong> <code>TestingController</code>, <code>TestTicketGeneratorController</code> and both chat controllers have no authorization. Lock them down or remove them from the deployed configuration <em>before</em> touching anything else (<a href="99-open-queries.html">Q-04</a>, <a href="99-open-queries.html">Q-46</a>).</li>
+<li><strong>Port the issue-resolved notification</strong> out of the legacy Admin chat copy (§2.1) — otherwise deleting it silently removes a customer notification that is currently the only one.</li>
+<li><strong>Ask BS23 about the agent feature</strong> (<a href="99-open-queries.html">Q-07</a>). Either an agent client is missing from the handover or the feature is dead weight.</li>
+<li><strong>Then delete</strong> the stubs (Platform, UserAuth, both <code>WeatherForecastController</code>s, <code>TestController</code>) — they cost nothing but noise.</li>
+<li><strong>Decide the fate of the inert data</strong> (§5) with the business. <code>SocialMediaSettings</code> and <code>GeneralNotices</code> are the two that most likely represent content someone believes is live.</li>
+</ol>
+<h2 id="9-component-relationships">9. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  subgraph live["Live"]
+    UI["UserIssue service<br/>chat REST + hub"]
+    A24["A-24 admin issues"]
+    P12["P-12 portal chat"]
+  end
+  subgraph legacy["Legacy — parallel copy"]
+    AL["Admin UserIssueChatController<br/>same route, no [Authorize]"]
+    AH["Admin UserIssueChatHub<br/>authorized"]
+    AN["Issue-resolved notification<br/>ONLY HERE"]
+  end
+  subgraph junk["Stubs and tests — no auth"]
+    TC["TestingController<br/>re-initiate-data, sync-data"]
+    TG["TestTicketGeneratorController"]
+    PL["Platform + UserAuth stubs"]
+  end
+  P12 --> UI
+  A24 --> AL
+  AL -.->|"duplicate route"| UI
+  AH -.->|"duplicate hub"| UI
+  AN -.->|"port before deleting"| UI
+  TC & TG & PL -.->|"delete or lock down"| X["—"]
+</div>
+<p><strong>Depends on:</strong> <a href="10-admin-portal/A-24-user-issues-admin.html">A-24</a>, <a href="20-user-portal/P-12-issues-chat.html">P-12</a>, <a href="60-cross-cutting/X-13-agent-pool.html">X-13</a>. <strong>Affects:</strong> anything you plan to delete from — check §2.1's notification dependency first.</p>
+  </main>
+</div>
+<script src="../assets/vendor/mermaid.min.js"></script>
+<script src="../assets/site.js?v=d7ce93f0"></script>
+</body>
+</html>

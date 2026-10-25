@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>93 · অ্যাপেন্ডিক্স D — লোকাল টেস্ট রেফারেন্স · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../assets/site.css?v=5ded2c9a">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav class="side-nav">
+    <div class="side-sec" data-dir="ov">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">ওভারভিউ</span>
+        <span class="side-count">৪</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="00-platform-primer.html"><span class="id-chip">00</span><span>প্ল্যাটফর্ম প্রাইমার</span></a>
+        <a class="side-item" href="01-system-map.html"><span class="id-chip">01</span><span>সিস্টেম ম্যাপ</span></a>
+        <a class="side-item" href="02-traceability-matrix.html"><span class="id-chip">02</span><span>ট্রেসেবিলিটি ম্যাট্রিক্স</span></a>
+        <a class="side-item" href="03-component-reverse-index.html"><span class="id-chip">03</span><span>কম্পোনেন্ট রিভার্স ইনডেক্স</span></a>
+      </div>
+    </div>
+    <div class="side-sec is-open" data-dir="ap">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="true" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">পরিশিষ্ট</span>
+        <span class="side-count">৫</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="90-appendix-a-legacy.html"><span class="id-chip">90</span><span>অ্যাপেন্ডিক্স A — লেগ্যাসি, অব্যবহৃত ও নিষ্ক্রিয় কোড</span></a>
+        <a class="side-item" href="91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — এন্ডপয়েন্ট ইনডেক্স</span></a>
+        <a class="side-item" href="92-appendix-c-coverage.html"><span class="id-chip">92</span><span>অ্যাপেন্ডিক্স C — কভারেজ</span></a>
+        <a class="side-item is-active" href="93-appendix-d-local-test-reference.html"><span class="id-chip">93</span><span>অ্যাপেন্ডিক্স D — লোকাল টেস্ট রেফারেন্স</span></a>
+        <a class="side-item" href="99-open-queries.html"><span class="id-chip">99</span><span>ওপেন কোয়ারি</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="10-admin-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+        <span class="side-count">৩১</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+        <a class="side-item" href="10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+        <a class="side-item" href="10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+        <a class="side-item" href="10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+        <a class="side-item" href="10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+        <a class="side-item" href="10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+        <a class="side-item" href="10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+        <a class="side-item" href="10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+        <a class="side-item" href="10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+        <a class="side-item" href="10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+        <a class="side-item" href="10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+        <a class="side-item" href="10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+        <a class="side-item" href="10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+        <a class="side-item" href="10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+        <a class="side-item" href="10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+        <a class="side-item" href="10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+        <a class="side-item" href="10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+        <a class="side-item" href="10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+        <a class="side-item" href="10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+        <a class="side-item" href="10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+        <a class="side-item" href="10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+        <a class="side-item" href="10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+        <a class="side-item" href="10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+        <a class="side-item" href="10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+        <a class="side-item" href="10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+        <a class="side-item" href="10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+        <a class="side-item" href="10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="20-user-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+        <span class="side-count">১৩</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+        <a class="side-item" href="20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+        <a class="side-item" href="20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+        <a class="side-item" href="20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+        <a class="side-item" href="20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+        <a class="side-item" href="20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+        <a class="side-item" href="20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+        <a class="side-item" href="20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+        <a class="side-item" href="20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+        <a class="side-item" href="20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+        <a class="side-item" href="20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+        <a class="side-item" href="20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+        <a class="side-item" href="20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="30-user-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="30-user-app/index.html">30 · ইউজার অ্যাপ</a>
+        <span class="side-count">১০</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+        <a class="side-item" href="30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+        <a class="side-item" href="30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+        <a class="side-item" href="30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+        <a class="side-item" href="30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+        <a class="side-item" href="30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+        <a class="side-item" href="30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+        <a class="side-item" href="30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+        <a class="side-item" href="30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+        <a class="side-item" href="30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="40-checker-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+        <span class="side-count">৬</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+        <a class="side-item" href="40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+        <a class="side-item" href="40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+        <a class="side-item" href="40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+        <a class="side-item" href="40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+        <a class="side-item" href="40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="50-system-initiated">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+        <span class="side-count">১৭</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+        <a class="side-item" href="50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+        <a class="side-item" href="50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+        <a class="side-item" href="50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+        <a class="side-item" href="50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+        <a class="side-item" href="50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+        <a class="side-item" href="50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+        <a class="side-item" href="50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+        <a class="side-item" href="50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+        <a class="side-item" href="50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+        <a class="side-item" href="50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="60-cross-cutting">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+        <span class="side-count">২৬</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+        <a class="side-item" href="60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+        <a class="side-item" href="60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+        <a class="side-item" href="60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+        <a class="side-item" href="60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+        <a class="side-item" href="60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+        <a class="side-item" href="60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+        <a class="side-item" href="60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+        <a class="side-item" href="60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+      </div>
+    </div>
+    </nav>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="index.html">সূচিপত্র</a><span class="sep">›</span><span>93 · অ্যাপেন্ডিক্স D — লোকাল টেস্ট রেফারেন্স</span></div>
+<h1><span class="id-chip">93</span> অ্যাপেন্ডিক্স D — লোকাল টেস্ট রেফারেন্স</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> লোকাল টেস্ট রেফারেন্স</p>
+<p><a href="index.html">← সূচিপত্র</a> · <a href="92-appendix-c-coverage.html">কভারেজ</a></p>
+</blockquote>
+<p>প্রতিটি ফিচারের জন্য একটি করে সারি: <strong>এটি স্থানীয়ভাবে পরীক্ষা করা যায় কি না, আর যদি না হয় তাহলে কেন।</strong> প্রতিটি ফিচার ফাইলের নিজস্ব §11 ডেভেলপার টেস্ট গাইডে সুনির্দিষ্ট ধাপ আছে; এই পাতাটি সেই সূচক, যা বলে দেয় এগুলোর মধ্যে কোনগুলো আসলে আপনাকে কিছু দেখাবে।</p>
+<h2 id="1-সটআপ-ডকমনট">1. সেটআপ ডকুমেন্ট</h2>
+<p>এখান থেকে শুরু করবেন না। এখান থেকে শুরু করুন, তারপর ফিরে আসুন:</p>
+<table>
+<thead>
+<tr>
+<th>ডকুমেন্ট</th>
+<th>যা কভার করে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="link-na" title="রিপোজিটরির ফাইল, এই সাইটের অংশ নয়"><code>docs/local-dev.md</code></span></td>
+<td>পুরো ব্যাকএন্ড স্ট্যাক: PostgreSQL, Redis, DynamoDB Local, Floci (Cognito, S3, SQS, SES, DynamoDB), Aspire-এর নিচে নয়টি সার্ভিস, seeding, teardown</td>
+</tr>
+<tr>
+<td><span class="link-na" title="রিপোজিটরির ফাইল, এই সাইটের অংশ নয়"><code>docs/mobile-local.md</code></span></td>
+<td>দুটি Flutter অ্যাপ: টুল, ডিভাইস, কীভাবে সেগুলো ব্যাকএন্ডে পৌঁছায়, এবং <strong>§8 পরিচিত ফাঁক</strong></td>
+</tr>
+<tr>
+<td><span class="link-na" title="রিপোজিটরির ফাইল, এই সাইটের অংশ নয়"><code>docs/admin-portal-local.md</code></span></td>
+<td>অ্যাডমিন পোর্টাল (এটি submodule নয়, লোকাল কপি থেকে চলে)</td>
+</tr>
+<tr>
+<td><span class="link-na" title="রিপোজিটরির ফাইল, এই সাইটের অংশ নয়"><code>docs/user-portal-local.md</code></span></td>
+<td>ইউজার পোর্টাল, <code>/p/identity</code> ও <code>/p/oneid</code> স্টাবসহ</td>
+</tr>
+<tr>
+<td><span class="link-na" title="রিপোজিটরির ফাইল, এই সাইটের অংশ নয়"><code>docs/config-reference.md</code></span></td>
+<td>প্রতিটি কনফিগারেশন key</td>
+</tr>
+<tr>
+<td><span class="link-na" title="রিপোজিটরির ফাইল, এই সাইটের অংশ নয়"><code>docs/local-dev-setup.bn.md</code></span></td>
+<td>বাংলায় সেটআপ ম্যানুয়াল</td>
+</tr>
+<tr>
+<td><a href="../../../../postman/"><code>postman/</code></a></td>
+<td>সার্ভিস কলেকশন ও লোকাল এনভায়রনমেন্ট</td>
+</tr>
+<tr>
+<td><a href="../../../../scripts/"><code>scripts/</code></a></td>
+<td><code>user-secrets.example.json</code>, seed SQL, <code>Set-EtpSecrets.ps1</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-লকল-সটযক-য-dummy">2. লোকাল স্ট্যাকে যা dummy</h2>
+<p>নিচের সবকিছুই stub করা। এই একটি টেবিলই §3-এর বেশিরভাগ "Partial" রেটিং ব্যাখ্যা করে।</p>
+<table>
+<thead>
+<tr>
+<th>বাহ্যিক</th>
+<th>লোকাল মান</th>
+<th>পরিণতি</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DgePay</strong></td>
+<td>dummy</td>
+<td>অর্ডার তৈরি কাজ করে; পেমেন্ট পেজ ও callback কাজ করে না</td>
+</tr>
+<tr>
+<td><strong>TSP (VDS)</strong></td>
+<td><code>https://tsp.invalid/…</code>, কোনো সার্টিফিকেট নেই</td>
+<td>টিকিট <code>Requested</code>-এ পৌঁছায় কিন্তু কখনো সই হয় না — এতে আটকে যায় <a href="50-system-initiated/S-08-ticket-signing.html">S-08</a>, <a href="50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>, <a href="20-user-portal/P-08-ticket-generation-request.html">P-08</a>, <a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a></td>
+</tr>
+<tr>
+<td><strong>OneID</strong></td>
+<td><code>/p/oneid</code>-এ fake</td>
+<td>লগইন কাজ করে; টিকিট সিঙ্ক কাজ করে না (<a href="20-user-portal/P-10-oneid-ticket-sync.html">P-10</a>)</td>
+</tr>
+<tr>
+<td><strong>NBR VAT</strong></td>
+<td><code>https://*.invalid</code></td>
+<td>VAT মেসেজ চিরকাল রিট্রাই করে (<a href="50-system-initiated/S-10-vat-challan.html">S-10</a>)</td>
+</tr>
+<tr>
+<td><strong>Identity API</strong></td>
+<td>503 স্টাব, বা <code>/p/identity</code></td>
+<td>রেজিস্ট্রেশন, OTP, প্রোফাইল ও ডিলিট ঠিকভাবে পরীক্ষা করা যায় না (<a href="99-open-queries.html">Q-01</a>)</td>
+</tr>
+<tr>
+<td><strong>Serverless API</strong></td>
+<td><code>https://serverless.invalid/</code></td>
+<td>গ্রাহকের নাম/ফোন লুকআপ ফাঁকা ফেরত দেয় (<a href="99-open-queries.html">Q-03</a>)</td>
+</tr>
+<tr>
+<td><strong>Notification service</strong></td>
+<td><code>https://notification.invalid/</code></td>
+<td>প্রতিটি SMS ব্যর্থ হয় (<a href="99-open-queries.html">Q-05</a>)</td>
+</tr>
+<tr>
+<td><strong>Firebase</strong></td>
+<td>dummy</td>
+<td>কোনো পুশ কখনো ডেলিভার হয় না</td>
+</tr>
+<tr>
+<td><strong>CloudFront signed cookie</strong></td>
+<td><code>local-dummy</code></td>
+<td>অ্যাডমিন-পোর্টালের ফাইল সুরক্ষা স্থানীয়ভাবে ব্যর্থ হয় (<a href="60-cross-cutting/X-20-file-storage.html">X-20</a>)</td>
+</tr>
+<tr>
+<td><strong>SES</strong></td>
+<td>Floci SES, <code>noreply@etp.local</code></td>
+<td>পাঠানো গ্রহণ করা হয়; আসল মেল নেই (<a href="60-cross-cutting/X-21-email-ses.html">X-21</a>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Floci যা দেয় এবং যা আসল:</strong> Cognito (সব চারটি পুল), S3 (বাকেট <code>etp-local</code>), SQS (আসল কিউ সেমান্টিক), SES, DynamoDB Local, PostgreSQL ও Redis।</p>
+<h2 id="3-ফচরভততক-পরকষযগযত">3. ফিচারভিত্তিক পরীক্ষাযোগ্যতা</h2>
+<p><strong>Full</strong> — স্থানীয়ভাবে কাজ করে। <strong>Partial</strong> — মূল পথ কাজ করে, নিচের দিকে কিছু dummy। <strong>Not locally</strong> — আসল বাহ্যিক সিস্টেম ছাড়া কোনো উপায়ে পরীক্ষা করার সুযোগ নেই।</p>
+<h3 id="31-অযডমন-পরটল">3.1 অ্যাডমিন পোর্টাল</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>রেটিং</th>
+<th>সীমাবদ্ধতা</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="10-admin-portal/A-01-program-selection.html">A-01</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-02-programs.html">A-02</a></td>
+<td>Full</td>
+<td>S3 হলো Floci</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-03-program-settings.html">A-03</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-04-teams.html">A-04</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-05-venues.html">A-05</a></td>
+<td>Full</td>
+<td>seeded venue আছে</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-06-program-venue-mapping.html">A-06</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-07-events.html">A-07</a></td>
+<td>পুশ ছাড়া Full</td>
+<td>dummy Firebase</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-08-event-settings.html">A-08</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-09-event-level-pricing.html">A-09</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-10-capacity-adjustment.html">A-10</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-11-seat-reservation.html">A-11</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-12-reserved-tickets.html">A-12</a></td>
+<td><strong>Partial</strong></td>
+<td>সাইনিংয়ের জন্য TSP দরকার; CloudFront cookie ব্যর্থ হয়</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-13-ticket-layouts.html">A-13</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-14-ticket-pricing-content.html">A-14</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-15-promo-codes.html">A-15</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-16-discounts.html">A-16</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-17-ticket-checker-users.html">A-17</a></td>
+<td><strong>Partial</strong></td>
+<td>Cognito কাজ করে; <strong>ব্যবহারকারী তৈরি হওয়ার পরেই SMS ব্যর্থ হয়</strong>, তাই তৈরিতে এরর দেয়</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-18-gate-assignment.html">A-18</a></td>
+<td>Full (অ্যাডমিন দিক)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-19-gate-reports.html">A-19</a></td>
+<td><strong>Partial</strong></td>
+<td>চেকার অ্যাপ স্থানীয়ভাবে সাইন ইন করতে পারে না; Postman বা seed ডেটা ব্যবহার করুন</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-20-raffle-draw.html">A-20</a></td>
+<td><strong>Partial</strong></td>
+<td>Serverless dummy; পার্টনার ও কম্প্লিমেন্টারি টিকিট কাজ করে</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-21-dashboard.html">A-21</a></td>
+<td>Full</td>
+<td>ডেটার জন্য <code>pwsh ./scripts/Seed-EtpData.ps1</code></td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-22-reports.html">A-22</a></td>
+<td>Full</td>
+<td><code>scripts/seed/03-orders-tickets.sql</code></td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-23-reconciliation.html">A-23</a></td>
+<td><strong>Partial</strong></td>
+<td>Serverless dummy, তাই গ্রাহকের তথ্য ফাঁকা</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-24-user-issues-admin.html">A-24</a></td>
+<td><strong>Partial</strong></td>
+<td>সার্ভিস, হাব ও REST চলে; গ্রাহকের ডেটা চলে না</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-25-admin-users.html">A-25</a></td>
+<td><strong>Partial</strong></td>
+<td>একই তৈরির পরে SMS ব্যর্থতা</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-26-agent-users.html">A-26</a></td>
+<td><strong>Partial</strong></td>
+<td>একই</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-27-activity-log.html">A-27</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-28-media-configuration.html">A-28</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-29-content-editor.html">A-29</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-30-header-footer-social.html">A-30</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-31-general-notices.html">A-31</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-ইউজর-পরটল">3.2 ইউজার পোর্টাল</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>রেটিং</th>
+<th>সীমাবদ্ধতা</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="20-user-portal/P-01-home-content.html">P-01</a></td>
+<td>Full</td>
+<td>seeded hero, sponsor, notice ও FAQ সারি</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-02-browse-events.html">P-02</a></td>
+<td>Full</td>
+<td>সাতটি seeded ম্যাচ</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-03-info-pages.html">P-03</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-04-seat-selection.html">P-04</a></td>
+<td>preview পর্যন্ত Full</td>
+<td>স্থানীয়ভাবে পেমেন্ট সম্ভব নয়</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-05-apply-promo-code.html">P-05</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a></td>
+<td><strong>Partial</strong></td>
+<td>DgePay dummy</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-07-my-bookings.html">P-07</a></td>
+<td>Full</td>
+<td>নয়টি seeded অর্ডার</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-08-ticket-generation-request.html">P-08</a></td>
+<td><strong>Partial</strong></td>
+<td>টিকিট <code>Requested</code>-এ পৌঁছায়, কখনো সই হয় না</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-09-ticket-details-downloads.html">P-09</a></td>
+<td><strong>Partial</strong></td>
+<td>হোল্ডার এডিট, বিবরণ ও ইনভয়েস কাজ করে; সই করা PDF seed-এর ওপর নির্ভর করে</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-10-oneid-ticket-sync.html">P-10</a></td>
+<td><strong>Not locally</strong></td>
+<td>OneID dummy</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-11-profile.html">P-11</a></td>
+<td><strong>Partial</strong></td>
+<td><code>/p/identity</code>-এর বিরুদ্ধে চলে; OTP স্টাব <code>123456</code></td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-12-issues-chat.html">P-12</a></td>
+<td>REST Full / <strong>হাব Partial</strong></td>
+<td>হাবের WebSocket রুট দরকার; <code>skipNegotiation</code> ফলব্যাকটি সরিয়ে দেয়</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-13-language-switch.html">P-13</a></td>
+<td>Full</td>
+<td>সম্পূর্ণ ক্লায়েন্ট-সাইড</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-ইউজর-অযপ">3.3 ইউজার অ্যাপ</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>রেটিং</th>
+<th>সীমাবদ্ধতা</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="30-user-app/U-01-splash-onboarding.html">U-01</a></td>
+<td>ভার্সন চেক ছাড়া Full</td>
+<td><code>allowed-app-version</code> স্টাব নেই; <code>/p/identity</code>-এ পয়েন্ট করুন</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-02-home-browse-events.html">U-02</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-03-info-pages.html">U-03</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-04-seat-selection-promo.html">U-04</a></td>
+<td>রিড Full / <strong>পেমেন্ট Partial</strong></td>
+<td>একটি gateway sandbox দরকার</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-05-booking-webview-payment.html">U-05</a></td>
+<td><strong>Partial</strong></td>
+<td>অর্ডারের POST কাজ করে; gateway পেজ কাজ করে না</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-06-my-bookings-tickets.html">U-06</a></td>
+<td>লিস্ট Full / <strong>PDF Partial</strong></td>
+<td>সাইনিং ও OneID স্থানীয়ভাবে নেই</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-07-profile-settings.html">U-07</a></td>
+<td><strong>Partial</strong></td>
+<td><code>/p/identity</code>-এর বিরুদ্ধে চলে; Cognito কলের জন্য আসল পুল দরকার</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-08-issues-chat.html">U-08</a></td>
+<td>REST Full / <strong>হাব Partial</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-09-device-token.html">U-09</a></td>
+<td><strong>Partial</strong></td>
+<td>কোড চলে; আসল টোকেন নেই</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-10-push-receipt.html">U-10</a></td>
+<td><strong>Not locally</strong> (ডেলিভারি)</td>
+<td>ম্যানুয়াল নোটিফিকেশন দিয়ে ফোরগ্রাউন্ড রেন্ডারিং চালানো যায়</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-চকর-অযপ">3.4 চেকার অ্যাপ</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>রেটিং</th>
+<th>সীমাবদ্ধতা</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="40-checker-app/C-01-assigned-event-gate.html">C-01</a></td>
+<td>Full (API কল)</td>
+<td>Cognito পুল পৌঁছানো বা seeded হতে হবে</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-02-offline-ticket-download.html">C-02</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a></td>
+<td><strong>Android-এ Full / iOS-এ নয়</strong></td>
+<td>iOS-এ কোনো ক্রিপ্টো ইমপ্লিমেন্টেশন নেই (<a href="99-open-queries.html">Q-72</a>)</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-04-manual-entry.html">C-04</a></td>
+<td>Full</td>
+<td>কোনো নেটওয়ার্ক জড়িত নয়</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-05-ticket-sync.html">C-05</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/C-06-manual-ticket-validation.html">C-06</a></td>
+<td><strong>Android-এ Full / iOS-এ সবসময় ব্যর্থ</strong></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>চেকার অ্যাপ স্থানীয়ভাবে একেবারেই সাইন ইন করতে পারে না</strong> — Amplify Flutter-কে Floci-র দিকে পয়েন্ট করানো যায় না (<a href="60-cross-cutting/X-12-checker-login.html">X-12</a>)। এ কারণেই <a href="10-admin-portal/A-19-gate-reports.html">A-19</a> কেবল আংশিক: স্ক্যান Postman দিয়ে ইনজেক্ট করতে হয়।</p>
+<h3 id="35-সসটম-ইনসযটড">3.5 সিস্টেম-ইনিসিয়েটেড</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>রেটিং</th>
+<th>সীমাবদ্ধতা</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="50-system-initiated/S-01-level-capacity-update.html">S-01</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-02-event-live-capacity.html">S-02</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-03-locked-capacity-refresh.html">S-03</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-04-scheduler-capacity-update.html">S-04</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-05-pending-failed-revalidation.html">S-05</a></td>
+<td><strong>Partial</strong></td>
+<td>DgePay dummy → <code>GetPaymentStatus</code> ছুঁড়ে ফেলে → অর্ডার <code>Pending</code> থেকে যায়</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-06-booking-status-generated.html">S-06</a></td>
+<td><strong>Partial</strong></td>
+<td>সাইনিং ছাড়া অর্ডার কখনো <code>Generated</code>-এ পৌঁছায় না</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a></td>
+<td><strong>Partial</strong></td>
+<td>টিকিট ও ফাঁকা PDF কাজ করে</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-08-ticket-signing.html">S-08</a></td>
+<td><strong>Partial</strong></td>
+<td>সাইনিংয়ের আগের সবকিছু কাজ করে</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-09-ticket-merge-zip.html">S-09</a></td>
+<td><strong>Partial</strong></td>
+<td>আগে সই করা PDF দরকার</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-10-vat-challan.html">S-10</a></td>
+<td><strong>Partial</strong></td>
+<td>মেসেজ চিরকাল রিট্রাই করে</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-11-firebase-notification.html">S-11</a></td>
+<td><strong>Partial</strong></td>
+<td>কিউ ও ওয়ার্কার চলে; ডেলিভারি নেই</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-12-ticket-generated-notification.html">S-12</a></td>
+<td><strong>Partial</strong></td>
+<td>পাঠানো ব্যর্থ হয়, কিছুই মার্ক হয় না</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-13-device-token-cleanup.html">S-13</a></td>
+<td><strong>Partial</strong></td>
+<td>কোডে থাকা পথ Admin-এ পৌঁছায়, PushNotification-এ নয় — <a href="99-open-queries.html">Q-16</a></td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-14-checked-ticket-sync.html">S-14</a></td>
+<td>Full (ওয়ার্কার)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-15-gate-download-status-cleanup.html">S-15</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-16-promo-code-status.html">S-16</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-17-discount-status.html">S-17</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="36-করস-কট">3.6 ক্রস-কাটিং</h3>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>রেটিং</th>
+<th>সীমাবদ্ধতা</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="60-cross-cutting/X-01-admin-login.html">X-01</a></td>
+<td><strong>Partial</strong></td>
+<td>OTP স্টাব: যেকোনো ফোন, কোড <code>123456</code></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-02-admin-forgot-password.html">X-02</a></td>
+<td><strong>Partial</strong></td>
+<td>OTP স্টাব <code>user_id</code> ফেরত দেয় না, তাই প্রবাহ থেমে যায়</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-03-admin-change-password-logout.html">X-03</a></td>
+<td>লগআউট Full / <strong>পাসওয়ার্ড পরিবর্তন Partial</strong></td>
+<td>Floci-র <code>ChangePassword</code> এমুলেশন অসম্পূর্ণ</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-04-admin-session.html">X-04</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-05-admin-provisioning.html">X-05</a></td>
+<td><strong>Partial</strong></td>
+<td>Cognito কাজ করে; SMS ব্যর্থ হয়</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-06-user-registration.html">X-06</a></td>
+<td><strong>Not locally</strong></td>
+<td>identity proxy 503 দেয়</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-07-user-password-login.html">X-07</a></td>
+<td>Full (পোর্টাল) / <strong>Not locally</strong> (অ্যাপ)</td>
+<td>Amplify Flutter Floci-র দিকে পয়েন্ট করতে পারে না</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-08-oneid-sso.html">X-08</a></td>
+<td><strong>Partial</strong></td>
+<td><code>/p/oneid</code>-এর fake স্বয়ংক্রিয়ভাবে অনুমোদন দেয়</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-09-user-forgot-password.html">X-09</a></td>
+<td><strong>Not locally</strong></td>
+<td>503 স্টাব</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-10-user-session.html">X-10</a></td>
+<td>Full (পোর্টাল) / <strong>Not locally</strong> (অ্যাপ)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-11-delete-account-force-update.html">X-11</a></td>
+<td><strong>Not locally</strong></td>
+<td>503 স্টাব</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-12-checker-login.html">X-12</a></td>
+<td><strong>Not locally</strong> (সাইন ইন)</td>
+<td>Amplify Flutter-এর সীমাবদ্ধতা</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-13-agent-pool.html">X-13</a></td>
+<td><strong>Partial</strong></td>
+<td>এন্ডপয়েন্ট ও পুল লগইন কাজ করে; এজেন্ট ডেটা নেই</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-14-authz-pool-policies.html">X-14</a></td>
+<td>Full</td>
+<td>Floci-তে সব চারটি পুল</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-15-authz-roles.html">X-15</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-16-authz-program-scope.html">X-16</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-17-authz-client-side.html">X-17</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-19-service-to-service.html">X-19</a></td>
+<td>Full (HTTP, SQS)</td>
+<td>বাহ্যিক সিস্টেমগুলো dummy</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-20-file-storage.html">X-20</a></td>
+<td><strong>Partial</strong></td>
+<td>আপলোড কাজ করে; signed cookie কাজ করে না</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-21-email-ses.html">X-21</a></td>
+<td><strong>Partial</strong></td>
+<td>Floci SES পাঠানো গ্রহণ করে</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-22-sms-notification.html">X-22</a></td>
+<td><strong>Not locally</strong></td>
+<td>কোনো স্টাব নেই</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-23-push-firebase.html">X-23</a></td>
+<td><strong>Partial</strong></td>
+<td>টোকেন ও কিউ কাজ করে; ডেলিভারি নেই</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-24-activity-logging.html">X-24</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-25-redis.html">X-25</a></td>
+<td>Full</td>
+<td><code>localhost:6379</code>; <strong>Redis বন্ধ থাকলে সার্ভিস ক্র্যাশ করে</strong></td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/X-26-configuration.html">X-26</a></td>
+<td>Full</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-সরসকষপ">4. সারসংক্ষেপ</h2>
+<table>
+<thead>
+<tr>
+<th>রেটিং</th>
+<th>সংখ্যা</th>
+<th>103-এর মধ্যে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Full</strong></td>
+<td>60</td>
+<td>58%</td>
+</tr>
+<tr>
+<td><strong>Partial</strong></td>
+<td>35</td>
+<td>34%</td>
+</tr>
+<tr>
+<td><strong>Not locally</strong></td>
+<td>8</td>
+<td>8%</td>
+</tr>
+</tbody>
+</table>
+<p>প্রায় প্রতিটি "Partial"-এর কারণ §2-এর দশটি dummy-র একটি, আর প্রায় প্রতিটি "Not locally"-র কারণ identity API, OneID, DgePay, বা অনুপস্থিত Amplify-Floci সেতু। <strong>এর কোনোটিই কোডের ত্রুটি নয়</strong> — এগুলো লোকাল পরিবেশের সীমাবদ্ধতা, আর লোকাল পরিবেশের কাজই এটি।</p>
+<h2 id="5-পরথম-পরকষ-করর-মত-পচট-বষয">5. প্রথমে পরীক্ষা করার মতো পাঁচটি বিষয়</h2>
+<p>আপনার একটি বিকেল থাকলে এবং মিনিটপ্রতি সর্বাধিক আচরণ দেখতে চাইলে:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>যা করবেন</th>
+<th>যা দেখাবে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ডেটা seed করুন, ইউজার পোর্টাল খুলুন, কোনো ইভেন্টে ঘুরে দেখুন ও সিট ম্যাপ খুলুন</td>
+<td>পুরো read path: Event, Booking, Redis ক্যাপাসিটি</td>
+</tr>
+<tr>
+<td>2</td>
+<td>একটি বুকিং অর্ডার তৈরি করুন, Redis lock আসতে দেখুন, তারপর <a href="50-system-initiated/S-03-locked-capacity-refresh.html">S-03</a> সেটি পরিষ্কার করতে দেখুন</td>
+<td>ক্যাপাসিটি লকিং, RedLock ওয়ার্কার, এবং <a href="99-open-queries.html">Q-10</a> key বাগ</td>
+</tr>
+<tr>
+<td>3</td>
+<td>চেকার অ্যাপের <strong>ম্যানুয়াল এন্ট্রি</strong> পথ চালান (<a href="40-checker-app/C-04-manual-entry.html">C-04</a>)</td>
+<td>পণ্যের সবচেয়ে দুর্বল ভ্যালিডেশন, এবং <a href="99-open-queries.html">Q-75</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>টোকেন ছাড়া</strong> চ্যাট REST এন্ডপয়েন্টে POST করুন</td>
+<td><a href="99-open-queries.html">Q-46</a> — সবচেয়ে গুরুতর ফান্ডিং, একটি রিকোয়েস্টেই পুনরাবৃত্তিযোগ্য</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Redis বন্ধ করুন, তারপর একটি সার্ভিস রিস্টার্ট করুন</td>
+<td><a href="60-cross-cutting/X-25-redis.html">X-25</a> কেন Redis-কে hard dependency বলে</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-কমপননট-সমপরক">6. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  SET["docs/local-dev.md<br/>+ mobile-local.md"] --> STACK["Local stack<br/>Floci, Postgres, Redis"]
+  STACK --> F["103 feature §11 guides"]
+  DUM["10 dummy externals<br/>(§2)"] -.->|"blocks"| F
+  F --> RT["Full 60 / Partial 35 / None 8"]
+</div>
+<p><strong>নির্ভর করে:</strong> <code>docs/local-dev.md</code>, <code>docs/mobile-local.md</code>, <code>docs/admin-portal-local.md</code>, <code>docs/user-portal-local.md</code>। <strong>প্রভাব ফেলে:</strong> প্রতিটি ফিচারের §11 গাইড।</p>
+  </main>
+</div>
+<script src="../assets/vendor/mermaid.min.js"></script>
+<script src="../assets/site.js?v=d7ce93f0"></script>
+</body>
+</html>

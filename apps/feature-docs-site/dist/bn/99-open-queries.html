@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>99 · ওপেন কোয়ারি · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../assets/site.css?v=5ded2c9a">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav class="side-nav">
+    <div class="side-sec" data-dir="ov">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">ওভারভিউ</span>
+        <span class="side-count">৪</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="00-platform-primer.html"><span class="id-chip">00</span><span>প্ল্যাটফর্ম প্রাইমার</span></a>
+        <a class="side-item" href="01-system-map.html"><span class="id-chip">01</span><span>সিস্টেম ম্যাপ</span></a>
+        <a class="side-item" href="02-traceability-matrix.html"><span class="id-chip">02</span><span>ট্রেসেবিলিটি ম্যাট্রিক্স</span></a>
+        <a class="side-item" href="03-component-reverse-index.html"><span class="id-chip">03</span><span>কম্পোনেন্ট রিভার্স ইনডেক্স</span></a>
+      </div>
+    </div>
+    <div class="side-sec is-open" data-dir="ap">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="true" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">পরিশিষ্ট</span>
+        <span class="side-count">৫</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="90-appendix-a-legacy.html"><span class="id-chip">90</span><span>অ্যাপেন্ডিক্স A — লেগ্যাসি, অব্যবহৃত ও নিষ্ক্রিয় কোড</span></a>
+        <a class="side-item" href="91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — এন্ডপয়েন্ট ইনডেক্স</span></a>
+        <a class="side-item" href="92-appendix-c-coverage.html"><span class="id-chip">92</span><span>অ্যাপেন্ডিক্স C — কভারেজ</span></a>
+        <a class="side-item" href="93-appendix-d-local-test-reference.html"><span class="id-chip">93</span><span>অ্যাপেন্ডিক্স D — লোকাল টেস্ট রেফারেন্স</span></a>
+        <a class="side-item is-active" href="99-open-queries.html"><span class="id-chip">99</span><span>ওপেন কোয়ারি</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="10-admin-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+        <span class="side-count">৩১</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+        <a class="side-item" href="10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+        <a class="side-item" href="10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+        <a class="side-item" href="10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+        <a class="side-item" href="10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+        <a class="side-item" href="10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+        <a class="side-item" href="10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+        <a class="side-item" href="10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+        <a class="side-item" href="10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+        <a class="side-item" href="10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+        <a class="side-item" href="10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+        <a class="side-item" href="10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+        <a class="side-item" href="10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+        <a class="side-item" href="10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+        <a class="side-item" href="10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+        <a class="side-item" href="10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+        <a class="side-item" href="10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+        <a class="side-item" href="10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+        <a class="side-item" href="10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+        <a class="side-item" href="10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+        <a class="side-item" href="10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+        <a class="side-item" href="10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+        <a class="side-item" href="10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+        <a class="side-item" href="10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+        <a class="side-item" href="10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+        <a class="side-item" href="10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+        <a class="side-item" href="10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="20-user-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+        <span class="side-count">১৩</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+        <a class="side-item" href="20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+        <a class="side-item" href="20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+        <a class="side-item" href="20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+        <a class="side-item" href="20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+        <a class="side-item" href="20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+        <a class="side-item" href="20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+        <a class="side-item" href="20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+        <a class="side-item" href="20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+        <a class="side-item" href="20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+        <a class="side-item" href="20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+        <a class="side-item" href="20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+        <a class="side-item" href="20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="30-user-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="30-user-app/index.html">30 · ইউজার অ্যাপ</a>
+        <span class="side-count">১০</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+        <a class="side-item" href="30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+        <a class="side-item" href="30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+        <a class="side-item" href="30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+        <a class="side-item" href="30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+        <a class="side-item" href="30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+        <a class="side-item" href="30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+        <a class="side-item" href="30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+        <a class="side-item" href="30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+        <a class="side-item" href="30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="40-checker-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+        <span class="side-count">৬</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+        <a class="side-item" href="40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+        <a class="side-item" href="40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+        <a class="side-item" href="40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+        <a class="side-item" href="40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+        <a class="side-item" href="40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="50-system-initiated">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+        <span class="side-count">১৭</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+        <a class="side-item" href="50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+        <a class="side-item" href="50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+        <a class="side-item" href="50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+        <a class="side-item" href="50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+        <a class="side-item" href="50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+        <a class="side-item" href="50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+        <a class="side-item" href="50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+        <a class="side-item" href="50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+        <a class="side-item" href="50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+        <a class="side-item" href="50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="60-cross-cutting">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+        <span class="side-count">২৬</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+        <a class="side-item" href="60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+        <a class="side-item" href="60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+        <a class="side-item" href="60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+        <a class="side-item" href="60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+        <a class="side-item" href="60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+        <a class="side-item" href="60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+        <a class="side-item" href="60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+        <a class="side-item" href="60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+      </div>
+    </div>
+    </nav>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="index.html">সূচিপত্র</a><span class="sep">›</span><span>99 · ওপেন কোয়ারি</span></div>
+<h1><span class="id-chip">99</span> ওপেন কোয়ারি</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> ওপেন কোয়ারি</p>
+<p><a href="index.html">← সূচিপত্র</a></p>
+</blockquote>
+<p>এই ডকুমেন্টেশনের প্রতিটি <span class="badge-unconfirmed">[UNCONFIRMED: Q-nn]</span> মার্কার একটি এন্ট্রি এখানে আছে। একটি এন্ট্রি মানে <strong>এই পর্যালোচনায় পাঁচটি রিপোজিটরির কোড থেকে প্রশ্নটির উত্তর নির্ধারণ করা যায়নি</strong> — এটি মানে কোড ভুল, তা নয়। কয়েকটি রিপোজিটরির ফাঁক (কোনো সোর্স ছাড়া একটি বাহ্যিক service), কয়েকটি deployment বা configuration মান, কয়েকটি implementation-এর প্রকৃত অস্পষ্টতা, আর কয়েকটি ক্ষেত্রে এমন কিছু যেখানে কোড স্পষ্ট কিন্তু <em>উদ্দেশ্য</em> স্পষ্ট নয়।</p>
+<p>কোনো কোয়ারিতে কাজ করার আগে <strong>Kind</strong> কলামটি পড়ুন। চার প্রকার:</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>অর্থ</th>
+<th>কে উত্তর দিতে পারে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>External</strong></td>
+<td>কম্পোনেন্টটি পাঁচটি রিপোজিটরির কোনোটিতেই নেই</td>
+<td>BS23</td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td>কোড settings, secrets, SSM বা ক্লাউড থেকে একটি মান পড়ে, যা এই পর্যালোচনায় দেখা যায় না</td>
+<td>BS23 / infrastructure</td>
+</tr>
+<tr>
+<td><strong>Ambiguity</strong></td>
+<td>কোড পড়া যায়, কিন্তু requirement না জানলে তার সঠিকতা বা উদ্দেশ্য বিচার করা যায় না</td>
+<td>BS23 / ব্যবসা</td>
+</tr>
+<tr>
+<td><strong>Defect</strong></td>
+<td>কোডটি ভুল বলে মনে হচ্ছে; এটি উত্তর দেওয়ার প্রশ্ন নয়, সংশোধন করার একটি finding</td>
+<td>RVL</td>
+</tr>
+</tbody>
+</table>
+<p>অগ্রাধিকার দেওয়ার মতো একমাত্র সারি <strong>Defect</strong> সারি। বাকি সবই ডকুমেন্টেশনের ঋণ।</p>
+<h2 id="1-সরসকষপ">1. সারসংক্ষেপ</h2>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>সংখ্যা</th>
+<th>Ids</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>External</td>
+<td>10</td>
+<td>Q-01, Q-03, Q-05, Q-06, Q-07, Q-13, Q-34, Q-35, Q-42, Q-50</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>15</td>
+<td>Q-02, Q-04, Q-08, Q-16, Q-19, Q-29, Q-30, Q-45, Q-49, Q-52, Q-62, Q-63, Q-69, Q-70, Q-73</td>
+</tr>
+<tr>
+<td>Ambiguity</td>
+<td>27</td>
+<td>Q-09, Q-11, Q-12, Q-15, Q-18, Q-20, Q-22, Q-23, Q-25, Q-26, Q-28, Q-31, Q-32, Q-36, Q-37, Q-38, Q-39, Q-40, Q-41, Q-43, Q-48, Q-56, Q-57, Q-58, Q-66, Q-67, Q-77</td>
+</tr>
+<tr>
+<td>Defect</td>
+<td>23</td>
+<td>Q-10, Q-14, Q-17, Q-27, Q-33, Q-44, Q-46, Q-47, Q-51, Q-53, Q-54, Q-55, Q-59, Q-60, Q-61, Q-64, Q-65, Q-68, Q-71, Q-72, Q-74, Q-75, Q-76</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>মোট ৭৫টি এন্ট্রি</strong> (10 + 15 + 27 + 23)। Q-21 ও Q-24 সংরক্ষিত কিন্তু অব্যবহৃত, তাই নম্বরিং Q-77 পর্যন্ত যায় এবং দুটি ফাঁক থাকে।</p>
+</blockquote>
+<p><strong>Q-21 ও Q-24 অব্যবহৃত।</strong> খসড়া তৈরির সময় এগুলো সংরক্ষিত ছিল, কিন্তু কোনো ফিচারই শেষে পর্যন্ত এগুলো উদ্ধৃত করেনি। নম্বরিং স্থিতিশীল রাখার জন্য এগুলো এখানেই রাখা হয়েছে — নম্বর পরিবর্তন করবেন না।</p>
+<h2 id="2-বহযক-কমপননট-রপজটরত-নই-q-01-q-03-q-05-q-06-q-07-q-13-q-34-q-35-q-42-q-50">2. বাহ্যিক কম্পোনেন্ট — রিপোজিটরিতে নেই (Q-01, Q-03, Q-05, Q-06, Q-07, Q-13, Q-34, Q-35, Q-42, Q-50)</h2>
+<p>হ্যান্ডওভারের সবচেয়ে বড় কাঠামোগত ঝুঁকি এগুলো: <strong>পণ্যের আচরণের একটি উল্লেখযোগ্য অংশ পাঁচটি রিপোজিটরির বাইরে বাস করে</strong>, তাই এই ডকুমেন্টেশনের পাঠক সেটি যাচাই করতে পারে না।</p>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>প্রশ্ন</th>
+<th>কেন খোলা আছে</th>
+<th>কোথা থেকে উদ্ধৃত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong id="q-01">Q-01</strong></td>
+<td><strong>Identity API</strong>-এর সোর্স কোথায়, কে হোস্ট করে এবং মালিক কে?</td>
+<td>Registration, OTP, <code>my-profile</code>, <code>register-sso</code>, <code>allowed-app-version</code> ও <code>delete-my-profile</code> — সবই এমন একটি API-তে যায় যা পাঁচটি রিপোজিটরির কোনোটিতেই নেই। স্থানীয়ভাবে তা <code>http://localhost:4200/</code> (<code>scripts/user-secrets.example.json</code>)। <strong>Go-live-এর আগে BS23-এর কাছে এর repository, hosting ও owner জেনে নিন।</strong></td>
+<td><a href="60-cross-cutting/X-06-user-registration.html">X-06</a>, <a href="60-cross-cutting/X-07-user-password-login.html">X-07</a>, <a href="60-cross-cutting/X-08-oneid-sso.html">X-08</a>, <a href="60-cross-cutting/X-09-user-forgot-password.html">X-09</a>, <a href="60-cross-cutting/X-11-delete-account-force-update.html">X-11</a>, <a href="20-user-portal/P-11-profile.html">P-11</a>, <a href="30-user-app/U-01-splash-onboarding.html">U-01</a>, <a href="30-user-app/U-07-profile-settings.html">U-07</a>, primer</td>
+</tr>
+<tr>
+<td><strong id="q-03">Q-03</strong></td>
+<td><strong>Serverless / Lambda identity API</strong>-এর সোর্স কোথায়?</td>
+<td>Admin login ব্যবহার করে id দিয়ে ব্যবহারকারীর নাম ও ফোন খুঁজতে, এবং Booking flow-ও। কোনো রিপোজিটরিতেই নেই।</td>
+<td><a href="60-cross-cutting/X-01-admin-login.html">X-01</a>, <a href="60-cross-cutting/X-07-user-password-login.html">X-07</a></td>
+</tr>
+<tr>
+<td><strong id="q-05">Q-05</strong></td>
+<td><strong>বাহ্যিক notification service</strong>-এর সোর্স কোথায় এবং payload-এর সাথে এটি কী করে?</td>
+<td>প্রতিটি SMS-এর জন্য backend <code>Notification:Endpoint</code>-এ JSON পোস্ট করে। টেক্সট, চ্যানেল ও টেমপ্লেটিং সবই সেখানে বাস করে — তাই গ্রাহক আসলে কী পাচ্ছেন তা প্ল্যাটফর্ম আপনাকে বলতে পারে না।</td>
+<td><a href="60-cross-cutting/X-05-admin-provisioning.html">X-05</a>, <a href="60-cross-cutting/X-22-sms-notification.html">X-22</a>, <a href="50-system-initiated/S-12-ticket-generated-notification.html">S-12</a></td>
+</tr>
+<tr>
+<td><strong id="q-06">Q-06</strong></td>
+<td><strong>নকল বাহ্যিক integration</strong>-গুলো কি প্রোডাকশনেও এখনও নকল?</td>
+<td>OneID, TSP (টিকিট সই) ও NBR VAT স্থানীয়ভাবে <code>https://*.invalid</code>-এ stub করা। ফলে টিকিট সই, OneID টিকিট sync ও VAT challan স্থানীয়ভাবে end-to-end পরীক্ষা করা যায় না, আর deployed environment-এ আসল integrationগুলো wired আছে কি না তা কোড থেকে দেখা যায় না।</td>
+<td><a href="50-system-initiated/S-06-booking-status-generated.html">S-06</a>, <a href="50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>, <a href="50-system-initiated/S-10-vat-challan.html">S-10</a>, <a href="60-cross-cutting/X-20-file-storage.html">X-20</a>, <a href="60-cross-cutting/X-21-email-ses.html">X-21</a>, <a href="60-cross-cutting/X-26-configuration.html">X-26</a>, <a href="20-user-portal/P-10-oneid-ticket-sync.html">P-10</a></td>
+</tr>
+<tr>
+<td><strong id="q-07">Q-07</strong></td>
+<td>Agent Cognito pool-এর জন্য কি কোনো <strong>agent app বা client</strong> আছে?</td>
+<td>Agent অ্যাকাউন্ট, <code>Agent</code>-policy endpoint <code>POST /ticketing/api/v1/offline-sold-ticket</code> এবং <code>OfflineSoldTickets</code> ডেটা — সবই আছে, কিন্তু <strong>পাঁচটি রিপোজিটরির কোনো client এগুলো ব্যবহার করে না</strong> এবং কিছুই offline-sold টিকিটগুলো ফিরে পড়ে না। হয় হ্যান্ডওভার থেকে কোনো client বাদ পড়েছে, নয়তো ফিচারটি নিষ্ক্রিয়।</td>
+<td><a href="60-cross-cutting/X-13-agent-pool.html">X-13</a>, <a href="10-admin-portal/A-26-agent-users.html">A-26</a></td>
+</tr>
+<tr>
+<td><strong id="q-13">Q-13</strong></td>
+<td><strong>TSP client certificate</strong> (<code>Cert/tspgw_client.pfx</code>) Ticketing pod-এ কীভাবে পৌঁছায়?</td>
+<td>কোনো project, Dockerfile বা ডকুমেন্ট এটিকে image-এ কপি করে না। এটি ছাড়া Ticketing service, TSP client তৈরি হওয়ার মুহূর্তেই ব্যর্থ হয়, তাই এটি একটি কঠিন ব্যর্থতার মোডযুক্ত deployment কাজ।</td>
+<td><a href="50-system-initiated/S-08-ticket-signing.html">S-08</a></td>
+</tr>
+<tr>
+<td><strong id="q-34">Q-34</strong></td>
+<td><strong>User app</strong> কি <code>SocialMediaSettings</code> পড়ে, নাকি শুধু <code>HeaderFooters</code>?</td>
+<td>User portal social link শুধু <code>HeaderFooters</code> থেকে পড়ে; পুরোনো <code>SocialMediaSettings</code> রেকর্ডের সেখানে কোনো পাঠক নেই। app-এর আচরণ ভিন্নভাবে বলা হয়েছে, এবং দুটোই একসাথে ঠিক হতে পারে না।</td>
+<td><a href="10-admin-portal/A-30-header-footer-social.html">A-30</a>, <a href="20-user-portal/P-01-home-content.html">P-01</a></td>
+</tr>
+<tr>
+<td><strong id="q-35">Q-35</strong></td>
+<td>User portal হোম পেজের <strong>notices strip</strong> আসলে কোন স্ক্রিন দিয়ে চালিত হওয়ার কথা?</td>
+<td><code>EventApiService.getAllGeneralNotices</code> <strong>বলা হয়</strong> এবং রোগুলো মেমোরিতে <strong>ফিল্টারও হয়</strong>, কিন্তু ফলাফলটি এমন একটি <code>notices</code> অ্যারেতে রাখা হয় যা template কখনো bind করে না — তাই যে Admin স্ক্রিন <code>GeneralNotices</code> সম্পাদনা করে (<a href="10-admin-portal/A-31-general-notices.html">A-31</a>) তার <strong>কোনো দৃশ্যমান প্রভাব নেই</strong>, যদিও গ্রাহক যে স্ক্রলিং লাইন দেখেন তা content editor-এর <code>Notice</code> টাইপ দিয়ে চালিত হয় (<a href="10-admin-portal/A-29-content-editor.html">A-29</a>)। দুটি notice ফিচার আছে; কোনটি অভিসন্ধ তা ব্যবসাকেই বলতে হবে। কর্মীরা "আমি নোটিশ প্রকাশ করলাম, কিছুই হলো না" বলার সম্ভাবনা সবচেয়ে বেশি এখানেই।</td>
+<td><a href="20-user-portal/P-01-home-content.html">P-01</a>, <a href="10-admin-portal/A-31-general-notices.html">A-31</a>, <a href="10-admin-portal/A-29-content-editor.html">A-29</a></td>
+</tr>
+<tr>
+<td><strong id="q-42">Q-42</strong></td>
+<td>Identity API কি প্রতিটি কলে <strong>static API-key header</strong> চায়, আর portal-এর profile <code>PUT</code> কি সত্যিই সেটি পাঠায়?</td>
+<td><code>GET user/my-profile</code> স্পষ্টভাবে <code>environment.headerkey</code> পাঠায়; <code>PUT</code> <strong>কোনো headers object-ই পাঠায় না</strong> এবং <code>TokenInterceptor</code>-এর substring allow-list মিলে <code>/user/my-profile</code> ধরে নির্ভর করে। আজ এটি ডিজাইনের বদলে allow-list-এর দুর্ঘটনা মিলের কারণে কাজ করে।</td>
+<td><a href="20-user-portal/P-11-profile.html">P-11</a></td>
+</tr>
+<tr>
+<td><strong id="q-50">Q-50</strong></td>
+<td><strong>CloudFront signed token</strong> কোন কম্পোনেন্ট ব্যবহার করে?</td>
+<td><code>generate-signed-token</code> একটি global Redis key লেখে যা দুটি admin ৬০ সেকেন্ডের মধ্যে উপরে লেখে, এবং <strong>backend-এ কিছুই <code>signedToken</code> ফিরে পড়ে না</strong>। cookie যাচাই করে এমন যেকোনো কিছু এই রিপোজিটরির বাইরে।</td>
+<td><a href="60-cross-cutting/X-20-file-storage.html">X-20</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-deployment-ও-configuration-মন-q-02-q-04-q-08-q-16-q-19-q-29-q-30-q-45-q-49-q-52-q-62-q-63-q-69-q-70-q-73">3. Deployment ও configuration মান (Q-02, Q-04, Q-08, Q-16, Q-19, Q-29, Q-30, Q-45, Q-49, Q-52, Q-62, Q-63, Q-69, Q-70, Q-73)</h2>
+<p>এখানে কোড স্পষ্ট; <strong>মান</strong> থাকে secrets, SSM, ক্লাউড অ্যাকাউন্ট বা DNS-এ।</p>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>প্রশ্ন</th>
+<th>কোডের পাঠ</th>
+<th>কোথা থেকে উদ্ধৃত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong id="q-02">Q-02</strong></td>
+<td>প্রোডাকশন কি <strong>schema <code>etp</code>-তে একটিমাত্র PostgreSQL database</strong>, নাকি service-প্রতি আলাদা database?</td>
+<td>প্রতিটি <code>DbContext</code> schema <code>etp</code> ব্যবহার করে কিন্তু প্রতিটি service-এর নিজস্ব connection string আছে। architecture document বলে "প্রতি service একটি schema"; কোড বলে সবার জন্য একটি schema। এটি নির্ধারণ করে cross-service table পড়া (<a href="50-system-initiated/S-17-discount-status.html">S-17</a>, <a href="60-cross-cutting/X-24-activity-logging.html">X-24</a>) কাজ করবে কি না।</td>
+<td>primer, <a href="60-cross-cutting/X-24-activity-logging.html">X-24</a>, <a href="60-cross-cutting/X-26-configuration.html">X-26</a></td>
+</tr>
+<tr>
+<td><strong id="q-04">Q-04</strong></td>
+<td><strong>ingress বা WAF</strong> কি এমন route প্রকাশ করে যেগুলো সার্ভিসগুলো অপ্রমাণীকৃত রাখে?</td>
+<td>PushNotification-এর authentication middleware comment করা, user-issue chat REST controller-এ <code>[Authorize]</code> নেই, আর admin <code>generate-signed-token</code>-এর জন্য gateway path-ও গুরুত্বপূর্ণ। এগুলো ইন্টারনেট থেকে পৌঁছানো যায় কি না তা একটি deployment বিষয়। <strong>এটি এই হ্যান্ডওভারের একমাত্র সবচেয়ে গুরুত্বপূর্ণ deployment প্রশ্ন</strong> — দেখুন <a href="60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>।</td>
+<td><a href="60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a>, <a href="60-cross-cutting/X-23-push-firebase.html">X-23</a>, <a href="60-cross-cutting/X-05-admin-provisioning.html">X-05</a>, <a href="60-cross-cutting/X-02-admin-forgot-password.html">X-02</a>, <a href="20-user-portal/P-01-home-content.html">P-01</a></td>
+</tr>
+<tr>
+<td><strong id="q-08">Q-08</strong></td>
+<td>PushNotification-এর <strong>push send method</strong>-গুলো কি live থাকা উচিত?</td>
+<td><code>send-to-users</code> ও <code>send-to-user</code> সার্ভিসে ও Admin client-এ আছে কিন্তু পাঁচটি রিপোজিটরিতে এর <strong>কোনো caller নেই</strong>। একমাত্র live sender হলো event publish। মৃত কোড নাকি অনুপস্থিত ফিচার — কোনটি জিজ্ঞাসা করুন।</td>
+<td><a href="60-cross-cutting/X-23-push-firebase.html">X-23</a></td>
+</tr>
+<tr>
+<td><strong id="q-16">Q-16</strong></td>
+<td>Scheduler-এর token cleanup-এর জন্য deployed Admin base URL-এ <strong><code>pushnotification/</code> prefix</strong> কি আছে?</td>
+<td>Scheduler প্রিফিক্স ছাড়াই <code>Services:Admin</code>-এ <code>api/v1/device-token/cleanup</code> পাঠায়; ওই endpoint কেবল PushNotification-এ আছে। যদি deployed base URL PushNotification-এ map না হয়, তবে দৈনিক cleanup 404 দেয় এবং পুরোনো token চিরতরে জমতে থাকে।</td>
+<td><a href="50-system-initiated/S-13-device-token-cleanup.html">S-13</a>, <a href="60-cross-cutting/X-23-push-firebase.html">X-23</a></td>
+</tr>
+<tr>
+<td><strong id="q-19">Q-19</strong></td>
+<td><strong>SSLCommerz</strong> কি scope-এর অভ্যন্তরে, এবং তার নিষ্ক্রিয় callback-এর মালিক কে?</td>
+<td>program-settings ফর্মে <code>SSLCommerz</code> দেওয়া আছে এবং enum-ও তা সমর্থন করে, কিন্তু তার callback handler নিষ্ক্রিয় যখন <code>DgePay</code> হলো live path। এটির উত্তর না পাওয়া পর্যন্ত <code>DgePay</code> কনফিগার করুন।</td>
+<td><a href="10-admin-portal/A-03-program-settings.html">A-03</a>, <a href="90-appendix-a-legacy.html">Appendix A</a></td>
+</tr>
+<tr>
+<td><strong id="q-29">Q-29</strong></td>
+<td>raffle draw মুছে ফেলা কি <strong>soft নাকি hard</strong> delete?</td>
+<td>repository method হলো <code>DeleteByIdAsync</code>; এই পর্যালোচনায় কোনটি তা পড়ে দেখা হয়নি। মুছে ফেলা draw কি audit করা যাবে — এটির জন্য এটি গুরুত্বপূর্ণ।</td>
+<td><a href="10-admin-portal/A-20-raffle-draw.html">A-20</a></td>
+</tr>
+<tr>
+<td><strong id="q-30">Q-30</strong></td>
+<td>revenue report-গুলো দিনের সীমার জন্য কোন <strong>time zone</strong> ব্যবহার করে?</td>
+<td><code>GetUserBookingOrdersByEvent</code>-এ <code>startDate</code> ও <code>endDate</code> স্ট্রিং হিসেবে আসে। এটি না জানা পর্যন্ত মাস শেষের reconciliation এক দিন বেশি-কম হতে পারে।</td>
+<td><a href="10-admin-portal/A-22-reports.html">A-22</a></td>
+</tr>
+<tr>
+<td><strong id="q-45">Q-45</strong></td>
+<td><code>en.json</code> ও <code>bn.json</code>-এর <strong>key সংখ্যা</strong> কেন আলাদা (560 বনাম 587)?</td>
+<td><code>bn.json</code>-এ English ফাইলে নেই এমন ২৭টি key আছে, তাই কয়েকটি English string অনূদিত নয়। ১৩তম namespace যোগ করার আগে নির্ধারিত source of truth নিশ্চিত করুন।</td>
+<td><a href="20-user-portal/P-13-language-switch.html">P-13</a></td>
+</tr>
+<tr>
+<td><strong id="q-49">Q-49</strong></td>
+<td>deployed gateway কি portal ও app chat-এ <strong>WebSocket upgrade</strong> ফরওয়ার্ড করে?</td>
+<td>দুই client-ই SignalR তৈরি করে <code>skipNegotiation: true</code> দিয়ে, যার মানে <strong>শুধু WebSockets</strong> — কোনো Server-Sent Events বা long-polling fallback নেই। যদি ingress upgrade না ফরওয়ার্ড করে তবে chat একেবারে connect হবে না।</td>
+<td><a href="20-user-portal/P-12-issues-chat.html">P-12</a></td>
+</tr>
+<tr>
+<td><strong id="q-52">Q-52</strong></td>
+<td><code>appLink</code> মানটি কোন ফরম্যাটে, এবং <strong>store redirect</strong> কি অভিসন্ধ?</td>
+<td>force-update sheet <code>url_launcher</code> দিয়ে <code>appLink</code> খোলে, এবং কেবল তখনই যখন scheme <code>http</code>/<code>https</code>। <code>market://</code> বা <code>itms-apps://</code> লিঙ্ক নীরবে উপেক্ষিত হয়, তাই গ্রাহক update করতে পারে না।</td>
+<td><a href="30-user-app/U-01-splash-onboarding.html">U-01</a></td>
+</tr>
+<tr>
+<td><strong id="q-62">Q-62</strong></td>
+<td><strong>PushNotification service</strong> কি টোকেন ছাড়াই পৌঁছানোর জন্য বানানো?</td>
+<td>app-এর তিনটি device-token কল (POST/PUT/DELETE) এমন একটি service-এ যায় যার <code>UseAuthentication()</code> ও <code>UseAuthorization()</code> comment করা। কাগজ অনুযায়ী যেকোনো caller token যোগ বা মুছতে পারে, বা অন্য ব্যবহারকারীর token পড়তে পারে।</td>
+<td><a href="30-user-app/U-09-device-token.html">U-09</a>, <a href="60-cross-cutting/X-18-endpoints-without-auth.html">X-18</a></td>
+</tr>
+<tr>
+<td><strong id="q-63">Q-63</strong></td>
+<td><strong>iOS APNs token-এ ২ সেকেন্ডের অপেক্ষা</strong> কি প্রোডাকশনে যথেষ্ট?</td>
+<td><code>getAPNSToken()</code> একটি নির্দিষ্ট ২ সেকেন্ডের বিলম্বের পর await করা হয় এবং null token তাড়াতাড়ি ফিরে যায়, বাইরের <code>catch</code> ব্যর্থতা গিলে ফেলে। আসল ডিভাইস ও আসল নেটওয়ার্কে এটি যথেষ্ট কি না তা একটি deployment/environment বিষয় যা এই পর্যালোচনায় নির্ধারণ করা যায় না — স্থানীয়ভাবে উত্তরটি নকল Firebase configuration-এ আড়ালে থাকে।</td>
+<td><a href="30-user-app/U-09-device-token.html">U-09</a>, <a href="30-user-app/U-10-push-receipt.html">U-10</a></td>
+</tr>
+<tr>
+<td><strong id="q-69">Q-69</strong></td>
+<td><strong>offline ticket download</strong> কি paged নাকি chunked হওয়ার কথা?</td>
+<td>download একটি single request, কোনো paging, cursor বা signed payload ছাড়াই, এবং পুরো <code>{ticketId: checkedNumber}</code> map ফেরত দেয়। বড় স্টেডিয়াম ইভেন্টের জন্য এটি একটি অত্যন্ত বড় response, কোনো progress report-এর ছাড়াই, আর ডিভাইসের ফাঁকা storage-এর কোনো সুরক্ষাও নেই। সর্বোচ্চ প্রত্যাশিত ইভেন্টের আকার নিশ্চিত করুন।</td>
+<td><a href="40-checker-app/C-02-offline-ticket-download.html">C-02</a></td>
+</tr>
+<tr>
+<td><strong id="q-70">Q-70</strong></td>
+<td>checker app-এর জন্য <strong>drift/SQLite migration</strong> বিষয় কী?</td>
+<td><code>app_database.dart</code> এবং তৈরি <code>.g.dart</code> ফাইল, কোনো দৃশ্যমান <code>migration</code> ধাপ ছাড়া। তাই ইতিমধ্যে ইনস্টল করা app-এ schema বদলালে স্পষ্ট ব্যবস্থা লাগে যা রিপোজিটরিতে দেখা যায় না — shipped install কীভাবে upgrade করার কথা তা নিশ্চিত করুন।</td>
+<td><a href="40-checker-app/C-02-offline-ticket-download.html">C-02</a>, <a href="40-checker-app/C-05-ticket-sync.html">C-05</a></td>
+</tr>
+<tr>
+<td><strong id="q-73">Q-73</strong></td>
+<td>checker app-এর জন্য <strong>VDS certificate rotation</strong>-এর মালিক কে?</td>
+<td>trust anchor হলো <code>.env</code>-এর <code>VDS_CERTIFICATE</code>-এ থেকে পড়া একটিমাত্র PEM certificate। Certificate বদলানো বা যোগ করা মানে একটি app release, আর আগের কোনো certificate দিয়ে সই করা প্রতিটি টিকিট যে ডিভাইসগুলো update করেনি তাদের কাছে validation ব্যর্থ হয়। Go-live-এর আগে এর জন্য একটি operational মালিক ও একটি rotation runbook দরকার।</td>
+<td><a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a>, <a href="40-checker-app/C-06-manual-ticket-validation.html">C-06</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-অসপষটত-কড-পড-যয-উদদশয-অজন-q-09-q-11-q-12-q-15-q-18-q-20-q-22q-28-q-31-q-32-q-36q-41-q-43-q-48-q-56-q-57-q-58-q-66-q-67">4. অস্পষ্টতা — কোড পড়া যায়, উদ্দেশ্য অজানা (Q-09, Q-11, Q-12, Q-15, Q-18, Q-20, Q-22–Q-28, Q-31, Q-32, Q-36–Q-41, Q-43, Q-48, Q-56, Q-57, Q-58, Q-66, Q-67)</h2>
+<p>কোড হুবহু যা করে তাই করে। অজানা হলো, সেটাই কি অভিসন্ধ ছিল।</p>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>প্রশ্ন</th>
+<th>কোডের পাঠ</th>
+<th>কোথা থেকে উদ্ধৃত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong id="q-09">Q-09</strong></td>
+<td>SQS consumer-দের জন্য অভিসন্ধ <strong>retry ও dead-letter নীতি</strong> কী?</td>
+<td><code>RetryCount</code> শুধু deserialize করা কপিতে বাড়ানো হয় এবং message-টি সেই সাথে আবার publish হয় না, তাই <code>MAX_RETRY_COUNT = 3</code> কখনো পৌঁছায় না এবং স্থায়ীভাবে ব্যর্থ message queue-এর visibility timeout-এ চিরতরে retry হয়। কোনো consumer-এর কোডে দৃশ্যমান dead-letter ব্যবস্থাপনা নেই।</td>
+<td><a href="50-system-initiated/S-01-level-capacity-update.html">S-01</a>, <a href="50-system-initiated/S-02-event-live-capacity.html">S-02</a>, <a href="50-system-initiated/S-08-ticket-signing.html">S-08</a>, <a href="50-system-initiated/S-09-ticket-merge-zip.html">S-09</a>, <a href="50-system-initiated/S-10-vat-challan.html">S-10</a></td>
+</tr>
+<tr>
+<td><strong id="q-11">Q-11</strong></td>
+<td><strong>পেমেন্ট হয়ে যাওয়া কিন্তু দেরি করা</strong> order কি reconcile হয়, নাকি নীরবে হারিয়ে যায়?</td>
+<td><code>CancelBookingAsync</code> DgePay-কে জিজ্ঞাসা করে উত্তর ফেলে দেয়, এবং ১২ মিনিটের পুরোনো প্রতিটি <code>Pending</code>/<code>Failed</code> order বাতিল করে। ৭–১০ মিনিটের check window-এর পরে পেমেন্ট করা গ্রাহকের টাকা কেটে নেওয়া হতে পারে আর order বাতিল হয়ে যেতে পারে। এটি কি কেউ হাতে reconcile করে তা দেখা যায় না।</td>
+<td><a href="50-system-initiated/S-05-pending-failed-revalidation.html">S-05</a>, <a href="20-user-portal/P-06-booking-payment.html">P-06</a></td>
+</tr>
+<tr>
+<td><strong id="q-12">Q-12</strong></td>
+<td><strong><code>Requested</code>-এ আটকে থাকা</strong> order-এর কী হয়?</td>
+<td>যেসব order-এর টিকিট সই করা শেষ হয় না তাদের জন্য কোনো timeout, কোনো alert ও কোনো dead-letter নেই। সাপোর্ট তাদের reconciliation স্ক্রিনে খুঁজে পায়।</td>
+<td><a href="50-system-initiated/S-06-booking-status-generated.html">S-06</a>, <a href="50-system-initiated/S-07-initiate-user-ticket-generation.html">S-07</a>, <a href="20-user-portal/P-08-ticket-generation-request.html">P-08</a></td>
+</tr>
+<tr>
+<td><strong id="q-15">Q-15</strong></td>
+<td><strong>দেরি করা <code>Paid</code> callback</strong> কি VAT challan publish করা উচিত?</td>
+<td>Order status কেবল ১২ মিনিটের মধ্যে প্রয়োগ হয়, কিন্তু VAT message যেকোনো <code>Paid</code> callback-এর জন্য বয়স না দেখেই publish হয় — তাই দেরি করা callback এমন একটি order-এর জন্য VAT রেকর্ড করে যা <code>Pending</code> থাকে বা পরে বাতিল হয়। কেবল DgePay-নিশ্চিত order-ই publish করে; re-check ও bypass দিয়ে চিহ্নিত order করে না।</td>
+<td><a href="50-system-initiated/S-10-vat-challan.html">S-10</a>, <a href="20-user-portal/P-06-booking-payment.html">P-06</a></td>
+</tr>
+<tr>
+<td><strong id="q-18">Q-18</strong></td>
+<td>Promo code-এর <code>IsActive</code> / <code>IsPublished</code> ফ্ল্যাগ কি তার ব্যবহার <strong>নিয়ন্ত্রণ করে</strong>?</td>
+<td><code>ValidateApplyPromoCodeAsync</code> কেবল <code>!IsDeleted</code>, তারিখ ও মোট পড়ে। admin portal-এ কর্মী যে code unpublish করেন তা মুছে ফেলা বা মেয়াদোত্তীর্ণ হওয়ার আগ পর্যন্ত কাজ করে।</td>
+<td><a href="50-system-initiated/S-16-promo-code-status.html">S-16</a>, <a href="20-user-portal/P-05-apply-promo-code.html">P-05</a></td>
+</tr>
+<tr>
+<td><strong id="q-20">Q-20</strong></td>
+<td><strong>ব্যবহার হওয়া team মুছে ফেলা</strong> কি আটকে রাখা উচিত?</td>
+<td>ইভেন্ট কর্তৃক ব্যবহৃত team soft-deleted হতে পারে; ইভেন্ট পেজগুলো এখনও তা দেখাবে কি না তা নির্ভর করে কোন query সেটি পড়ে তার ওপরে।</td>
+<td><a href="10-admin-portal/A-04-teams.html">A-04</a></td>
+</tr>
+<tr>
+<td><strong id="q-22">Q-22</strong></td>
+<td><strong>bulk seat-reservation</strong> endpoint (<code>CreateBulk</code>, ডিফল্ট 65 %) কি সত্যিকারের ফিচার?</td>
+<td>admin portal-এ কোনো caller পাওয়া যায়নি, আর শতাংশের ধ্রুবটির ব্যাখ্যা নেই। ব্যবসা নিশ্চিত না করা পর্যন্ত এটি interface-এর বাইরে রাখুন।</td>
+<td><a href="10-admin-portal/A-11-seat-reservation.html">A-11</a></td>
+</tr>
+<tr>
+<td><strong id="q-23">Q-23</strong></td>
+<td><strong>ইভেন্টের আগে লেআউট প্রকাশের</strong> নিয়ম কি UI ছাড়া আর কোথাও enforced?</td>
+<td>একটি লেআউট তার program ও venue-এর ইভেন্ট হওয়ার পর unpublish বা delete করা যায় না, draft হলেও; কিন্তু active gallery অনুযায়ী প্রকাশিত লেআউট ছাড়া ইভেন্ট প্রকাশ করা যায় না। এটি UI-পর্যায়ের নিয়ম, এর পেছনে কোনো database বা service constraint নেই।</td>
+<td><a href="10-admin-portal/A-13-ticket-layouts.html">A-13</a></td>
+</tr>
+<tr>
+<td><strong id="q-25">Q-25</strong></td>
+<td><strong>soft-deleted promo code</strong> কি তার text দিয়ে এখনও ব্যবহার বন্ধ করে?</td>
+<td><code>ExistsAsync</code> কেবল non-deleted code দেখে, তাই মুছে ফেলা code-এর text পুনরায় ব্যবহার করা যেতে দেখায়। এটি কি অভিসন্ধ তা অজানা।</td>
+<td><a href="10-admin-portal/A-15-promo-codes.html">A-15</a></td>
+</tr>
+<tr>
+<td><strong id="q-26">Q-26</strong></td>
+<td><strong>একজন checker মুছে ফেললে</strong> তার gate assignment কি পরিষ্কার হওয়া উচিত?</td>
+<td>delete শুধু Cognito-কে লক্ষ্য করে; <code>TicketCheckerGateUsers</code> রো টেকে থাকে। অনাথ হয়ে যাওয়া assignment admin স্ক্রিনে অদৃশ্য, কিন্তু ডেটায় তখনও অর্থপূর্ণ।</td>
+<td><a href="10-admin-portal/A-17-ticket-checker-users.html">A-17</a></td>
+</tr>
+<tr>
+<td><strong id="q-27">Q-27</strong></td>
+<td>Gate assignment-এ <strong>Redis write লুপ await না করা</strong> কি একটি বাগ?</td>
+<td><code>Split(',').ToList().ForEach(async e =&gt; …)</code> write-গুলো await করে না, তাই দ্রুত পরের একটি request — বা একটি exception — হলে <code>TicketCheckerLevelGateMap</code> অসম্পূর্ণ থেকে যায় এবং checker app-এর sync gate রিজলভ করতে পারে না।</td>
+<td><a href="10-admin-portal/A-18-gate-assignment.html">A-18</a></td>
+</tr>
+<tr>
+<td><strong id="q-28">Q-28</strong></td>
+<td>Gate report-এ <strong>"duplicate"</strong> মানে কী?</td>
+<td>SQL একটি gate-এর ভিতরে <code>count(...) &gt; 1</code> রো গোনে। <strong>একটি period-এর ভিতরে</strong> দুইবার স্ক্যান করা টিকিট হলো <code>EntryCount</code> 2-সহ একটিমাত্র রো এবং সেটি duplicate <em>নয়</em>; দুটি period-এ স্ক্যান করা টিকিট <em>হলো</em>। এই সংখ্যার ওপর নির্ভর করার আগে ব্যবসাকে সংজ্ঞা নিশ্চিত করতে বলুন।</td>
+<td><a href="10-admin-portal/A-19-gate-reports.html">A-19</a></td>
+</tr>
+<tr>
+<td><strong id="q-31">Q-31</strong></td>
+<td>Reserved ticket-এর ক্ষেত্রে <strong>টিকিট নম্বরের খোঁজ</strong> কেন অসংশ্লিষ্ট order ফেরত দেয়?</td>
+<td>SQL join করে <code>UBO."Id" = (select "BookingOrderId" from "Tickets" …)</code>, কিন্তু reserved ticket সেখানে একটি <strong>reservation id</strong> রাখে, তাই মিলটি একই সংখ্যাযুক্ত অসংশ্লিষ্ট গ্রাহক order-এ পড়ে যায়।</td>
+<td><a href="10-admin-portal/A-23-reconciliation.html">A-23</a></td>
+</tr>
+<tr>
+<td><strong id="q-32">Q-32</strong></td>
+<td>নিষ্ক্রিয় করা admin-এর জন্য অভিসন্ধ <strong>session lifetime</strong> কী?</td>
+<td>Role পরিবর্তন সর্বোচ্চ প্রায় ২ মিনিটের cache lifetime সাথে কার্যকর হয়, আর নিষ্ক্রিয় অ্যাকাউন্টের <strong>বিদ্যমান token মেয়াদ শেষ না হওয়া পর্যন্ত বৈধ থাকে</strong>, কারণ server প্রতিটি request-এ Cognito status যাচাই করে না।</td>
+<td><a href="10-admin-portal/A-25-admin-users.html">A-25</a>, <a href="60-cross-cutting/X-14-authz-pool-policies.html">X-14</a></td>
+</tr>
+<tr>
+<td><strong id="q-36">Q-36</strong></td>
+<td>segment বা venue ছাড়া ইভেন্টের জন্য <strong>ইভেন্ট-লিস্ট ফিল্টার</strong> কেন অসুরক্ষিত?</td>
+<td><code>event.segments.filter(…)</code> ও <code>event.venue.name</code> guard ছাড়া কল করা হয়, তাই দুটোর যেকোনো একটি নেই এমন ইভেন্ট browse পেজ ভেঙে দেয়।</td>
+<td><a href="20-user-portal/P-02-browse-events.html">P-02</a></td>
+</tr>
+<tr>
+<td><strong id="q-37">Q-37</strong></td>
+<td><strong>বাতিল করা কেনাকাটাও আসন ধরে রাখে</strong> — এটি কি অভিসন্ধ?</td>
+<td><code>CreateAsync</code> promo code যাচাইয়ের <strong>আগে</strong> Redis-এ আসন lock করে (১২ মিনিটের lock), তাই বাতিল করা code সাময়িকভাবে inventory ধরে রাখে এবং গ্রাহককে নিজের ব্যর্থ চেষ্টার কারণে "sold out" দেখাতে পারে।</td>
+<td><a href="20-user-portal/P-05-apply-promo-code.html">P-05</a></td>
+</tr>
+<tr>
+<td><strong id="q-38">Q-38</strong></td>
+<td><strong>order-limit যাচাই</strong> কি হুবহু হওয়া উচিত?</td>
+<td><code>order_limit_exceeded</code> কেবল তখন বাজায় যখন গ্রাহকের কাছে <code>AllowableMaximumOrderPerUser</code>-এর <strong>বেশি</strong> order আছে, তাই সীমার ঠিক একটি বেশি order অনুমোদিত; <code>seat_limit_exceeded</code>-এও তুলনীয় off-by-one আছে।</td>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a></td>
+</tr>
+<tr>
+<td><strong id="q-39">Q-39</strong></td>
+<td><strong>machine error code</strong> কি গ্রাহকের জন্য অনূদিত হওয়া উচিত?</td>
+<td><code>err.error.title</code> হুবহু দেখানো হয়, তাই <code>ticket_selling_stopped</code> ও <code>order_limit_exceeded</code>-এর মতো code কাঁচা identifier হিসেবে গ্রাহকের কাছে পৌঁছায়।</td>
+<td><a href="20-user-portal/P-06-booking-payment.html">P-06</a></td>
+</tr>
+<tr>
+<td><strong id="q-40">Q-40</strong></td>
+<td>টিকিট <strong>generation-এর write-গুলো কি atomic হওয়া উচিত?</strong></td>
+<td>Booking order-কে <code>Requested</code> করার আগেই টিকিটগুলো <code>Requested</code> চিহ্নিত হয় এবং message publish হয়; Booking কল ব্যর্থ হলে টিকিটগুলো কোনো parent order ছাড়াই আটকা পড়ে থাকে।</td>
+<td><a href="20-user-portal/P-08-ticket-generation-request.html">P-08</a></td>
+</tr>
+<tr>
+<td><strong id="q-41">Q-41</strong></td>
+<td>টিকিট endpoint-গুলোতে <strong>owner যাচাই</strong> থাকা উচিত কি?</td>
+<td><code>GetUserAllTicketStreamAsync</code>, <code>sync-order-to-oneid</code> ও app-এর সমতুল্য — এসব valid token সহ একটি order বা ticket id নেয় কিন্তু <strong>owner যাচাই করে না</strong>, তাই যেকোনো sign-in করা গ্রাহক একটি id জানলেই অন্য গ্রাহকের টিকিট ডাউনলোড করতে বা তার OneID sync চালু করতে পারে। প্রভাব সীমিত — PDF এখনও order-এর নিজস্ব OneID অ্যাকাউন্টেই যায়।</td>
+<td><a href="20-user-portal/P-09-ticket-details-downloads.html">P-09</a>, <a href="20-user-portal/P-10-oneid-ticket-sync.html">P-10</a>, <a href="30-user-app/U-06-my-bookings-tickets.html">U-06</a></td>
+</tr>
+<tr>
+<td><strong id="q-43">Q-43</strong></td>
+<td>গ্রাহক কি পণ্যের কোথাও <strong>ভুল করে লেখা ফোন নম্বর বা ইমেইল শোধরাতে</strong> পারে?</td>
+<td>Portal ও app দুটোই নাম, ফোন ও ইমেইল read-only হিসেবে দেখায় এবং <code>PUT</code> body-তে এমন কোনো field নেই। ভুল ফোন নম্বর ঠিক করার পণ্যে কোনো পথ নেই।</td>
+<td><a href="20-user-portal/P-11-profile.html">P-11</a>, <a href="30-user-app/U-07-profile-settings.html">U-07</a></td>
+</tr>
+<tr>
+<td><strong id="q-48">Q-48</strong></td>
+<td>অভিসন্ধ <strong>attachment size limit</strong> কোনটি — 10 MB নাকি 5 MB?</td>
+<td>server 10 MB গ্রহণ করে (<code>ReportIssueChatManager.cs:185-186</code>) আর portal client 5 MB-তে সীমাবদ্ধ করে (<code>report-issue-details.component.ts:127</code>), তাই ৭ MB attachment ব্রাউজার প্রত্যাখ্যান করে এবং কারণটি বোঝার কোনো উপায় থাকে না। Server-side MIME allowlist-ও পাওয়া যায়নি, আর client jpeg/png/jpg/pdf-তে সীমাবদ্ধ — সীমাটি কি কেবল এক পাশে থাকা উচিত তা নিশ্চিত করুন।</td>
+<td><a href="20-user-portal/P-12-issues-chat.html">P-12</a>, <a href="30-user-app/U-08-issues-chat.html">U-08</a></td>
+</tr>
+<tr>
+<td><strong id="q-56">Q-56</strong></td>
+<td>আসনের মানচিত্র খোলা থাকা অবস্থায় app কি <strong>আসন refresh</strong> করা উচিত?</td>
+<td>level খোলার সময় app একটি level-এর আসন ঠিক একবার আনে, কোনো <code>Timer</code> বা refresh লুপ ছাড়া, আর portal interaction-এর ওপর refresh করে। এটি <a href="#5-defects--code-that-appears-wrong">Q-54</a>-এর app-এর উদাহরণ, কিন্তু আলাদা করে বলা হয়েছে কারণ এটিই সেই একটি যেটি গ্রাহককে পুরোনো availability-র ওপর কাজ করতে দেয় এবং checkout-এ বাতিল পায়।</td>
+<td><a href="30-user-app/U-04-seat-selection-promo.html">U-04</a></td>
+</tr>
+<tr>
+<td><strong id="q-66">Q-66</strong></td>
+<td>কয়েকটি ইভেন্টে <strong>নিয়োজিত একজন checker</strong> কি তাদের মধ্যে বদলাতে পারা উচিত?</td>
+<td>একাধিক নিয়োগ নীরবে প্রথমটিতে সংকুচিত হয় (<code>qr_page_view_model.dart:154</code> ও <code>event_page_view_model.dart:60</code>-এ <code>eventList.first</code>), তাই দুটি ইভেন্ট কভার করা একজন checker কেবল প্রথমটিতেই কাজ করতে পারেন, বদলানোর কোনো উপায় ছাড়া — অথচ admin portal অনেক-অনেক নিয়োগ সমর্থন করে। app কিংবা assignment স্ক্রিন — একটি বদলাতে হবে।</td>
+<td><a href="40-checker-app/C-01-assigned-event-gate.html">C-01</a>, <a href="10-admin-portal/A-18-gate-assignment.html">A-18</a></td>
+</tr>
+<tr>
+<td><strong id="q-67">Q-67</strong></td>
+<td>অবশিষ্ট <strong><code>movie*</code> route enum</strong> নামগুলো কি সরানো উচিত?</td>
+<td><code>route_path.dart</code>-এ <code>movieList</code>, <code>movieDetails</code>, <code>movieSearch</code> ও <code>movieBookmark</code> একটি movie-ticket template থেকে এসেছে; <code>movieList</code>, <code>movieDetails</code> ও <code>movieBookmark</code>-এর পেছনে কোনো feature folder নেই, আর <code>movieSearch</code>-ও মৃত। এগুলো মুছে ফেলার আগে নিশ্চিত করুন যে এই path-গুলোর ওপর নির্ভরশীল কোনো বাহ্যিক deep link নেই।</td>
+<td><a href="40-checker-app/C-01-assigned-event-gate.html">C-01</a>, <a href="90-appendix-a-legacy.html">Appendix A</a></td>
+</tr>
+<tr>
+<td><strong id="q-57">Q-57</strong></td>
+<td><strong>gateway কোনো <code>checkoutUrl</code> না দিলে</strong> app কী করবে?</td>
+<td><code>if (paymentUrl != null)</code>-এ কোনো <code>else</code> নেই, তাই null checkout URL কোথাও নেভিগেট করে না এবং কোনো বার্তা না দিয়ে order-কে pending রাখে।</td>
+<td><a href="30-user-app/U-05-booking-webview-payment.html">U-05</a></td>
+</tr>
+<tr>
+<td><strong id="q-58">Q-58</strong></td>
+<td>app কি redirect থেকে অনুমান না করে <strong>server-এর সাথে পেমেন্ট নিশ্চিত করা</strong> উচিত?</td>
+<td>সফলতা নির্ধারণ হয় <code>request.url.contains(targetUrlHostName)</code> দিয়ে — substring, prefix নয় — আর fallback target হলো production domain <code>'ticket-bangla.com/tickets'</code>। webhook ব্যর্থ হয়েও যে redirect সফল হয় তা গ্রাহককে সফল পেমেন্ট হিসেবে জানানো হয়।</td>
+<td><a href="30-user-app/U-05-booking-webview-payment.html">U-05</a></td>
+</tr>
+</tbody>
+</table>
+<p><a id="5-defects--code-that-appears-wrong"></a></p>
+<h2 id="5-defect-য-কডট-ভল-বল-মন-হচছ-q-10-q-14-q-17-q-33-q-44-q-46-q-47-q-51-q-53-q-54-q-55-q-59-q-60-q-61-q-64-q-65-q-68-q-71-q-72-q-74-q-75-q-76-q-77">5. Defect — যে কোডটি ভুল বলে মনে হচ্ছে (Q-10, Q-14, Q-17, Q-33, Q-44, Q-46, Q-47, Q-51, Q-53, Q-54, Q-55, Q-59, Q-60, Q-61, Q-64, Q-65, Q-68, Q-71, Q-72, Q-74, Q-75, Q-76, Q-77)</h2>
+<p>এগুলো প্রশ্ন নয়, finding। প্রতিটিই কোড থেকে পুনরায় উৎপাদনযোগ্য।</p>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Finding</th>
+<th>প্রমাণ</th>
+<th>কোথা থেকে উদ্ধৃত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong id="q-10">Q-10</strong></td>
+<td><strong>Payment-bypass handler-এ key অমিল।</strong> <code>Failed</code>-এ <code>HandleDgePaymentBypass</code> মুছে ফেলে <code>level_locked_{EventId}_…</code> (underscore, public event id) থেকে, আর বাকি সব <code>level_locked:{EventLongId}_…</code> ব্যবহার করে, তাই entry সরে যায় না এবং কেবল ১২ মিনিটের নিয়মে মেয়াদ শেষ হয়।</td>
+<td><code>S-01</code></td>
+<td><a href="50-system-initiated/S-01-level-capacity-update.html">S-01</a></td>
+</tr>
+<tr>
+<td><strong id="q-14">Q-14</strong></td>
+<td><strong>Merge/ZIP request যাচাইয়ে chunk index অমিল।</strong> <code>RequestMergeTicketsAsync</code> ও <code>RequestZipTicketsAsync</code> সেই level-এর <em>reservation</em>-এর সংখ্যা থেকে শেষ chunk index বের করে; <code>UtilityService</code> ব্যবহার করে এই reservation-এর <em>ticket</em>-এর সংখ্যা। তাই "ইতিমধ্যে তৈরি হয়েছে" যাচাইটি worker যে ফাইল নাম লেখে তার ভিন্ন নাম খোঁজে।</td>
+<td><code>S-09</code></td>
+<td><a href="50-system-initiated/S-09-ticket-merge-zip.html">S-09</a></td>
+</tr>
+<tr>
+<td><strong id="q-17">Q-17</strong></td>
+<td><strong><code>ticketCheckerDbSync</code>-এর কোনো expiry নেই।</strong> মাঝপথে মারা পড়া একটি pod ফ্ল্যাগটি <code>true</code> রেখে দেয় চিরতরে, আর <strong>সব</strong> checker sync আটকে থাকে যতক্ষণ না হাতে (<code>SET ticketCheckerDbSync false</code>) পরিষ্কার করা হয়।</td>
+<td><code>S-14</code></td>
+<td><a href="50-system-initiated/S-14-checked-ticket-sync.html">S-14</a></td>
+</tr>
+<tr>
+<td><strong id="q-33">Q-33</strong></td>
+<td><strong>HTML sanitize ছাড়াই সংরক্ষিত ও sanitize ছাড়াই রেন্ডার হয়।</strong> Admin content editor ও notices editor যে HTML পাচ্ছে তাই সংরক্ষণ করে; portal Terms ও Privacy-কে <code>bypassSecurityTrustHtml</code> দিয়ে রেন্ডার করে। Content-editor role-এর যে কেউ থাকেন তিনি প্রতিটি দর্শকের ব্রাউজারে script চালাতে পারেন।</td>
+<td><code>A-29</code>, <code>A-31</code>, <code>P-03</code></td>
+<td><a href="10-admin-portal/A-29-content-editor.html">A-29</a>, <a href="10-admin-portal/A-31-general-notices.html">A-31</a>, <a href="20-user-portal/P-03-info-pages.html">P-03</a></td>
+</tr>
+<tr>
+<td><strong id="q-44">Q-44</strong></td>
+<td><strong>Database-এর content কখনও অনূদিত হয় না।</strong> ভাষা বদলানো শুধু client-side — কোনো request-এ <code>Accept-Language</code> বা locale field যায় না — তাই শুধু portal-এর chrome-ই ভাষা বদলায়। বাংলা-প্রথম লঞ্চের জন্য এটি একক সবচেয়ে বড় ফাঁক।</td>
+<td><code>P-13</code></td>
+<td><a href="20-user-portal/P-13-language-switch.html">P-13</a></td>
+</tr>
+<tr>
+<td><strong id="q-46">Q-46</strong></td>
+<td><strong>Issue-chat REST API দুটি কপিতেই সম্পূর্ণভাবে অপ্রমাণীকৃত।</strong> <code>UserIssue/ReportIssueChatController</code> এবং legacy <code>Admin/UserIssueChatController</code> (একই route <code>api/v1/user-issue-chat</code>, একই আটটি endpoint) — কোনোটিতেই <code>[Authorize]</code> নেই, আর <code>senderId</code> / <code>senderName</code> / <code>senderType</code> <strong>client-সরবরাহকৃত form field</strong> — তাই anonymous caller <code>ADMIN</code> হিসেবে মেসেজ পোস্ট করতে পারে। দুটো SignalR hub <em>authorized</em>, তাই এটি একটি অসামঞ্জস্য। এটি এই হ্যান্ডওভারের সবচেয়ে গুরুতর security finding।</td>
+<td><code>ReportIssueChatController.cs:12</code>, <code>UserIssueChatController.cs:12</code></td>
+<td><a href="20-user-portal/P-12-issues-chat.html">P-12</a>, <a href="30-user-app/U-08-issues-chat.html">U-08</a>, <a href="90-appendix-a-legacy.html">Appendix A</a></td>
+</tr>
+<tr>
+<td><strong id="q-47">Q-47</strong></td>
+<td><strong>"একটি order-এ একটি issue"</strong> একটি manager check, database constraint নয়। <code>UserIssueDbContext.cs:105</code>-এ <code>HasIndex(p =&gt; p.PublicOrderId)</code> আছে কিন্তু <code>IsUnique()</code> নেই, আর manager-এর check-then-act সম্পর্কে race তৈরি হয়।</td>
+<td><code>UserIssueDbContext.cs:105</code></td>
+<td><a href="20-user-portal/P-12-issues-chat.html">P-12</a></td>
+</tr>
+<tr>
+<td><strong id="q-51">Q-51</strong></td>
+<td><strong>App-version check তার error গিলে ফেলে।</strong> কলটি <code>try/catch</code>-এ মোড়ানো এবং exception ফেলে দেওয়া হয়, তাই launch-এর সময় নেটওয়ার্ক নেই এমন গ্রাহক force-update gate নীরবে পেরিয়ে যান, থামেন না।</td>
+<td><code>splash_view_model.dart:82-84</code></td>
+<td><a href="30-user-app/U-01-splash-onboarding.html">U-01</a></td>
+</tr>
+<tr>
+<td><strong id="q-53">Q-53</strong></td>
+<td><strong>Gallery ও হোম ব্যানার একই endpoint কল করে।</strong> <code>landing-page-image/public</code> দুটি service থেকে কল করা হয় (<code>event_api_service_impl.dart:36</code>, <code>gallery_api_service_impl.dart:13</code>), তাই দুটি স্ক্রিন স্বাধীনভাবে ফিল্টার করা যায় না।</td>
+<td><code>U-02</code>, <code>U-03</code></td>
+<td><a href="30-user-app/U-02-home-browse-events.html">U-02</a>, <a href="30-user-app/U-03-info-pages.html">U-03</a></td>
+</tr>
+<tr>
+<td><strong id="q-54">Q-54</strong></td>
+<td><strong>App-এ কোথাও polling নেই।</strong> আসনের তালিকা, ইভেন্টের তালিকা ও টিকিট generation status — প্রতিটিই একবার আনা হয়; endpoint-গুলো polling সমর্থন করে কিন্তু app-এ কোনো <code>Timer</code> নেই। Portal polling করে; app করে না, তাই টিকিটের জন্য অপেক্ষা করা গ্রাহককে স্ক্রিনটি আবার খুলতে হয়।</td>
+<td><code>U-02</code>, <code>U-04</code>, <code>U-06</code></td>
+<td><a href="30-user-app/U-02-home-browse-events.html">U-02</a>, <a href="30-user-app/U-04-seat-selection-promo.html">U-04</a>, <a href="30-user-app/U-06-my-bookings-tickets.html">U-06</a></td>
+</tr>
+<tr>
+<td><strong id="q-55">Q-55</strong></td>
+<td><strong>Admin HTML অ্যাপে ফিল্টার ছাড়া রেন্ডার হয়।</strong> কোনো sanitisation configuration ছাড়া <code>flutter_html</code> 3.0.0, <code>booking_details/widgets/ticket_guideline.dart:56</code> ও <code>event_list/widgets/warning_message.dart:87</code>-এ। এটি app-এ Q-33-এর প্রতিরূপ।</td>
+<td><code>U-03</code></td>
+<td><a href="30-user-app/U-03-info-pages.html">U-03</a></td>
+</tr>
+<tr>
+<td><strong id="q-59">Q-59</strong></td>
+<td><strong>App <code>GET user/my-profile</code>-এ <code>user_id</code> query parameter হিসেবে পাঠায়</strong>, যেখানে portal bearer token-এর ওপর নির্ভর করে। কার প্রোফাইল ফেরত আসবে তা নির্ধারণ করে identity API query parameter নাকি token অনুসরণ করে কি না।</td>
+<td><code>profile_api_service_impl.dart:17-22</code></td>
+<td><a href="30-user-app/U-07-profile-settings.html">U-07</a></td>
+</tr>
+<tr>
+<td><strong id="q-60">Q-60</strong></td>
+<td><strong>দুই client <code>dob</code> ভিন্নভাবে ফরম্যাট করে</strong> — app <code>yyyy-MM-dd</code>-এ, portal পূর্ণ ISO timestamp-এ — আর <strong id="q-59">Q-59</strong> যোগ করে <code>user_id</code> query parameter। identity API যদি কঠোরভাবে যাচাই করে, তবে দুই client-এর একটি ব্যর্থ হবে।</td>
+<td><code>U-07</code></td>
+<td><a href="30-user-app/U-07-profile-settings.html">U-07</a>, <a href="20-user-portal/P-11-profile.html">P-11</a></td>
+</tr>
+<tr>
+<td><strong id="q-61">Q-61</strong></td>
+<td><strong><code>delete-my-profile</code> বাস্তবায়িত কিন্তু অপৌঁছযোগ্য নয়।</strong> <code>auth_api_service_impl.dart:296</code> endpoint কল করে, কিন্তু কোনো view model বা স্ক্রিন সেটি ডাকে না এবং কোনো route নেই। <strong>এটি <a href="60-cross-cutting/X-11-delete-account-force-update.html">X-11</a>-এর সাথে বিরোধিতা করে, যা সংশোধন করতে হবে</strong> — data layer আছে, UI নেই।</td>
+<td><code>auth_api_service_impl.dart:296</code></td>
+<td><a href="30-user-app/U-07-profile-settings.html">U-07</a></td>
+</tr>
+<tr>
+<td><strong id="q-64">Q-64</strong></td>
+<td><strong>App-এ push handling অসম্পূর্ণ।</strong> কোনো <strong><code>onBackgroundMessage</code> handler</strong> নেই এবং কোনো tap-navigation handler নেই (<code>getNotificationAppLaunchDetails</code> / <code>onMessageOpenedApp</code> অনুপস্থিত), আর <code>if (message.notification == null) return;</code> data-only message ফেলে দেয়। কোনো notification-এ tap করলে app খোলে কিন্তু কোথাও নেভিগেট করে না — তাই "আপনার টিকিট প্রস্তুত" গ্রাহককে তার টিকিটে নিয়ে যায় না।</td>
+<td><code>U-10</code></td>
+<td><a href="30-user-app/U-10-push-receipt.html">U-10</a></td>
+</tr>
+<tr>
+<td><strong id="q-65">Q-65</strong></td>
+<td><strong>কোনো read receipt নেই।</strong> Notification আসলে app কোনো API কল করে না, আর প্ল্যাটফর্মে কোনো read-receipt endpoint নেই। প্ল্যাটফর্ম বলতে পারে না গ্রাহক টিকিট-প্রস্তুত notification দেখেছেন কি না, যা S-12 সাপোর্ট workflow-র জন্য গুরুত্বপূর্ণ।</td>
+<td><code>U-10</code></td>
+<td><a href="30-user-app/U-10-push-receipt.html">U-10</a></td>
+</tr>
+<tr>
+<td><strong id="q-68">Q-68</strong></td>
+<td><strong><code>-1</code> manual-entry রীতি অনূদক।</strong> <code>state.isManual ? -1 : 1</code> হলো wire-এর ওপর manual entry আলাদা করার একমাত্র জায়গা, আর backend-এ কিছুই sign-টি নথিভুক্ত বা যাচাই করে না। <strong>বদলানোর আগে BS23-এর কাছে server-এর কাছে <code>-1</code> মানে কী জেনে নিন</strong> — gate report এর ওপর এর নির্ভরশীলতা আছে।</td>
+<td><code>qr_repository_impl.dart:24-26</code></td>
+<td><a href="40-checker-app/C-02-offline-ticket-download.html">C-02</a>, <a href="40-checker-app/C-04-manual-entry.html">C-04</a>, <a href="40-checker-app/C-05-ticket-sync.html">C-05</a></td>
+</tr>
+<tr>
+<td><strong id="q-71">Q-71</strong></td>
+<td><strong>অনুপস্থিত QR label "ভুল QR" দেখানোর বদলে exception ছুঁড়ে।</strong> <code>.where((e) =&gt; e.label == "…").toList().single</code> শূন্য বা একাধিক মিলে exception তোলে, তাই ত্রুটিপূর্ণ বা তৃতীয় পক্ষের QR একটি বন্ধুতৎপূর্ণ বার্তার বদলে অনিয়ন্ত্রিত exception দেয়।</td>
+<td><code>qr_page_view_model.dart</code></td>
+<td><a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a></td>
+</tr>
+<tr>
+<td><strong id="q-72">Q-72</strong></td>
+<td><strong>iOS কোনো QR কোডই যাচাই করতে পারে না।</strong> <code>AppDelegate.swift</code> (১৩ লাইন) কেবল plugin register করে — এতে <strong>কোনো <code>certificate/methods</code> handler নেই এবং কোনো Swift বাস্তবায়নও নেই</strong>। প্রতিটি <code>verifyQrData</code> throw করে, ধরা পড়ে, <code>null</code> ফেরত দেয়, আর প্রতিটি টিকিট ভুল বলে জানানো হয়। একটি Swift <code>verifyCertificate</code> লেখা হওয়ার আগে checker app <strong>আসল validation-এর জন্য শুধু Android</strong>। এটি <strong>কোনো</strong> barcode-scanner সীমাবদ্ধতা নয়।</td>
+<td><code>AppDelegate.swift:1-13</code></td>
+<td><a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a>, <a href="40-checker-app/C-06-manual-ticket-validation.html">C-06</a></td>
+</tr>
+<tr>
+<td><strong id="q-74">Q-74</strong></td>
+<td><strong>Duplicate scanning শুধু স্থানীয়ভাবে শনাক্ত হয়</strong>, <code>count &gt; 0</code> দিয়ে। একই gate-এ থাকা দুটি ডিভাইস একই download নিয়ে একই টিকিট দুটোই গ্রহণ করতে পারে; server-কে পরে sync-ই জানানো হয়।</td>
+<td><code>C-03</code></td>
+<td><a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a></td>
+</tr>
+<tr>
+<td><strong id="q-75">Q-75</strong></td>
+<td><strong>Manual entry VDS signature verification সম্পূর্ণভাবে এড়িয়ে যায়।</strong> signature path কেবল <code>onQRCodeDetected</code>-এ আছে; manual entry সরাসরি local-map lookup-এ যায়। তাই একজন checker ডাউনলোড করা সেটে থাকা যেকোনো ticket id — মুদ্রিত হোক বা না হোক — গ্রহণ করতে পারেন — আর <strong>অজানা id-ও database-এ লেখা হয়</strong>, যা না-থাকা একটি টিকিটের জন্য পরে <code>-1</code> report হয়ে দেখায়। Comment করা দৈর্ঘ্য যাচাই এটি আরও বড় করে।</td>
+<td><code>C-04</code></td>
+<td><a href="40-checker-app/C-04-manual-entry.html">C-04</a></td>
+</tr>
+<tr>
+<td><strong id="q-76">Q-76</strong></td>
+<td><strong>ব্যর্থ sync-ও "last sync time" আপডেট করে।</strong> ফল অজানা হওয়ার আগেই <code>_lastSyncTime</code> শর্তহীনভাবে সেট করা হয়, তাই UI এমন সফল sync দাবি করতে পারে যা কখনো ঘটেনি। স্ক্যানগুলো নিজেরা নিরাপদ — কেবল দেখানো সময় মিথ্যা বলে। Retry backoff-ও নেই, failure counter-ও নেই।</td>
+<td><code>qr_page_view_model.dart:129</code></td>
+<td><a href="40-checker-app/C-05-ticket-sync.html">C-05</a></td>
+</tr>
+<tr>
+<td><strong id="q-77">Q-77</strong></td>
+<td><strong><code>/manualTicketValidation</code> কি admissions-এর জন্য অভিসন্ধ?</strong> এটি কেবল authenticity প্রমাণ করে — event নয়, gate নয়, আগে ব্যবহৃত হয়েছে কি না নয়। এটি দিয়ে গ্রাহকদের ঢোকাতে চাইলে কেউ ব্যবহৃত বা ভুল gate-এর টিকিট ঢুকতে দেবেন। UI-তে এটিকে একটি diagnostic tool হিসেবে চিহ্নিত করা উচিত।</td>
+<td><code>C-06</code></td>
+<td><a href="40-checker-app/C-06-manual-ticket-validation.html">C-06</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-সরকষত-অবযবহত-id">6. সংরক্ষিত, অব্যবহৃত id</h2>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>অবস্থা</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong id="q-21">Q-21</strong></td>
+<td>অব্যবহৃত — খসড়া তৈরির সময় সংরক্ষিত, কোনো ফিচার উদ্ধৃত করে না।</td>
+</tr>
+<tr>
+<td><strong id="q-24">Q-24</strong></td>
+<td>অব্যবহৃত — খসড়া তৈরির সময় সংরক্ষিত, কোনো ফিচার উদ্ধৃত করে না।</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-সমধনর-পরসতবত-করম">7. সমাধানের প্রস্তাবিত ক্রম</h2>
+<ol>
+<li><strong>আগে security</strong> — Q-46, Q-04, Q-62, Q-33, Q-55, Q-47। এগুলো এখনই পৌঁছানো যায় এমন finding; এদের কোনোটিতে কোড যাচাই করতে BS23-এর দরকার নেই, শুধু পৌঁছানো যায় কি না তা নিশ্চিত করতে হবে।</li>
+<li><strong>কোডের বিপরীতে ডকুমেন্টেশন সংশোধন</strong> — Q-61 (X-11 ঠিক করুন), Q-34 (A-30 কে app-এর সাথে মিলান), Q-35 (কোন notice স্ক্রিন অভিসন্ধ তা সিদ্ধান্ত), Q-07 (agent ফিচার scope-এর অভ্যন্তরে কি না সিদ্ধান্ত)।</li>
+<li><strong>টাকা ও inventory-এর সঠিকতা</strong> — Q-11, Q-15, Q-68, Q-38, Q-10, Q-14, Q-17। অভিসন্ধ অর্থ বুঝতে BS23-এর কাছে জিজ্ঞাসা করুন, তারপর ঠিক করুন।</li>
+<li><strong>গ্রাহক-দৃশ্যমান আচরণ</strong> — Q-44 ও Q-45 (ভাষা), Q-64 ও Q-65 (push), Q-54 ও Q-56 (polling), Q-72 (iOS), Q-51 ও Q-52 (force update), Q-57 ও Q-58 (পেমেন্ট), Q-48 (attachment limit)।</li>
+<li><strong>Gate পরিচালনা</strong> — Q-73 (certificate rotation), Q-70 (database migrations), Q-69 (download paging), Q-66 (একাধিক নিয়োগ), Q-75 ও Q-77 (manual entry ও diagnostic)।</li>
+<li><strong>Go-live-এর আগে সংগ্রহ করার deployment মান</strong> — Q-01, Q-02, Q-03, Q-05, Q-06, Q-13, Q-16, Q-19, Q-29, Q-30, Q-42, Q-49, Q-50, Q-63।</li>
+</ol>
+<hr />
+<p><strong>মোট: ৭৫টি ওপেন কোয়ারি</strong> (Q-01 … Q-77, Q-21 ও Q-24 বাদে)।</p>
+  </main>
+</div>
+<script src="../assets/vendor/mermaid.min.js"></script>
+<script src="../assets/site.js?v=d7ce93f0"></script>
+</body>
+</html>

@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>92 · অ্যাপেন্ডিক্স C — কভারেজ · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../assets/site.css?v=5ded2c9a">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../bn/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">EN</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav class="side-nav">
+    <div class="side-sec" data-dir="ov">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">ওভারভিউ</span>
+        <span class="side-count">৪</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="00-platform-primer.html"><span class="id-chip">00</span><span>প্ল্যাটফর্ম প্রাইমার</span></a>
+        <a class="side-item" href="01-system-map.html"><span class="id-chip">01</span><span>সিস্টেম ম্যাপ</span></a>
+        <a class="side-item" href="02-traceability-matrix.html"><span class="id-chip">02</span><span>ট্রেসেবিলিটি ম্যাট্রিক্স</span></a>
+        <a class="side-item" href="03-component-reverse-index.html"><span class="id-chip">03</span><span>কম্পোনেন্ট রিভার্স ইনডেক্স</span></a>
+      </div>
+    </div>
+    <div class="side-sec is-open" data-dir="ap">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="true" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">পরিশিষ্ট</span>
+        <span class="side-count">৫</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="90-appendix-a-legacy.html"><span class="id-chip">90</span><span>অ্যাপেন্ডিক্স A — লেগ্যাসি, অব্যবহৃত ও নিষ্ক্রিয় কোড</span></a>
+        <a class="side-item" href="91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — এন্ডপয়েন্ট ইনডেক্স</span></a>
+        <a class="side-item is-active" href="92-appendix-c-coverage.html"><span class="id-chip">92</span><span>অ্যাপেন্ডিক্স C — কভারেজ</span></a>
+        <a class="side-item" href="93-appendix-d-local-test-reference.html"><span class="id-chip">93</span><span>অ্যাপেন্ডিক্স D — লোকাল টেস্ট রেফারেন্স</span></a>
+        <a class="side-item" href="99-open-queries.html"><span class="id-chip">99</span><span>ওপেন কোয়ারি</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="10-admin-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a>
+        <span class="side-count">৩১</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>প্রোগ্রাম নির্বাচন ও প্রোগ্রাম-ভিত্তিক মেনু</span></a>
+        <a class="side-item" href="10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>প্রোগ্রাম</span></a>
+        <a class="side-item" href="10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>প্রোগ্রাম সেটিংস</span></a>
+        <a class="side-item" href="10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>দল (টিম)</span></a>
+        <a class="side-item" href="10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>ভেন্যু ও স্টেডিয়াম লেআউট</span></a>
+        <a class="side-item" href="10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>প্রোগ্রাম–ভেন্যু ম্যাপিং ও ভেন্যু ডিটেইলস</span></a>
+        <a class="side-item" href="10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>ইভেন্ট (ম্যাচ)</span></a>
+        <a class="side-item" href="10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>ইভেন্ট সেটিংস ওভাররাইড</span></a>
+        <a class="side-item" href="10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>ইভেন্ট ভেন্যু ডিটেইলস ও লেভেলভিত্তিক দাম</span></a>
+        <a class="side-item" href="10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>ইভেন্ট ধারণক্ষমতা সমন্বয়</span></a>
+        <a class="side-item" href="10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>সিট রিজার্ভেশন (কমপ্লিমেন্টারি / পার্টনার)</span></a>
+        <a class="side-item" href="10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>রিজার্ভড টিকিট তৈরি ও বিতরণ</span></a>
+        <a class="side-item" href="10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>টিকিট লেআউট ও টিকিট অ্যাট্রিবিউট</span></a>
+        <a class="side-item" href="10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>টিকিট-প্রাইসিং কনটেন্ট পেজ</span></a>
+        <a class="side-item" href="10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>প্রোমো কোড</span></a>
+        <a class="side-item" href="10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>সিস্টেম ডিসকাউন্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>টিকিট-চেকার (গেট স্টাফ) অ্যাকাউন্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>গেট অ্যাসাইনমেন্ট ও ডাউনলোড নিয়ন্ত্রণ</span></a>
+        <a class="side-item" href="10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>গেট (টিকিট-চেকার) রিপোর্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>র‍্যাফেল ড্র</span></a>
+        <a class="side-item" href="10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>ড্যাশবোর্ড</span></a>
+        <a class="side-item" href="10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>বুকিং, বিক্রি, রাজস্ব ও পেমেন্ট-অসঙ্গতি রিপোর্ট</span></a>
+        <a class="side-item" href="10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>রিকনসিলিয়েশন অনুসন্ধান</span></a>
+        <a class="side-item" href="10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>ইউজার ইস্যু ও সাপোর্ট চ্যাট (অ্যাডমিন দিক)</span></a>
+        <a class="side-item" href="10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>অ্যাডমিন ইউজার</span></a>
+        <a class="side-item" href="10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>এজেন্ট (বিক্রেতা) ইউজার</span></a>
+        <a class="side-item" href="10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>অ্যাক্টিভিটি লগ ভিউয়ার</span></a>
+        <a class="side-item" href="10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>মিডিয়া কনফিগারেশন (ব্যানার, গ্যালারি, যোগাযোগ, রেজিস্ট্রেশন)</span></a>
+        <a class="side-item" href="10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>কনটেন্ট এডিটর (T&amp;C, FAQ, প্রাইভেসি, নোটিশ)</span></a>
+        <a class="side-item" href="10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>হেডার/ফুটার ও সোশ্যাল-মিডিয়া সেটিংস</span></a>
+        <a class="side-item" href="10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>সাধারণ নোটিশ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="20-user-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="20-user-portal/index.html">20 · ইউজার ওয়েব পোর্টাল</a>
+        <span class="side-count">১৩</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>হোম পেজ কনটেন্ট</span></a>
+        <a class="side-item" href="20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>ইভেন্ট ব্রাউজ ও ইভেন্টের বিস্তারিত</span></a>
+        <a class="side-item" href="20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ, নীতিমালা)</span></a>
+        <a class="side-item" href="20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>সিট নির্বাচন</span></a>
+        <a class="side-item" href="20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>প্রোমো কোড প্রয়োগ</span></a>
+        <a class="side-item" href="20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>বুকিং অর্ডার ও অনলাইন পেমেন্ট (DgePay)</span></a>
+        <a class="side-item" href="20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>আমার বুকিং ও টিকিট তৈরির অবস্থা</span></a>
+        <a class="side-item" href="20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>টিকিট তৈরির অনুরোধ</span></a>
+        <a class="side-item" href="20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>টিকিটের বিস্তারিত, হোল্ডার তথ্য, ডাউনলোড, শেয়ার, ইনভয়েস</span></a>
+        <a class="side-item" href="20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>OneID ওয়ালেটে টিকিট সিঙ্ক</span></a>
+        <a class="side-item" href="20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>প্রোফাইল</span></a>
+        <a class="side-item" href="20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>ইস্যু রিপোর্ট ও সাপোর্টের সাথে চ্যাট</span></a>
+        <a class="side-item" href="20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>ভাষা পরিবর্তন (EN/BN)</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="30-user-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="30-user-app/index.html">30 · ইউজার অ্যাপ</a>
+        <span class="side-count">১০</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>স্প্ল্যাশ, ভার্সন গেট ও অনবোর্ডিং</span></a>
+        <a class="side-item" href="30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>হোম ও ইভেন্ট ব্রাউজ</span></a>
+        <a class="side-item" href="30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>তথ্য পেজ (দাম, গ্যালারি, যোগাযোগ)</span></a>
+        <a class="side-item" href="30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>সিট নির্বাচন ও প্রোমো কোড</span></a>
+        <a class="side-item" href="30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>বুকিং ও WebView পেমেন্ট</span></a>
+        <a class="side-item" href="30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>আমার বুকিং ও টিকিট</span></a>
+        <a class="side-item" href="30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>প্রোফাইল ও সেটিংস</span></a>
+        <a class="side-item" href="30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>ইস্যু রিপোর্ট ও সাপোর্ট চ্যাট</span></a>
+        <a class="side-item" href="30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>পুশ ডিভাইস-টোকেন রেজিস্ট্রেশন</span></a>
+        <a class="side-item" href="30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>পুশ নোটিফিকেশন গ্রহণ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="40-checker-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="40-checker-app/index.html">40 · চেকার অ্যাপ</a>
+        <span class="side-count">৬</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>নির্ধারিত ইভেন্ট ও গেট</span></a>
+        <a class="side-item" href="40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>অফলাইন চেকিংয়ের জন্য টিকিট ডাউনলোড</span></a>
+        <a class="side-item" href="40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR স্ক্যান যাচাই</span></a>
+        <a class="side-item" href="40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>ম্যানুয়াল এন্ট্রি</span></a>
+        <a class="side-item" href="40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>স্ক্যান সিঙ্ক</span></a>
+        <a class="side-item" href="40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>শুধু-সিগনেচার টিকিট যাচাই</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="50-system-initiated">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="50-system-initiated/index.html">50 · সিস্টেম-চালিত</a>
+        <span class="side-count">১৭</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>লেভেল ধারণক্ষমতা হালনাগাদ (OrderSuccess কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>ইভেন্ট লাইভ ধারণক্ষমতা (EventCapacity কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>লক করা ধারণক্ষমতা রিফ্রেশ</span></a>
+        <a class="side-item" href="50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>শিডিউলার ধারণক্ষমতা মিলানো</span></a>
+        <a class="side-item" href="50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>পেন্ডিং/ব্যর্থ পেমেন্ট পুনঃযাচাই</span></a>
+        <a class="side-item" href="50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>বুকিং স্ট্যাটাস → Generated</span></a>
+        <a class="side-item" href="50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>ইউজার টিকিট তৈরি শুরু</span></a>
+        <a class="side-item" href="50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>TSP-এর মাধ্যমে টিকিট সাইনিং (TicketSigning কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>রিজার্ভড টিকিট merge/zip (TicketProcessing কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>NBR-এ VAT চালান (VatChallanProcessing কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>FCM-এ পুশ পাঠানো (FirebaseNotification কিউ)</span></a>
+        <a class="side-item" href="50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>টিকিট-তৈরি নোটিফিকেশন</span></a>
+        <a class="side-item" href="50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>ডিভাইস-টোকেন পরিষ্কার</span></a>
+        <a class="side-item" href="50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>চেকড-টিকিট সিঙ্ক (Redis → ডাটাবেস)</span></a>
+        <a class="side-item" href="50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>গেট ডাউনলোড-স্ট্যাটাস পরিষ্কার</span></a>
+        <a class="side-item" href="50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>প্রোমো-কোড স্ট্যাটাস হালনাগাদ</span></a>
+        <a class="side-item" href="50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>সিস্টেম-ডিসকাউন্ট স্ট্যাটাস হালনাগাদ</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="60-cross-cutting">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="অংশ খোলা / বন্ধ করুন" aria-label="অংশ খোলা / বন্ধ করুন"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="60-cross-cutting/index.html">60 · ক্রস-কাটিং</a>
+        <span class="side-count">২৬</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>অ্যাডমিন লগইন (ফোন OTP + পাসওয়ার্ড)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>অ্যাডমিন পাসওয়ার্ড ভুলে যাওয়া</span></a>
+        <a class="side-item" href="60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>অ্যাডমিন পাসওয়ার্ড পরিবর্তন ও লগআউট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>অ্যাডমিন সেশন ব্যবস্থাপনা (টোকেন সংযুক্তি ও রিফ্রেশ)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>স্টাফ অ্যাকাউন্ট তৈরি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>গ্রাহক নিবন্ধন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>ফোন ও পাসওয়ার্ড দিয়ে গ্রাহক লগইন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID সিঙ্গেল সাইন-অন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>গ্রাহকের পাসওয়ার্ড ভুলে যাওয়া/রিসেট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>গ্রাহকের পাসওয়ার্ড পরিবর্তন, লগআউট ও টোকেন সংযুক্তি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>অ্যাকাউন্ট মুছে ফেলা ও অ্যাপ force-update</span></a>
+        <a class="side-item" href="60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>চেকার লগইন</span></a>
+        <a class="side-item" href="60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>এজেন্ট pool ও অফলাইনে বিক্রি টিকিট</span></a>
+        <a class="side-item" href="60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>অথরাইজেশন স্তর ১: pool স্কিম ও পলিসি</span></a>
+        <a class="side-item" href="60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>অথরাইজেশন স্তর ২–৩: স্টাফ রোল</span></a>
+        <a class="side-item" href="60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>অথরাইজেশন স্তর ৪: প্রোগ্রাম স্কোপ</span></a>
+        <a class="side-item" href="60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>ক্লায়েন্ট-সাইড অথরাইজেশন (মেনু ও গার্ড)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>অথরাইজেশন ছাড়া endpoint</span></a>
+        <a class="side-item" href="60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>সার্ভিস-থেকে-সার্ভিস যোগাযোগ</span></a>
+        <a class="side-item" href="60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>ফাইল স্টোরেজ (S3, CloudFront)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>ইমেইল (SES)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS ও বাহ্যিক নোটিফিকেশন সার্ভিস</span></a>
+        <a class="side-item" href="60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>পুশ নোটিফিকেশন (PushNotification সার্ভিস, Firebase)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>অ্যাক্টিভিটি লগিং (অডিট ট্রেইল)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: ক্যাশ, লাইভ ধারণক্ষমতা ও লক</span></a>
+        <a class="side-item" href="60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>কনফিগারেশন ও সিক্রেট</span></a>
+      </div>
+    </div>
+    </nav>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="index.html">সূচিপত্র</a><span class="sep">›</span><span>92 · অ্যাপেন্ডিক্স C — কভারেজ</span></div>
+<h1><span class="id-chip">92</span> অ্যাপেন্ডিক্স C — কভারেজ</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> কভারেজ</p>
+<p><a href="index.html">← সূচিপত্র</a> · <a href="93-appendix-d-local-test-reference.html">লোকাল টেস্ট রেফারেন্স</a> · <a href="99-open-queries.html">ওপেন কোয়ারি</a></p>
+</blockquote>
+<p>এই ডকুমেন্টেশনে কী কভার করা হয়েছে, কী সচেতনভাবে করা হয়নি, এবং কোথায় কভারেজ পাতলা — সব তা এখানে। আপনার কোনো প্রশ্নের উত্তর এখানে পাবেন কি না, তা বিচার করতে এটি ব্যবহার করুন।</p>
+<h2 id="1-ক-নথভকত-হযছ">1. কী নথিভুক্ত হয়েছে</h2>
+<table>
+<thead>
+<tr>
+<th>সেকশন</th>
+<th>ফিচার</th>
+<th>ফাইল</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="00-platform-primer.html">00 · প্ল্যাটফর্ম প্রাইমার</a></td>
+<td>— (পটভূমি)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="01-system-map.html">01 · সিস্টেম ম্যাপ</a></td>
+<td>— (সূচক)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="02-traceability-matrix.html">02 · ট্রেসেবিলিটি ম্যাট্রিক্স</a></td>
+<td>— (সূচক)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="03-component-reverse-index.html">03 · কম্পোনেন্ট রিভার্স ইনডেক্স</a></td>
+<td>— (সূচক)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/index.html">10 · অ্যাডমিন পোর্টাল</a></td>
+<td>A-01 … A-31</td>
+<td>31 + README</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/index.html">20 · ইউজার পোর্টাল</a></td>
+<td>P-01 … P-13</td>
+<td>13 + README</td>
+</tr>
+<tr>
+<td><a href="30-user-app/index.html">30 · ইউজার অ্যাপ</a></td>
+<td>U-01 … U-10</td>
+<td>10 + README</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/index.html">40 · চেকার অ্যাপ</a></td>
+<td>C-01 … C-06</td>
+<td>6 + README</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/index.html">50 · সিস্টেম-ইনিসিয়েটেড</a></td>
+<td>S-01 … S-17</td>
+<td>17 + README</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/index.html">60 · ক্রস-কাটিং</a></td>
+<td>X-01 … X-26</td>
+<td>26 + README</td>
+</tr>
+<tr>
+<td><a href="90-appendix-a-legacy.html">90–93 · অ্যাপেন্ডিক্স</a></td>
+<td>— (রেফারেন্স)</td>
+<td>4</td>
+</tr>
+<tr>
+<td><a href="99-open-queries.html">99 · ওপেন কোয়ারি</a></td>
+<td>— (কোয়ারি)</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>মোট: 103টি ফিচার ফাইল</strong>, প্রতিটিই একই এগারোটি পয়েন্টের টেমপ্লেট অনুসরণ করে।</p>
+<h2 id="2-পরতট-ফচর-ফইল-ক-থক">2. প্রতিটি ফিচার ফাইলে কী থাকে</h2>
+<p>প্রতিটি ফাইল এই ক্রমে উত্তর দেয়:</p>
+<table>
+<thead>
+<tr>
+<th>§</th>
+<th>সেকশন</th>
+<th>সবসময় আছে?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>নাম ও উদ্দেশ্য</td>
+<td>হ্যাঁ</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ট্রিগার ও অ্যাক্টর</td>
+<td>হ্যাঁ</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ব্যবসায়িক প্রবাহ</td>
+<td>হ্যাঁ</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>প্রযুক্তিগত প্রবাহ</strong> — হপ-বাই-হপ পথ, <code>[HTTP + token]</code> / <code>[SQS: key]</code> / <code>[Worker: interval, lock]</code> ট্যাগ সহ</td>
+<td>হ্যাঁ</td>
+</tr>
+<tr>
+<td>5</td>
+<td>কম্পোনেন্ট</td>
+<td>হ্যাঁ</td>
+</tr>
+<tr>
+<td>6</td>
+<td>API কন্ট্রাক্ট</td>
+<td>হ্যাঁ, উত্তর "None" হলেও</td>
+</tr>
+<tr>
+<td>7</td>
+<td>ডেটা ও পার্শ্বপ্রতিক্রিয়া</td>
+<td>হ্যাঁ</td>
+</tr>
+<tr>
+<td>8</td>
+<td>কোড রেফারেন্স</td>
+<td>হ্যাঁ</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>হ্যান্ডওভার নোট</strong> — ফান্ডিংস, ঝুঁকি ও <span class="badge-unconfirmed">[UNCONFIRMED: Q-nn]</span> মার্কার</td>
+<td>হ্যাঁ</td>
+</tr>
+<tr>
+<td>10</td>
+<td>কম্পোনেন্ট সম্পর্ক (mermaid)</td>
+<td>হ্যাঁ</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>ডেভেলপার টেস্ট গাইড</strong> — টেস্ট ডেটা, ব্রেকপয়েন্ট ও যাচাইয়ের উপায়</td>
+<td>হ্যাঁ</td>
+</tr>
+</tbody>
+</table>
+<p>হ্যান্ডওভারের জন্য সবচেয়ে মূল্যবান তিনটি সেকশন হলো <strong>4</strong>, <strong>9</strong> ও <strong>11</strong>।</p>
+<h2 id="3-পলযটফরম-কষতর-অনযয-কভরজ">3. প্ল্যাটফর্ম ক্ষেত্র অনুযায়ী কভারেজ</h2>
+<table>
+<thead>
+<tr>
+<th>ক্ষেত্র</th>
+<th>নথিভুক্ত</th>
+<th>কতটা ভালো</th>
+<th>ফাঁক</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>অ্যাডমিন মাস্টার ডেটা</strong> (প্রোগ্রাম, ভেন্যু, ইভেন্ট, মূল্য, লেআউট)</td>
+<td>14টি ফিচার</td>
+<td>বিস্তারিত</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>বুকিং ও পেমেন্ট</strong></td>
+<td>8টি ফিচার</td>
+<td>বিস্তারিত</td>
+<td>আসল gateway স্থানীয়ভাবে পরীক্ষা করা যায় না</td>
+</tr>
+<tr>
+<td><strong>টিকিট জেনারেশন ও সাইনিং</strong></td>
+<td>6টি ফিচার</td>
+<td>কোড পথে বিস্তারিত</td>
+<td>আসল TSP সাইনিং পরীক্ষা করা যায় না (<a href="99-open-queries.html">Q-06</a>, <a href="99-open-queries.html">Q-13</a>)</td>
+</tr>
+<tr>
+<td><strong>চেকার অ্যাপ</strong></td>
+<td>6টি ফিচার</td>
+<td>বিস্তারিত</td>
+<td><strong>iOS একেবারে পরীক্ষা করা যায় না</strong> (<a href="99-open-queries.html">Q-72</a>)</td>
+</tr>
+<tr>
+<td><strong>সাপোর্ট ও ইস্যু</strong></td>
+<td>3টি ফিচার</td>
+<td>বিস্তারিত</td>
+<td>নোটিফিকেশন দিকটি বাহ্যিক (<a href="99-open-queries.html">Q-05</a>)</td>
+</tr>
+<tr>
+<td><strong>পুশ নোটিফিকেশন</strong></td>
+<td>4টি ফিচার</td>
+<td>ভালো</td>
+<td>Firebase ডেলিভারি পরীক্ষা করা যায় না (<a href="60-cross-cutting/X-23-push-firebase.html">X-23</a>)</td>
+</tr>
+<tr>
+<td><strong>পরিচয় ও auth</strong></td>
+<td>13টি ফিচার</td>
+<td><strong>স্বাভাবিকভাবেই আংশিক</strong></td>
+<td>identity API-এর কোনো সোর্স নেই (<a href="99-open-queries.html">Q-01</a>)</td>
+</tr>
+<tr>
+<td><strong>এজেন্ট / অফলাইন বিক্রি</strong></td>
+<td>2টি ফিচার</td>
+<td>পাতলা</td>
+<td>কোনো ক্লায়েন্ট নেই (<a href="99-open-queries.html">Q-07</a>)</td>
+</tr>
+<tr>
+<td><strong>অবকাঠামো</strong> (Redis, S3, SES, SMS, কনফিগ, লগিং)</td>
+<td>8টি ফিচার</td>
+<td>ভালো</td>
+<td>ডিপ্লয়মেন্টের মান অজানা (<a href="99-open-queries.html">Q-02</a>, <a href="99-open-queries.html">Q-04</a>)</td>
+</tr>
+<tr>
+<td><strong>ওয়ার্কার ও কিউ</strong></td>
+<td>17টি ফিচার</td>
+<td>বিস্তারিত</td>
+<td>কোনো dead-letter হ্যান্ডলিং নেই (<a href="99-open-queries.html">Q-09</a>)</td>
+</tr>
+<tr>
+<td><strong>অ্যাডমিন রিপোর্টিং</strong></td>
+<td>5টি ফিচার</td>
+<td>ভালো</td>
+<td>রিপোর্টের সংজ্ঞা ও time zone স্পষ্ট নয় (<a href="99-open-queries.html">Q-28</a>, <a href="99-open-queries.html">Q-30</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-য-সচতনভব-নথভকত-কর-হযন">4. যা সচেতনভাবে নথিভুক্ত করা হয়নি</h2>
+<table>
+<thead>
+<tr>
+<th>যা কভার হয়নি</th>
+<th>কেন</th>
+<th>যেখানে আছে</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>identity API-এর ইমপ্লিমেন্টেশন</strong></td>
+<td>ওয়ার্কস্পেসে নেই</td>
+<td><a href="99-open-queries.html">Q-01</a> — BS23-কে জিজ্ঞাসা করুন</td>
+</tr>
+<tr>
+<td><strong>OneID-এর ইমপ্লিমেন্টেশন</strong></td>
+<td>বাহ্যিক, স্থানীয়ভাবে dummy</td>
+<td><code>docs/user-portal-local.md</code> §5</td>
+</tr>
+<tr>
+<td><strong>বাহ্যিক নোটিফিকেশন সার্ভিসের টেমপ্লেট</strong></td>
+<td>বাহ্যিক</td>
+<td><a href="99-open-queries.html">Q-05</a></td>
+</tr>
+<tr>
+<td><strong>NBR VAT-এর API</strong></td>
+<td>বাহ্যিক</td>
+<td><a href="99-open-queries.html">Q-06</a></td>
+</tr>
+<tr>
+<td><strong>ডিপ্লয়মেন্ট ম্যানিফেস্ট, Terraform, ingress নিয়ম</strong></td>
+<td>ওয়ার্কস্পেসে নেই</td>
+<td><code>architecture/gobcb-aws-architecture.md</code> (BS23-এর ডকুমেন্ট, এখানে যাচাই করা হয়নি)</td>
+</tr>
+<tr>
+<td><strong>ডেটাবেস স্কিমার DDL</strong></td>
+<td>migration দিয়ে তৈরি হয়</td>
+<td><code>Services/*/ETP.*.Storage/Migrations/</code></td>
+</tr>
+<tr>
+<td><strong>Unit ও integration টেস্ট স্যুট</strong></td>
+<td>পাঁচটি রিপোজিটরিতে প্রায় কিছুই নেই</td>
+<td>— দেখুন §6</td>
+</tr>
+<tr>
+<td><strong>জেনারেট হওয়া drift <code>.g.dart</code> ফাইল</strong></td>
+<td>জেনারেট করা</td>
+<td><code>data/lib/local/drift_database/*.g.dart</code></td>
+</tr>
+<tr>
+<td><strong>AWS অ্যাকাউন্টের নির্দিষ্ট তথ্য</strong></td>
+<td>BS23-এর</td>
+<td><code>docs/rvl-handover-AWS-access-summary.md</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-কডর-কভরজ">5. কোডের কভারেজ</h2>
+<table>
+<thead>
+<tr>
+<th>কম্পোনেন্ট</th>
+<th>আকার</th>
+<th>নথিভুক্ত</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11টি ব্যাকএন্ড সার্ভিস</td>
+<td>58টি কন্ট্রোলার, 354টি রুট</td>
+<td>প্রতিটি কন্ট্রোলার <a href="91-appendix-b-endpoint-index.html">91</a>-এ সূচকবদ্ধ</td>
+</tr>
+<tr>
+<td>17টি ব্যাকগ্রাউন্ড ওয়ার্কার</td>
+<td>—</td>
+<td>প্রতিটি ওয়ার্কার <a href="03-component-reverse-index.html">03 §6</a>-এ</td>
+</tr>
+<tr>
+<td>6টি SQS কিউ</td>
+<td>—</td>
+<td>প্রতিটি কিউ <a href="03-component-reverse-index.html">03 §5</a>-এ</td>
+</tr>
+<tr>
+<td>~30টি Redis key family</td>
+<td>—</td>
+<td>প্রতিটি key family <a href="03-component-reverse-index.html">03 §4</a>-এ</td>
+</tr>
+<tr>
+<td>~70টি ডেটাবেস টেবিল</td>
+<td>—</td>
+<td>প্রতিটি টেবিল <a href="03-component-reverse-index.html">03 §3</a>-এ</td>
+</tr>
+<tr>
+<td>অ্যাডমিন পোর্টাল</td>
+<td>31টি স্ক্রিন</td>
+<td>সব 31টি ফিচার</td>
+</tr>
+<tr>
+<td>ইউজার পোর্টাল</td>
+<td>13টি ফিচার</td>
+<td>সব 13টি</td>
+</tr>
+<tr>
+<td>ইউজার অ্যাপ</td>
+<td>10টি ফিচার</td>
+<td>সব 10টি</td>
+</tr>
+<tr>
+<td>চেকার অ্যাপ</td>
+<td>6টি ফিচার</td>
+<td>সব 6টি</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ডকুমেন্টেশনের কোড কভারেজ ফিচার-লেভেলে সম্পূর্ণ।</strong> যেটা বদলায় তা হলো গভীরতা: সহজ প্রবাহগুলো সংক্ষেপে নথিভুক্ত, আর যেগুলোতে অপ্রত্যাশিত কিছু লুকানো আছে সেগুলো বিস্তারিতভাবে।</p>
+<h2 id="6-পণযর-ফক-ডকমনটশনর-নয">6. পণ্যের ফাঁক, ডকুমেন্টেশনের নয়</h2>
+<p><strong>পাঁচটি রিপোজিটরির কোনোটিতেই অর্থবহ অটোমেটেড টেস্ট স্যুট নেই।</strong> যা আছে তা ম্যানুয়াল টেস্ট নির্দেশিকা — প্রতিটি ফিচার ফাইলের §11 ডেভেলপার টেস্ট গাইড।</p>
+<p>অর্থাৎ:</p>
+<ul>
+<li>হ্যান্ডওভার নোটে তালিকাভুক্ত প্রতিটি রিগ্রেশন ঝুঁকি CI দ্বারা অরক্ষিত।</li>
+<li>কোনো আচরণ চুপচাপ বদলে যেতে পারে, কারণ কিছুই তা দাবি করে না।</li>
+<li>টেস্ট লেখা পর্যন্ত §11 গাইডগুলোই একমাত্র রিগ্রেশন সুরক্ষা।</li>
+</ul>
+<p>হ্যান্ডওভারের পর RVL যদি একটি বিনিয়োগকে অগ্রাধিকার দেয়, তা হওয়া উচিত সবচেয়ে বেশি ফান্ডিং থাকা প্রবাহগুলোর চারপাশে characterisation test লেখা: চেকার ভ্যালিডেশন পথ (<a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a>), পেমেন্ট callback (<a href="20-user-portal/P-06-booking-payment.html">P-06</a>) এবং চ্যাট অনুমোদন (<a href="20-user-portal/P-12-issues-chat.html">P-12</a>)।</p>
+<h2 id="7-আসথ">7. আস্থা</h2>
+<table>
+<thead>
+<tr>
+<th>বক্তব্যের ধরন</th>
+<th>আস্থা</th>
+<th>নোট</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"এই ফাইলটি এই পাথে আছে"</td>
+<td><strong>যাচাই করা</strong></td>
+<td>এই পর্যালোচনায় প্রতিটি কোড রেফারেন্স পড়া হয়েছে</td>
+</tr>
+<tr>
+<td>"এই এন্ডপয়েন্টটি এই ফাইল থেকে কল হয়"</td>
+<td><strong>যাচাই করা</strong></td>
+<td>কল সাইট পড়া হয়েছে, অনুমান করা হয়নি</td>
+</tr>
+<tr>
+<td>"কোড এটা করে"</td>
+<td><strong>উচ্চ</strong></td>
+<td>কোড পড়া হয়েছে</td>
+</tr>
+<tr>
+<td>"এটা যা করার <em>করা উচিত</em> ছিল"</td>
+<td><strong><code>[UNCONFIRMED]</code> চিহ্নিত</strong></td>
+<td><a href="99-open-queries.html">99</a>-এ 75টি ওপেন কোয়ারি</td>
+</tr>
+<tr>
+<td>"ডিপ্লয় করা সিস্টেম যা করে"</td>
+<td><strong>অজানা</strong></td>
+<td>ডিপ্লয়মেন্টের মান ওয়ার্কস্পেসে নেই (<a href="99-open-queries.html">Q-02</a>, <a href="99-open-queries.html">Q-04</a>, <a href="99-open-queries.html">Q-06</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>যেখানে এই ডকুমেন্টেশন ও BS23-এর <code>gobcb-aws-architecture.md</code> মতভেদ করে, <strong>কোডই জেতে</strong> — আর্কিটেকচার ডকুমেন্টটি ডিপ্লয়মেন্টের অভিসন্ধি বর্ণনা করে, আর এই ডকুমেন্টেশন বর্ণনা করে ওয়ার্কস্পেসের কোড আসলে যা করে।</p>
+<h2 id="8-পরচত-পতল-জযগ">8. পরিচিত পাতলা জায়গা</h2>
+<table>
+<thead>
+<tr>
+<th>জায়গা</th>
+<th>কেন পাতলা</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="60-cross-cutting/X-13-agent-pool.html">X-13</a> / <a href="10-admin-portal/A-26-agent-users.html">A-26</a></td>
+<td>শুধু ব্যাকএন্ডের অর্ধেক আছে; ট্রেস করার মতো কোনো ক্লায়েন্ট নেই (<a href="99-open-queries.html">Q-07</a>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-20-raffle-draw.html">A-20</a> raffle draw</td>
+<td>ছোট ফিচার; Serverless lookup স্থানীয়ভাবে dummy</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-28-media-configuration.html">A-28</a> media</td>
+<td>গ্যালারি ও ব্যানার একই এন্ডপয়েন্ট ব্যবহার করে (<a href="99-open-queries.html">Q-53</a>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-27-activity-log.html">A-27</a> activity log</td>
+<td>পাতলা, কারণ বিস্তারিত <a href="60-cross-cutting/X-24-activity-logging.html">X-24</a> বহন করে</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-13-language-switch.html">P-13</a> language switch</td>
+<td>সম্পূর্ণ ক্লায়েন্ট-সাইড; সার্ভারে ট্রেস করার কিছু নেই</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-10-push-receipt.html">U-10</a> push receipt</td>
+<td>ট্রেস করার মতো কোনো সার্ভার-সাইড কম্পোনেন্ট নেই — এটাই ফান্ডিং (<a href="99-open-queries.html">Q-65</a>)</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-15-gate-download-status-cleanup.html">S-15</a>, <a href="50-system-initiated/S-16-promo-code-status.html">S-16</a>, <a href="50-system-initiated/S-17-discount-status.html">S-17</a></td>
+<td>সহজ স্ট্যাটাস-আপডেট ওয়ার্কার, উল্লেখ করা ছাড়া আর কোনো অপ্রত্যাশিত কিছু নেই</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-এই-ডকমনটশন-কভব-সমপরসরত-করবন">9. এই ডকুমেন্টেশন কীভাবে সম্প্রসারিত করবেন</h2>
+<p>এগারোটি পয়েন্টের টেমপ্লেটটিই চুক্তি। নতুন ফিচার যোগ করতে:</p>
+<ol>
+<li>একই সেকশনের একটি বিদ্যমান ফাইল কপি করুন।</li>
+<li>এগারোটি সেকশন ক্রম অপরিবর্তিত রাখুন। §6 ও §7-এর জন্য "None" একটি বৈধ উত্তর — সেকশনটি মুছে ফেলার বদলে সেটি লিখুন।</li>
+<li>প্রযুক্তিগত-প্রবাহের প্রতিটি হপে এগুলোর একটি ট্যাগ দিন: <code>[HTTP + user token]</code>, <code>[HTTP + admin token]</code>, <code>[HTTP, no token]</code>, <code>[SQS: &lt;queue&gt;]</code>, <code>[Worker: &lt;interval&gt;, &lt;lock&gt;]</code>, <code>[External: &lt;system&gt;]</code>, <code>[Local: &lt;store&gt;]</code>।</li>
+<li>যা কিছু আপনি নিশ্চিত করতে পারছেন না তার জন্য একটি <span class="badge-unconfirmed">[UNCONFIRMED: Q-nn]</span> মার্কার যোগ করুন, এবং একই পরিবর্তনে <a href="99-open-queries.html">99</a>-এ তার সংজ্ঞা দিন।</li>
+<li>সেকশনের README, <a href="02-traceability-matrix.html">ট্রেসেবিলিটি ম্যাট্রিক্স</a> এবং <a href="91-appendix-b-endpoint-index.html">এন্ডপয়েন্ট ইনডেক্স</a> হালনাগাদ করুন।</li>
+<li>স্থানীয়ভাবে পরীক্ষা করা যায় — এই দাবিটি সত্যিই চালিয়ে যাচাই করুন।</li>
+</ol>
+<h2 id="10-কমপননট-সমপরক">10. কম্পোনেন্ট সম্পর্ক</h2>
+<div class="mermaid">flowchart LR
+  CODE["Code in the 5 repos"] --> PR["00 primer"]
+  PR --> SM["01 system map"]
+  PR --> F["103 feature files"]
+  F --> TM["02 matrix"]
+  F --> RI["03 reverse index"]
+  SM --> EI["91 endpoint index"]
+  RI --> EI
+  F --> OV["99 open queries<br/>75 items"]
+  F --> LG["90 legacy"]
+  F --> CO["92 coverage"]
+  CO -.->|"this page"| F
+</div>
+<p><strong>নির্ভর করে:</strong> অন্য সব পাতার ওপর। <strong>প্রভাব ফেলে:</strong> §9 — এই ডকুমেন্টেশন নির্ভুল রাখার পদ্ধতি।</p>
+  </main>
+</div>
+<script src="../assets/vendor/mermaid.min.js"></script>
+<script src="../assets/site.js?v=d7ce93f0"></script>
+</body>
+</html>

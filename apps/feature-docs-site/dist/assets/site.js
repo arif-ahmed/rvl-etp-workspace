@@ -79,6 +79,43 @@
     });
   }
 
+  /* ---------- sidebar section groups (collapsible, persisted) ---------- */
+
+  (function () {
+    var KEY = "fd-side";
+    var saved = {};
+    try { saved = JSON.parse(load(KEY) || "{}"); } catch (e) { /* corrupted state */ }
+
+    function setOpen(sec, open) {
+      sec.classList.toggle("is-open", open);
+      var chev = sec.querySelector(".side-chevron");
+      if (chev) chev.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    var secs = Array.prototype.slice.call(doc.querySelectorAll(".side-sec"));
+    secs.forEach(function (sec) {
+      var dir = sec.getAttribute("data-dir");
+      if (Object.prototype.hasOwnProperty.call(saved, dir)) {
+        setOpen(sec, !!saved[dir]); // user's own choice beats the page default
+      }
+      var chev = sec.querySelector(".side-chevron");
+      if (chev) {
+        chev.addEventListener("click", function () {
+          setOpen(sec, !sec.classList.contains("is-open"));
+          var out = {};
+          secs.forEach(function (s) { out[s.getAttribute("data-dir")] = s.classList.contains("is-open"); });
+          store(KEY, JSON.stringify(out));
+        });
+      }
+    });
+
+    /* keep the active feature visible without jumping the page itself */
+    var activeItem = doc.querySelector(".side-item.is-active");
+    if (activeItem && sidebar) {
+      sidebar.scrollTop = activeItem.offsetTop - sidebar.clientHeight / 2;
+    }
+  })();
+
   /* ---------- heading anchor links ---------- */
 
   Array.prototype.forEach.call(

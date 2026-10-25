@@ -10,7 +10,7 @@ if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'d
 document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
 <link rel="stylesheet" href="../../assets/vendor/fonts/fonts.css?v=047d486c">
-<link rel="stylesheet" href="../../assets/site.css?v=0baff1bf">
+<link rel="stylesheet" href="../../assets/site.css?v=5ded2c9a">
 </head>
 <body>
 <header class="topbar">
@@ -22,128 +22,199 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </header>
 <div class="layout">
   <aside class="sidebar" id="sidebar">
-    <a class="side-section" href="../10-admin-portal/index.html">10 · Admin Portal</a>
-    <div class="side-group">Features</div>
-    <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
-    <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
-    <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
-    <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
-    <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
-    <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
-    <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
-    <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
-    <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
-    <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
-    <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
-    <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
-    <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
-    <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
-    <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
-    <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
-    <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
-    <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
-    <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
-    <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
-    <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
-    <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
-    <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
-    <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
-    <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
-    <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
-    <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
-    <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
-    <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
-    <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
-    <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
-    <a class="side-section" href="../20-user-portal/index.html">20 · User Web Portal</a>
-    <div class="side-group">Features</div>
-    <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
-    <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
-    <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
-    <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
-    <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
-    <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
-    <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
-    <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
-    <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
-    <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
-    <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
-    <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
-    <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
-    <a class="side-section" href="../30-user-app/index.html">30 · User App</a>
-    <div class="side-group">Features</div>
-    <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
-    <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
-    <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
-    <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
-    <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
-    <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
-    <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
-    <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
-    <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
-    <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
-    <a class="side-section" href="index.html">40 · Checker App</a>
-    <div class="side-group">Features</div>
-    <a class="side-item is-active" href="C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
-    <a class="side-item" href="C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
-    <a class="side-item" href="C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
-    <a class="side-item" href="C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
-    <a class="side-item" href="C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
-    <a class="side-item" href="C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
-    <a class="side-section" href="../50-system-initiated/index.html">50 · System-initiated</a>
-    <div class="side-group">Features</div>
-    <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
-    <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
-    <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
-    <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
-    <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
-    <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
-    <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
-    <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
-    <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
-    <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
-    <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
-    <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
-    <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
-    <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
-    <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
-    <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
-    <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
-    <a class="side-section" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
-    <div class="side-group">Features</div>
-    <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
-    <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+    <nav class="side-nav">
+    <div class="side-sec" data-dir="ov">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">Overview</span>
+        <span class="side-count">4</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="../00-platform-primer.html"><span class="id-chip">00</span><span>Platform primer</span></a>
+        <a class="side-item" href="../01-system-map.html"><span class="id-chip">01</span><span>System map</span></a>
+        <a class="side-item" href="../02-traceability-matrix.html"><span class="id-chip">02</span><span>Traceability matrix</span></a>
+        <a class="side-item" href="../03-component-reverse-index.html"><span class="id-chip">03</span><span>Component reverse index</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="ap">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">Appendices</span>
+        <span class="side-count">5</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="../90-appendix-a-legacy.html"><span class="id-chip">90</span><span>Appendix A — Legacy, unused and dormant code</span></a>
+        <a class="side-item" href="../91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — Endpoint index</span></a>
+        <a class="side-item" href="../92-appendix-c-coverage.html"><span class="id-chip">92</span><span>Appendix C — Coverage</span></a>
+        <a class="side-item" href="../93-appendix-d-local-test-reference.html"><span class="id-chip">93</span><span>Appendix D — Local test reference</span></a>
+        <a class="side-item" href="../99-open-queries.html"><span class="id-chip">99</span><span>Open queries</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="10-admin-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="../10-admin-portal/index.html">10 · Admin Portal</a>
+        <span class="side-count">31</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="../10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+        <a class="side-item" href="../10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+        <a class="side-item" href="../10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+        <a class="side-item" href="../10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+        <a class="side-item" href="../10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+        <a class="side-item" href="../10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+        <a class="side-item" href="../10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+        <a class="side-item" href="../10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+        <a class="side-item" href="../10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+        <a class="side-item" href="../10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+        <a class="side-item" href="../10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+        <a class="side-item" href="../10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+        <a class="side-item" href="../10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+        <a class="side-item" href="../10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+        <a class="side-item" href="../10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+        <a class="side-item" href="../10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+        <a class="side-item" href="../10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+        <a class="side-item" href="../10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+        <a class="side-item" href="../10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+        <a class="side-item" href="../10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+        <a class="side-item" href="../10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+        <a class="side-item" href="../10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+        <a class="side-item" href="../10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+        <a class="side-item" href="../10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+        <a class="side-item" href="../10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+        <a class="side-item" href="../10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+        <a class="side-item" href="../10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+        <a class="side-item" href="../10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+        <a class="side-item" href="../10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+        <a class="side-item" href="../10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+        <a class="side-item" href="../10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="20-user-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="../20-user-portal/index.html">20 · User Web Portal</a>
+        <span class="side-count">13</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="../20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+        <a class="side-item" href="../20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+        <a class="side-item" href="../20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+        <a class="side-item" href="../20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+        <a class="side-item" href="../20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+        <a class="side-item" href="../20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+        <a class="side-item" href="../20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+        <a class="side-item" href="../20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+        <a class="side-item" href="../20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+        <a class="side-item" href="../20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+        <a class="side-item" href="../20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+        <a class="side-item" href="../20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+        <a class="side-item" href="../20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="30-user-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="../30-user-app/index.html">30 · User App</a>
+        <span class="side-count">10</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="../30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
+        <a class="side-item" href="../30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
+        <a class="side-item" href="../30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
+        <a class="side-item" href="../30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
+        <a class="side-item" href="../30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
+        <a class="side-item" href="../30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
+        <a class="side-item" href="../30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
+        <a class="side-item" href="../30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
+        <a class="side-item" href="../30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
+        <a class="side-item" href="../30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
+      </div>
+    </div>
+    <div class="side-sec is-open" data-dir="40-checker-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="true" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="index.html">40 · Checker App</a>
+        <span class="side-count">6</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item is-active" href="C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
+        <a class="side-item" href="C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
+        <a class="side-item" href="C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
+        <a class="side-item" href="C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
+        <a class="side-item" href="C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
+        <a class="side-item" href="C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="50-system-initiated">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="../50-system-initiated/index.html">50 · System-initiated</a>
+        <span class="side-count">17</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="../50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+        <a class="side-item" href="../50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+        <a class="side-item" href="../50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+        <a class="side-item" href="../50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+        <a class="side-item" href="../50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+        <a class="side-item" href="../50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+        <a class="side-item" href="../50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+        <a class="side-item" href="../50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+        <a class="side-item" href="../50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+        <a class="side-item" href="../50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+        <a class="side-item" href="../50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+        <a class="side-item" href="../50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+        <a class="side-item" href="../50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+        <a class="side-item" href="../50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+        <a class="side-item" href="../50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+        <a class="side-item" href="../50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+        <a class="side-item" href="../50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="60-cross-cutting">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="../60-cross-cutting/index.html">60 · Cross-cutting</a>
+        <span class="side-count">26</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="../60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+        <a class="side-item" href="../60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+      </div>
+    </div>
+    </nav>
   </aside>
   <main class="content">
 <div class="crumb"><a href="../index.html">Contents</a><span class="sep">›</span><a href="index.html">40 · Checker App</a><span class="sep">›</span><span>C-01</span></div>
 <h1><span class="id-chip">C-01</span> Assigned event and gate</h1>
 <blockquote>
 <p><strong>Bangla name:</strong> নির্ধারিত ইভেন্ট ও গেট</p>
-<p><a href="index.html">← 40 · Checker app</a> · <a href="../index.html">Contents</a> · <span class="link-na" title="Not included in the site yet">Open queries</span></p>
+<p><a href="index.html">← 40 · Checker app</a> · <a href="../index.html">Contents</a> · <a href="../99-open-queries.html">Open queries</a></p>
 </blockquote>
 <h2 id="1-name-and-purpose">1. Name and purpose</h2>
 <p><strong>Assigned event and gate.</strong> After signing in, a checker sees which event and which gate they are assigned to. This assignment is created from the admin portal (<a href="../10-admin-portal/A-18-gate-assignment.html">A-18</a>); the app only reads it. The screen also decides whether the checker still needs to download tickets (<a href="C-02-offline-ticket-download.html">C-02</a>) and is the app's <strong>offline entry point</strong> — the assignment is cached in <code>SharedPreferences</code> under <code>event-list</code>, so it can be shown without a network.</p>
@@ -335,6 +406,6 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   </main>
 </div>
 <script src="../../assets/vendor/mermaid.min.js"></script>
-<script src="../../assets/site.js?v=5e440112"></script>
+<script src="../../assets/site.js?v=d7ce93f0"></script>
 </body>
 </html>

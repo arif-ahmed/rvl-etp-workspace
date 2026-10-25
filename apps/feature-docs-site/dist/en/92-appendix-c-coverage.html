@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>92 · Appendix C — Coverage · GoBCB Feature Docs</title>
+<script>
+(function(){try{var t=localStorage.getItem('fd-theme');
+if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="stylesheet" href="../assets/vendor/fonts/fonts.css?v=047d486c">
+<link rel="stylesheet" href="../assets/site.css?v=5ded2c9a">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="../en/index.html"><span class="brand-mark"></span>GoBCB&nbsp;<small>· Feature Docs</small></a>
+  <span class="topbar-spacer"></span>
+  <button class="icon-btn" id="langToggle" title="Switch language / ভাষা বদলান" aria-label="Switch language">বাংলা</button>
+  <button class="icon-btn" id="themeToggle" title="Light / dark" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav class="side-nav">
+    <div class="side-sec" data-dir="ov">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">Overview</span>
+        <span class="side-count">4</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="00-platform-primer.html"><span class="id-chip">00</span><span>Platform primer</span></a>
+        <a class="side-item" href="01-system-map.html"><span class="id-chip">01</span><span>System map</span></a>
+        <a class="side-item" href="02-traceability-matrix.html"><span class="id-chip">02</span><span>Traceability matrix</span></a>
+        <a class="side-item" href="03-component-reverse-index.html"><span class="id-chip">03</span><span>Component reverse index</span></a>
+      </div>
+    </div>
+    <div class="side-sec is-open" data-dir="ap">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="true" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <span class="side-sec-title">Appendices</span>
+        <span class="side-count">5</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="90-appendix-a-legacy.html"><span class="id-chip">90</span><span>Appendix A — Legacy, unused and dormant code</span></a>
+        <a class="side-item" href="91-appendix-b-endpoint-index.html"><span class="id-chip">91</span><span>Appendix B — Endpoint index</span></a>
+        <a class="side-item is-active" href="92-appendix-c-coverage.html"><span class="id-chip">92</span><span>Appendix C — Coverage</span></a>
+        <a class="side-item" href="93-appendix-d-local-test-reference.html"><span class="id-chip">93</span><span>Appendix D — Local test reference</span></a>
+        <a class="side-item" href="99-open-queries.html"><span class="id-chip">99</span><span>Open queries</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="10-admin-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="10-admin-portal/index.html">10 · Admin Portal</a>
+        <span class="side-count">31</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="10-admin-portal/A-01-program-selection.html"><span class="id-chip">A-01</span><span>Program selection and program-scoped menu</span></a>
+        <a class="side-item" href="10-admin-portal/A-02-programs.html"><span class="id-chip">A-02</span><span>Programs</span></a>
+        <a class="side-item" href="10-admin-portal/A-03-program-settings.html"><span class="id-chip">A-03</span><span>Program settings</span></a>
+        <a class="side-item" href="10-admin-portal/A-04-teams.html"><span class="id-chip">A-04</span><span>Teams</span></a>
+        <a class="side-item" href="10-admin-portal/A-05-venues.html"><span class="id-chip">A-05</span><span>Venues and stadium layout</span></a>
+        <a class="side-item" href="10-admin-portal/A-06-program-venue-mapping.html"><span class="id-chip">A-06</span><span>Program–venue mapping and venue details</span></a>
+        <a class="side-item" href="10-admin-portal/A-07-events.html"><span class="id-chip">A-07</span><span>Events (matches)</span></a>
+        <a class="side-item" href="10-admin-portal/A-08-event-settings.html"><span class="id-chip">A-08</span><span>Event settings override</span></a>
+        <a class="side-item" href="10-admin-portal/A-09-event-level-pricing.html"><span class="id-chip">A-09</span><span>Event venue details and per-level pricing</span></a>
+        <a class="side-item" href="10-admin-portal/A-10-capacity-adjustment.html"><span class="id-chip">A-10</span><span>Event capacity adjustment</span></a>
+        <a class="side-item" href="10-admin-portal/A-11-seat-reservation.html"><span class="id-chip">A-11</span><span>Seat reservation (complimentary / partner)</span></a>
+        <a class="side-item" href="10-admin-portal/A-12-reserved-tickets.html"><span class="id-chip">A-12</span><span>Reserved ticket generation and distribution</span></a>
+        <a class="side-item" href="10-admin-portal/A-13-ticket-layouts.html"><span class="id-chip">A-13</span><span>Ticket layouts and ticket attributes</span></a>
+        <a class="side-item" href="10-admin-portal/A-14-ticket-pricing-content.html"><span class="id-chip">A-14</span><span>Ticket-pricing content page</span></a>
+        <a class="side-item" href="10-admin-portal/A-15-promo-codes.html"><span class="id-chip">A-15</span><span>Promo codes</span></a>
+        <a class="side-item" href="10-admin-portal/A-16-discounts.html"><span class="id-chip">A-16</span><span>System discounts</span></a>
+        <a class="side-item" href="10-admin-portal/A-17-ticket-checker-users.html"><span class="id-chip">A-17</span><span>Ticket-checker (gate staff) accounts</span></a>
+        <a class="side-item" href="10-admin-portal/A-18-gate-assignment.html"><span class="id-chip">A-18</span><span>Gate assignment and download control</span></a>
+        <a class="side-item" href="10-admin-portal/A-19-gate-reports.html"><span class="id-chip">A-19</span><span>Gate (ticket-checker) reports</span></a>
+        <a class="side-item" href="10-admin-portal/A-20-raffle-draw.html"><span class="id-chip">A-20</span><span>Raffle draw</span></a>
+        <a class="side-item" href="10-admin-portal/A-21-dashboard.html"><span class="id-chip">A-21</span><span>Dashboard</span></a>
+        <a class="side-item" href="10-admin-portal/A-22-reports.html"><span class="id-chip">A-22</span><span>Booking, sales, revenue and payment-discrepancy reports</span></a>
+        <a class="side-item" href="10-admin-portal/A-23-reconciliation.html"><span class="id-chip">A-23</span><span>Reconciliation lookup</span></a>
+        <a class="side-item" href="10-admin-portal/A-24-user-issues-admin.html"><span class="id-chip">A-24</span><span>User issues and support chat (admin side)</span></a>
+        <a class="side-item" href="10-admin-portal/A-25-admin-users.html"><span class="id-chip">A-25</span><span>Admin users</span></a>
+        <a class="side-item" href="10-admin-portal/A-26-agent-users.html"><span class="id-chip">A-26</span><span>Agent (seller) users</span></a>
+        <a class="side-item" href="10-admin-portal/A-27-activity-log.html"><span class="id-chip">A-27</span><span>Activity log viewer</span></a>
+        <a class="side-item" href="10-admin-portal/A-28-media-configuration.html"><span class="id-chip">A-28</span><span>Media configuration (banners, gallery, contact, registration)</span></a>
+        <a class="side-item" href="10-admin-portal/A-29-content-editor.html"><span class="id-chip">A-29</span><span>Content editor (T&amp;C, FAQ, privacy, notice)</span></a>
+        <a class="side-item" href="10-admin-portal/A-30-header-footer-social.html"><span class="id-chip">A-30</span><span>Header/footer and social-media settings</span></a>
+        <a class="side-item" href="10-admin-portal/A-31-general-notices.html"><span class="id-chip">A-31</span><span>General notices</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="20-user-portal">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="20-user-portal/index.html">20 · User Web Portal</a>
+        <span class="side-count">13</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="20-user-portal/P-01-home-content.html"><span class="id-chip">P-01</span><span>Home page content</span></a>
+        <a class="side-item" href="20-user-portal/P-02-browse-events.html"><span class="id-chip">P-02</span><span>Browse events and event details</span></a>
+        <a class="side-item" href="20-user-portal/P-03-info-pages.html"><span class="id-chip">P-03</span><span>Information pages (pricing, gallery, contact, policies)</span></a>
+        <a class="side-item" href="20-user-portal/P-04-seat-selection.html"><span class="id-chip">P-04</span><span>Seat selection</span></a>
+        <a class="side-item" href="20-user-portal/P-05-apply-promo-code.html"><span class="id-chip">P-05</span><span>Apply promo code</span></a>
+        <a class="side-item" href="20-user-portal/P-06-booking-payment.html"><span class="id-chip">P-06</span><span>Booking order and online payment (DgePay)</span></a>
+        <a class="side-item" href="20-user-portal/P-07-my-bookings.html"><span class="id-chip">P-07</span><span>My bookings and generation status</span></a>
+        <a class="side-item" href="20-user-portal/P-08-ticket-generation-request.html"><span class="id-chip">P-08</span><span>Ticket generation request</span></a>
+        <a class="side-item" href="20-user-portal/P-09-ticket-details-downloads.html"><span class="id-chip">P-09</span><span>Ticket details, holder info, download, share, invoice</span></a>
+        <a class="side-item" href="20-user-portal/P-10-oneid-ticket-sync.html"><span class="id-chip">P-10</span><span>Sync tickets to OneID wallet</span></a>
+        <a class="side-item" href="20-user-portal/P-11-profile.html"><span class="id-chip">P-11</span><span>Profile</span></a>
+        <a class="side-item" href="20-user-portal/P-12-issues-chat.html"><span class="id-chip">P-12</span><span>Report an issue and chat with support</span></a>
+        <a class="side-item" href="20-user-portal/P-13-language-switch.html"><span class="id-chip">P-13</span><span>Language switch (EN/BN)</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="30-user-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="30-user-app/index.html">30 · User App</a>
+        <span class="side-count">10</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="30-user-app/U-01-splash-onboarding.html"><span class="id-chip">U-01</span><span>Splash, version gate and onboarding</span></a>
+        <a class="side-item" href="30-user-app/U-02-home-browse-events.html"><span class="id-chip">U-02</span><span>Home and browse events</span></a>
+        <a class="side-item" href="30-user-app/U-03-info-pages.html"><span class="id-chip">U-03</span><span>Information pages (pricing, gallery, contact)</span></a>
+        <a class="side-item" href="30-user-app/U-04-seat-selection-promo.html"><span class="id-chip">U-04</span><span>Seat selection and promo code</span></a>
+        <a class="side-item" href="30-user-app/U-05-booking-webview-payment.html"><span class="id-chip">U-05</span><span>Booking and WebView payment</span></a>
+        <a class="side-item" href="30-user-app/U-06-my-bookings-tickets.html"><span class="id-chip">U-06</span><span>My bookings and tickets</span></a>
+        <a class="side-item" href="30-user-app/U-07-profile-settings.html"><span class="id-chip">U-07</span><span>Profile and settings</span></a>
+        <a class="side-item" href="30-user-app/U-08-issues-chat.html"><span class="id-chip">U-08</span><span>Report an issue and support chat</span></a>
+        <a class="side-item" href="30-user-app/U-09-device-token.html"><span class="id-chip">U-09</span><span>Push device-token registration</span></a>
+        <a class="side-item" href="30-user-app/U-10-push-receipt.html"><span class="id-chip">U-10</span><span>Receiving push notifications</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="40-checker-app">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="40-checker-app/index.html">40 · Checker App</a>
+        <span class="side-count">6</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="40-checker-app/C-01-assigned-event-gate.html"><span class="id-chip">C-01</span><span>Assigned event and gate</span></a>
+        <a class="side-item" href="40-checker-app/C-02-offline-ticket-download.html"><span class="id-chip">C-02</span><span>Ticket download for offline checking</span></a>
+        <a class="side-item" href="40-checker-app/C-03-qr-scan-validation.html"><span class="id-chip">C-03</span><span>QR scan validation</span></a>
+        <a class="side-item" href="40-checker-app/C-04-manual-entry.html"><span class="id-chip">C-04</span><span>Manual entry</span></a>
+        <a class="side-item" href="40-checker-app/C-05-ticket-sync.html"><span class="id-chip">C-05</span><span>Scan sync</span></a>
+        <a class="side-item" href="40-checker-app/C-06-manual-ticket-validation.html"><span class="id-chip">C-06</span><span>Signature-only ticket validation</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="50-system-initiated">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="50-system-initiated/index.html">50 · System-initiated</a>
+        <span class="side-count">17</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="50-system-initiated/S-01-level-capacity-update.html"><span class="id-chip">S-01</span><span>Level capacity update (OrderSuccess queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-02-event-live-capacity.html"><span class="id-chip">S-02</span><span>Event live capacity (EventCapacity queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-03-locked-capacity-refresh.html"><span class="id-chip">S-03</span><span>Locked-capacity refresh</span></a>
+        <a class="side-item" href="50-system-initiated/S-04-scheduler-capacity-update.html"><span class="id-chip">S-04</span><span>Scheduler capacity reconcile</span></a>
+        <a class="side-item" href="50-system-initiated/S-05-pending-failed-revalidation.html"><span class="id-chip">S-05</span><span>Pending/failed payment revalidation</span></a>
+        <a class="side-item" href="50-system-initiated/S-06-booking-status-generated.html"><span class="id-chip">S-06</span><span>Booking status → Generated</span></a>
+        <a class="side-item" href="50-system-initiated/S-07-initiate-user-ticket-generation.html"><span class="id-chip">S-07</span><span>Initiate user ticket generation</span></a>
+        <a class="side-item" href="50-system-initiated/S-08-ticket-signing.html"><span class="id-chip">S-08</span><span>Ticket signing via TSP (TicketSigning queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-09-ticket-merge-zip.html"><span class="id-chip">S-09</span><span>Reserved ticket merge/zip (TicketProcessing queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-10-vat-challan.html"><span class="id-chip">S-10</span><span>VAT challan with NBR (VatChallanProcessing queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-11-firebase-notification.html"><span class="id-chip">S-11</span><span>Push delivery to FCM (FirebaseNotification queue)</span></a>
+        <a class="side-item" href="50-system-initiated/S-12-ticket-generated-notification.html"><span class="id-chip">S-12</span><span>Ticket-generated notification</span></a>
+        <a class="side-item" href="50-system-initiated/S-13-device-token-cleanup.html"><span class="id-chip">S-13</span><span>Device-token cleanup</span></a>
+        <a class="side-item" href="50-system-initiated/S-14-checked-ticket-sync.html"><span class="id-chip">S-14</span><span>Checked-ticket sync (Redis → database)</span></a>
+        <a class="side-item" href="50-system-initiated/S-15-gate-download-status-cleanup.html"><span class="id-chip">S-15</span><span>Gate download-status cleanup</span></a>
+        <a class="side-item" href="50-system-initiated/S-16-promo-code-status.html"><span class="id-chip">S-16</span><span>Promo-code status update</span></a>
+        <a class="side-item" href="50-system-initiated/S-17-discount-status.html"><span class="id-chip">S-17</span><span>System-discount status update</span></a>
+      </div>
+    </div>
+    <div class="side-sec" data-dir="60-cross-cutting">
+      <div class="side-sec-head">
+        <button class="side-chevron" type="button" aria-expanded="false" title="Expand / collapse section" aria-label="Expand / collapse section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+        <a class="side-sec-title" href="60-cross-cutting/index.html">60 · Cross-cutting</a>
+        <span class="side-count">26</span>
+      </div>
+      <div class="side-sec-body">
+        <a class="side-item" href="60-cross-cutting/X-01-admin-login.html"><span class="id-chip">X-01</span><span>Admin login (phone OTP + password)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-02-admin-forgot-password.html"><span class="id-chip">X-02</span><span>Admin forgot password</span></a>
+        <a class="side-item" href="60-cross-cutting/X-03-admin-change-password-logout.html"><span class="id-chip">X-03</span><span>Admin change password and logout</span></a>
+        <a class="side-item" href="60-cross-cutting/X-04-admin-session.html"><span class="id-chip">X-04</span><span>Admin session handling (token attach and refresh)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-05-admin-provisioning.html"><span class="id-chip">X-05</span><span>Staff account provisioning</span></a>
+        <a class="side-item" href="60-cross-cutting/X-06-user-registration.html"><span class="id-chip">X-06</span><span>Customer registration</span></a>
+        <a class="side-item" href="60-cross-cutting/X-07-user-password-login.html"><span class="id-chip">X-07</span><span>Customer login with phone and password</span></a>
+        <a class="side-item" href="60-cross-cutting/X-08-oneid-sso.html"><span class="id-chip">X-08</span><span>OneID single sign-on</span></a>
+        <a class="side-item" href="60-cross-cutting/X-09-user-forgot-password.html"><span class="id-chip">X-09</span><span>Customer forgot/reset password</span></a>
+        <a class="side-item" href="60-cross-cutting/X-10-user-session.html"><span class="id-chip">X-10</span><span>Customer change password, logout and token attach</span></a>
+        <a class="side-item" href="60-cross-cutting/X-11-delete-account-force-update.html"><span class="id-chip">X-11</span><span>Delete account and app force-update</span></a>
+        <a class="side-item" href="60-cross-cutting/X-12-checker-login.html"><span class="id-chip">X-12</span><span>Checker login</span></a>
+        <a class="side-item" href="60-cross-cutting/X-13-agent-pool.html"><span class="id-chip">X-13</span><span>Agent pool and offline-sold tickets</span></a>
+        <a class="side-item" href="60-cross-cutting/X-14-authz-pool-policies.html"><span class="id-chip">X-14</span><span>Authorization layer 1: pool schemes and policies</span></a>
+        <a class="side-item" href="60-cross-cutting/X-15-authz-roles.html"><span class="id-chip">X-15</span><span>Authorization layers 2–3: staff roles</span></a>
+        <a class="side-item" href="60-cross-cutting/X-16-authz-program-scope.html"><span class="id-chip">X-16</span><span>Authorization layer 4: program scope</span></a>
+        <a class="side-item" href="60-cross-cutting/X-17-authz-client-side.html"><span class="id-chip">X-17</span><span>Client-side authorization (menus and guards)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-18-endpoints-without-auth.html"><span class="id-chip">X-18</span><span>Endpoints without authorization</span></a>
+        <a class="side-item" href="60-cross-cutting/X-19-service-to-service.html"><span class="id-chip">X-19</span><span>Service-to-service communication</span></a>
+        <a class="side-item" href="60-cross-cutting/X-20-file-storage.html"><span class="id-chip">X-20</span><span>File storage (S3, CloudFront)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-21-email-ses.html"><span class="id-chip">X-21</span><span>Email (SES)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-22-sms-notification.html"><span class="id-chip">X-22</span><span>SMS and the external notification service</span></a>
+        <a class="side-item" href="60-cross-cutting/X-23-push-firebase.html"><span class="id-chip">X-23</span><span>Push notifications (PushNotification service, Firebase)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-24-activity-logging.html"><span class="id-chip">X-24</span><span>Activity logging (audit trail)</span></a>
+        <a class="side-item" href="60-cross-cutting/X-25-redis.html"><span class="id-chip">X-25</span><span>Redis: cache, live capacity and locks</span></a>
+        <a class="side-item" href="60-cross-cutting/X-26-configuration.html"><span class="id-chip">X-26</span><span>Configuration and secrets</span></a>
+      </div>
+    </div>
+    </nav>
+  </aside>
+  <main class="content">
+<div class="crumb"><a href="index.html">Contents</a><span class="sep">›</span><span>92 · Appendix C — Coverage</span></div>
+<h1><span class="id-chip">92</span> Appendix C — Coverage</h1>
+<blockquote>
+<p><strong>Bangla name:</strong> কভারেজ</p>
+<p><a href="index.html">← Contents</a> · <a href="93-appendix-d-local-test-reference.html">Local test reference</a> · <a href="99-open-queries.html">Open queries</a></p>
+</blockquote>
+<p>What this documentation covers, what it deliberately does not, and where the coverage is thin. Use it to judge whether a question you have will be answered here.</p>
+<h2 id="1-what-is-documented">1. What is documented</h2>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Features</th>
+<th>Files</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="00-platform-primer.html">00 · Platform primer</a></td>
+<td>— (background)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="01-system-map.html">01 · System map</a></td>
+<td>— (index)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="02-traceability-matrix.html">02 · Traceability matrix</a></td>
+<td>— (index)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="03-component-reverse-index.html">03 · Component reverse index</a></td>
+<td>— (index)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/index.html">10 · Admin portal</a></td>
+<td>A-01 … A-31</td>
+<td>31 + README</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/index.html">20 · User portal</a></td>
+<td>P-01 … P-13</td>
+<td>13 + README</td>
+</tr>
+<tr>
+<td><a href="30-user-app/index.html">30 · User app</a></td>
+<td>U-01 … U-10</td>
+<td>10 + README</td>
+</tr>
+<tr>
+<td><a href="40-checker-app/index.html">40 · Checker app</a></td>
+<td>C-01 … C-06</td>
+<td>6 + README</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/index.html">50 · System-initiated</a></td>
+<td>S-01 … S-17</td>
+<td>17 + README</td>
+</tr>
+<tr>
+<td><a href="60-cross-cutting/index.html">60 · Cross-cutting</a></td>
+<td>X-01 … X-26</td>
+<td>26 + README</td>
+</tr>
+<tr>
+<td><a href="90-appendix-a-legacy.html">90–93 · Appendices</a></td>
+<td>— (reference)</td>
+<td>4</td>
+</tr>
+<tr>
+<td><a href="99-open-queries.html">99 · Open queries</a></td>
+<td>— (queries)</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total: 103 feature files</strong>, each following the same eleven-point template.</p>
+<h2 id="2-what-each-feature-file-covers">2. What each feature file covers</h2>
+<p>Every file answers, in this order:</p>
+<table>
+<thead>
+<tr>
+<th>§</th>
+<th>Section</th>
+<th>Always present?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Name and purpose</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Trigger and actor</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Business flow</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Technical flow</strong> — the hop-by-hop path with <code>[HTTP + token]</code> / <code>[SQS: key]</code> / <code>[Worker: interval, lock]</code> tags</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Components</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>6</td>
+<td>API contracts</td>
+<td>yes, even when the answer is "None"</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Data and side effects</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Code references</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Handover notes</strong> — the findings, the risks and the <span class="badge-unconfirmed">[UNCONFIRMED: Q-nn]</span> markers</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Component relationships (mermaid)</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Developer test guide</strong> — test data, breakpoints, and how to verify</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<p>The three sections that carry the most value for a handover are <strong>4</strong>, <strong>9</strong> and <strong>11</strong>.</p>
+<h2 id="3-coverage-by-platform-area">3. Coverage by platform area</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Documented</th>
+<th>How well</th>
+<th>Gaps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Admin master data</strong> (programs, venues, events, pricing, layouts)</td>
+<td>14 features</td>
+<td>thorough</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Booking and payment</strong></td>
+<td>8 features</td>
+<td>thorough</td>
+<td>Real gateway cannot be tested locally</td>
+</tr>
+<tr>
+<td><strong>Ticket generation and signing</strong></td>
+<td>6 features</td>
+<td>thorough on the code path</td>
+<td>Real TSP signing untestable (<a href="99-open-queries.html">Q-06</a>, <a href="99-open-queries.html">Q-13</a>)</td>
+</tr>
+<tr>
+<td><strong>Checker app</strong></td>
+<td>6 features</td>
+<td>thorough</td>
+<td><strong>iOS is not testable at all</strong> (<a href="99-open-queries.html">Q-72</a>)</td>
+</tr>
+<tr>
+<td><strong>Support and issues</strong></td>
+<td>3 features</td>
+<td>thorough</td>
+<td>Notification side is external (<a href="99-open-queries.html">Q-05</a>)</td>
+</tr>
+<tr>
+<td><strong>Push notifications</strong></td>
+<td>4 features</td>
+<td>good</td>
+<td>Firebase delivery untestable (<a href="60-cross-cutting/X-23-push-firebase.html">X-23</a>)</td>
+</tr>
+<tr>
+<td><strong>Identity and auth</strong></td>
+<td>13 features</td>
+<td><strong>partial by necessity</strong></td>
+<td>The identity API has no source (<a href="99-open-queries.html">Q-01</a>)</td>
+</tr>
+<tr>
+<td><strong>Agent / offline sales</strong></td>
+<td>2 features</td>
+<td>thin</td>
+<td>No client exists (<a href="99-open-queries.html">Q-07</a>)</td>
+</tr>
+<tr>
+<td><strong>Infrastructure</strong> (Redis, S3, SES, SMS, config, logging)</td>
+<td>8 features</td>
+<td>good</td>
+<td>Deployment values unknown (<a href="99-open-queries.html">Q-02</a>, <a href="99-open-queries.html">Q-04</a>)</td>
+</tr>
+<tr>
+<td><strong>Workers and queues</strong></td>
+<td>17 features</td>
+<td>thorough</td>
+<td>No dead-letter handling exists (<a href="99-open-queries.html">Q-09</a>)</td>
+</tr>
+<tr>
+<td><strong>Admin reporting</strong></td>
+<td>5 features</td>
+<td>good</td>
+<td>Report definitions and time zones unclear (<a href="99-open-queries.html">Q-28</a>, <a href="99-open-queries.html">Q-30</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-what-is-deliberately-not-documented">4. What is deliberately not documented</h2>
+<table>
+<thead>
+<tr>
+<th>Not covered</th>
+<th>Why</th>
+<th>Where it is instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>The identity API's implementation</strong></td>
+<td>Not in the workspace</td>
+<td><a href="99-open-queries.html">Q-01</a> — ask BS23</td>
+</tr>
+<tr>
+<td><strong>OneID's implementation</strong></td>
+<td>External, dummy locally</td>
+<td><code>docs/user-portal-local.md</code> §5</td>
+</tr>
+<tr>
+<td><strong>The external notification service's templates</strong></td>
+<td>External</td>
+<td><a href="99-open-queries.html">Q-05</a></td>
+</tr>
+<tr>
+<td><strong>NBR VAT's API</strong></td>
+<td>External</td>
+<td><a href="99-open-queries.html">Q-06</a></td>
+</tr>
+<tr>
+<td><strong>Deployment manifests, Terraform, ingress rules</strong></td>
+<td>Not in the workspace</td>
+<td><code>architecture/gobcb-aws-architecture.md</code> (BS23's document, not verified here)</td>
+</tr>
+<tr>
+<td><strong>Database schema DDL</strong></td>
+<td>Generated by migrations</td>
+<td><code>Services/*/ETP.*.Storage/Migrations/</code></td>
+</tr>
+<tr>
+<td><strong>Unit and integration test suites</strong></td>
+<td>Almost none exist in the five repositories</td>
+<td>— see §6</td>
+</tr>
+<tr>
+<td><strong>The generated drift <code>.g.dart</code> files</strong></td>
+<td>Generated</td>
+<td><code>data/lib/local/drift_database/*.g.dart</code></td>
+</tr>
+<tr>
+<td><strong>AWS account specifics</strong></td>
+<td>BS23's</td>
+<td><code>docs/rvl-handover-AWS-access-summary.md</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-coverage-of-the-code">5. Coverage of the code</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Size</th>
+<th>Documented</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11 backend services</td>
+<td>58 controllers, 354 routes</td>
+<td>Every controller is indexed in <a href="91-appendix-b-endpoint-index.html">91</a></td>
+</tr>
+<tr>
+<td>17 background workers</td>
+<td>—</td>
+<td>Every worker in <a href="03-component-reverse-index.html">03 §6</a></td>
+</tr>
+<tr>
+<td>6 SQS queues</td>
+<td>—</td>
+<td>Every queue in <a href="03-component-reverse-index.html">03 §5</a></td>
+</tr>
+<tr>
+<td>~30 Redis key families</td>
+<td>—</td>
+<td>Every key family in <a href="03-component-reverse-index.html">03 §4</a></td>
+</tr>
+<tr>
+<td>~70 database tables</td>
+<td>—</td>
+<td>Every table in <a href="03-component-reverse-index.html">03 §3</a></td>
+</tr>
+<tr>
+<td>Admin portal</td>
+<td>31 screens</td>
+<td>All 31 features</td>
+</tr>
+<tr>
+<td>User portal</td>
+<td>13 features</td>
+<td>All 13</td>
+</tr>
+<tr>
+<td>User app</td>
+<td>10 features</td>
+<td>All 10</td>
+</tr>
+<tr>
+<td>Checker app</td>
+<td>6 features</td>
+<td>All 6</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Code coverage of the documentation is complete at the feature level.</strong> What varies is depth: the flows that are simple are documented briefly, and the flows that hide surprises are documented at length.</p>
+<h2 id="6-a-gap-in-the-product-not-the-documentation">6. A gap in the product, not the documentation</h2>
+<p><strong>There is no meaningful automated test suite in any of the five repositories.</strong> What exists is manual test guidance — the §11 developer test guide in each feature file.</p>
+<p>That means:</p>
+<ul>
+<li>Every regression risk listed in the handover notes is unguarded by CI.</li>
+<li>A behaviour can change without anyone noticing, because nothing asserts it.</li>
+<li>The §11 guides are the only regression protection until tests are written.</li>
+</ul>
+<p>If RVL prioritises one investment after the handover, it should be characterising tests around the flows with the most findings: the checker validation path (<a href="40-checker-app/C-03-qr-scan-validation.html">C-03</a>), the payment callback (<a href="20-user-portal/P-06-booking-payment.html">P-06</a>) and the chat authorisation (<a href="20-user-portal/P-12-issues-chat.html">P-12</a>).</p>
+<h2 id="7-confidence">7. Confidence</h2>
+<table>
+<thead>
+<tr>
+<th>Statement type</th>
+<th>Confidence</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"This file exists at this path"</td>
+<td><strong>Verified</strong></td>
+<td>Every code reference was read during this review</td>
+</tr>
+<tr>
+<td>"This endpoint is called from this file"</td>
+<td><strong>Verified</strong></td>
+<td>Call sites were read, not inferred</td>
+</tr>
+<tr>
+<td>"This is what the code does"</td>
+<td><strong>High</strong></td>
+<td>The code was read</td>
+</tr>
+<tr>
+<td>"This is what it is <em>meant</em> to do"</td>
+<td><strong>Marked <code>[UNCONFIRMED]</code></strong></td>
+<td>75 open queries in <a href="99-open-queries.html">99</a></td>
+</tr>
+<tr>
+<td>"This is what the deployed system does"</td>
+<td><strong>Unknown</strong></td>
+<td>Deployment values are not in the workspace (<a href="99-open-queries.html">Q-02</a>, <a href="99-open-queries.html">Q-04</a>, <a href="99-open-queries.html">Q-06</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>Where this documentation and BS23's <code>gobcb-aws-architecture.md</code> disagree, <strong>the code wins</strong> — the architecture document describes the intended deployment, this documentation describes what the code in the workspace actually does.</p>
+<h2 id="8-known-thin-spots">8. Known thin spots</h2>
+<table>
+<thead>
+<tr>
+<th>Spot</th>
+<th>Why it is thin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="60-cross-cutting/X-13-agent-pool.html">X-13</a> / <a href="10-admin-portal/A-26-agent-users.html">A-26</a></td>
+<td>Only the backend half exists; there is no client to trace (<a href="99-open-queries.html">Q-07</a>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-20-raffle-draw.html">A-20</a> raffle draw</td>
+<td>Small feature; the Serverless lookup is dummy locally</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-28-media-configuration.html">A-28</a> media</td>
+<td>Gallery and banners share one endpoint (<a href="99-open-queries.html">Q-53</a>)</td>
+</tr>
+<tr>
+<td><a href="10-admin-portal/A-27-activity-log.html">A-27</a> activity log</td>
+<td>Thin because <a href="60-cross-cutting/X-24-activity-logging.html">X-24</a> carries the detail</td>
+</tr>
+<tr>
+<td><a href="20-user-portal/P-13-language-switch.html">P-13</a> language switch</td>
+<td>Entirely client-side; nothing to trace on the server</td>
+</tr>
+<tr>
+<td><a href="30-user-app/U-10-push-receipt.html">U-10</a> push receipt</td>
+<td>There is no server-side component to trace — which is itself the finding (<a href="99-open-queries.html">Q-65</a>)</td>
+</tr>
+<tr>
+<td><a href="50-system-initiated/S-15-gate-download-status-cleanup.html">S-15</a>, <a href="50-system-initiated/S-16-promo-code-status.html">S-16</a>, <a href="50-system-initiated/S-17-discount-status.html">S-17</a></td>
+<td>Simple status-update workers with no surprises beyond those noted</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-how-to-extend-this-documentation">9. How to extend this documentation</h2>
+<p>The eleven-point template is the contract. To add a feature:</p>
+<ol>
+<li>Copy an existing file in the same section.</li>
+<li>Keep the eleven sections in order. "None" is a valid answer for §6 and §7 — write it rather than deleting the section.</li>
+<li>Tag every technical-flow hop with one of: <code>[HTTP + user token]</code>, <code>[HTTP + admin token]</code>, <code>[HTTP, no token]</code>, <code>[SQS: &lt;queue&gt;]</code>, <code>[Worker: &lt;interval&gt;, &lt;lock&gt;]</code>, <code>[External: &lt;system&gt;]</code>, <code>[Local: &lt;store&gt;]</code>.</li>
+<li>Add a <span class="badge-unconfirmed">[UNCONFIRMED: Q-nn]</span> marker for anything you cannot settle, and define it in <a href="99-open-queries.html">99</a> in the same change.</li>
+<li>Update the section README, the <a href="02-traceability-matrix.html">traceability matrix</a> and the <a href="91-appendix-b-endpoint-index.html">endpoint index</a>.</li>
+<li>Verify the local testability claim by actually running it.</li>
+</ol>
+<h2 id="10-component-relationships">10. Component relationships</h2>
+<div class="mermaid">flowchart LR
+  CODE["Code in the 5 repos"] --> PR["00 primer"]
+  PR --> SM["01 system map"]
+  PR --> F["103 feature files"]
+  F --> TM["02 matrix"]
+  F --> RI["03 reverse index"]
+  SM --> EI["91 endpoint index"]
+  RI --> EI
+  F --> OV["99 open queries<br/>75 items"]
+  F --> LG["90 legacy"]
+  F --> CO["92 coverage"]
+  CO -.->|"this page"| F
+</div>
+<p><strong>Depends on:</strong> every other page. <strong>Affects:</strong> §9 — the procedure for keeping this documentation accurate.</p>
+  </main>
+</div>
+<script src="../assets/vendor/mermaid.min.js"></script>
+<script src="../assets/site.js?v=d7ce93f0"></script>
+</body>
+</html>

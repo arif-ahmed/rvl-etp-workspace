@@ -42,38 +42,44 @@ WOFF2_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 
 UI = {
     "en": {
-        "features": "Features",
         "contents": "Contents",
         "prev": "Previous",
         "next": "Next",
         "na": "Not included in the site yet",
-        "scope_note": "Included sections: {sections}. "
-                      "The remaining sections can be added by re-running the build with a wider scope.",
         "ref_overview": "Overview",
         "ref_appendix": "Appendices",
         "outside": "Repository file, not part of this site",
+        "count": "{n} features",
+        "toggle_section": "Expand / collapse section",
         "router_title": "Choose a language",
         "router_note": "Light / dark mode can be switched from the top bar on any page.",
     },
     "bn": {
-        "features": "ফিচারসমূহ",
         "contents": "সূচিপত্র",
         "prev": "পূর্ববর্তী",
         "next": "পরবর্তী",
         "na": "এখনো সাইটে যোগ হয়নি",
-        "scope_note": "অন্তর্ভুক্ত অংশ: {sections}। "
-                      "বাকি অংশগুলো পরে বিল্ড আবার চালিয়ে যোগ হবে।",
         "ref_overview": "ওভারভিউ",
         "ref_appendix": "পরিশিষ্ট",
         "outside": "রিপোজিটরির ফাইল, এই সাইটের অংশ নয়",
+        "count": "{n}টি ফিচার",
+        "toggle_section": "অংশ খোলা / বন্ধ করুন",
         "router_title": "ভাষা বেছে নিন",
         "router_note": "যেকোনো পেজের উপরের বার থেকে লাইট / ডার্ক মোড বদলানো যায়।",
     },
 }
 
+BN_DIGITS = str.maketrans("0123456789", "০১২৩৪৫৬৭৮৯")
+
+
+def bn_num(s, lang):
+    """Render western digits as Bengali numerals on bn pages."""
+    return s.translate(BN_DIGITS) if lang == "bn" else s
+
 SVG_MENU = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>'
 SVG_SUN = '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
 SVG_MOON = '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>'
+SVG_CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg>'
 
 THEME_BOOT = """<script>
 (function(){try{var t=localStorage.getItem('fd-theme');
@@ -81,14 +87,11 @@ if(!t)t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'d
 document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>"""
 
-# root router: forward straight into the site (remembered language, else
-# browser language, else English); location.replace keeps the router out of
-# the back-button history. Cards below remain as the no-JS fallback.
+# root router: land on the English home (predictable default); the topbar
+# language switch — and the বাংলা card below, for no-JS — moves to Bengali.
+# location.replace keeps the router out of the back-button history.
 ROUTER_REDIRECT = """<script>
-(function(){var d='en';try{var s=localStorage.getItem('fd-lang');
-if(s)d=s;else if((navigator.language||'').toLowerCase().indexOf('bn')===0)d='bn';}
-catch(e){}
-location.replace(d+'/index.html');})();
+(function(){location.replace('en/index.html');})();
 </script>"""
 
 
@@ -132,8 +135,7 @@ def strip_feature_h1(text):
 
 def strip_feature_h1_root(text):
     """Root documents use '# <nn> · <title>'; return (num, title, rest)."""
-    m = re.match(r"#\s+(\d+)\s+·\s+(.+?)\s*(?:
-|$)", text)
+    m = re.match(r"#\s+(\d+)\s+·\s+(.+?)\s*(?:\n|$)", text)
     return m.group(1), m.group(2), text[m.end():]
 
 
@@ -293,40 +295,54 @@ def page(lang, title, crumb, content, sidebar, to_root, mermaid_tag, lang_toggle
 """
 
 
-def sidebar_html(sections, ui, cur_dir, active=None, root_docs=()):
-    """sections: [(num, short_title, full_title, desc, feats, dir_name)] for one language.
+def sidebar_html(sections, ui, lang, cur_dir, active=None, root_docs=()):
+    """Collapsible nav groups: overview, appendices, then one group per section.
 
-    cur_dir: section dirname the page lives in (None = language root index).
-    Same-section links are bare; other sections get ../<dir>/; the root prefixes <dir>/.
-    active: 'sec:<dir>' marks the section link, '<dir>/<file>.html' a feature link.
+    cur_dir: section dirname the page lives in (None = root-level page).
+    active: 'root:<stem>', 'sec:<dir>' or '<dir>/<file>.html'.
+    A group starts open when it holds the current/active page; the user's own
+    toggling (chevron) is persisted by site.js across pages.
     """
-    parts = []
+    def group(key, title_html, items, is_open):
+        open_cls, exp = (" is-open", "true") if is_open else ("", "false")
+        out = [f'    <div class="side-sec{open_cls}" data-dir="{key}">',
+               '      <div class="side-sec-head">',
+               (f'        <button class="side-chevron" type="button" aria-expanded="{exp}" '
+                f'title="{html.escape(ui["toggle_section"])}" aria-label="{html.escape(ui["toggle_section"])}">'
+                f'{SVG_CHEV}</button>'),
+               f'        {title_html}',
+               f'        <span class="side-count">{bn_num(str(len(items)), lang)}</span>',
+               '      </div>',
+               '      <div class="side-sec-body">']
+        out.extend(items)
+        out += ['      </div>', '    </div>']
+        return out
+
+    def item(href, chip, label, is_on):
+        return (f'        <a class="side-item{is_on}" href="{href}">'
+                f'<span class="id-chip">{chip}</span><span>{html.escape(label)}</span></a>')
+
+    parts = ['    <nav class="side-nav">']
     root_prefix = "" if cur_dir is None else "../"
-    for group, kind in (("ref_overview", "ov"), ("ref_appendix", "ap")):
-        items = [d for d in root_docs if d["kind"] == kind]
-        if not items:
+    for group_key, group_label in (("ov", ui["ref_overview"]), ("ap", ui["ref_appendix"])):
+        docs = [d for d in root_docs if d["kind"] == group_key]
+        if not docs:
             continue
-        parts.append(f'    <div class="side-group">{html.escape(ui[group])}</div>')
-        for d in items:
-            is_on = " is-active" if active == f"root:{d['stem']}" else ""
-            parts.append(
-                f'    <a class="side-item{is_on}" href="{root_prefix}{d["stem"]}.html">'
-                f'<span class="id-chip">{d["num"]}</span><span>{html.escape(d["title"])}</span></a>')
+        items = [item(f"{root_prefix}{d['stem']}.html", d["num"], d["title"],
+                      " is-active" if active == f"root:{d['stem']}" else "") for d in docs]
+        open_default = any(active == f"root:{d['stem']}" for d in docs)
+        parts += group(group_key, f'<span class="side-sec-title">{html.escape(group_label)}</span>',
+                       items, open_default)
+
     for num, short, _full, _desc, feats, dirname in sections:
-        if cur_dir is None:
-            prefix = dirname + "/"
-        else:
-            prefix = "" if dirname == cur_dir else f"../{dirname}/"
-        is_on = " is-active" if active == f"sec:{dirname}" else ""
-        parts.append(f'    <a class="side-section{is_on}" '
-                     f'href="{prefix}index.html">{num} · {html.escape(short)}</a>')
-        parts.append(f'    <div class="side-group">{html.escape(ui["features"])}</div>')
-        for f in feats:
-            fname = f["file"][:-3]
-            is_on = " is-active" if active == f"{dirname}/{fname}.html" else ""
-            parts.append(
-                f'    <a class="side-item{is_on}" href="{prefix}{fname}.html">'
-                f'<span class="id-chip">{f["id"]}</span><span>{html.escape(f["title"])}</span></a>')
+        prefix = dirname + "/" if cur_dir is None else ("" if dirname == cur_dir else f"../{dirname}/")
+        items = [item(f"{prefix}{f['file'][:-3]}.html", f["id"], f["title"],
+                      " is-active" if active == f"{dirname}/{f['file'][:-3]}.html" else "")
+                 for f in feats]
+        title = (f'<a class="side-sec-title{" is-active" if active == f"sec:{dirname}" else ""}" '
+                 f'href="{prefix}index.html">{num} · {html.escape(short)}</a>')
+        parts += group(dirname, title, items, dirname == cur_dir)
+    parts.append('    </nav>')
     return "\n".join(parts)
 
 
@@ -454,18 +470,30 @@ def build(docs: Path, out: Path, assets: Path, wanted):
 
         # ---- language root index: the README, rendered ------------------
         readme_src = (docs / lang / "README.md").read_text(encoding="utf-8")
-        m = re.match(r"#\s+(.+?)\s*
-", readme_src)
+        m = re.match(r"#\s+(.+?)\s*\n", readme_src)
         home_title = m.group(1)
         # the language toggle in the top bar replaces the "other language" link
         rest = re.sub(r"^\[[^\]]+\]\(\.\./(?:en|bn)/README\.md\)\s*$", "", readme_src[m.end():], flags=re.M)
-        content = f"<h1>{html.escape(home_title)}</h1>
-" + md_to_html(rest, lang, "", built_md)
-        side = sidebar_html(parsed[lang], ui, cur_dir=None, root_docs=root_docs[lang])
+        # the README's nested per-feature TOC block is redundant here (the sidebar
+        # and the section indexes cover it); a section card grid navigates better
+        cards = "\n".join(
+            f'      <a class="card" href="{d}/index.html">'
+            f'<span class="card-title"><span class="id-chip">{num}</span> {html.escape(short)}</span>'
+            f'<span class="card-desc">{inline_md(desc)}</span>'
+            f'<span class="card-count">{html.escape(ui["count"].format(n=bn_num(str(len(feats)), lang)))}</span></a>'
+            for num, short, full, desc, feats, d in parsed[lang])
+        card_grid = f'<div class="cards">\n{cards}\n      </div>'
+        head, _, tail = rest.partition("<!-- TOC:START -->")
+        tail = tail.partition("<!-- TOC:END -->")[2] if _ else rest
+        content = (f"<h1>{html.escape(home_title)}</h1>\n"
+                   + md_to_html(head, lang, "", built_md) + "\n"
+                   + card_grid + "\n"
+                   + md_to_html(tail, lang, "", built_md))
+        side = sidebar_html(parsed[lang], ui, lang, cur_dir=None, root_docs=root_docs[lang])
         (out / lang / "index.html").parent.mkdir(parents=True, exist_ok=True)
         (out / lang / "index.html").write_text(
             page(lang, home_title, "", content, side, "../",
-                 mermaid_tag_tpl.format(to_root="../"), lang_toggle=False,
+                 mermaid_tag_tpl.format(to_root="../"),
                  fonts_link=fonts_tag_tpl.format(to_root="../", v=fonts_v)),
             encoding="utf-8")
         n_pages += 1
@@ -474,10 +502,19 @@ def build(docs: Path, out: Path, assets: Path, wanted):
         for d in root_docs[lang]:
             src = (docs / lang / d["file"]).read_text(encoding="utf-8")
             _num, _title, body_md = strip_feature_h1_root(src)
-            content = (f'<h1><span class="id-chip">{d["num"]}</span> {html.escape(d["title"])}</h1>
-'
-                       + md_to_html(body_md, lang, "", built_md))
-            side = sidebar_html(parsed[lang], ui, cur_dir=None, active=f"root:{d['stem']}",
+            body = md_to_html(body_md, lang, "", built_md)
+            if d["stem"] == "99-open-queries":
+                # queries are table rows, so '[Q-19](99-open-queries.md#q-19)'
+                # links need ids on the row labels; first occurrence of each
+                body = re.sub(
+                    r"<strong>(Q-\d+)</strong>",
+                    lambda m: (f'<strong id="{m.group(1).lower()}">{m.group(1)}</strong>'
+                               if not body.count(f'id="{m.group(1).lower()}"')
+                               else m.group(0)),
+                    body)
+            content = (f'<h1><span class="id-chip">{d["num"]}</span> {html.escape(d["title"])}</h1>\n'
+                       + body)
+            side = sidebar_html(parsed[lang], ui, lang, cur_dir=None, active=f"root:{d['stem']}",
                                 root_docs=root_docs[lang])
             (out / lang / f"{d['stem']}.html").write_text(
                 page(lang, f"{d['num']} · {d['title']}",
@@ -505,7 +542,7 @@ def build(docs: Path, out: Path, assets: Path, wanted):
             content = (f'<h1><span class="id-chip">{num}</span> {html.escape(full)}</h1>\n'
                        f'{intro}\n'
                        f'<div class="cards">\n{cards}\n    </div>')
-            side = sidebar_html(parsed[lang], ui, cur_dir=dirname, active=f"sec:{dirname}",
+            side = sidebar_html(parsed[lang], ui, lang, cur_dir=dirname, active=f"sec:{dirname}",
                                 root_docs=root_docs[lang])
             (sec_dir_out / "index.html").write_text(
                 page(lang, f"{num} · {short}", crumb_html([(ui["contents"], "../index.html"), (f"{num} · {short}", None)]),
@@ -537,7 +574,7 @@ def build(docs: Path, out: Path, assets: Path, wanted):
                 pager.append("</div>")
                 content = (f'<h1><span class="id-chip">{fid}</span> {html.escape(title)}</h1>\n{body}\n'
                            + "\n".join(pager))
-                side = sidebar_html(parsed[lang], ui, cur_dir=dirname,
+                side = sidebar_html(parsed[lang], ui, lang, cur_dir=dirname,
                                     active=f"{dirname}/{f['file'][:-3]}.html",
                                     root_docs=root_docs[lang])
                 (sec_dir_out / (f["file"][:-3] + ".html")).write_text(
