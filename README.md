@@ -400,7 +400,7 @@ notepad "$env:USERPROFILE\.etp-local\user-secrets.json"     # paste the JSON bel
     "AuthorizationToken": "REPLACE_ME"
   },
   "CloudfrontTicketValidator": { "BucketName": "REPLACE_ME", "ObjectKey": "REPLACE_ME" },
-  "Services": { "AppBase": "http://localhost:4200/" }
+  "Services": { "AppBase": "http://localhost:5120/" }
 }
 ```
 
@@ -657,7 +657,7 @@ Only if you cannot use Aspire (for example you want Visual Studio multi-project 
        "Admin": "http://localhost:5101/", "Booking": "http://localhost:5102/", "Event": "http://localhost:5103/",
        "Platform": "http://localhost:5104/", "PushNotification": "http://localhost:5105/", "Scheduler": "http://localhost:5106/",
        "TicketChecker": "http://localhost:5107/", "Ticketing": "http://localhost:5108/", "UserAuth": "http://localhost:5109/",
-       "UserIssue": "http://localhost:5110/", "Utility": "http://localhost:5111/", "AppBase": "http://localhost:4200/"
+       "UserIssue": "http://localhost:5110/", "Utility": "http://localhost:5111/", "AppBase": "http://localhost:5120/"
      },
      "Cache": { "Redis": { "ConnectionString": "localhost:6380", "InstanceName": "etp-local:", "DefaultDatabase": "0" } },
      "DistributedLock": { "Redis": { "EndPoint": "localhost", "Port": "6380", "Database": "0", "AccessKey": "" } }

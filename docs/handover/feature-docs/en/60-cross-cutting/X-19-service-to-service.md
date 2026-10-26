@@ -110,8 +110,9 @@ None of its own.
 2. **Scheduler's `IEventClient` points at `Services:Admin`**, not `Services:Event`. The client's paths decide which service answers
    ([S-04](../50-system-initiated/S-04-scheduler-capacity-update.md)).
 3. **`Services:AppBase`** is the base URL of `IUserClient`, which calls `user/my-profile` with the forwarded token, i.e. the
-   identity API `[UNCONFIRMED: Q-01]`. Locally it is set to `http://localhost:4200/` (`scripts/user-secrets.example.json`), which is
-   the admin portal, so these calls do not work locally.
+   identity API `[UNCONFIRMED: Q-01]`. Locally it is set to `http://localhost:5120/` (`scripts/user-secrets.example.json`), the
+   `mock-identity` server, which answers `GET user/my-profile`. It was previously `http://localhost:4200/` (the admin portal), which
+   made order creation fail with "connection refused".
 4. **Token expiry mid-request**: the services do not refresh tokens (architecture §2.3 A).
 5. **MassTransit is registered but unused** ([Appendix A](../90-appendix-a-legacy.md)).
 
