@@ -430,8 +430,8 @@ FodyWeavers.xsd
 # Local user-secrets source (copied from scripts/user-secrets.example.json)
 scripts/user-secrets.json
 
-# Floci HTTPS proxy certificate (exported dev cert)
-floci/certs/
+# Local HTTPS dev certificate for the Floci proxy (exported by scripts/Setup-EtpHttps.ps1)
+certs/
 .gstack/
 
 # Generated local admin portal copy (scripts/Setup-AdminPortal.ps1)

@@ -148,8 +148,8 @@ docker compose up -d
 docker compose ps
 ```
 
-The certificate goes to `floci/certs/` (git-ignored, per machine). The proxy's nginx config is inline in `docker-compose.yml`, so there is no other file to create.
-If you run `docker compose up -d` first, it stops with `bind source path does not exist: .../floci/certs`: run the script, then repeat. The six containers:
+The certificate goes to `certs/` (git-ignored, per machine). The proxy's nginx config is inline in `docker-compose.yml`, so there is no other file to create.
+If you run `docker compose up -d` first, it stops with `bind source path does not exist: .../certs`: run the script, then repeat. The six containers:
 
 | Container | Address | Credentials | Data |
 |---|---|---|---|
@@ -574,7 +574,7 @@ docker compose down --volumes --rmi all --remove-orphans
 # remove the user secrets from all 11 services (+ your optional override file)
 pwsh ./scripts/Clear-EtpSecrets.ps1
 # remove the exported HTTPS certificate (Setup-EtpHttps.ps1 recreates it)
-rm -rf floci/certs
+rm -rf certs
 # leftovers check: should list nothing
 docker ps -a --filter "name=etp"
 # leftovers check: should list nothing
@@ -595,7 +595,7 @@ To start again, go back to [Part 3](#3-first-time-setup).
 | `port is already allocated` (5432, 6379, 8000, 4566, 4567, 4500) | Another program owns the port: `pwsh -c "Get-NetTCPConnection -LocalPort 5432 -State Listen"` shows which. Stop it (a native Postgres/Redis, LocalStack) |
 | Every request fails with `The MetadataAddress or Authority must use HTTPS` | The Cognito URLs in your secrets are `http://`. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, `docker compose up -d`, then `pwsh ./scripts/Set-EtpSecrets.ps1` and restart the AppHost |
 | Valid token still gets **401** `The signature key was not found`, or **403**, or logs `User pool ... does not exist` | Usually the pools in Floci do not match your secrets (see "401 on every call" below) or were created in another region: everything must be in `ap-southeast-1`. Reset only Floci and re-seed ([Teardown](#8-teardown-and-cleanup)). If a fresh seed still gives the signature error, check the discovery document through the proxy: `curl.exe -k https://localhost:4567/<PoolId>/.well-known/openid-configuration` must show `"jwks_uri"` first; that rewrite is the `sub_filter` block in the `floci_nginx` config of `docker-compose.yml` (a workaround for mismatched IdentityModel package versions in the backend) |
-| `docker compose up -d` fails with `bind source path does not exist: .../floci/certs` | You have not created the HTTPS certificate yet. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, then `docker compose up -d` again |
+| `docker compose up -d` fails with `bind source path does not exist: .../certs` | You have not created the HTTPS certificate yet. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, then `docker compose up -d` again |
 | `etp-floci-tls` keeps restarting, or https://localhost:4567 does not answer | The certificate files are missing or incomplete. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, then `docker compose up -d` again |
 | `docker compose up -d` rejects the `configs:` block (an error mentioning `content`) | Docker Compose is too old for inline configs. Update Docker Desktop (4.26 or newer); check with `docker compose version` (2.23.1+) |
 | The "Open Floci UI" button on http://localhost:4566 shows "could not reach the container runtime" | Expected: no Docker socket is mounted on purpose. Open the console at http://localhost:4500 directly |

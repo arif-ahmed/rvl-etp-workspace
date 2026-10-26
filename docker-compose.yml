@@ -90,7 +90,7 @@ services:
       # Written by scripts/Setup-EtpHttps.ps1. create_host_path: false makes `docker compose up` fail with a clear
       # error if you forgot to run it, instead of creating an empty folder and crash-looping the proxy.
       - type: bind
-        source: ./floci/certs
+        source: ./certs
         target: /certs
         read_only: true
         bind:
