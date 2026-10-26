@@ -26,7 +26,7 @@ node mock-identity/server.js            # :5120
 
 ## As a Floci Lambda (optional)
 `lambda.js` exports `handler` for API Gateway proxy events (v1/v2). Requires Floci with the Docker socket mounted
-(the root `docker-compose.yml` has it off on purpose) and Floci Lambda function-URL / API Gateway support, **not yet verified**:
+(the AppHost has it off on purpose: no Docker socket is mounted into Floci) and Floci Lambda function-URL / API Gateway support, **not yet verified**:
 
 ```powershell
 Compress-Archive mock-identity\handler.js, mock-identity\lambda.js -DestinationPath mock-identity\fn.zip -Force

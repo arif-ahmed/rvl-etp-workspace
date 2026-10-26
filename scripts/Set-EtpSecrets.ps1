@@ -51,7 +51,7 @@ $cfg = Read-JsonHash $example
 # ---- Cognito values from the running Floci ----
 $reachable = $true
 try { $null = aws cognito-idp list-user-pools --max-results 1 2>&1; if ($LASTEXITCODE -ne 0) { $reachable = $false } } catch { $reachable = $false }
-if (-not $reachable) { throw "Cannot reach Floci at $endpoint. Start it: docker compose up -d" }
+if (-not $reachable) { throw "Cannot reach Floci at $endpoint. Start the AppHost: dotnet run --project aspire/Etp.AppHost" }
 
 foreach ($pool in 'Admin','User','TicketChecker','Agent') {
     $name = "etp-$($pool.ToLower())"
@@ -71,8 +71,8 @@ foreach ($pool in 'Admin','User','TicketChecker','Agent') {
 # ---- the HTTPS metadata must be reachable and must name the same issuer the tokens carry ----
 $adminId = $cfg.AWS.CognitoPool.Admin.PoolId
 try { $doc = Invoke-RestMethod "$oidc/$adminId/.well-known/openid-configuration" -TimeoutSec 10 }
-catch { throw "Cannot read $oidc (HTTPS proxy for Floci): $($_.Exception.Message)`nFix: pwsh ./scripts/Setup-EtpHttps.ps1; docker compose up -d" }
-if ($doc.issuer -ne "$oidc/$adminId") { throw "Floci reports issuer '$($doc.issuer)', expected '$oidc/$adminId'.`nFix: docker compose up -d to recreate Floci with the HTTPS base URL." }
+catch { throw "Cannot read $oidc (HTTPS proxy for Floci): $($_.Exception.Message)`nFix: pwsh ./scripts/Setup-EtpHttps.ps1; restart the AppHost" }
+if ($doc.issuer -ne "$oidc/$adminId") { throw "Floci reports issuer '$($doc.issuer)', expected '$oidc/$adminId'.`nFix: restart the AppHost to recreate Floci with the HTTPS base URL." }
 
 # ---- personal overrides (optional) ----
 if (Test-Path $override) {

@@ -4,7 +4,7 @@
 # Cognito pools/clients/users come from ./scripts/Seed-EtpCognitoUsers.ps1 (the custom attribute schema must be
 # defined at pool creation, so that script owns Cognito end to end).
 #
-# Usage:  docker compose up -d (workspace root) ; ./scripts/Seed-EtpFloci.ps1 ; ./scripts/Seed-EtpCognitoUsers.ps1
+# Usage:  the AppHost runs this (and Seed-EtpCognitoUsers.ps1) on every start; run by hand with Floci up: ./scripts/Seed-EtpFloci.ps1
 
 $ErrorActionPreference = 'Stop'
 

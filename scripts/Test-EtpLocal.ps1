@@ -18,7 +18,7 @@ function Get-Status($url, $headers = @{}) {
 # containers
 $running = @(docker ps --format '{{.Names}}' 2>$null)
 foreach ($c in 'etp-postgres','etp-redis','etp-dynamodb','etp-floci','etp-floci-tls') {
-    Check "container $c" ($running -contains $c) 'not running: docker compose up -d (workspace root)'
+    Check "container $c" ($running -contains $c) 'not running: start the AppHost (dotnet run --project aspire/Etp.AppHost)'
 }
 
 # services
