@@ -169,7 +169,7 @@ Floci stands in for AWS so you need no real AWS keys. It is an emulator: it cann
 
 - **HTTPS for login.** The backend only accepts HTTPS Cognito metadata, so a small proxy container (`etp-floci-tls`, `https://localhost:4567`) fronts Floci for
   the Cognito URLs, using the certificate from Step 2. AWS calls (S3, SQS, the CLI) still go to `http://localhost:4566`.
-- **Region `ap-southeast-1` (Singapore).** Everything in Floci must be created in this one region, to match the real AWS deployment. The seed scripts, the CLI and the services must all use it.
+- **Region `us-east-1`.** Everything in Floci must be created in this one region, and the seed scripts, the CLI and the services must all use it. It is deliberately not the production region (`ap-southeast-1`): once `AWS_ENDPOINT_URL` is set, the AWS SDK signs every request with `us-east-1` whatever region the code passes, and Floci looks pools, queues and buckets up by the signing region. Creating everything in `us-east-1` is what makes the backend find its Cognito pool (otherwise every valid token gets 403, see `docs/testing-services.md`).
 - **Seed once.** Seeding creates the bucket, queues and Cognito pools. Do not delete the Floci volume afterwards unless you want to start over.
 
 ```bash
@@ -199,12 +199,12 @@ Test accounts for the Admin pool (password for all: `Passw0rd!23`, username = ph
 
 ```powershell
 # PowerShell 7
-$env:AWS_ACCESS_KEY_ID = "test"; $env:AWS_SECRET_ACCESS_KEY = "test"; $env:AWS_REGION = "ap-southeast-1"
+$env:AWS_ACCESS_KEY_ID = "test"; $env:AWS_SECRET_ACCESS_KEY = "test"; $env:AWS_REGION = "us-east-1"
 ```
 
 ```bash
 # Git Bash
-export AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_REGION=ap-southeast-1
+export AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_REGION=us-east-1
 ```
 
 Check: `aws --endpoint-url http://localhost:4566 s3 ls` lists the bucket `etp-local`. This setup was tested with Floci 2.3.0 (pinned in `docker-compose.yml`).
@@ -421,7 +421,7 @@ dotnet run --project aspire/Etp.AppHost -- --ETP_SKIP=Event
 |---|---|
 | **VS Code** | *Run and Debug* > **Event (5103)** > F5. Configs for all 11 services are in `.vscode/launch.json`; they build first and set the port, environment and Floci endpoint |
 | **Rider** | *Run > Edit Configurations > + > .NET Project*, project `ETP.Event.Service`, untick the launch profile, environment variables `ASPNETCORE_ENVIRONMENT=Development;ASPNETCORE_URLS=http://localhost:5103;AWS_ENDPOINT_URL=http://localhost:4566`, then Debug |
-| **Visual Studio** | Run it in a terminal with those variables (commands right below the table), then attach (6.1) |
+| **Visual Studio** | Start VS with `./scripts/Start-VisualStudio.ps1` and press F5 (see below), or run it in a terminal with those variables (commands below the table) and attach (6.1) |
 
 Run one service from a terminal (Event shown; use its port from the list in 6.2) so Visual Studio can attach:
 
@@ -435,6 +435,10 @@ dotnet run --project rvl-gobcb-backend/Services/Event/ETP.Event.Service --no-lau
 # Git Bash: same thing in one line
 ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://localhost:5103 AWS_ENDPOINT_URL=http://localhost:4566 dotnet run --project rvl-gobcb-backend/Services/Event/ETP.Event.Service --no-launch-profile
 ```
+
+**F5 from Visual Studio:** start VS with `./scripts/Start-VisualStudio.ps1` (close all VS windows first). It sets `AWS_ENDPOINT_URL=http://localhost:4566` (and the SMS stub endpoint), which the debugged service inherits.
+A service started from a plain VS window has no `AWS_ENDPOINT_URL`, sends its Cognito calls to real AWS, and every role-protected Admin endpoint returns 403 even with a valid token
+(log: `Error enriching user claims with Cognito attributes ... The security token included in the request is invalid`). Stop the AppHost's copy of that service first (or use `ETP_SKIP`), and note that the launch profile port may differ (Admin: 5099).
 
 Why not simply press F5 on the service in Visual Studio? The repo's `launchSettings.json` ports differ from the fixed ports the services expect
 (and two services share 5033), and fixing that would mean editing a file inside a submodule. Do not use the *Launch Profiles* editor for the same reason.
@@ -594,7 +598,7 @@ To start again, go back to [Part 3](#3-first-time-setup).
 | `docker version` shows no Server / containers fail to start | Docker Desktop is not running. Start it and wait for the whale icon to be steady |
 | `port is already allocated` (5432, 6379, 8000, 4566, 4567, 4500) | Another program owns the port: `pwsh -c "Get-NetTCPConnection -LocalPort 5432 -State Listen"` shows which. Stop it (a native Postgres/Redis, LocalStack) |
 | Every request fails with `The MetadataAddress or Authority must use HTTPS` | The Cognito URLs in your secrets are `http://`. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, `docker compose up -d`, then `pwsh ./scripts/Set-EtpSecrets.ps1` and restart the AppHost |
-| Valid token still gets **401** `The signature key was not found`, or **403**, or logs `User pool ... does not exist` | Usually the pools in Floci do not match your secrets (see "401 on every call" below) or were created in another region: everything must be in `ap-southeast-1`. Reset only Floci and re-seed ([Teardown](#8-teardown-and-cleanup)). If a fresh seed still gives the signature error, check the discovery document through the proxy: `curl.exe -k https://localhost:4567/<PoolId>/.well-known/openid-configuration` must show `"jwks_uri"` first; that rewrite is the `sub_filter` block in the `floci_nginx` config of `docker-compose.yml` (a workaround for mismatched IdentityModel package versions in the backend) |
+| Valid token still gets **401** `The signature key was not found`, or **403**, or logs `User pool ... does not exist` | Usually the pools in Floci do not match your secrets (see "401 on every call" below) or were created in another region: everything must be in `us-east-1`. Reset only Floci and re-seed ([Teardown](#8-teardown-and-cleanup)). If a fresh seed still gives the signature error, check the discovery document through the proxy: `curl.exe -k https://localhost:4567/<PoolId>/.well-known/openid-configuration` must show `"jwks_uri"` first; that rewrite is the `sub_filter` block in the `floci_nginx` config of `docker-compose.yml` (a workaround for mismatched IdentityModel package versions in the backend) |
 | `docker compose up -d` fails with `bind source path does not exist: .../certs` | You have not created the HTTPS certificate yet. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, then `docker compose up -d` again |
 | `etp-floci-tls` keeps restarting, or https://localhost:4567 does not answer | The certificate files are missing or incomplete. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, then `docker compose up -d` again |
 | `docker compose up -d` rejects the `configs:` block (an error mentioning `content`) | Docker Compose is too old for inline configs. Update Docker Desktop (4.26 or newer); check with `docker compose version` (2.23.1+) |

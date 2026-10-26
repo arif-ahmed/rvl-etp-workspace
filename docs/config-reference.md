@@ -83,7 +83,7 @@ Key groups and purpose:
 | `Cache:Redis:ConnectionString / InstanceName / DefaultDatabase` | `localhost:6379` / `etp-local:` / `0` | distributed cache + DataProtection; Redis is contacted eagerly at startup |
 | `DistributedLock:Redis:EndPoint / Port / Database / AccessKey` | `localhost` / `6379` / `0` / `""` | RedLock for background jobs (`Database` is missing from repo appsettings — must come from secrets) |
 | `Application:ServiceName / Title / Description` | shipped in each repo's appsettings (except **UserIssue**) | controller route prefix `/<name>/api/...`, Swagger titles |
-| `AWS:Region / AccessKey / SecretAccessKey` | `ap-southeast-1` / `test` / `test` | SQS, MassTransit SQS bus, S3, SES, Cognito, DynamoDB clients |
+| `AWS:Region / AccessKey / SecretAccessKey` | `us-east-1` / `test` / `test` | SQS, MassTransit SQS bus, S3, SES, Cognito, DynamoDB clients |
 | `AWS:Bucket:Name / :BaseUrl` | `etp-local` / `http://localhost:4566` | generic S3 media bucket + its ServiceURL (BaseUrl must be the Floci endpoint, not a CDN) |
 | `AWS:Ticket:Bucket:{Name,BaseUrl}` | `etp-local` / `http://localhost:4566` | ticket-assets bucket; **Booking reads it although Booking's appsettings has no `AWS:Ticket` node** |
 | `AWS:Ticket:TemplateBase / BlankBase / SignedBase / ShareBase / MergeBase` | `templates/`, `blank/`, `signed/`, `share/`, `merge/` | S3 key prefixes of the ticket PDF pipeline |
@@ -142,7 +142,7 @@ File `portal-local/admin-portal/src/environments/environment.ts` (+ identical `e
 ```ts
 export const environment = {
   production: false,
-  aws: { region: 'ap-southeast-1', userPoolId: '<etp-admin pool id>', userPoolWebClientId: '<etp-local client id>' },
+  aws: { region: 'us-east-1', userPoolId: '<etp-admin pool id>', userPoolWebClientId: '<etp-local client id>' },
   services: {
     admin: '/p/admin', booking: '/p/booking', ticketing: '/p/ticketing',
     userissue: '/p/userissue', userissuehub: '/p/userissue',
@@ -188,7 +188,7 @@ copy is generated. Generated file `portal-local/user-portal/src/environments/env
 export const environment = {
   production: false,
   aws: {
-    region: 'ap-southeast-1',
+    region: 'us-east-1',
     userPoolId: '<etp-user pool id>',
     userPoolWebClientId: '<etp-local client id>',
     oauth: {
@@ -274,7 +274,7 @@ FIREBASE_IOS_BUNDLE_ID='com.ticketbangla.gobcbticket'
 {"UserAgent":"aws-amplify-cli/2.0","Version":"1.0","auth":{"plugins":{"awsCognitoAuthPlugin":
 {"UserAgent":"aws-amplify/cli","Version":"0.1.0","IdentityManager":{"Default":{}},
 "CognitoUserPool":{"Default":{"PoolId":"<etp-user pool id>","AppClientId":"<etp-local client id>",
-"Region":"ap-southeast-1"}},"Auth":{"Default":{"authenticationFlowType":"USER_PASSWORD_AUTH"}}}}}}
+"Region":"us-east-1"}},"Auth":{"Default":{"authenticationFlowType":"USER_PASSWORD_AUTH"}}}}}}
 ```
 
 | Key | Purpose |

@@ -227,7 +227,7 @@ def main():
     for k in TOKENS.values():
         vals.append({"key": k, "value": "", "type": "secret", "enabled": True})
     # used by etp-login-all-pools (Floci Cognito); same keys/defaults as etp-local-floci env
-    for k, v, t in [("floci_url", "http://localhost:4566", "default"), ("aws_region", "ap-southeast-1", "default"),
+    for k, v, t in [("floci_url", "http://localhost:4566", "default"), ("aws_region", "us-east-1", "default"),
                     ("aws_access_key", "test", "default"), ("aws_secret_key", "test", "secret"),
                     ("test_password", "Passw0rd!23", "secret"), ("client_name", "etp-local", "default")]:
         vals.append({"key": k, "value": v, "type": t, "enabled": True})

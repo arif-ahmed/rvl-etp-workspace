@@ -279,13 +279,13 @@ dotnet run --project Etp.AppHost
 
 | Key | মান |
 |---|---|
-| `AWS:Region` / `AWS:AccessKey` / `AWS:SecretAccessKey` | `ap-southeast-1` / `test` / `test` |
+| `AWS:Region` / `AWS:AccessKey` / `AWS:SecretAccessKey` | `us-east-1` / `test` / `test` |
 | `AWS:Bucket:Name` / `AWS:Bucket:BaseUrl` | `etp-local` / `http://localhost:4566` (কোড এটাকেই S3 ServiceURL ধরে) |
 | `AWS:Queue:OrderSuccess` … (৬টা) | queue-এর **নাম** — URL নয় (কোড `GetQueueUrl` করে) |
 | `AWS:CognitoPool:{Admin,User,TicketChecker,Agent}:PoolId` / `:ClientId` | `Seed-EtpCognitoUsers.ps1`-এর আউটপুট থেকে |
 | `AWS:CognitoPool:X:Authority` / `:Metadata` | `http://localhost:4566/<PoolId>` / `http://localhost:4566/<PoolId>/.well-known/openid-configuration` |
 
-এই মেশিনের বর্তমান মান (উদাহরণ): Admin pool `ap-southeast-1_2a67fbbf0` / client `f965366831814296abb70a9b65`; User pool `ap-southeast-1_656aa721c` / client `27c371e0e0544671a0e1736e88`। ⚠️ `docker compose down -v` করলে আইডি বদলে যায় — আবার seed করে নতুন মান বসাতে হবে।
+এই মেশিনের বর্তমান মান (উদাহরণ): Admin pool `us-east-1_2a67fbbf0` / client `f965366831814296abb70a9b65`; User pool `us-east-1_656aa721c` / client `27c371e0e0544671a0e1736e88`। ⚠️ `docker compose down -v` করলে আইডি বদলে যায় — আবার seed করে নতুন মান বসাতে হবে।
 
 **AppHost নিজে যা দেয়** (env var — user-secrets-কে override করে): `ConnectionStrings:*` → নিজের postgres-এর **একক `etp` DB** (password `etp-local-pg`, volume `etp-postgres-data` — তাই সার্ভিসগুলোর নিজের connection-secret এ পথে অগ্রাহ্য), password-হীন Redis, `Services:*` → `http://localhost:5101–5111`, DynamoDB Local :8000 (Ticketing-এর জন্য), `ASPNETCORE_ENVIRONMENT=Development`, আর `AWS_ENDPOINT_URL=http://localhost:4566` — শেষোক্তটা এ টেস্টে AppHost-এ যোগ করা হয়েছে, যাতে SQS/SES/Cognito কল ফ্লোসিতে যায়। AppHost ছাড়া একক সার্ভিস চালালে শেলে নিজে দিন: `$env:AWS_ENDPOINT_URL="http://localhost:4566"`।
 

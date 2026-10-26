@@ -29,7 +29,7 @@ param([switch]$Reset)
 $ErrorActionPreference = 'Stop'
 $seedDir   = Join-Path $PSScriptRoot 'seed'
 $container = 'etp-postgres'
-$env:AWS_ENDPOINT_URL = 'http://localhost:4566'; $env:AWS_REGION = 'ap-southeast-1'
+$env:AWS_ENDPOINT_URL = 'http://localhost:4566'; $env:AWS_REGION = 'us-east-1'
 $env:AWS_ACCESS_KEY_ID = 'test'; $env:AWS_SECRET_ACCESS_KEY = 'test'; $env:AWS_PAGER = ''
 
 function Invoke-Psql([string]$sqlText, [string[]]$extra = @()) {

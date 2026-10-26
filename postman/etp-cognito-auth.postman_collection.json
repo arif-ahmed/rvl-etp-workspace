@@ -69,7 +69,7 @@
                   "pm.test('200 from Floci Cognito', () => pm.response.to.have.status(200));",
                   "const pool = (pm.response.json().UserPools||[]).find(p => p.Name === pm.environment.get('admin_pool_name'));",
                   "pm.test('Admin pool exists (run scripts/Seed-EtpCognitoUsers.ps1 if not)', () => pm.expect(pool, 'pool '+pm.environment.get('admin_pool_name')).to.exist);",
-                  "if (pool) { pm.environment.set('admin_pool_id', pool.Id); pm.environment.set('admin_authority', pm.environment.get('floci_url') + '/' + pool.Id); }"
+                  "if (pool) { pm.environment.set('admin_pool_id', pool.Id); pm.environment.set('admin_authority', pm.environment.get('floci_oidc_url') + '/' + pool.Id); }"
                 ]
               }
             }
@@ -396,7 +396,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{admin_base_url}}/health",
+            "url": "{{admin_host_url}}/health",
             "auth": {
               "type": "noauth"
             }

@@ -43,7 +43,7 @@ function Find-Placeholders($node, $path) {
 }
 
 if (-not (Get-Command aws -ErrorAction SilentlyContinue)) { throw 'AWS CLI not found. Install it (winget install Amazon.AWSCLI) and open a new terminal.' }
-$env:AWS_ENDPOINT_URL = $endpoint; $env:AWS_REGION = 'ap-southeast-1'
+$env:AWS_ENDPOINT_URL = $endpoint; $env:AWS_REGION = 'us-east-1'
 $env:AWS_ACCESS_KEY_ID = 'test'; $env:AWS_SECRET_ACCESS_KEY = 'test'; $env:AWS_PAGER = ''
 
 $cfg = Read-JsonHash $example

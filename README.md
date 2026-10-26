@@ -176,7 +176,7 @@ New migrations pulled from others need no action; the owning service applies the
 | Purge a queue | `aws --endpoint-url http://localhost:4566 sqs purge-queue --queue-url <url>` |
 | Floci logs | `docker compose logs -f floci` |
 
-Tip: put `AWS_ENDPOINT_URL=http://localhost:4566`, `AWS_REGION=ap-southeast-1` and the `test`/`test` credentials in your
+Tip: put `AWS_ENDPOINT_URL=http://localhost:4566`, `AWS_REGION=us-east-1` and the `test`/`test` credentials in your
 shell profile for dev sessions so you can drop `--endpoint-url`.
 
 **Which services do I need?** The AppHost starts all 11. For lighter runs, comment services out of the `defs` list in `AppHost.cs`
@@ -245,7 +245,7 @@ It is standalone and does not depend on the Aspire AppHost.
 | SQS queues | `OrderSuccess`, `EventCapacity`, `FirebaseNotification`, `TicketProcessing`; **also needed but not yet created by `Seed-EtpFloci.ps1`:** `VatChallanProcessing`, `TicketSigning` |
 | SES identity | `noreply@etp.local` |
 | Cognito pools | `Admin`, `User`, `TicketChecker`, `Agent` (each with one app client) |
-| Region | `ap-southeast-1` |
+| Region | `us-east-1` (not the production region on purpose, see [docs/local-dev.md](docs/local-dev.md)) |
 | Credentials | any value works; we use `test` / `test` |
 
 DynamoDB is not on Floci; Aspire provides DynamoDB Local on port 8000.
@@ -321,7 +321,7 @@ notepad "$env:USERPROFILE\.etp-local\user-secrets.json"     # paste the JSON bel
     "ClientSecret": "local-dev-only-signing-key-change-me-0123456789abcdef"
   },
   "AWS": {
-    "Region": "ap-southeast-1",
+    "Region": "us-east-1",
     "AccessKey": "test",
     "SecretAccessKey": "test",
     "Bucket": { "Name": "etp-local", "BaseUrl": "http://localhost:4566" },
@@ -485,10 +485,10 @@ Most endpoints are `[Authorize]`. With Floci, get a token from the seeded pool (
 [section 10](#10-postman-cognito-and-auth-tests)). With a real dev pool:
 
 ```powershell
-aws cognito-idp initiate-auth --region ap-southeast-1 --auth-flow USER_PASSWORD_AUTH --client-id <CLIENT_ID> --auth-parameters USERNAME=<user>,PASSWORD=<password>
+aws cognito-idp initiate-auth --region us-east-1 --auth-flow USER_PASSWORD_AUTH --client-id <CLIENT_ID> --auth-parameters USERNAME=<user>,PASSWORD=<password>
 ```
 
-Take the `AccessToken` and paste it (token only) into Swagger's **Authorize** button. Admin program-scoped endpoints also need the
+Take the `AccessToken` and paste it (token only) into Swagger's **Authorize** button. Step-by-step token and endpoint testing, with known issues, is in [docs/testing-services.md](docs/testing-services.md). Admin program-scoped endpoints also need the
 header `X-Program-Id: <id>`. For service-to-service JWTs:
 `GET http://localhost:5101/admin/api/v1/token` with header `ServiceApiKey: local-dev-service-api-key`.
 
@@ -515,7 +515,7 @@ Files in `postman/`:
 | File | Purpose |
 |---|---|
 | `etp-cognito-auth.postman_collection.json` | Collection v2.1, 75 requests with test scripts |
-| `etp-local-floci.postman_environment.json` | Environment for Floci (`:4566`) and the Admin service (`:5101`) |
+| `etp-local-floci.postman_environment.json` | Environment for Floci (`:4566`, issuer `:4567`) and the Admin service (`:5101/admin`) |
 
 ### Run
 
@@ -555,8 +555,8 @@ On Node 24, `localhost` can fail with "Invalid IP address: undefined"; add
 
 ### Caveats
 
-- Not yet run against a live Floci and backend. Failures may be Floci-fidelity gaps (error `__type` names, `scope` claim,
-  `custom:*` in ID tokens, `AdminGetUser` by `sub`); triage each before blaming the collection.
+- Run on 2026-10-26 against Floci seeded in `us-east-1`: 150 of 150 assertions pass. Details, ports and the region rationale are in [docs/testing-services.md](docs/testing-services.md).
+  between the backend's Cognito client and Floci, so folders 04 (valid token), 05 and 06 fail; details and fix in [docs/testing-services.md](docs/testing-services.md).
 - Only the Admin pool is covered. The User, TicketChecker and Agent pools (`Seed-EtpFloci.ps1`) have no seeded users or tests yet.
 - Folder 06 `set-forget-password` documents an unauthenticated password-set endpoint (`[AllowAnonymous]`, no OTP check in
   `AdminUserManager.ForgetSetPasswordAsync`); see the request description.
@@ -673,10 +673,11 @@ Only if you cannot use Aspire (for example you want Visual Studio multi-project 
 
 Found while setting this up; worth separate tickets in the backend repo:
 
-1. **Ticketing `TicketGenerationService`:** no delay after `catch`, so an exception makes the loop spin and write hundreds of error logs per second (production risk too).
-2. **`launchSettings.json`:** Utility and Scheduler both use `http` 5033; PushNotification and Ticketing both use `https` 7007; the launch URLs of Utility, Platform and PushNotification point at the wrong Swagger path.
-3. **Backend README is outdated:** it says SQL Server (it is PostgreSQL), `dotnet ef database update` lacks `-c`, and the Docker Compose section does not work locally.
-4. **Config:** UserIssue has no `appsettings.json` in the repo, and the `DistributedLock:Redis:Database` key is missing everywhere although the code needs it.
-5. **Security:** the TSP HttpClient sets `ServerCertificateCustomValidationCallback = (...) => true`; Swagger is open in every environment; some regions are hard-coded.
-6. `UserAuth` and `Platform` are near-empty stubs, and 4 `*.Client` projects are not in the solution.
-7. Full configuration for the real environments lives in AWS SSM Parameter Store (`/rvl/<env>/<service>-service-appsettings`). If you copy values from there, take only Cognito/S3 style values, never connection strings, Redis or `AWS:Queue:*` (rule 6 in [section 1](#1-what-you-get)).
+1. **Cognito client region (403 on every valid token locally):** with `AWS_ENDPOINT_URL` set, AWSSDK 3.7.403 signs Cognito calls with `us-east-1` whatever region the code passes, and Floci looks pools up by the signing region. Locally this is avoided by creating everything in Floci in `us-east-1`; the real fix is an explicit `AuthenticationRegion` in the backend (`DependencyConfig.cs` of Admin, Booking, UserIssue). Details in [docs/testing-services.md](docs/testing-services.md).
+2. **Ticketing `TicketGenerationService`:** no delay after `catch`, so an exception makes the loop spin and write hundreds of error logs per second (production risk too).
+3. **`launchSettings.json`:** Utility and Scheduler both use `http` 5033; PushNotification and Ticketing both use `https` 7007; the launch URLs of Utility, Platform and PushNotification point at the wrong Swagger path.
+4. **Backend README is outdated:** it says SQL Server (it is PostgreSQL), `dotnet ef database update` lacks `-c`, and the Docker Compose section does not work locally.
+5. **Config:** UserIssue has no `appsettings.json` in the repo, and the `DistributedLock:Redis:Database` key is missing everywhere although the code needs it.
+6. **Security:** the TSP HttpClient sets `ServerCertificateCustomValidationCallback = (...) => true`; Swagger is open in every environment; some regions are hard-coded.
+7. `UserAuth` and `Platform` are near-empty stubs, and 4 `*.Client` projects are not in the solution.
+8. Full configuration for the real environments lives in AWS SSM Parameter Store (`/rvl/<env>/<service>-service-appsettings`). If you copy values from there, take only Cognito/S3 style values, never connection strings, Redis or `AWS:Queue:*` (rule 6 in [section 1](#1-what-you-get)).

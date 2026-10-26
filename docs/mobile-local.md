@@ -154,7 +154,7 @@ phone / emulator
 
 ## 8. Known gaps
 
-1. **Signing in against Floci is unsolved.** Both apps sign in with Amplify Flutter (Cognito). Unlike the Angular portals, which the setup scripts patch with a custom `endpoint`, Amplify Flutter has no endpoint override in its config, so it talks to real `cognito-idp.ap-southeast-1.amazonaws.com` and the Floci users do not exist there. Options to investigate: patch `data/lib/service/aws_amplify_service.dart` in the copy, a system-level redirect of the Cognito host, or a shared dev environment from bs23. Until then the apps start but cannot log in; screens that need no token may still work.
+1. **Signing in against Floci is unsolved.** Both apps sign in with Amplify Flutter (Cognito). Unlike the Angular portals, which the setup scripts patch with a custom `endpoint`, Amplify Flutter has no endpoint override in its config, so it talks to real `cognito-idp.us-east-1.amazonaws.com` and the Floci users do not exist there. Options to investigate: patch `data/lib/service/aws_amplify_service.dart` in the copy, a system-level redirect of the Cognito host, or a shared dev environment from bs23. Until then the apps start but cannot log in; screens that need no token may still work.
 2. **`identity` API** (sign-up, OTP, profile, forgot password) has no source in any repo (same as the user portal). The gateway returns 503.
 3. **Checker `VDS_CERTIFICATE`** is a placeholder. It is the public certificate used to verify ticket QR signatures; ask bs23, or derive it from the Ticketing service signing key ([local-dev.md](local-dev.md)).
 4. **Firebase is dummy** (`google-services.json`, `FIREBASE_*`). Analytics and push notifications do nothing.

@@ -78,7 +78,7 @@ The first run takes a few minutes (`npm install`). Later runs take seconds: `nod
 Expected output:
 
 ```
-cognito Admin pool ap-southeast-1_xxxxxxxxx client xxxxxxxxxxxxxxxxxxxxxxxxxx
+cognito Admin pool us-east-1_xxxxxxxxx client xxxxxxxxxxxxxxxxxxxxxxxxxx
 ok  SRP enabled on app client
 ok  copied ... -> portal-local\admin-portal
 ok  environment.ts, aws-exports.ts, proxy.conf.js written

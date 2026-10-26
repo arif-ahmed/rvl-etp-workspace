@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 const FLOCI = process.env.AWS_ENDPOINT_URL || 'http://localhost:4566';
-const REGION = process.env.AWS_REGION || 'ap-southeast-1';
+const REGION = process.env.AWS_REGION || 'us-east-1';
 const OTP = process.env.MOCK_OTP || '123456';
 const OTP_TTL_MS = Number(process.env.MOCK_OTP_TTL_MS || 5 * 60 * 1000);
 const SENDER = process.env.MOCK_EMAIL_SENDER || 'noreply@etp.local';

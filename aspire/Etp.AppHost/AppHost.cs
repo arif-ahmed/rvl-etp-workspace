@@ -97,7 +97,8 @@ foreach (var (name, folder, port) in defs)
        .WithEnvironment("DistributedLock__Redis__EndPoint", redisHost)
        .WithEnvironment("DistributedLock__Redis__Port", redisPort)
        .WithEnvironment("DistributedLock__Redis__AccessKey", "")
-       .WithEnvironment("AWS_ENDPOINT_URL", "http://localhost:4566");   // Floci: SQS/SES/Cognito via the local emulator
+       .WithEnvironment("AWS_ENDPOINT_URL", "http://localhost:4566")   // Floci; its region is us-east-1, which is what the AWS SDK signs with once an endpoint is set
+       .WithEnvironment("Notification__Endpoint", "http://localhost:4569/");   // secrets hold a placeholder SMS gateway; floci-tls answers 200 on :4569 so admin user create / password reset work locally
 }
 
 builder.Build().Run();

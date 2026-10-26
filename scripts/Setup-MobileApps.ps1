@@ -59,9 +59,9 @@ Write-Host "ok  Android SDK $sdk"
 
 # Floci Cognito IDs (optional)
 function Get-CognitoIds($poolName) {
-    $ids = @{ PoolId = 'ap-southeast-1_LOCALPLACEHOLDER'; ClientId = 'LOCALPLACEHOLDER'; Real = $false }
+    $ids = @{ PoolId = 'us-east-1_LOCALPLACEHOLDER'; ClientId = 'LOCALPLACEHOLDER'; Real = $false }
     if (-not (Get-Command aws -ErrorAction SilentlyContinue)) { Write-Warning 'aws CLI not found; Cognito IDs are placeholders.'; return $ids }
-    $env:AWS_ACCESS_KEY_ID = 'test'; $env:AWS_SECRET_ACCESS_KEY = 'test'; $env:AWS_REGION = 'ap-southeast-1'; $env:AWS_PAGER = ''
+    $env:AWS_ACCESS_KEY_ID = 'test'; $env:AWS_SECRET_ACCESS_KEY = 'test'; $env:AWS_REGION = 'us-east-1'; $env:AWS_PAGER = ''
     try {
         $pool = & aws --endpoint-url $floci cognito-idp list-user-pools --max-results 60 --query "UserPools[?Name=='$poolName'].Id | [0]" --output text 2>$null
         if ($LASTEXITCODE -or -not $pool -or $pool -eq 'None') { throw 'pool missing' }
@@ -100,7 +100,7 @@ foreach ($key in $selected) {
         auth = @{ plugins = @{ awsCognitoAuthPlugin = [ordered]@{
             UserAgent = 'aws-amplify/cli'; Version = '0.1.0'
             IdentityManager = @{ Default = @{} }
-            CognitoUserPool = @{ Default = [ordered]@{ PoolId = $cog.PoolId; AppClientId = $cog.ClientId; Region = 'ap-southeast-1' } }
+            CognitoUserPool = @{ Default = [ordered]@{ PoolId = $cog.PoolId; AppClientId = $cog.ClientId; Region = 'us-east-1' } }
             Auth = @{ Default = @{ authenticationFlowType = 'USER_PASSWORD_AUTH' } }
         } } }
     } | ConvertTo-Json -Depth 10 -Compress
