@@ -442,3 +442,7 @@ mobile-local/
 
 # ZCode agent session artifacts
 .zcode/
+
+# Local run artifacts
+aspire-apphost.log
+e2e/test-run.log

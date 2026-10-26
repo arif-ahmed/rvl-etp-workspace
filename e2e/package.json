@@ -1,0 +1,16 @@
+{
+  "name": "etp-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Playwright E2E tests for the ETP platform. Runs against the local stack (Aspire AppHost + Floci + mocks); never modifies submodules.",
+  "scripts": {
+    "test": "playwright test",
+    "test:user": "playwright test --project=user",
+    "test:admin": "playwright test --project=admin",
+    "test:headed": "playwright test --project=user --headed",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}
