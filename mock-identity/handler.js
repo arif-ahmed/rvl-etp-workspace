@@ -143,7 +143,9 @@ const routes = {
     if (body.type === 'sms') {
       const phone = normPhone(body.destination);
       const found = Object.entries(state.pending).find(([, v]) => v.phone === phone);
-      return ok('sms_otp_verified_successfully', { user_id: found ? found[0] : crypto.randomUUID() });
+      const user_id = found ? found[0] : crypto.randomUUID();
+      // user portal reads user_id from the top level of the response; keep data.user_id for other callers
+      return ok('sms_otp_verified_successfully', { user_id }, { user_id });
     }
     return ok('email_otp_verified_successfully');
   },
