@@ -117,10 +117,10 @@
 
 ### সেশন ২ — লোকাল এনভায়রনমেন্ট সেটআপ ও ১১টি সার্ভিস চালানো
 
-- **পড়া:** `README.md` (§First-time setup / §4), `docs/local-dev-setup.bn.md` (বাংলা গাইড), `floci/QUICKSTART.md`, `scripts/user-secrets.example.json`।
+- **পড়া:** `README.md` (§First-time setup / §4), `docs/local-dev-setup.bn.md` (বাংলা গাইড), `docs/local-dev.md`, `scripts/user-secrets.example.json`।
 - **হাতে-কলমে (ঠিক এই ক্রমে):**
   1. `docker compose up -d` — Postgres 16 + Redis 7 + DynamoDB Local।
-  2. Floci চালু (`floci/`), তারপর `seed.ps1` ও `seed-users.ps1` — ৪টি Cognito pool + ৫টি স্টাফ ইউজার seeded হবে।
+  2. Floci চালু (`floci/`), তারপর `Seed-EtpFloci.ps1` ও `Seed-EtpCognitoUsers.ps1` — ৪টি Cognito pool + ৫টি স্টাফ ইউজার seeded হবে।
   3. `%USERPROFILE%\.etp-local\user-secrets.json` তৈরি ও `scripts/Set-EtpSecrets.ps1` দিয়ে সব সার্ভিসে প্রয়োগ।
   4. `AWS_ENDPOINT_URL=http://localhost:4566` সেট করে `dotnet run --project aspire/Etp.AppHost`।
   5. সব সার্ভিস Running হলে `pwsh ./scripts/Test-EtpLocal.ps1` (~২০ সেকেন্ড)।
@@ -469,7 +469,7 @@
 
 | ফেজ | মূল ডক | মূল কোড/টুল |
 |---|---|---|
-| 0 | `README.md`, `docs/local-dev-setup.bn.md`, `floci/QUICKSTART.md` | Aspire AppHost, `scripts/`, `postman/` |
+| 0 | `README.md`, `docs/local-dev-setup.bn.md`, `docs/local-dev.md` | Aspire AppHost, `scripts/`, `postman/` |
 | 1 | `feature-docs/bn/` primer 00-03, `docs/architecture/gobcb-aws-architecture.md` | `Core/`, `Services/` (স্ট্রাকচার) |
 | 2 | `X-01`..`X-26` | `Services/UserAuth`, Redis, Floci (SES/S3/DynamoDB) |
 | 3 | `A-*`, `P-*`, `S-*`, `X`-বাকি, `docs/knowledge_transfer_context.md` | `Services/` সব (বিশেষত Booking, Ticketing, TicketChecker) |

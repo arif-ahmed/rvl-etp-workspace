@@ -6,10 +6,10 @@
 # CognitoUserAttributesMiddleware).
 #
 # The custom attribute schema must be defined at pool creation (real Cognito rule), so this script
-# is the single owner of Cognito; seed.ps1 only covers S3/SQS/SES.
+# is the single owner of Cognito; Seed-EtpFloci.ps1 only covers S3/SQS/SES.
 # Idempotent: reuses pools/clients, skips users that already exist.
 #
-# Usage:  ./seed-users.ps1            (prints PoolId / ClientId per pool for user-secrets)
+# Usage:  ./scripts/Seed-EtpCognitoUsers.ps1            (prints PoolId / ClientId per pool for user-secrets)
 
 $ErrorActionPreference = 'Stop'
 
@@ -55,7 +55,7 @@ foreach ($p in $pools.Keys) {
     else {
         $schemaNames = aws cognito-idp describe-user-pool --user-pool-id $poolId --query 'UserPool.SchemaAttributes[].Name' --output text
         if ($schemaNames -notmatch 'custom:role' -or $schemaNames -notmatch 'custom:program_ids') {
-            Write-Warning "Pool $poolName ($poolId) predates the custom attribute schema. Logins work, but custom:role / custom:program_ids claims will be missing. Fix: docker compose down -v ; docker compose up -d ; ./seed.ps1 ; ./seed-users.ps1"
+            Write-Warning "Pool $poolName ($poolId) predates the custom attribute schema. Logins work, but custom:role / custom:program_ids claims will be missing. Fix: reset Floci (docs/local-dev.md, Teardown), then ./scripts/Seed-EtpFloci.ps1 ; ./scripts/Seed-EtpCognitoUsers.ps1"
         }
         Write-Host "Using existing pool $poolName ($poolId)"
     }

@@ -57,7 +57,7 @@ Six rules that save time:
 | `rvl-gobcb-user-app/` | user mobile app, git submodule |
 | `rvl-gobcb-checker-app/` | ticket checker mobile app, git submodule |
 | `aspire/Etp.AppHost/` | .NET Aspire AppHost that runs the whole backend (all wiring is in `AppHost.cs`) |
-| `floci/` | `docker-compose.yml`, `seed.ps1`, `seed-users.ps1` for local AWS emulation |
+| `floci/` | `docker-compose.yml`, `Seed-EtpFloci.ps1`, `Seed-EtpCognitoUsers.ps1` for local AWS emulation |
 | `postman/` | Postman collection and environment |
 | `status.ps1` | shows submodule pins vs. remote `main` |
 
@@ -103,17 +103,16 @@ git config submodule.recurse true     # recommended: pull/checkout move submodul
 ### 4.2 Start Floci (local AWS)
 
 ```powershell
-cd floci
-docker compose up -d
+pwsh ./scripts/Setup-EtpHttps.ps1          # once: certificate for the HTTPS proxy
+docker compose up -d                  # PostgreSQL, Redis, DynamoDB and Floci (one compose file at the workspace root)
 docker compose logs -f floci          # wait until it reports ready, then Ctrl+C
-./seed.ps1                            # bucket, queues, SES identity, one Cognito pool + client per role
-./seed-users.ps1                      # Admin pool with custom attributes, app client, 5 staff users
-cd ..
+pwsh ./scripts/Seed-EtpFloci.ps1                 # bucket, queues, SES identity, one Cognito pool + client per role
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1           # Admin pool with custom attributes, app client, 5 staff users
 ```
 
 Copy the output of both scripts: they print the Cognito `PoolId` / `ClientId` (and for Admin, `Authority` / `Metadata`) values you need in step 4.3.
-`seed-users.ps1` is what makes login work for the Admin service and the Postman collection ([section 10](#10-postman-cognito-and-auth-tests));
-for the Admin pool, use the values it prints rather than the ones from `seed.ps1`.
+`Seed-EtpCognitoUsers.ps1` is what makes login work for the Admin service and the Postman collection ([section 10](#10-postman-cognito-and-auth-tests));
+for the Admin pool, use the values it prints rather than the ones from `Seed-EtpFloci.ps1`.
 Details in [section 7](#7-floci-local-aws-emulation).
 
 ### 4.3 Set the service configuration
@@ -157,11 +156,11 @@ The pieces to exercise end to end: one S3 upload, one SQS message, one Cognito l
 
 ```powershell
 git pull                              # then: git submodule update --init  (if pins moved)
-cd floci; docker compose up -d; cd .. # no-op if running; data persists, no need to re-seed
+docker compose up -d                  # no-op if running; data persists, no need to re-seed
 dotnet run --project aspire/Etp.AppHost
 ```
 
-Start Floci before the AppHost. Floci data lives in the `etp-floci-data` volume, so you normally do not re-run `seed.ps1`.
+Start Floci before the AppHost. Floci data lives in the `etp-floci-data` volume, so you normally do not re-run `Seed-EtpFloci.ps1`.
 If `aws sqs list-queues` shows nothing, the data was lost: re-seed.
 
 New migrations pulled from others need no action; the owning service applies them on startup.
@@ -175,7 +174,7 @@ New migrations pulled from others need no action; the owning service applies the
 | List queues | `aws --endpoint-url http://localhost:4566 sqs list-queues` |
 | Peek at a queue | `aws --endpoint-url http://localhost:4566 sqs receive-message --queue-url <url>` |
 | Purge a queue | `aws --endpoint-url http://localhost:4566 sqs purge-queue --queue-url <url>` |
-| Floci logs | `docker compose -f floci/docker-compose.yml logs -f floci` |
+| Floci logs | `docker compose logs -f floci` |
 
 Tip: put `AWS_ENDPOINT_URL=http://localhost:4566`, `AWS_REGION=ap-southeast-1` and the `test`/`test` credentials in your
 shell profile for dev sessions so you can drop `--endpoint-url`.
@@ -196,7 +195,7 @@ shell profile for dev sessions so you can drop `--endpoint-url`.
 **End of day**
 
 - Stop the AppHost with `Ctrl+C` (or the stop button in the dashboard). Do not force-kill it; that can leave containers behind.
-- `cd floci; docker compose stop` (keeps data). Leaving Floci running is fine too.
+- `docker compose stop` (keeps data). Leaving the containers running is fine too.
 
 ## 6. Services and ports
 
@@ -243,7 +242,7 @@ It is standalone and does not depend on the Aspire AppHost.
 | Resource | Name(s) |
 |---|---|
 | S3 bucket | `etp-local` |
-| SQS queues | `OrderSuccess`, `EventCapacity`, `FirebaseNotification`, `TicketProcessing`; **also needed but not yet created by `seed.ps1`:** `VatChallanProcessing`, `TicketSigning` |
+| SQS queues | `OrderSuccess`, `EventCapacity`, `FirebaseNotification`, `TicketProcessing`; **also needed but not yet created by `Seed-EtpFloci.ps1`:** `VatChallanProcessing`, `TicketSigning` |
 | SES identity | `noreply@etp.local` |
 | Cognito pools | `Admin`, `User`, `TicketChecker`, `Agent` (each with one app client) |
 | Region | `ap-southeast-1` |
@@ -251,7 +250,7 @@ It is standalone and does not depend on the Aspire AppHost.
 
 DynamoDB is not on Floci; Aspire provides DynamoDB Local on port 8000.
 
-`docker compose up -d` in `floci/` starts two containers, pinned to fixed versions in `docker-compose.yml`:
+`docker compose up -d` also starts the Floci containers, pinned to fixed versions in the root `docker-compose.yml`:
 
 | Container | URL |
 |---|---|
@@ -279,10 +278,10 @@ Quick check: `aws --endpoint-url http://localhost:4566 s3 ls` (set `AWS_ACCESS_K
 
 ### Known gaps
 
-- `seed.ps1` creates plain pools. Only the Admin pool made by `seed-users.ps1` has the custom attributes (`custom:role`, `custom:program_ids`) the backend reads; User, TicketChecker and Agent pools have none, and no users.
-- Both scripts create a pool named `etp-admin`, and `seed-users.ps1` reuses the first pool with that name. If it picks the one from `seed.ps1` (no custom attributes), the Postman custom-attribute checks fail. Not verified; if you see that, `docker compose down -v` and run `./seed-users.ps1` before `./seed.ps1`.
-- `seed.ps1` creates new pools on every run (S3 and SQS are idempotent). Run it once per fresh Floci volume.
-- The Admin `Authority` / `Metadata` URLs (`http://localhost:4566/<poolId>` and `.../.well-known/openid-configuration`) come from `seed-users.ps1` and are unconfirmed against the Floci docs. For the other pools the URL pattern is presumably the same, unconfirmed.
+- `Seed-EtpFloci.ps1` creates plain pools. Only the Admin pool made by `Seed-EtpCognitoUsers.ps1` has the custom attributes (`custom:role`, `custom:program_ids`) the backend reads; User, TicketChecker and Agent pools have none, and no users.
+- Both scripts create a pool named `etp-admin`, and `Seed-EtpCognitoUsers.ps1` reuses the first pool with that name. If it picks the one from `Seed-EtpFloci.ps1` (no custom attributes), the Postman custom-attribute checks fail. Not verified; if you see that, `docker compose down -v` and run `./seed-users.ps1` before `./seed.ps1`.
+- `Seed-EtpFloci.ps1` creates new pools on every run (S3 and SQS are idempotent). Run it once per fresh Floci volume.
+- The Admin `Authority` / `Metadata` URLs (`http://localhost:4566/<poolId>` and `.../.well-known/openid-configuration`) come from `Seed-EtpCognitoUsers.ps1` and are unconfirmed against the Floci docs. For the other pools the URL pattern is presumably the same, unconfirmed.
 - Firebase push notifications and the DgePay payment gateway are not AWS, so Floci does not cover them.
 - The advertised service count is not a fidelity guarantee. Verify Cognito token claims and IAM rather than assuming them.
 
@@ -297,8 +296,8 @@ Keep one personal config file outside every repo, then apply it to all services.
 
 ### 8.1 Create `%USERPROFILE%\.etp-local\user-secrets.json`
 
-The values below target Floci. The `REPLACE_WITH_*` values for Cognito come from `seed.ps1` output, and for the Admin pool from
-`seed-users.ps1` output, which also prints the `Authority` and `Metadata` URLs (`http://localhost:4566/<poolId>` and
+The values below target Floci. The `REPLACE_WITH_*` values for Cognito come from `Seed-EtpFloci.ps1` output, and for the Admin pool from
+`Seed-EtpCognitoUsers.ps1` output, which also prints the `Authority` and `Metadata` URLs (`http://localhost:4566/<poolId>` and
 `http://localhost:4566/<poolId>/.well-known/openid-configuration`; use the same pattern for the other pools). If you use a real dev pool, get the values from the team lead. Dummy values are fine for everything else; health, Swagger and
 anonymous APIs work without real keys.
 
@@ -520,7 +519,7 @@ Files in `postman/`:
 
 ### Run
 
-1. Floci is up and `floci/seed-users.ps1` has been run. It creates the `etp-admin` pool (with `custom:role` and `custom:program_ids`), the `etp-local` client and 5 staff users, all with password `Passw0rd!23` and the phone number as username:
+1. Floci is up and `scripts/Seed-EtpCognitoUsers.ps1` has been run. It creates the `etp-admin` pool (with `custom:role` and `custom:program_ids`), the `etp-local` client and 5 staff users, all with password `Passw0rd!23` and the phone number as username:
 
    | Phone | Role | Programs |
    |---|---|---|
@@ -531,7 +530,7 @@ Files in `postman/`:
    | +8801700000005 | customer_support | none |
 
    Re-running it is safe; existing users are skipped.
-2. The Admin service is running with the `AWS:CognitoPool:Admin:*` values printed by `seed-users.ps1` in its user secrets.
+2. The Admin service is running with the `AWS:CognitoPool:Admin:*` values printed by `Seed-EtpCognitoUsers.ps1` in its user secrets.
 3. Import both files into Postman, select the **ETP Local - Floci** environment, and run the collection in order.
    Folder 00 resolves `admin_pool_id`, `admin_client_id` and `admin_authority` itself; folder 01 stores the per-role tokens that later folders use.
 4. Optional: set `service_api_key` (secret) to enable folder 07.
@@ -558,7 +557,7 @@ On Node 24, `localhost` can fail with "Invalid IP address: undefined"; add
 
 - Not yet run against a live Floci and backend. Failures may be Floci-fidelity gaps (error `__type` names, `scope` claim,
   `custom:*` in ID tokens, `AdminGetUser` by `sub`); triage each before blaming the collection.
-- Only the Admin pool is covered. The User, TicketChecker and Agent pools (`seed.ps1`) have no seeded users or tests yet.
+- Only the Admin pool is covered. The User, TicketChecker and Agent pools (`Seed-EtpFloci.ps1`) have no seeded users or tests yet.
 - Folder 06 `set-forget-password` documents an unauthenticated password-set endpoint (`[AllowAnonymous]`, no OTP check in
   `AdminUserManager.ForgetSetPasswordAsync`); see the request description.
 
@@ -591,10 +590,10 @@ Rules of thumb:
 | `FormatException` / `Distributed lock...` at startup | User secrets not applied (config still `[see User Secrets]`); re-run [8.2](#82-apply-it-to-every-service) |
 | `NullReferenceException` in Program.cs for `Application:ServiceName` (UserIssue) | UserIssue's Application section missing; re-run 8.2 |
 | `relation "etp.xxx" does not exist` | Admin migrations did not run yet; wait for Admin or check its log |
-| Connection refused on 4566 | Floci not running: `docker compose ps`, then `docker compose logs floci` (in `floci/`) |
+| Connection refused on 4566 | Floci not running: `docker compose ps`, then `docker compose logs floci` |
 | Floci console at :4500 not loading | `docker compose logs floci-ui`. Do not set `PORT` on the `floci-ui` service; it moves the server off 4500 |
 | "Open Floci UI" button: "could not reach the container runtime" | Expected (no Docker socket). Use http://localhost:4500 |
-| Port 4566 in use | LocalStack or another emulator is running. Stop it, or change the host port in `floci/docker-compose.yml` and every endpoint URL |
+| Port 4566 in use | LocalStack or another emulator is running. Stop it, or change the host port in `docker-compose.yml` and every endpoint URL |
 | Services still hit real AWS | `AWS_ENDPOINT_URL` not set in the process that starts the AppHost, or the SDK ignores it |
 | S3 `NoSuchBucket` / DNS errors | `AWS:Bucket:BaseUrl` must be `http://localhost:4566` and the bucket must exist (`aws s3 ls`) |
 | Queue not found | The secret must be the queue *name* (not a URL) and the queue must exist |
@@ -609,9 +608,9 @@ Rules of thumb:
 | Goal | Command | What is lost |
 |---|---|---|
 | Stop backend | `Ctrl+C` in the AppHost terminal | nothing |
-| Stop Floci | `cd floci; docker compose stop` | nothing |
-| Remove Floci containers/network | `docker compose down` (in `floci/`) | nothing (volume kept) |
-| Reset Floci data | `docker compose down -v; docker compose up -d; ./seed.ps1` | all buckets, queues, Cognito pools; IDs regenerate, so update user secrets |
+| Stop Floci (and the other containers) | `docker compose stop` | nothing |
+| Remove containers/network | `docker compose down` | nothing (volumes kept) |
+| Reset Floci data only | `docker compose rm -sf floci floci-tls floci-ui; docker volume rm etp-floci-data; docker compose up -d; pwsh ./scripts/Seed-EtpFloci.ps1` | all buckets, queues, Cognito pools; IDs regenerate, so update user secrets |
 | Reset backend data | stop the AppHost, `docker volume rm etp-postgres-data etp-redis-data` | all DB and Redis data |
 | Clear user secrets | `Get-ChildItem rvl-gobcb-backend/Services -Recurse -Filter *.Service.csproj \| ? { Select-String -Path $_.FullName -Pattern '<UserSecretsId>' -Quiet } \| % { dotnet user-secrets clear --project $_.FullName }` | all service secrets |
 | Remove personal files | `Remove-Item -Recurse $env:USERPROFILE\.etp-local` | your `user-secrets.json`; back up real keys first |

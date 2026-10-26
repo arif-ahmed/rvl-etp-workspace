@@ -265,7 +265,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 </tbody>
 </table>
-<p>Locally both settings point at the single bucket <code>etp-local</code> in Floci (<code>scripts/user-secrets.example.json</code>, created by <code>floci/seed.ps1</code>).</p>
+<p>Locally both settings point at the single bucket <code>etp-local</code> in Floci (<code>scripts/user-secrets.example.json</code>, created by <code>scripts/Seed-EtpFloci.ps1</code>).</p>
 <p><strong>Key layout.</strong> <code>UploadContentAsync(directory, parentId, name, ...)</code> builds the object key as <code>{directory}/{parentId}/{name}</code>, or <code>{directory}/{name}</code> when <code>parentId</code> is empty, and returns that key. The managers then store a <strong>full URL</strong>, <code>{AWS:Bucket:BaseUrl}/{key}</code>, in the owning row (for example <code>ProgramManager.UploadImageAsync</code>); ticket-layout and ticket code splits such URLs on the folder name to recover the key before deleting an object.</p>
 <p><strong>Media folders</strong> (<code>AWS:Bucket</code>):</p>
 <table>

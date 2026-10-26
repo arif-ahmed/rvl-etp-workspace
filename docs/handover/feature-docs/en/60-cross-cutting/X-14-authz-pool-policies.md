@@ -103,7 +103,7 @@ the `etp-floci-tls` proxy, `docs/local-dev.md` Step 3).
 
 | Item | Detail |
 |---|---|
-| Test data and accounts | One user per pool: admin `…01`–`…05`, user `…11`, checker `…21`, agent `…31` (`floci/seed-users.ps1`) |
+| Test data and accounts | One user per pool: admin `…01`–`…05`, user `…11`, checker `…21`, agent `…31` (`scripts/Seed-EtpCognitoUsers.ps1`) |
 | Browser | Not needed |
 | Emulator | Not needed |
 | Postman | `postman/etp-cognito-auth.postman_collection.json` folder "04 - Backend JWT validation (Admin scheme)": "No token", "Malformed bearer token", "Forged token (wrong signing key)", "Tampered signature on real token", "ID token instead of access token", "access_token query string (only honoured on chathub paths)", "Valid admin access token". Cross-pool test: call a `Policy = user` request in `postman/services/etp-booking.postman_collection.json` with `access_token_admin` → 401 |

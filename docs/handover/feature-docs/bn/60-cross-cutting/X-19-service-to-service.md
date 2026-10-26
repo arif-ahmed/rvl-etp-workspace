@@ -146,4 +146,4 @@ flowchart LR
 | এমুলেটর | — |
 | Postman | একটি ক্রস-সার্ভিস কল ট্রিগার করুন, যেমন `postman/services/etp-admin.postman_collection.json`-এর "POST /api/v1/events" (Admin → Event/Booking) |
 | Visual Studio ডিবাগ | একসাথে দুটি সার্ভিসে অ্যাট্যাচ করুন (`docs/local-dev.md` §6.1 টিপস), কলারের `DelegatedBearerAuthenticationHandler.SendAsync`-এ এবং ক্যালির কন্ট্রোলারে ব্রেকপয়েন্ট |
-| যাচাই | `aws --endpoint-url http://localhost:4566 sqs list-queues` ছয়টি কিউ দেখায়; `aws --endpoint-url http://localhost:4566 sqs receive-message --queue-url <url>` একটি মেসেজ দেখে (`floci/README.md` "During the day") |
+| যাচাই | `aws --endpoint-url http://localhost:4566 sqs list-queues` ছয়টি কিউ দেখায়; `aws --endpoint-url http://localhost:4566 sqs receive-message --queue-url <url>` একটি মেসেজ দেখে (`docs/local-dev.md` "Look at fake AWS") |

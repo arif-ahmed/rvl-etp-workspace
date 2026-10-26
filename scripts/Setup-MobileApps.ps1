@@ -69,7 +69,7 @@ function Get-CognitoIds($poolName) {
         if ($LASTEXITCODE -or -not $client -or $client -eq 'None') { throw 'client missing' }
         return @{ PoolId = $pool; ClientId = $client; Real = $true }
     }
-    catch { Write-Warning "Floci/$poolName not available ($_). Cognito IDs are placeholders. Run floci/seed-users.ps1 and re-run this script."; return $ids }
+    catch { Write-Warning "Floci/$poolName not available ($_). Cognito IDs are placeholders. Run scripts/Seed-EtpCognitoUsers.ps1 and re-run this script."; return $ids }
 }
 
 New-Item -ItemType Directory -Force $out | Out-Null

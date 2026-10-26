@@ -360,7 +360,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </div>
 <p><strong>Depends on:</strong> reserved-ticket generation and signing (<a href="../10-admin-portal/A-12-reserved-tickets.html">A-12</a>, <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>). <strong>Affects:</strong> nothing downstream.</p>
 <h2 id="11-developer-test-guide">11. Developer test guide</h2>
-<p><strong>Local testability: Partial.</strong> Floci provides SES and <code>floci/seed.ps1</code> verifies <code>noreply@etp.local</code>, which matches <code>AWS:Ticket:EmailSender</code> in <code>scripts/user-secrets.example.json</code>. No real mail is delivered.</p>
+<p><strong>Local testability: Partial.</strong> Floci provides SES and <code>scripts/Seed-EtpFloci.ps1</code> verifies <code>noreply@etp.local</code>, which matches <code>AWS:Ticket:EmailSender</code> in <code>scripts/user-secrets.example.json</code>. No real mail is delivered.</p>
 <table>
 <thead>
 <tr>
@@ -391,7 +391,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>Verify</td>
-<td>Aspire logs for Ticketing; ticket row action state <code>emailed: ...</code> in the Ticketing database; Floci SES sent-message listing (<code>docs/local-dev.md</code> / <code>floci/README.md</code> do not describe how to read it <span class="badge-unconfirmed">[UNCONFIRMED: Q-06]</span>)</td>
+<td>Aspire logs for Ticketing; ticket row action state <code>emailed: ...</code> in the Ticketing database; Floci SES sent-message listing (<code>docs/local-dev.md</code> does not describe how to read it <span class="badge-unconfirmed">[UNCONFIRMED: Q-06]</span>)</td>
 </tr>
 </tbody>
 </table>

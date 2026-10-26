@@ -106,7 +106,7 @@ flowchart LR
 
 | বিষয় | বিবরণ |
 |---|---|
-| টেস্ট ডেটা ও অ্যাকাউন্ট | Agent-pool ব্যবহারকারী `+8801700000031` / `Passw0rd!23` (`floci/seed-users.ps1`) |
+| টেস্ট ডেটা ও অ্যাকাউন্ট | Agent-pool ব্যবহারকারী `+8801700000031` / `Passw0rd!23` (`scripts/Seed-EtpCognitoUsers.ps1`) |
 | ব্রাউজার | প্রযোজ্য নয় |
 | এমুলেটর | প্রযোজ্য নয় |
 | Postman | `postman/etp-login-all-pools.postman_collection.json` "Agent pool" → "Login as agent" (`access_token_agent`); `postman/services/etp-ticketing.postman_collection.json` ফোল্ডার "OfflineTicketSold", "POST /api/v1/offline-sold-ticket" |

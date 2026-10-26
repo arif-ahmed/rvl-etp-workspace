@@ -140,7 +140,7 @@ flowchart LR
 
 | বিষয় | বিবরণ |
 |---|---|
-| টেস্ট ডেটা ও অ্যাকাউন্ট | `floci/seed-users.ps1` থেকে Admin-pool ইউজার: `+8801700000001` admin, `…02` event_manager, `…03` ticket_manager, `…04` ticket_operator, `…05` customer_support। পাসওয়ার্ড `Passw0rd!23` (`docs/local-dev.md` ধাপ ৩) |
+| টেস্ট ডেটা ও অ্যাকাউন্ট | `scripts/Seed-EtpCognitoUsers.ps1` থেকে Admin-pool ইউজার: `+8801700000001` admin, `…02` event_manager, `…03` ticket_manager, `…04` ticket_operator, `…05` customer_support। পাসওয়ার্ড `Passw0rd!23` (`docs/local-dev.md` ধাপ ৩) |
 | ব্রাউজার | ব্যাকএন্ড চালু করুন (`dotnet run --project aspire/Etp.AppHost`) এবং পোর্টাল কপি (`pwsh ./scripts/Setup-AdminPortal.ps1 -Start`)। খুলুন `http://localhost:4200/auth/login`; ফোন `1700000001`, OTP `123456`, পাসওয়ার্ড `Passw0rd!23` (`docs/admin-portal-local.md` §5)। DevTools → Network-এ `p/` দিয়ে ফিল্টার করুন: `/p/serverless/admin/login-2fa-send-otp`, `…verify-otp`, তারপর `/p/cognito`-এর কল, শেষে `Authorization: Bearer …`-সহ প্রথম `/p/admin/...` কল দেখা যাবে |
 | ইমুলেটর | প্রযোজ্য নয় (অ্যাডমিন পোর্টাল শুধু ওয়েব) |
 | Postman | কলেকশন `postman/etp-login-all-pools.postman_collection.json`, ফোল্ডার "Admin pool", রিকোয়েস্ট "Login as admin" (Floci-র বিপরীতে USER_PASSWORD_AUTH, এনভায়রনমেন্ট `postman/etp-local-services.postman_environment.json`)। এটি সার্ভিস কলেকশনের জন্য টোকেন সংরক্ষণ করে। নেগেটিভ কেস: `postman/etp-cognito-auth.postman_collection.json` ফোল্ডার "02 - Cognito negative auth" |

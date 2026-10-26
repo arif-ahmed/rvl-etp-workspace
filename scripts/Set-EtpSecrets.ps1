@@ -5,11 +5,11 @@
 .DESCRIPTION
   1. Starts from scripts/user-secrets.example.json (Floci URLs, test keys, queue names, DB/Redis, service URLs).
   2. Asks the running Floci for the Cognito PoolId/ClientId of the Admin, User, TicketChecker and Agent pools
-     (created by floci/seed-users.ps1) and fills in PoolId, ClientId, Authority and Metadata. Nothing to copy by hand.
+     (created by scripts/Seed-EtpCognitoUsers.ps1) and fills in PoolId, ClientId, Authority and Metadata. Nothing to copy by hand.
   3. Optionally merges scripts/user-secrets.json (git-ignored) on top, for personal overrides such as a real key.
   4. Refuses to apply if a Cognito value is still a placeholder, then writes the result to every service.
 
-  Run it after floci/seed-users.ps1, and again whenever Floci is re-seeded.
+  Run it after scripts/Seed-EtpCognitoUsers.ps1, and again whenever Floci is re-seeded.
 #>
 param([switch]$DryRun)   # -DryRun prints the final JSON and applies nothing
 $ErrorActionPreference = 'Stop'
@@ -51,14 +51,14 @@ $cfg = Read-JsonHash $example
 # ---- Cognito values from the running Floci ----
 $reachable = $true
 try { $null = aws cognito-idp list-user-pools --max-results 1 2>&1; if ($LASTEXITCODE -ne 0) { $reachable = $false } } catch { $reachable = $false }
-if (-not $reachable) { throw "Cannot reach Floci at $endpoint. Start it: (cd floci; docker compose up -d)" }
+if (-not $reachable) { throw "Cannot reach Floci at $endpoint. Start it: docker compose up -d" }
 
 foreach ($pool in 'Admin','User','TicketChecker','Agent') {
     $name = "etp-$($pool.ToLower())"
     $id = aws cognito-idp list-user-pools --max-results 60 --query "UserPools[?Name=='$name'].Id | [0]" --output text
-    if (-not $id -or $id -eq 'None') { throw "Cognito pool '$name' not found in Floci. Run: (cd floci; ./seed-users.ps1)" }
+    if (-not $id -or $id -eq 'None') { throw "Cognito pool '$name' not found in Floci. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }
     $client = aws cognito-idp list-user-pool-clients --user-pool-id $id --query "UserPoolClients[?ClientName=='etp-local'].ClientId | [0]" --output text
-    if (-not $client -or $client -eq 'None') { throw "App client 'etp-local' not found in pool '$name'. Run: (cd floci; ./seed-users.ps1)" }
+    if (-not $client -or $client -eq 'None') { throw "App client 'etp-local' not found in pool '$name'. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }
     $cfg.AWS.CognitoPool[$pool] = [ordered]@{
         PoolId    = $id
         ClientId  = $client
@@ -71,8 +71,8 @@ foreach ($pool in 'Admin','User','TicketChecker','Agent') {
 # ---- the HTTPS metadata must be reachable and must name the same issuer the tokens carry ----
 $adminId = $cfg.AWS.CognitoPool.Admin.PoolId
 try { $doc = Invoke-RestMethod "$oidc/$adminId/.well-known/openid-configuration" -TimeoutSec 10 }
-catch { throw "Cannot read $oidc (HTTPS proxy for Floci): $($_.Exception.Message)`nFix: (cd floci; ./setup-https.ps1; docker compose up -d)" }
-if ($doc.issuer -ne "$oidc/$adminId") { throw "Floci reports issuer '$($doc.issuer)', expected '$oidc/$adminId'.`nFix: (cd floci; docker compose up -d) to recreate Floci with the HTTPS base URL." }
+catch { throw "Cannot read $oidc (HTTPS proxy for Floci): $($_.Exception.Message)`nFix: pwsh ./scripts/Setup-EtpHttps.ps1; docker compose up -d" }
+if ($doc.issuer -ne "$oidc/$adminId") { throw "Floci reports issuer '$($doc.issuer)', expected '$oidc/$adminId'.`nFix: docker compose up -d to recreate Floci with the HTTPS base URL." }
 
 # ---- personal overrides (optional) ----
 if (Test-Path $override) {

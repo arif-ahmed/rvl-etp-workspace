@@ -102,7 +102,7 @@ HTTPS, `docs/local-dev.md` Step 3)।
 
 | বিষয় | বিবরণ |
 |---|---|
-| টেস্ট ডেটা ও অ্যাকাউন্ট | প্রতি pool-এ একজন ব্যবহারকারী: admin `…01`–`…05`, user `…11`, checker `…21`, agent `…31` (`floci/seed-users.ps1`) |
+| টেস্ট ডেটা ও অ্যাকাউন্ট | প্রতি pool-এ একজন ব্যবহারকারী: admin `…01`–`…05`, user `…11`, checker `…21`, agent `…31` (`scripts/Seed-EtpCognitoUsers.ps1`) |
 | ব্রাউজার | প্রয়োজন নেই |
 | এমুলেটর | প্রয়োজন নেই |
 | Postman | `postman/etp-cognito-auth.postman_collection.json` ফোল্ডার "04 - Backend JWT validation (Admin scheme)": "No token", "Malformed bearer token", "Forged token (wrong signing key)", "Tampered signature on real token", "ID token instead of access token", "access_token query string (only honoured on chathub paths)", "Valid admin access token"। Cross-pool পরীক্ষা: `access_token_admin` দিয়ে `postman/services/etp-booking.postman_collection.json`-এর একটি `Policy = user` request কল করুন → 401 |

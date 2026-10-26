@@ -142,7 +142,7 @@ flowchart LR
 
 | Item | Detail |
 |---|---|
-| Test data and accounts | The five Admin-pool users, one per role (`floci/seed-users.ps1`) |
+| Test data and accounts | The five Admin-pool users, one per role (`scripts/Seed-EtpCognitoUsers.ps1`) |
 | Browser | Log in as each role at `http://localhost:4200` and compare the menu with the matrix |
 | Emulator | Not applicable |
 | Postman | `postman/etp-cognito-auth.postman_collection.json` folder "05 - Role-based access (custom:role -> Role claim)" (allow/deny per role for `admin-users`, `ticket-checker/search`, `ticket-checker`, `user-issue`); "03 - Token lifecycle" → "AdminGetUser (what CognitoUserAttributesMiddleware calls)" |

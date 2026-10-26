@@ -8,7 +8,7 @@ against the real service. No dependencies, Node 18+. Users are created in Floci 
 sign-in afterwards uses real Floci tokens.
 
 ```powershell
-# Floci must be up and seeded (floci/seed-users.ps1)
+# Floci must be up and seeded (scripts/Seed-EtpCognitoUsers.ps1)
 node mock-identity/server.js            # :5120
 ```
 
@@ -26,7 +26,7 @@ node mock-identity/server.js            # :5120
 
 ## As a Floci Lambda (optional)
 `lambda.js` exports `handler` for API Gateway proxy events (v1/v2). Requires Floci with the Docker socket mounted
-(`floci/docker-compose.yml` has it off on purpose) and Floci Lambda function-URL / API Gateway support, **not yet verified**:
+(the root `docker-compose.yml` has it off on purpose) and Floci Lambda function-URL / API Gateway support, **not yet verified**:
 
 ```powershell
 Compress-Archive mock-identity\handler.js, mock-identity\lambda.js -DestinationPath mock-identity\fn.zip -Force

@@ -89,7 +89,7 @@ flowchart LR
 
 ## 11. Developer test guide
 
-**Local testability: Partial.** Floci provides SES and `floci/seed.ps1` verifies `noreply@etp.local`, which matches `AWS:Ticket:EmailSender` in `scripts/user-secrets.example.json`. No real mail is delivered.
+**Local testability: Partial.** Floci provides SES and `scripts/Seed-EtpFloci.ps1` verifies `noreply@etp.local`, which matches `AWS:Ticket:EmailSender` in `scripts/user-secrets.example.json`. No real mail is delivered.
 
 | Item | Detail |
 |---|---|
@@ -98,4 +98,4 @@ flowchart LR
 | Emulator | — |
 | Postman | `postman/services/etp-ticketing.postman_collection.json`, request for `POST /api/v1/booking-order-ticket/send-reserved` with an admin token (`{{access_token_admin}}`) |
 | Visual Studio debug | Breakpoints in `TicketManager.SendReservedTicketsAsync` and `EmailService.SendEmailWithZipAttachmentAsync` |
-| Verify | Aspire logs for Ticketing; ticket row action state `emailed: ...` in the Ticketing database; Floci SES sent-message listing (`docs/local-dev.md` / `floci/README.md` do not describe how to read it `[UNCONFIRMED: Q-06]`) |
+| Verify | Aspire logs for Ticketing; ticket row action state `emailed: ...` in the Ticketing database; Floci SES sent-message listing (`docs/local-dev.md` does not describe how to read it `[UNCONFIRMED: Q-06]`) |

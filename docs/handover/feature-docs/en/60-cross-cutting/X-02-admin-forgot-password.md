@@ -134,7 +134,7 @@ the password has already been changed.
 
 | Item | Detail |
 |---|---|
-| Test data and accounts | Admin-pool users from `floci/seed-users.ps1`; for a throw-away account use the Postman variable `tmp_phone` (`+8801700009999`) |
+| Test data and accounts | Admin-pool users from `scripts/Seed-EtpCognitoUsers.ps1`; for a throw-away account use the Postman variable `tmp_phone` (`+8801700009999`) |
 | Browser | `http://localhost:4200/auth/login` → "Forgot password", phone `1700000001`, OTP `123456`. Expect the stop described above; DevTools shows the two `/p/serverless/...` calls |
 | Emulator | Not applicable |
 | Postman | `postman/etp-cognito-auth.postman_collection.json`, folder "06 - Admin user lifecycle (creates and deletes tmp_phone)", request "Set known password (set-forget-password)"; then "Login as new user" proves the change. Environment `postman/etp-local-floci.postman_environment.json`. Note: the collection's `admin_base_url` is `http://localhost:5101` and the request path is `/api/v1/...`; add the `/admin` prefix if you get 404 ([Appendix D](../93-appendix-d-local-test-reference.md)) |

@@ -91,7 +91,7 @@ Key groups and purpose:
 | `AWS:Ticket:ShareExpiryMinutes` | `60` | presigned ticket-share link TTL |
 | `AWS:Ticket:EmailSender` | `noreply@etp.local` | SES sender for ticket emails |
 | `AWS:Queue:*` (6 names) | `OrderSuccess`, `EventCapacity`, `FirebaseNotification`, `TicketProcessing`, `VatChallanProcessing`, `TicketSigning` | SQS queue **names** (code calls `GetQueueUrl` — names, never URLs) |
-| `AWS:CognitoPool:<Admin/User/TicketChecker/Agent>:{PoolId,ClientId,Authority,Metadata}` | Floci `seed.ps1` / `seed-users.ps1` output | per-audience JwtBearer schemes: expected issuer (Authority), token audience (ClientId), OIDC discovery (Metadata); PoolId maps Cognito users to app roles (Admin middleware) |
+| `AWS:CognitoPool:<Admin/User/TicketChecker/Agent>:{PoolId,ClientId,Authority,Metadata}` | Floci `Seed-EtpFloci.ps1` / `Seed-EtpCognitoUsers.ps1` output | per-audience JwtBearer schemes: expected issuer (Authority), token audience (ClientId), OIDC discovery (Metadata); PoolId maps Cognito users to app roles (Admin middleware) |
 | `Authentication:Jwt:{Key,Issuer,Audience}` | long random string / `etp-local` / `etp-local-services` | service-to-service JWTs signed by Admin's `/admin/api/v1/token` |
 | `Authentication:ServiceApiKey` | `local-dev-service-api-key` | HMAC header guarding Admin's token endpoint |
 | `Notification:{Endpoint,Authorization}` | dummy URL ending `/`, header value | external notification service (Admin, Booking, Scheduler) |
@@ -152,7 +152,7 @@ export const environment = {
 };
 ```
 
-`<etp-admin pool id>` / `<etp-local client id>` = the Cognito IDs printed by `floci/seed-users.ps1`
+`<etp-admin pool id>` / `<etp-local client id>` = the Cognito IDs printed by `scripts/Seed-EtpCognitoUsers.ps1`
 (change at every Floci re-seed — re-run the setup script afterwards).
 
 | Key | Purpose |

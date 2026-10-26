@@ -232,10 +232,11 @@ dotnet build RVL-ETP.BackEnd.sln
 টুল চেক: Docker Desktop চালু, **.NET 10 SDK** (AppHost নিজে net10.0-এর), `pwsh` + AWS CLI v2 (seed-এর জন্য)। তারপর floci চালু করে seed:
 
 ```bash
-cd D:\Workspace\Sources\RVL\rvl-etp\rvl-etp-workspace\floci
-docker compose up -d        # floci + UI কন্টেইনার (ডেটা etp-floci-data volume-এ থাকে)
-pwsh ./seed.ps1             # S3 bucket etp-local + ৬টা SQS queue + SES identity
-pwsh ./seed-users.ps1       # ৪টা Cognito pool + client + টেস্ট ইউজার — আউটপুটের PoolId/ClientId কপি করুন
+cd D:\Workspace\Sources\RVL\rvl-etp\rvl-etp-workspace
+pwsh ./scripts/Setup-EtpHttps.ps1  # একবার: HTTPS proxy-র সার্টিফিকেট
+docker compose up -d        # Postgres + Redis + DynamoDB + floci + UI কন্টেইনার (floci-র ডেটা etp-floci-data volume-এ থাকে)
+pwsh ./scripts/Seed-EtpFloci.ps1       # S3 bucket etp-local + ৬টা SQS queue + SES identity
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1 # ৪টা Cognito pool + client + টেস্ট ইউজার — আউটপুটের PoolId/ClientId কপি করুন
 ```
 
 টেস্ট ইউজার (password `Passw0rd!23`, username = ফোন): Admin `+8801700000001`, User `+8801700000011`, TicketChecker `+8801700000021`, Agent `+8801700000031`।
@@ -281,7 +282,7 @@ dotnet run --project Etp.AppHost
 | `AWS:Region` / `AWS:AccessKey` / `AWS:SecretAccessKey` | `ap-southeast-1` / `test` / `test` |
 | `AWS:Bucket:Name` / `AWS:Bucket:BaseUrl` | `etp-local` / `http://localhost:4566` (কোড এটাকেই S3 ServiceURL ধরে) |
 | `AWS:Queue:OrderSuccess` … (৬টা) | queue-এর **নাম** — URL নয় (কোড `GetQueueUrl` করে) |
-| `AWS:CognitoPool:{Admin,User,TicketChecker,Agent}:PoolId` / `:ClientId` | `seed-users.ps1`-এর আউটপুট থেকে |
+| `AWS:CognitoPool:{Admin,User,TicketChecker,Agent}:PoolId` / `:ClientId` | `Seed-EtpCognitoUsers.ps1`-এর আউটপুট থেকে |
 | `AWS:CognitoPool:X:Authority` / `:Metadata` | `http://localhost:4566/<PoolId>` / `http://localhost:4566/<PoolId>/.well-known/openid-configuration` |
 
 এই মেশিনের বর্তমান মান (উদাহরণ): Admin pool `ap-southeast-1_2a67fbbf0` / client `f965366831814296abb70a9b65`; User pool `ap-southeast-1_656aa721c` / client `27c371e0e0544671a0e1736e88`। ⚠️ `docker compose down -v` করলে আইডি বদলে যায় — আবার seed করে নতুন মান বসাতে হবে।

@@ -102,7 +102,7 @@ flowchart LR
 
 | Item | Detail |
 |---|---|
-| Test data and accounts | a seeded checker account from `floci/seed-users.ps1` or `scripts/generate-postman.py` (TicketChecker pool); assign that checker to an event and a gate from the admin portal first, or seed the `TicketCheckerGates` rows |
+| Test data and accounts | a seeded checker account from `scripts/Seed-EtpCognitoUsers.ps1` or `scripts/generate-postman.py` (TicketChecker pool); assign that checker to an event and a gate from the admin portal first, or seed the `TicketCheckerGates` rows |
 | Browser | the same assignment is visible in the admin portal at the gate-assignment screen (see [A-18](../10-admin-portal/A-18-gate-assignment.md)) |
 | Emulator | run the app (`scripts/Setup-MobileApps.ps1`); sign in; the app must reach the Admin service through `scripts/mobile-gateway.js`. Confirm the Download button appears on a fresh install and disappears after a download |
 | Postman | `postman/services/etp-admin.postman_collection.json`: "GET /api/v1/ticket-checker-gate/event-info"; set `{{access_token_checker}}` |

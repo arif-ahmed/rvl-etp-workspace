@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "3bbb89a8-b050-4cd0-8129-95b29cdf8ec7",
     "name": "ETP - Cognito & Auth (platform testing)",
-    "description": "Cognito and JWT/role authorization checks for the ETP backend, runnable against local Floci (floci/seed-users.ps1) or a real pool.\n\nRun folders in order (Collection Runner, environment 'ETP Local - Floci'). 00 resolves pool/client ids; 01 stores per-role tokens used by 03-08.\n\nPrereqs: docker compose up -d in floci/, ./seed-users.ps1, Admin service on :5101 configured with the printed Authority/Metadata/ClientId/PoolId.",
+    "description": "Cognito and JWT/role authorization checks for the ETP backend, runnable against local Floci (scripts/Seed-EtpCognitoUsers.ps1) or a real pool.\n\nRun folders in order (Collection Runner, environment 'ETP Local - Floci'). 00 resolves pool/client ids; 01 stores per-role tokens used by 03-08.\n\nPrereqs: docker compose up -d in floci/, ./seed-users.ps1, Admin service on :5101 configured with the printed Authority/Metadata/ClientId/PoolId.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -58,7 +58,7 @@
                 }
               ]
             },
-            "description": "Resolves the pool id and Authority so you don't have to copy them from the seed output. Authority format matches floci/seed-users.ps1 (http://localhost:4566/<poolId>)."
+            "description": "Resolves the pool id and Authority so you don't have to copy them from the seed output. Authority format matches scripts/Seed-EtpCognitoUsers.ps1 (http://localhost:4566/<poolId>)."
           },
           "event": [
             {
@@ -68,7 +68,7 @@
                 "exec": [
                   "pm.test('200 from Floci Cognito', () => pm.response.to.have.status(200));",
                   "const pool = (pm.response.json().UserPools||[]).find(p => p.Name === pm.environment.get('admin_pool_name'));",
-                  "pm.test('Admin pool exists (run floci/seed-users.ps1 if not)', () => pm.expect(pool, 'pool '+pm.environment.get('admin_pool_name')).to.exist);",
+                  "pm.test('Admin pool exists (run scripts/Seed-EtpCognitoUsers.ps1 if not)', () => pm.expect(pool, 'pool '+pm.environment.get('admin_pool_name')).to.exist);",
                   "if (pool) { pm.environment.set('admin_pool_id', pool.Id); pm.environment.set('admin_authority', pm.environment.get('floci_url') + '/' + pool.Id); }"
                 ]
               }
@@ -134,7 +134,7 @@
                 "exec": [
                   "pm.test('200 ListUsers', () => pm.response.to.have.status(200));",
                   "const res = pm.response.json();",
-                  "pm.test('Pool has users (run floci/seed-users.ps1 if not)', () => pm.expect((res.Users||[]).length).to.be.above(0));",
+                  "pm.test('Pool has users (run scripts/Seed-EtpCognitoUsers.ps1 if not)', () => pm.expect((res.Users||[]).length).to.be.above(0));",
                   "(res.Users || []).forEach(u => {",
                   "  const a = u.Attributes || [];",
                   "  console.log(u.Username, '->', (a.find(x => x.Name === 'custom:role') || {}).Value, '| programs:', (a.find(x => x.Name === 'custom:program_ids') || {}).Value);",

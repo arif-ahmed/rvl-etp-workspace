@@ -9,10 +9,10 @@
   3. Writes src/environments/environment*.ts in the COPY (the submodule ships them empty; CI fills them from SSM).
   4. Points Amplify at the dev-server proxy (aws-exports.ts in the COPY) and writes proxy.conf.js:
      /p/cognito -> Floci, /p/<service> -> backend services, /p/serverless -> a local OTP stub (OTP = 123456).
-  5. Enables ALLOW_USER_SRP_AUTH on the Floci app client (the portal signs in with SRP; seed-users.ps1 only enables password auth).
+  5. Enables ALLOW_USER_SRP_AUTH on the Floci app client (the portal signs in with SRP; Seed-EtpCognitoUsers.ps1 only enables password auth).
   6. Runs npm install when needed. With -Start it then runs ng serve on http://localhost:4200.
 
-  Run it again after every Floci reset / re-seed (floci/seed-users.ps1), or after the submodule is updated.
+  Run it again after every Floci reset / re-seed (scripts/Seed-EtpCognitoUsers.ps1), or after the submodule is updated.
 #>
 param(
     [switch]$Start,          # run ng serve after preparing
@@ -34,10 +34,10 @@ foreach ($tool in 'aws', 'node', 'npm') { if (-not (Get-Command $tool -ErrorActi
 
 # 1. Cognito IDs from Floci
 try { $poolId = Invoke-Aws cognito-idp list-user-pools --max-results 60 --query "UserPools[?Name=='etp-admin'].Id | [0]" --output text }
-catch { throw "Cannot reach Floci at $floci. Start it: docker compose -f floci/docker-compose.yml up -d" }
-if (-not $poolId -or $poolId -eq 'None') { throw "Pool 'etp-admin' not found. Run: pwsh ./floci/seed-users.ps1" }
+catch { throw "Cannot reach Floci at $floci. Start it: docker compose up -d" }
+if (-not $poolId -or $poolId -eq 'None') { throw "Pool 'etp-admin' not found. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }
 $clientId = Invoke-Aws cognito-idp list-user-pool-clients --user-pool-id $poolId --query "UserPoolClients[?ClientName=='etp-local'].ClientId | [0]" --output text
-if (-not $clientId -or $clientId -eq 'None') { throw "Client 'etp-local' not found in $poolId. Run: pwsh ./floci/seed-users.ps1" }
+if (-not $clientId -or $clientId -eq 'None') { throw "Client 'etp-local' not found in $poolId. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }
 Write-Host "cognito Admin pool $poolId client $clientId"
 
 # 2. SRP on the app client (update replaces the whole list, so name every flow)

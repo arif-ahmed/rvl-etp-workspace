@@ -360,7 +360,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </div>
 <p><strong>নির্ভর করে:</strong> রিজার্ভ-টিকিট জেনারেশন ও সাইনিং (<a href="../10-admin-portal/A-12-reserved-tickets.html">A-12</a>, <a href="../50-system-initiated/S-08-ticket-signing.html">S-08</a>)। <strong>প্রভাব ফেলে:</strong> পরবর্তী কোনো কিছুতে নয়।</p>
 <h2 id="11-ডভলপর-টসট-গইড">11. ডেভেলপার টেস্ট গাইড</h2>
-<p><strong>লোকালে পরীক্ষাযোগ্যতা: আংশিক।</strong> Floci SES দেয় এবং <code>floci/seed.ps1</code> <code>noreply@etp.local</code> ভেরিফাই করে, যা <code>scripts/user-secrets.example.json</code>-এর <code>AWS:Ticket:EmailSender</code>-এর সঙ্গে মেলে। কোনো আসল মেইল পৌঁছায় না।</p>
+<p><strong>লোকালে পরীক্ষাযোগ্যতা: আংশিক।</strong> Floci SES দেয় এবং <code>scripts/Seed-EtpFloci.ps1</code> <code>noreply@etp.local</code> ভেরিফাই করে, যা <code>scripts/user-secrets.example.json</code>-এর <code>AWS:Ticket:EmailSender</code>-এর সঙ্গে মেলে। কোনো আসল মেইল পৌঁছায় না।</p>
 <table>
 <thead>
 <tr>
@@ -391,7 +391,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 <tr>
 <td>যাচাই</td>
-<td>Ticketing-এর Aspire লগ; Ticketing ডেটাবেসে টিকিট রোর action state <code>emailed: ...</code>; Floci SES-এর sent-message তালিকা (<code>docs/local-dev.md</code> / <code>floci/README.md</code>-এ তা কীভাবে পড়তে হয় তা বর্ণিত নেই <span class="badge-unconfirmed">[UNCONFIRMED: Q-06]</span>)</td>
+<td>Ticketing-এর Aspire লগ; Ticketing ডেটাবেসে টিকিট রোর action state <code>emailed: ...</code>; Floci SES-এর sent-message তালিকা (<code>docs/local-dev.md</code>-এ তা কীভাবে পড়তে হয় তা বর্ণিত নেই <span class="badge-unconfirmed">[UNCONFIRMED: Q-06]</span>)</td>
 </tr>
 </tbody>
 </table>

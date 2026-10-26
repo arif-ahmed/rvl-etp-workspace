@@ -27,7 +27,7 @@ How to run the Angular user (customer) portal (`rvl-gobcb-user-portal/ETP-Web`, 
 | Floci sends no CORS headers; its HTTPS proxy uses a self-signed certificate | Browser only talks to `localhost:4201`; the dev server proxies to Floci and to the backend services |
 | The portal expects **one gateway host** for all APIs (`/booking`, `/event`, `/ticketing`, `/admin`, `/userissue` under one base) | All `services.*` hosts are `/p`; the proxy splits by path to the five local services |
 | Hosted-UI SSO code hardcodes `https://<domain>` and Floci has no hosted UI | Script patches `cognito.service.ts` in the copy to plain `<domain>`; the proxy hosts a fake OneID at `/p/oneid` (section 5) |
-| The portal signs in with SRP; `floci/seed-users.ps1` only enables password auth on the app client | Script enables `ALLOW_USER_SRP_AUTH` on the Floci client |
+| The portal signs in with SRP; `scripts/Seed-EtpCognitoUsers.ps1` only enables password auth on the app client | Script enables `ALLOW_USER_SRP_AUTH` on the Floci client |
 
 All other Angular source is an unmodified copy.
 
@@ -45,7 +45,7 @@ browser :4201 ── ng serve (portal-local/user-portal)
 
 ## 2. Prerequisites
 
-Backend setup from [local-dev.md](local-dev.md) done and running (Floci seeded with `floci/seed-users.ps1`, AppHost started), plus:
+Backend setup from [local-dev.md](local-dev.md) done and running (Floci seeded with `scripts/Seed-EtpCognitoUsers.ps1`, AppHost started), plus:
 
 - Node.js 20+ (tested with 24) and npm
 - AWS CLI on PATH
@@ -75,10 +75,11 @@ The script is safe to re-run at any time, even while the dev server is running (
 Pool and client IDs change whenever Floci's data is recreated. Nothing is edited by hand:
 
 ```bash
-docker compose -f floci/docker-compose.yml down -v
-docker compose -f floci/docker-compose.yml up -d
-pwsh ./floci/seed.ps1
-pwsh ./floci/seed-users.ps1          # new Cognito pools, clients, users
+docker compose rm -sf floci floci-tls floci-ui   # Floci only; Postgres and Redis keep their data
+docker volume rm etp-floci-data
+docker compose up -d
+pwsh ./scripts/Seed-EtpFloci.ps1
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1          # new Cognito pools, clients, users
 pwsh ./scripts/Set-EtpSecrets.ps1    # backend picks up the new IDs; restart the AppHost
 pwsh ./scripts/Setup-UserPortal.ps1 -Start
 ```
@@ -149,9 +150,9 @@ Allow popups for `localhost:4201` in your browser, or the portal shows "Popup wa
 | Login: "Incorrect username or password" | Wrong user, or Floci was reset. Re-run the script; use `1700000011` (the Admin-pool users `…01` to `…05` are not in this pool) |
 | SSO: "Popup was blocked" | Allow popups for localhost:4201 |
 | SSO: "Authentication failed" | Floci rejected the seeded user (pool reset?). Re-run the script; check `1700000011` exists in the User pool |
-| Login: "User does not exist" | `seed-users.ps1` not run for the User pool |
-| Script: `Cannot reach Floci` | `docker compose -f floci/docker-compose.yml up -d` |
-| Script: `Pool 'etp-user' not found` / `Client 'etp-local' not found` | `pwsh ./floci/seed-users.ps1` |
+| Login: "User does not exist" | `Seed-EtpCognitoUsers.ps1` not run for the User pool |
+| Script: `Cannot reach Floci` | `docker compose up -d` |
+| Script: `Pool 'etp-user' not found` / `Client 'etp-local' not found` | `pwsh ./scripts/Seed-EtpCognitoUsers.ps1` |
 | Home page lists are empty | No data. `pwsh ./scripts/Seed-EtpData.ps1` (backend must be running) |
 | My Tickets empty or 401 | Backend holds old Cognito IDs: `pwsh ./scripts/Set-EtpSecrets.ps1`, restart AppHost; or orders were seeded for another Cognito `sub` (re-run `Seed-EtpData.ps1 -Reset`) |
 | 502 / `ECONNREFUSED` in the dev-server window | A backend service is not running (see the Aspire dashboard) |

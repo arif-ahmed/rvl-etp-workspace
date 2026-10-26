@@ -102,7 +102,7 @@ flowchart LR
 
 | বিষয় | বিবরণ |
 |---|---|
-| টেস্ট ডেটা ও অ্যাকাউন্ট | `floci/seed-users.ps1` বা `scripts/generate-postman.py` থেকে একটি seeded চেকার অ্যাকাউন্ট (TicketChecker pool); আগে অ্যাডমিন পোর্টাল থেকে সেই চেকারকে একটি ইভেন্ট ও একটি গেটে নির্ধারণ করুন, অথবা `TicketCheckerGates` রো seed করুন |
+| টেস্ট ডেটা ও অ্যাকাউন্ট | `scripts/Seed-EtpCognitoUsers.ps1` বা `scripts/generate-postman.py` থেকে একটি seeded চেকার অ্যাকাউন্ট (TicketChecker pool); আগে অ্যাডমিন পোর্টাল থেকে সেই চেকারকে একটি ইভেন্ট ও একটি গেটে নির্ধারণ করুন, অথবা `TicketCheckerGates` রো seed করুন |
 | ব্রাউজার | একই নির্ধারণ অ্যাডমিন পোর্টালের গেট-নির্ধারণ স্ক্রিনে দেখা যায় (দেখুন [A-18](../10-admin-portal/A-18-gate-assignment.md)) |
 | এমুলেটর | অ্যাপ চালান (`scripts/Setup-MobileApps.ps1`); সাইন-ইন করুন; অ্যাপকে `scripts/mobile-gateway.js`-এর মাধ্যমে Admin service-এ পৌঁছাতে হবে। নতুন ইনস্টলে Download বাটনটি আসে এবং ডাউনলোডের পর অদৃশ্য হয় তা নিশ্চিত করুন |
 | Postman | `postman/services/etp-admin.postman_collection.json`: "GET /api/v1/ticket-checker-gate/event-info"; `{{access_token_checker}}` সেট করুন |

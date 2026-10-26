@@ -69,7 +69,7 @@ Only one device at a time is simplest. With several connected, pass `-Device <id
 
 ## 4. Setup and run
 
-Prerequisite: the backend is running ([local-dev.md](local-dev.md) steps 1-5) and Floci is seeded (`floci/seed-users.ps1`).
+Prerequisite: the backend is running ([local-dev.md](local-dev.md) steps 1-5) and Floci is seeded (`scripts/Seed-EtpCognitoUsers.ps1`).
 
 ```powershell
 # prepare both apps (copy, env files, keystores, dependencies); first run is slow

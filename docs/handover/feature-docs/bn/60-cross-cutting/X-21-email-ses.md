@@ -89,7 +89,7 @@ flowchart LR
 
 ## 11. ডেভেলপার টেস্ট গাইড
 
-**লোকালে পরীক্ষাযোগ্যতা: আংশিক।** Floci SES দেয় এবং `floci/seed.ps1` `noreply@etp.local` ভেরিফাই করে, যা `scripts/user-secrets.example.json`-এর `AWS:Ticket:EmailSender`-এর সঙ্গে মেলে। কোনো আসল মেইল পৌঁছায় না।
+**লোকালে পরীক্ষাযোগ্যতা: আংশিক।** Floci SES দেয় এবং `scripts/Seed-EtpFloci.ps1` `noreply@etp.local` ভেরিফাই করে, যা `scripts/user-secrets.example.json`-এর `AWS:Ticket:EmailSender`-এর সঙ্গে মেলে। কোনো আসল মেইল পৌঁছায় না।
 
 | বিষয় | বিবরণ |
 |---|---|
@@ -98,4 +98,4 @@ flowchart LR
 | এমুলেটর | — |
 | Postman | `postman/services/etp-ticketing.postman_collection.json`, `POST /api/v1/booking-order-ticket/send-reserved`-এর রিকোয়েস্ট অ্যাডমিন টোকেনসহ (`{{access_token_admin}}`) |
 | Visual Studio ডিবাগ | `TicketManager.SendReservedTicketsAsync` ও `EmailService.SendEmailWithZipAttachmentAsync`-এ ব্রেকপয়েন্ট |
-| যাচাই | Ticketing-এর Aspire লগ; Ticketing ডেটাবেসে টিকিট রোর action state `emailed: ...`; Floci SES-এর sent-message তালিকা (`docs/local-dev.md` / `floci/README.md`-এ তা কীভাবে পড়তে হয় তা বর্ণিত নেই `[UNCONFIRMED: Q-06]`) |
+| যাচাই | Ticketing-এর Aspire লগ; Ticketing ডেটাবেসে টিকিট রোর action state `emailed: ...`; Floci SES-এর sent-message তালিকা (`docs/local-dev.md` -এ তা কীভাবে পড়তে হয় তা বর্ণিত নেই `[UNCONFIRMED: Q-06]`) |

@@ -27,7 +27,7 @@
 | `AWS:Bucket:Name` | মিডিয়া: ছবি ও চ্যাট অ্যাটাচমেন্ট | `AwsSimpleStorageMediaManager` (`ICloudFrontMediaManager`) |
 | `AWS:Ticket:Bucket:Name` | টিকিট লেআউট ও তৈরি টিকিট | `AwsSimpleStorageTicketMediaManager` (`ITicketMediaManager`) |
 
-লোকালে দুটি সেটিংই Floci-তে একটিমাত্র বাকেট `etp-local`-এর দিকে ইঙ্গুত করে (`scripts/user-secrets.example.json`, তৈরি করে `floci/seed.ps1`)।
+লোকালে দুটি সেটিংই Floci-তে একটিমাত্র বাকেট `etp-local`-এর দিকে ইঙ্গুত করে (`scripts/user-secrets.example.json`, তৈরি করে `scripts/Seed-EtpFloci.ps1`)।
 
 **Key কাঠামো।** `UploadContentAsync(directory, parentId, name, ...)` অবজেক্ট key-কে `{directory}/{parentId}/{name}` হিসেবে গড়ে, অথবা `parentId` খালি থাকলে `{directory}/{name}`, এবং সেই key ফেরত দেয়। এরপর ম্যানেজারগুলো মালিক রো-তে একটি **পূর্ণ URL**, `{AWS:Bucket:BaseUrl}/{key}`, সংরক্ষণ করে (যেমন `ProgramManager.UploadImageAsync`); টিকিট-লেআউট ও টিকিট কোড এই URL-গুলো ফোল্ডারের নামে ভেঙে key ফিরিয়ে আনে, তারপর অবজেক্ট মুছে ফেলে।
 

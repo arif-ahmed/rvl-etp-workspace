@@ -81,12 +81,12 @@ $have = (Invoke-Psql "select table_name from information_schema.tables where tab
 $missing = $need | Where-Object { $_ -notin $have }
 if ($missing) { throw "Tables missing: $($missing -join ', '). Start the AppHost (all services) once so the EF migrations run, wait until they are healthy, then re-run." }
 
-# ---- Cognito subs of the seeded users (floci/seed-users.ps1) ----
+# ---- Cognito subs of the seeded users (scripts/Seed-EtpCognitoUsers.ps1) ----
 function Get-Sub([string]$pool, [string]$phone) {
     $id = aws cognito-idp list-user-pools --max-results 60 --query "UserPools[?Name=='etp-$pool'].Id | [0]" --output text
-    if (-not $id -or $id -eq 'None') { throw "Cognito pool 'etp-$pool' not found in Floci. Run: (cd floci; ./seed-users.ps1)" }
+    if (-not $id -or $id -eq 'None') { throw "Cognito pool 'etp-$pool' not found in Floci. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }
     $sub = aws cognito-idp admin-get-user --user-pool-id $id --username $phone --query "UserAttributes[?Name=='sub'].Value | [0]" --output text
-    if (-not $sub -or $sub -eq 'None') { throw "User $phone not found in pool etp-$pool. Run: (cd floci; ./seed-users.ps1)" }
+    if (-not $sub -or $sub -eq 'None') { throw "User $phone not found in pool etp-$pool. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }
     $sub
 }
 $vars = @{

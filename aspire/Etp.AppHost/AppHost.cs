@@ -8,7 +8,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 var servicesRoot = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", "..", "rvl-gobcb-backend", "Services"));
 
 // ---- Infrastructure -------------------------------------------------------------------------
-// PostgreSQL, Redis and DynamoDB Local come from the workspace docker-compose.yml (`docker compose up -d`,
+// PostgreSQL, Redis, DynamoDB Local and Floci (fake AWS) come from the workspace docker-compose.yml (`docker compose up -d`,
 // start it BEFORE the AppHost). Aspire only points the services at them; the values match that compose file
 // and scripts/user-secrets.example.json.
 const string dbConnection = "Host=localhost;Port=5432;Database=etp_local;Username=etp;Password=etp_local_pw;Include Error Detail=true";

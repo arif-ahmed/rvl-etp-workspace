@@ -1,10 +1,10 @@
 # Seeds Floci (local AWS emulator) with the non-Cognito resources the ETP backend expects:
 # S3 bucket, SQS queues, SES sender identity. Idempotent; prints the values to put into
 # each service's `dotnet user-secrets`.
-# Cognito pools/clients/users come from ./seed-users.ps1 (the custom attribute schema must be
+# Cognito pools/clients/users come from ./scripts/Seed-EtpCognitoUsers.ps1 (the custom attribute schema must be
 # defined at pool creation, so that script owns Cognito end to end).
 #
-# Usage:  docker compose up -d ; ./seed.ps1 ; ./seed-users.ps1
+# Usage:  docker compose up -d (workspace root) ; ./scripts/Seed-EtpFloci.ps1 ; ./scripts/Seed-EtpCognitoUsers.ps1
 
 $ErrorActionPreference = 'Stop'
 
@@ -33,7 +33,7 @@ foreach ($q in $queues) {
 aws ses verify-email-identity --email-address noreply@etp.local | Out-Null
 Write-Host 'SES identity: noreply@etp.local'
 
-# Cognito is seeded by ./seed-users.ps1 (pools, app clients, users with the custom attribute schema).
+# Cognito is seeded by ./scripts/Seed-EtpCognitoUsers.ps1 (pools, app clients, users with the custom attribute schema).
 
 Write-Host "`n--- user-secrets values (set per service) ---"
 Write-Host "AWS:Region                = $env:AWS_REGION"
@@ -42,4 +42,4 @@ Write-Host "AWS:SecretAccessKey       = test"
 Write-Host "AWS:Bucket:Name           = $bucket"
 Write-Host "AWS:Bucket:BaseUrl        = http://localhost:4566   (code sets S3 ServiceURL from this)"
 foreach ($q in $queues) { Write-Host ("AWS:Queue:{0,-20} = {0}" -f $q) }
-Write-Host 'Cognito (Admin/User/TicketChecker/Agent pools + users): run ./seed-users.ps1'
+Write-Host 'Cognito (Admin/User/TicketChecker/Agent pools + users): run ./scripts/Seed-EtpCognitoUsers.ps1'

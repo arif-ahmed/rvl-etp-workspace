@@ -18,7 +18,7 @@ function Get-Status($url, $headers = @{}) {
 # containers
 $running = @(docker ps --format '{{.Names}}' 2>$null)
 foreach ($c in 'etp-postgres','etp-redis','etp-dynamodb','etp-floci','etp-floci-tls') {
-    Check "container $c" ($running -contains $c) 'not running: docker compose up -d (workspace root) and (cd floci; docker compose up -d)'
+    Check "container $c" ($running -contains $c) 'not running: docker compose up -d (workspace root)'
 }
 
 # services
@@ -33,10 +33,10 @@ $env:AWS_ENDPOINT_URL = 'http://localhost:4566'; $env:AWS_REGION = 'ap-southeast
 $env:AWS_ACCESS_KEY_ID = 'test'; $env:AWS_SECRET_ACCESS_KEY = 'test'; $env:AWS_PAGER = ''
 $pool = aws cognito-idp list-user-pools --max-results 60 --query "UserPools[?Name=='etp-admin'].Id | [0]" --output text 2>$null
 $client = if ($pool -and $pool -ne 'None') { aws cognito-idp list-user-pool-clients --user-pool-id $pool --query "UserPoolClients[?ClientName=='etp-local'].ClientId | [0]" --output text 2>$null }
-Check 'Floci has the etp-admin pool and client' ($pool -and $pool -ne 'None' -and $client -and $client -ne 'None') 'run (cd floci; ./seed-users.ps1), then ./scripts/Set-EtpSecrets.ps1'
+Check 'Floci has the etp-admin pool and client' ($pool -and $pool -ne 'None' -and $client -and $client -ne 'None') 'run pwsh ./scripts/Seed-EtpCognitoUsers.ps1, then ./scripts/Set-EtpSecrets.ps1'
 if ($pool -and $pool -ne 'None' -and $client -and $client -ne 'None') {
     $token = aws cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --client-id $client --auth-parameters 'USERNAME=+8801700000001,PASSWORD=Passw0rd!23' --query AuthenticationResult.AccessToken --output text 2>$null
-    Check 'Cognito login (admin test user)' ($token -and $token -ne 'None') 'seed-users.ps1 not run?'
+    Check 'Cognito login (admin test user)' ($token -and $token -ne 'None') 'Seed-EtpCognitoUsers.ps1 not run?'
     $url = 'http://localhost:5101/admin/api/v1/events'
     $noTok = Get-Status $url
     Check 'protected endpoint without token -> 401' ($noTok -eq 401) "HTTP $noTok"

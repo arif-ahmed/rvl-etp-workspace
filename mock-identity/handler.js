@@ -61,7 +61,7 @@ async function userPoolId() {
   if (poolIdCache) return poolIdCache;
   const { UserPools = [] } = await cognito('ListUserPools', { MaxResults: 60 });
   const p = UserPools.find(x => x.Name === USER_POOL_NAME);
-  if (!p) throw new Error(`Cognito pool '${USER_POOL_NAME}' not found in Floci - run floci/seed-users.ps1`);
+  if (!p) throw new Error(`Cognito pool '${USER_POOL_NAME}' not found in Floci - run scripts/Seed-EtpCognitoUsers.ps1`);
   return (poolIdCache = p.Id);
 }
 

@@ -29,7 +29,7 @@ If you come from a single ASP.NET solution, three ideas are new:
   process with its own port, and they call each other over HTTP. To test a booking you may need Admin, Event, Booking and Ticketing
   all running.
 - **Shared infrastructure runs outside your code.** The services need a database (PostgreSQL), a cache and lock store (Redis) and AWS
-  (S3 files, SQS queues, Cognito login). Locally these run in Docker containers; you do not install them on Windows.
+  (S3 files, SQS queues, Cognito login). Locally these run in Docker containers from one compose file; you do not install them on Windows. AWS is played by **Floci**, an emulator: it never talks to the real AWS account.
 - **Something has to start all of it.** Starting 11 projects by hand is painful, so we use **.NET Aspire** as a launcher: one command starts
   every service on its fixed port, and a web dashboard shows each service's state, logs and traces. Aspire is a dev tool only, not part of the product.
 
@@ -44,7 +44,10 @@ If you come from a single ASP.NET solution, three ideas are new:
  +----+-----------------+--------------------+----------------+
       |                 |                    |
  PostgreSQL :5432   Redis :6379     Floci :4566 (fake AWS: S3, SQS, SES, Cognito)
- (docker compose)    (docker compose)    + DynamoDB Local :8000 (Ticketing only)
+                                      + HTTPS proxy :4567 (Cognito URLs), console :4500
+ DynamoDB Local :8000 (Ticketing only)
+
+ All of these containers come from the one docker-compose.yml in the workspace root.
 ```
 
 Facts that explain most "why is this happening" moments:
@@ -67,7 +70,7 @@ Facts that explain most "why is this happening" moments:
 | Git | clone the repos | `winget install Git.Git` |
 | .NET SDK 8 | the services target `net8.0` | `winget install Microsoft.DotNet.SDK.8` |
 | .NET SDK 10 | the Aspire launcher targets `net10.0` | `winget install Microsoft.DotNet.SDK.10` |
-| Docker Desktop | runs PostgreSQL, Redis, Floci, DynamoDB Local | `winget install Docker.DockerDesktop`, then enable the **WSL 2** engine and start it |
+| Docker Desktop 4.26+ (Compose 2.23.1+) | runs PostgreSQL, Redis, Floci, DynamoDB Local; the Floci proxy config is inline in `docker-compose.yml` | `winget install Docker.DockerDesktop`, then enable the **WSL 2** engine and start it |
 | PowerShell 7 | the seed scripts | `winget install Microsoft.PowerShell` |
 | AWS CLI v2 | inspect Floci (buckets, queues) | `winget install Amazon.AWSCLI` |
 | An IDE | build and debug | Visual Studio 2022 17.8+ **or** VS Code with *C# Dev Kit* **or** JetBrains Rider |
@@ -92,8 +95,7 @@ Give Docker Desktop at least 8 GB of RAM (Settings > Resources, or `%UserProfile
 ## 3. First-time setup
 
 Run everything from the workspace root (`rvl-etp-workspace`). **Every command works unchanged in both Git Bash and PowerShell 7**: PowerShell scripts are
-started as `pwsh ./path/script.ps1` (bash cannot run a `.ps1` directly), and Floci's compose file is addressed with `-f floci/docker-compose.yml`
-instead of `cd floci`. Where a command differs by shell, both forms are shown. The order matters.
+started as `pwsh ./scripts/<name>.ps1` (bash cannot run a `.ps1` directly). Where a command differs by shell, both forms are shown. The order matters.
 **The whole sequence at a glance** (each step below explains and checks one part):
 
 ```bash
@@ -101,16 +103,14 @@ instead of `cd floci`. Where a command differs by shell, both forms are shown. T
 git clone --recurse-submodules https://github.com/Relief-Validation/rvl-etp-workspace.git
 # enter it; everything below runs from this folder
 cd rvl-etp-workspace
-# Step 2: start PostgreSQL, Redis and DynamoDB Local containers
+# Step 2: trust + export the .NET dev certificate (needed by Floci's HTTPS proxy)
+pwsh ./scripts/Setup-EtpHttps.ps1
+# start PostgreSQL, Redis, DynamoDB Local and Floci (fake AWS) with its HTTPS proxy and web console
 docker compose up -d
-# Step 3: trust + export the .NET dev certificate (needed by Floci's HTTPS proxy)
-pwsh ./floci/setup-https.ps1
-# start Floci (fake AWS), its HTTPS proxy and its web console
-docker compose -f floci/docker-compose.yml up -d
-# create the S3 bucket, SQS queues and SES identity in Floci
-pwsh ./floci/seed.ps1
+# Step 3: create the S3 bucket, SQS queues and SES identity in Floci
+pwsh ./scripts/Seed-EtpFloci.ps1
 # create the 4 Cognito pools, app clients and test users
-pwsh ./floci/seed-users.ps1
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1
 # Step 4: write config + Cognito IDs into every service's user secrets
 pwsh ./scripts/Set-EtpSecrets.ps1
 # Step 5: build and start all 11 services + dashboard (keep this terminal open)
@@ -135,64 +135,55 @@ git config submodule.recurse true
 The workspace pins five product repos at known-good commits. If you cloned without `--recurse-submodules`, run `git submodule update --init`.
 Check: `rvl-gobcb-backend/Services` should contain 11 folders.
 
-### Step 2. Start PostgreSQL, Redis and DynamoDB
+### Step 2. Start the containers (PostgreSQL, Redis, DynamoDB, Floci)
 
-From the workspace root:
+Everything the services need outside your code runs from the single `docker-compose.yml` in the workspace root:
 
 ```bash
-# download images (first time) and start PostgreSQL, Redis, DynamoDB in the background
+# one-time, BEFORE the first compose up: trust + export the .NET dev certificate for Floci's HTTPS proxy (accept the Windows prompt)
+pwsh ./scripts/Setup-EtpHttps.ps1
+# download images (first time) and start all six containers in the background
 docker compose up -d
-# list them; etp-postgres and etp-redis should say "healthy" after ~10 seconds
+# list them; etp-postgres, etp-redis and etp-floci should say "healthy" after ~10 seconds
 docker compose ps
 ```
 
-This starts three containers from `docker-compose.yml`, all reachable only from your own PC:
+The certificate goes to `floci/certs/` (git-ignored, per machine). The proxy's nginx config is inline in `docker-compose.yml`, so there is no other file to create.
+If you run `docker compose up -d` first, it stops with `bind source path does not exist: .../floci/certs`: run the script, then repeat. The six containers:
 
 | Container | Address | Credentials | Data |
 |---|---|---|---|
 | `etp-postgres` | `localhost:5432`, database `etp_local` | user `etp`, password `etp_local_pw` | volume, kept |
 | `etp-redis` | `localhost:6379` | none | volume, kept |
 | `etp-dynamodb` (Ticketing only) | `http://localhost:8000` | none | in-memory, nothing to seed |
+| `etp-floci` (fake AWS) | `http://localhost:4566` | `test` / `test` | volume `etp-floci-data`, kept |
+| `etp-floci-tls` (HTTPS proxy for Cognito URLs) | `https://localhost:4567` | none | none |
+| `etp-floci-ui` (web console) | `http://localhost:4500` | none | none |
 
 The database is empty the first time: that is correct, the services create their own tables.
 If a port is taken (a native Postgres or Redis on your PC), stop that program. Find the owner with `pwsh -c "Get-NetTCPConnection -LocalPort 5432 -State Listen"`.
 
-### Step 3. Start Floci (fake AWS) and seed it
+### Step 3. Seed Floci (fake AWS)
 
-Floci stands in for AWS so you need no real AWS keys. Its web console is http://localhost:4500. Three details are deliberate:
+Floci stands in for AWS so you need no real AWS keys. It is an emulator: it cannot reach the real AWS resources. Its web console is http://localhost:4500. Three details are deliberate:
 
 - **HTTPS for login.** The backend only accepts HTTPS Cognito metadata, so a small proxy container (`etp-floci-tls`, `https://localhost:4567`) fronts Floci for
-  the Cognito URLs. It needs a certificate, which `setup-https.ps1` creates, so **run it before the first `docker compose up -d`** in `floci/`.
-  AWS calls (S3, SQS, the CLI) still go to `http://localhost:4566`.
+  the Cognito URLs, using the certificate from Step 2. AWS calls (S3, SQS, the CLI) still go to `http://localhost:4566`.
 - **Region `ap-southeast-1` (Singapore).** Everything in Floci must be created in this one region, to match the real AWS deployment. The seed scripts, the CLI and the services must all use it.
 - **Seed once.** Seeding creates the bucket, queues and Cognito pools. Do not delete the Floci volume afterwards unless you want to start over.
 
 ```bash
-# one-time: trust + export the .NET dev certificate (accept the Windows prompt)
-pwsh ./floci/setup-https.ps1
-# start Floci, its HTTPS proxy (4567) and web console (4500)
-docker compose -f floci/docker-compose.yml up -d
 # etp-floci must say "healthy" (about 10 seconds); wait and repeat if it says "starting"
-docker compose -f floci/docker-compose.yml ps
+docker compose ps
 # create S3 bucket etp-local, SQS queues, SES identity
-pwsh ./floci/seed.ps1
+pwsh ./scripts/Seed-EtpFloci.ps1
 # create 4 Cognito pools (Admin, User, TicketChecker, Agent), app clients, test users
-pwsh ./floci/seed-users.ps1
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1
 ```
 
-`seed-users.ps1` ends by printing a block of `AWS:CognitoPool:<Pool>:PoolId / ClientId / Authority / Metadata` lines for all four pools.
-You do not copy them: the next step reads them for you. Both scripts are safe to re-run: existing pools, clients, users, bucket and queues are reused,
-so nothing is duplicated.
-
-**If you lose the output** (closed the terminal, shut down the PC): you do not need to save it. Run `pwsh ./floci/seed-users.ps1` again and it prints
-the same block, or list the IDs directly:
-
-```bash
-# list the pools and their IDs
-aws --endpoint-url http://localhost:4566 cognito-idp list-user-pools --max-results 60
-# list the app client (ClientId) of one pool
-aws --endpoint-url http://localhost:4566 cognito-idp list-user-pool-clients --user-pool-id <PoolId>
-```
+`Seed-EtpCognitoUsers.ps1` prints the `PoolId` / `ClientId` of the four pools. You do not need to copy or keep them: the next step reads them from Floci itself.
+Both scripts are safe to re-run: existing pools, clients, users, bucket and queues are reused, so nothing is duplicated.
+To list the IDs yourself: `aws --endpoint-url http://localhost:4566 cognito-idp list-user-pools --max-results 60` (AWS CLI setup below).
 
 Test accounts for the Admin pool (password for all: `Passw0rd!23`, username = phone number; the other pools get one user each):
 
@@ -216,7 +207,7 @@ $env:AWS_ACCESS_KEY_ID = "test"; $env:AWS_SECRET_ACCESS_KEY = "test"; $env:AWS_R
 export AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_REGION=ap-southeast-1
 ```
 
-Check: `aws --endpoint-url http://localhost:4566 s3 ls` lists the bucket `etp-local`. This setup was tested with Floci 2.3.0 (pinned in `floci/docker-compose.yml`).
+Check: `aws --endpoint-url http://localhost:4566 s3 ls` lists the bucket `etp-local`. This setup was tested with Floci 2.3.0 (pinned in `docker-compose.yml`).
 
 ### Step 4. Configure the services (user secrets)
 
@@ -234,14 +225,14 @@ You edit no file. The script:
    payment, TSP and OneID entries are dummies because those features cannot work locally anyway);
 2. asks the running Floci for the Cognito `PoolId` and `ClientId` of the Admin, User, TicketChecker and Agent pools and fills in
    `PoolId`, `ClientId`, `Authority` and `Metadata` itself, so there is nothing to copy from the seed output;
-3. stops with a clear message if Floci is not running, a pool is missing (run `pwsh ./floci/seed-users.ps1`), or any `REPLACE_WITH_*` placeholder is left,
+3. stops with a clear message if Floci is not running, a pool is missing (run `pwsh ./scripts/Seed-EtpCognitoUsers.ps1`), or any `REPLACE_WITH_*` placeholder is left,
    so a half-configured setup cannot be applied;
 4. writes the result to every service with `dotnet user-secrets`.
 
 Expected: four `cognito <Pool> pool ... client ...` lines, then one `ok  ETP.<Name>.Service.csproj` line for each of the 10 services that read secrets (UserAuth reads none). Check one:
 `dotnet user-secrets list --project rvl-gobcb-backend/Services/Admin/ETP.Admin.Service`. `pwsh ./scripts/Set-EtpSecrets.ps1 -DryRun` prints the final JSON without applying it.
 
-**Re-run it** after every `pwsh ./floci/seed-users.ps1` on a fresh Floci (the IDs change), then restart the AppHost.
+**Re-run it** after every `pwsh ./scripts/Seed-EtpCognitoUsers.ps1` on a fresh Floci (the IDs change), then restart the AppHost.
 
 *Optional personal overrides:* if you have a real key (for example a real payment sandbox), put only that key in `scripts/user-secrets.json`
 (git-ignored, same structure as the example). It is merged on top; values still containing `REPLACE_WITH` are ignored. Never put real keys in any file in a repo.
@@ -335,10 +326,8 @@ You are now ready to build, run and debug.
 git pull
 # only needed if the pinned submodule commits changed
 git submodule update --init
-# PostgreSQL, Redis, DynamoDB (does nothing if already running)
+# PostgreSQL, Redis, DynamoDB and Floci (does nothing if already running; Floci's pools, queues and users persist, so do not re-seed)
 docker compose up -d
-# fake AWS; pools, queues and users persist, so do not re-seed
-docker compose -f floci/docker-compose.yml up -d
 # start all services + dashboard
 dotnet run --project aspire/Etp.AppHost
 ```
@@ -346,11 +335,9 @@ dotnet run --project aspire/Etp.AppHost
 Start the Docker parts before the AppHost. Once the services are *Running*, `pwsh ./scripts/Test-EtpLocal.ps1` confirms that everything works (about 20 seconds). New database migrations that other people added are applied automatically at service startup.
 
 **After a PC shutdown or reboot** there is nothing to redo: your Cognito IDs are saved in the services' user secrets,
-and Floci keeps its data in the `etp-floci-data` volume (Docker Desktop usually restarts the container by itself). Just run the two commands above.
+and Floci keeps its data in the `etp-floci-data` volume. Just run the commands above.
 If you get 401 everywhere, check that Floci still has its pools: `aws --endpoint-url http://localhost:4566 cognito-idp list-user-pools --max-results 60` (AWS CLI setup: Step 3).
-An empty list means Floci lost its data: re-run `pwsh ./floci/seed.ps1` and `pwsh ./floci/seed-users.ps1`,
-run `pwsh ./scripts/Set-EtpSecrets.ps1` (it picks up the new IDs by itself), restart the AppHost.
-(Persistence across restarts has not been verified for Cognito on every Floci version; this check is the safety net.)
+An empty list means Floci lost its data (persistence is not guaranteed on every Floci version): follow "After either reset" in [Teardown](#8-teardown-and-cleanup).
 
 **Run fewer services** (saves RAM and noise). Pass the names (comma separated, no spaces) after `--`:
 
@@ -375,7 +362,7 @@ services, *Traces* follows one request as it hops between services (very useful 
 **Evening**
 
 - `Ctrl+C` in the AppHost terminal (wait for it to exit; do not close the window, that can leave processes behind).
-- Optional: `docker compose stop` and `docker compose -f floci/docker-compose.yml stop`. Your data stays.
+- Optional: `docker compose stop`. Your data stays.
 
 ---
 
@@ -464,7 +451,7 @@ VS Code has an **Aspire AppHost** config in `launch.json`. This is not verified 
 
 ## 7. Everyday tasks
 
-**Call a protected API.** Most endpoints need a Cognito token. Get one from Floci for a seeded user (use the Admin `ClientId` printed by `pwsh ./floci/seed-users.ps1`; AWS CLI setup: Step 3):
+**Call a protected API.** Most endpoints need a Cognito token. Get one from Floci for a seeded user (use the Admin `ClientId` printed by `pwsh ./scripts/Seed-EtpCognitoUsers.ps1`; AWS CLI setup: Step 3):
 
 ```bash
 # log in as the admin test user; prints the tokens
@@ -515,7 +502,7 @@ Try it: `curl.exe http://localhost:5103/event/api/v1/landing-page-image/public` 
 - **Services with no tables.** Scheduler, Utility, Platform and UserAuth store nothing in Postgres, so there is nothing to seed. The DynamoDB ticket queue is written on demand.
 - **Agent sales and OneID.** The Agent pool user exists but no agent-sold tickets are seeded.
 
-After `docker compose down -v` the seed is gone along with the schema; start the AppHost once, then run the script again.
+After `docker compose down -v` the seed is gone along with the schema; start the AppHost once, then run the script again. If you reset **only Floci**, the database keeps its rows but the Cognito users get new `sub` values, so run `pwsh ./scripts/Seed-EtpData.ps1 -Reset` to relink them.
 
 **Look at fake AWS.**
 
@@ -541,40 +528,53 @@ Pick the level you need. Never run `docker system prune -a --volumes`: it delete
 
 ```bash
 # first press Ctrl+C in the AppHost terminal
-# stop PostgreSQL, Redis, DynamoDB (data stays in volumes)
+# stop all containers: PostgreSQL, Redis, DynamoDB, Floci (data stays in volumes)
 docker compose stop
-# stop Floci and its proxy/console (data stays)
-docker compose -f floci/docker-compose.yml stop
 ```
 
 **Reset data (clean database and AWS, keep images)**
 
+To wipe **everything** (PostgreSQL, Redis and Floci) and start empty:
+
 ```bash
-# remove the containers AND the PostgreSQL/Redis data volumes
+# remove all containers AND all data volumes (PostgreSQL, Redis, Floci)
 docker compose down -v
 # start them again, empty
 docker compose up -d
-# remove Floci containers AND its data (buckets, queues, Cognito pools)
-docker compose -f floci/docker-compose.yml down -v
-# start Floci again, empty
-docker compose -f floci/docker-compose.yml up -d
+```
+
+To reset **only Floci** (keep the database): this wipes its buckets, queues and Cognito pools, and the IDs change.
+
+```bash
+# remove the Floci containers, then its data volume
+docker compose rm -sf floci floci-tls floci-ui
+docker volume rm etp-floci-data
+# start Floci again, empty (PostgreSQL and Redis are untouched)
+docker compose up -d
+```
+
+**After either reset**, seed Floci again:
+
+```bash
 # re-create bucket, queues, SES identity
-pwsh ./floci/seed.ps1
+pwsh ./scripts/Seed-EtpFloci.ps1
 # re-create Cognito pools and users (new IDs)
-pwsh ./floci/seed-users.ps1
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1
 # pick up the new Cognito IDs; then restart the AppHost
 pwsh ./scripts/Set-EtpSecrets.ps1
+# only if you reset Floci but kept the database: relink the test data to the new users (needs the AppHost running)
+pwsh ./scripts/Seed-EtpData.ps1 -Reset
 ```
 
 **Full cleanup (data and images)**
 
 ```bash
-# remove infra containers, data volumes and images
+# remove all containers (infra, Floci, proxy, console), data volumes and images
 docker compose down --volumes --rmi all --remove-orphans
-# same for Floci, its proxy and console
-docker compose -f floci/docker-compose.yml down --volumes --rmi all --remove-orphans
 # remove the user secrets from all 11 services (+ your optional override file)
 pwsh ./scripts/Clear-EtpSecrets.ps1
+# remove the exported HTTPS certificate (Setup-EtpHttps.ps1 recreates it)
+rm -rf floci/certs
 # leftovers check: should list nothing
 docker ps -a --filter "name=etp"
 # leftovers check: should list nothing
@@ -592,11 +592,15 @@ To start again, go back to [Part 3](#3-first-time-setup).
 | Symptom | Cause and fix |
 |---|---|
 | `docker version` shows no Server / containers fail to start | Docker Desktop is not running. Start it and wait for the whale icon to be steady |
-| `port is already allocated` (5432, 6379, 4566, 8000) | Another program owns the port: `pwsh -c "Get-NetTCPConnection -LocalPort 5432 -State Listen"` shows which. Stop it (a native Postgres/Redis, LocalStack) |
-| Every request fails with `The MetadataAddress or Authority must use HTTPS` | The Cognito URLs in your secrets are `http://`. Run `pwsh ./floci/setup-https.ps1`, `docker compose -f floci/docker-compose.yml up -d`, then `pwsh ./scripts/Set-EtpSecrets.ps1` and restart the AppHost |
-| Valid token still gets **401** `The signature key was not found`, or **403**, or logs `User pool ... does not exist` | Floci was seeded in a different region. Floci must hold everything in `ap-southeast-1` (the seed scripts should do this). If your pool IDs start with `ap-southeast-1_`, they are from an older setup: re-run `pwsh ./floci/seed.ps1` and `pwsh ./floci/seed-users.ps1`, then `pwsh ./scripts/Set-EtpSecrets.ps1`, and restart the AppHost |
-| `etp-floci-tls` keeps restarting, or https://localhost:4567 does not answer | The certificate files are missing. Run `pwsh ./floci/setup-https.ps1`, then `docker compose -f floci/docker-compose.yml up -d` again |
+| `port is already allocated` (5432, 6379, 8000, 4566, 4567, 4500) | Another program owns the port: `pwsh -c "Get-NetTCPConnection -LocalPort 5432 -State Listen"` shows which. Stop it (a native Postgres/Redis, LocalStack) |
+| Every request fails with `The MetadataAddress or Authority must use HTTPS` | The Cognito URLs in your secrets are `http://`. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, `docker compose up -d`, then `pwsh ./scripts/Set-EtpSecrets.ps1` and restart the AppHost |
+| Valid token still gets **401** `The signature key was not found`, or **403**, or logs `User pool ... does not exist` | Usually the pools in Floci do not match your secrets (see "401 on every call" below) or were created in another region: everything must be in `ap-southeast-1`. Reset only Floci and re-seed ([Teardown](#8-teardown-and-cleanup)). If a fresh seed still gives the signature error, check the discovery document through the proxy: `curl.exe -k https://localhost:4567/<PoolId>/.well-known/openid-configuration` must show `"jwks_uri"` first; that rewrite is the `sub_filter` block in the `floci_nginx` config of `docker-compose.yml` (a workaround for mismatched IdentityModel package versions in the backend) |
+| `docker compose up -d` fails with `bind source path does not exist: .../floci/certs` | You have not created the HTTPS certificate yet. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, then `docker compose up -d` again |
+| `etp-floci-tls` keeps restarting, or https://localhost:4567 does not answer | The certificate files are missing or incomplete. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, then `docker compose up -d` again |
+| `docker compose up -d` rejects the `configs:` block (an error mentioning `content`) | Docker Compose is too old for inline configs. Update Docker Desktop (4.26 or newer); check with `docker compose version` (2.23.1+) |
+| The "Open Floci UI" button on http://localhost:4566 shows "could not reach the container runtime" | Expected: no Docker socket is mounted on purpose. Open the console at http://localhost:4500 directly |
 | Service **Finished** right after start | It crashed; read its console log. *Redis/Postgres connection* error: infra is down, run `docker compose up -d` (`docker compose ps` to check) and restart the AppHost. *`[see User Secrets]`/FormatException*: secrets not applied, re-run `pwsh ./scripts/Set-EtpSecrets.ps1`. `UserIssue` NullReference on `Application:ServiceName`: re-run the script |
+| `container name "/etp-floci" is already in use` after pulling | Floci used to have its own compose file and project. Remove the old containers (data in the `etp-floci-data` volume is kept, no re-seed): `docker rm -f etp-floci etp-floci-tls etp-floci-ui`, then `docker compose up -d` |
 | `password authentication failed for user "etp"` | The Postgres volume was created with another password. `docker compose down -v` and start again |
 | `relation "etp.xxx" does not exist` | Admin has not finished its migrations yet; wait, or check Admin's log |
 | Admin crashes at startup with `42P07: relation "__EFMigrationsHistory" already exists` | Concurrent migration race on a fresh database. Restart the AppHost; if it repeats after a reset, run `docker compose down -v && docker compose up -d`, then start the AppHost again |

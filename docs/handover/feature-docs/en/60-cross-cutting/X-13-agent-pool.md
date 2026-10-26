@@ -106,7 +106,7 @@ created first ([A-11](../10-admin-portal/A-11-seat-reservation.md)).
 
 | Item | Detail |
 |---|---|
-| Test data and accounts | Agent-pool user `+8801700000031` / `Passw0rd!23` (`floci/seed-users.ps1`) |
+| Test data and accounts | Agent-pool user `+8801700000031` / `Passw0rd!23` (`scripts/Seed-EtpCognitoUsers.ps1`) |
 | Browser | Not applicable |
 | Emulator | Not applicable |
 | Postman | `postman/etp-login-all-pools.postman_collection.json` "Agent pool" → "Login as agent" (`access_token_agent`); `postman/services/etp-ticketing.postman_collection.json` folder "OfflineTicketSold", "POST /api/v1/offline-sold-ticket" |

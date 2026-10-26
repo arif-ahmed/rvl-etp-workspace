@@ -27,7 +27,7 @@ Two S3 buckets are configured through `AWS:*` settings:
 | `AWS:Bucket:Name` | Media: images and chat attachments | `AwsSimpleStorageMediaManager` (`ICloudFrontMediaManager`) |
 | `AWS:Ticket:Bucket:Name` | Ticket layouts and generated tickets | `AwsSimpleStorageTicketMediaManager` (`ITicketMediaManager`) |
 
-Locally both settings point at the single bucket `etp-local` in Floci (`scripts/user-secrets.example.json`, created by `floci/seed.ps1`).
+Locally both settings point at the single bucket `etp-local` in Floci (`scripts/user-secrets.example.json`, created by `scripts/Seed-EtpFloci.ps1`).
 
 **Key layout.** `UploadContentAsync(directory, parentId, name, ...)` builds the object key as `{directory}/{parentId}/{name}`, or `{directory}/{name}` when `parentId` is empty, and returns that key. The managers then store a **full URL**, `{AWS:Bucket:BaseUrl}/{key}`, in the owning row (for example `ProgramManager.UploadImageAsync`); ticket-layout and ticket code splits such URLs on the folder name to recover the key before deleting an object.
 

@@ -141,7 +141,7 @@ real MFA and CloudFront cookies cannot be tested locally.
 
 | Item | Detail |
 |---|---|
-| Test data and accounts | Admin-pool users from `floci/seed-users.ps1`: `+8801700000001` admin, `…02` event_manager, `…03` ticket_manager, `…04` ticket_operator, `…05` customer_support. Password `Passw0rd!23` (`docs/local-dev.md` Step 3) |
+| Test data and accounts | Admin-pool users from `scripts/Seed-EtpCognitoUsers.ps1`: `+8801700000001` admin, `…02` event_manager, `…03` ticket_manager, `…04` ticket_operator, `…05` customer_support. Password `Passw0rd!23` (`docs/local-dev.md` Step 3) |
 | Browser | Start the backend (`dotnet run --project aspire/Etp.AppHost`) and the portal copy (`pwsh ./scripts/Setup-AdminPortal.ps1 -Start`). Open `http://localhost:4200/auth/login`; phone `1700000001`, OTP `123456`, password `Passw0rd!23` (`docs/admin-portal-local.md` §5). In DevTools → Network, filter `p/`: you see `/p/serverless/admin/login-2fa-send-otp`, `…verify-otp`, then calls to `/p/cognito` and finally the first `/p/admin/...` call with `Authorization: Bearer …` |
 | Emulator | Not applicable (admin portal is web only) |
 | Postman | Collection `postman/etp-login-all-pools.postman_collection.json`, folder "Admin pool", request "Login as admin" (USER_PASSWORD_AUTH against Floci, environment `postman/etp-local-services.postman_environment.json`). It stores the token for the service collections. Negative cases: `postman/etp-cognito-auth.postman_collection.json` folder "02 - Cognito negative auth" |

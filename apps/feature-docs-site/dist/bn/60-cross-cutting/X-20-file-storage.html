@@ -265,7 +265,7 @@ document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </tr>
 </tbody>
 </table>
-<p>লোকালে দুটি সেটিংই Floci-তে একটিমাত্র বাকেট <code>etp-local</code>-এর দিকে ইঙ্গুত করে (<code>scripts/user-secrets.example.json</code>, তৈরি করে <code>floci/seed.ps1</code>)।</p>
+<p>লোকালে দুটি সেটিংই Floci-তে একটিমাত্র বাকেট <code>etp-local</code>-এর দিকে ইঙ্গুত করে (<code>scripts/user-secrets.example.json</code>, তৈরি করে <code>scripts/Seed-EtpFloci.ps1</code>)।</p>
 <p><strong>Key কাঠামো।</strong> <code>UploadContentAsync(directory, parentId, name, ...)</code> অবজেক্ট key-কে <code>{directory}/{parentId}/{name}</code> হিসেবে গড়ে, অথবা <code>parentId</code> খালি থাকলে <code>{directory}/{name}</code>, এবং সেই key ফেরত দেয়। এরপর ম্যানেজারগুলো মালিক রো-তে একটি <strong>পূর্ণ URL</strong>, <code>{AWS:Bucket:BaseUrl}/{key}</code>, সংরক্ষণ করে (যেমন <code>ProgramManager.UploadImageAsync</code>); টিকিট-লেআউট ও টিকিট কোড এই URL-গুলো ফোল্ডারের নামে ভেঙে key ফিরিয়ে আনে, তারপর অবজেক্ট মুছে ফেলে।</p>
 <p><strong>মিডিয়া ফোল্ডার</strong> (<code>AWS:Bucket</code>):</p>
 <table>

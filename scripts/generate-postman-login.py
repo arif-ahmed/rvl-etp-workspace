@@ -1,5 +1,5 @@
 # Part of generate-postman.py (exec'd from it): builds postman/etp-login-all-pools.postman_collection.json
-# Logs in every seeded user of all four Cognito pools (floci/seed-users.ps1) and stores access_token_* in the environment.
+# Logs in every seeded user of all four Cognito pools (scripts/Seed-EtpCognitoUsers.ps1) and stores access_token_* in the environment.
 POOLS = [  # (pool key, seeded pool name, [(env token suffix, phone var, expected custom:role)])
     ("admin", "etp-admin", [("admin", "phone_admin", "admin"), ("event_manager", "phone_event_manager", "event_manager"),
                             ("ticket_manager", "phone_ticket_manager", "ticket_manager"),
@@ -24,7 +24,7 @@ def _cognito(name, target, body, test, signed, desc=""):
 _setup = [_cognito("Resolve pool ids (ListUserPools)", "ListUserPools", {"MaxResults": 60}, [
     "pm.test('200', () => pm.response.to.have.status(200));",
     "const pools = pm.response.json().UserPools || [];",
-] + [f"{{ const p = pools.find(x => x.Name === '{n}'); pm.test('pool {n} exists (run floci/seed-users.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('{k}_pool_id', p.Id); }}" for k, n, _ in POOLS],
+] + [f"{{ const p = pools.find(x => x.Name === '{n}'); pm.test('pool {n} exists (run scripts/Seed-EtpCognitoUsers.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('{k}_pool_id', p.Id); }}" for k, n, _ in POOLS],
     True, "Run first. Resolves the four pool ids from the seeded pool names.")]
 for k, n, _ in POOLS:
     _setup.append(_cognito(f"Resolve {k} client id", "ListUserPoolClients", {"UserPoolId": "{{%s_pool_id}}" % k, "MaxResults": 60}, [
@@ -56,7 +56,7 @@ for k, n, users in POOLS:
 _login_col = {"info": {"_postman_id": uid("login-all-pools"), "name": "ETP - Login (all pools)",
                        "description": "Logs in every seeded user across the Admin, User, TicketChecker and Agent Cognito pools and stores "
                                       "access_token_* / id_token_* / refresh_token_* in the environment 'ETP Local - Services'. "
-                                      "Run folder '00 - Resolve' first, then the pool folders (or the whole collection). Prereq: floci/seed-users.ps1.",
+                                      "Run folder '00 - Resolve' first, then the pool folders (or the whole collection). Prereq: scripts/Seed-EtpCognitoUsers.ps1.",
                        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
               "item": [{"name": "00 - Resolve", "item": _setup}] + _logins}
 (OUT / "etp-login-all-pools.postman_collection.json").write_text(json.dumps(_login_col, indent=2), encoding="utf-8")

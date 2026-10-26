@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "5e45682b-1d97-5321-12b6-8ae8127998ed",
     "name": "ETP - Login (all pools)",
-    "description": "Logs in every seeded user across the Admin, User, TicketChecker and Agent Cognito pools and stores access_token_* / id_token_* / refresh_token_* in the environment 'ETP Local - Services'. Run folder '00 - Resolve' first, then the pool folders (or the whole collection). Prereq: floci/seed-users.ps1.",
+    "description": "Logs in every seeded user across the Admin, User, TicketChecker and Agent Cognito pools and stores access_token_* / id_token_* / refresh_token_* in the environment 'ETP Local - Services'. Run folder '00 - Resolve' first, then the pool folders (or the whole collection). Prereq: scripts/Seed-EtpCognitoUsers.ps1.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -19,10 +19,10 @@
                 "exec": [
                   "pm.test('200', () => pm.response.to.have.status(200));",
                   "const pools = pm.response.json().UserPools || [];",
-                  "{ const p = pools.find(x => x.Name === 'etp-admin'); pm.test('pool etp-admin exists (run floci/seed-users.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('admin_pool_id', p.Id); }",
-                  "{ const p = pools.find(x => x.Name === 'etp-user'); pm.test('pool etp-user exists (run floci/seed-users.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('user_pool_id', p.Id); }",
-                  "{ const p = pools.find(x => x.Name === 'etp-ticketchecker'); pm.test('pool etp-ticketchecker exists (run floci/seed-users.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('ticketchecker_pool_id', p.Id); }",
-                  "{ const p = pools.find(x => x.Name === 'etp-agent'); pm.test('pool etp-agent exists (run floci/seed-users.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('agent_pool_id', p.Id); }"
+                  "{ const p = pools.find(x => x.Name === 'etp-admin'); pm.test('pool etp-admin exists (run scripts/Seed-EtpCognitoUsers.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('admin_pool_id', p.Id); }",
+                  "{ const p = pools.find(x => x.Name === 'etp-user'); pm.test('pool etp-user exists (run scripts/Seed-EtpCognitoUsers.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('user_pool_id', p.Id); }",
+                  "{ const p = pools.find(x => x.Name === 'etp-ticketchecker'); pm.test('pool etp-ticketchecker exists (run scripts/Seed-EtpCognitoUsers.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('ticketchecker_pool_id', p.Id); }",
+                  "{ const p = pools.find(x => x.Name === 'etp-agent'); pm.test('pool etp-agent exists (run scripts/Seed-EtpCognitoUsers.ps1)', () => pm.expect(p).to.exist); if (p) pm.environment.set('agent_pool_id', p.Id); }"
                 ]
               }
             }

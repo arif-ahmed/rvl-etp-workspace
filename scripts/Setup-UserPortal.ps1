@@ -14,7 +14,7 @@
 
   Local stand-ins (proxy.conf.js): a fake OneID (SSO signs in as seeded user 1700000011) and GET user/my-profile.
   Not available: the rest of the "identity" API (sign-up, OTP, forgot password) has no source in any repo.
-  Run it again after every Floci reset / re-seed (floci/seed-users.ps1), or after the submodule is updated.
+  Run it again after every Floci reset / re-seed (scripts/Seed-EtpCognitoUsers.ps1), or after the submodule is updated.
 #>
 param(
     [switch]$Start,          # run ng serve after preparing
@@ -36,10 +36,10 @@ foreach ($tool in 'aws', 'node', 'npm') { if (-not (Get-Command $tool -ErrorActi
 
 # 1. Cognito IDs from Floci
 try { $poolId = Invoke-Aws cognito-idp list-user-pools --max-results 60 --query "UserPools[?Name=='etp-user'].Id | [0]" --output text }
-catch { throw "Cannot reach Floci at $floci. Start it: docker compose -f floci/docker-compose.yml up -d" }
-if (-not $poolId -or $poolId -eq 'None') { throw "Pool 'etp-user' not found. Run: pwsh ./floci/seed-users.ps1" }
+catch { throw "Cannot reach Floci at $floci. Start it: docker compose up -d" }
+if (-not $poolId -or $poolId -eq 'None') { throw "Pool 'etp-user' not found. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }
 $clientId = Invoke-Aws cognito-idp list-user-pool-clients --user-pool-id $poolId --query "UserPoolClients[?ClientName=='etp-local'].ClientId | [0]" --output text
-if (-not $clientId -or $clientId -eq 'None') { throw "Client 'etp-local' not found in $poolId. Run: pwsh ./floci/seed-users.ps1" }
+if (-not $clientId -or $clientId -eq 'None') { throw "Client 'etp-local' not found in $poolId. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }
 Write-Host "cognito User pool $poolId client $clientId"
 
 # 2. SRP on the app client (update replaces the whole list, so name every flow)

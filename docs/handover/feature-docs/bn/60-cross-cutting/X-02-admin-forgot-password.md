@@ -134,7 +134,7 @@ password are required."-এ থেমে যায়। ব্যাকএন�
 
 | বিষয় | বিবরণ |
 |---|---|
-| টেস্ট ডেটা ও অ্যাকাউন্ট | `floci/seed-users.ps1` থেকে Admin-pool ইউজার; একবার ব্যবহারের পরে ফেলে দেওয়া অ্যাকাউন্টের জন্য Postman ভ্যারিয়েবল `tmp_phone` (`+8801700009999`) ব্যবহার করুন |
+| টেস্ট ডেটা ও অ্যাকাউন্ট | `scripts/Seed-EtpCognitoUsers.ps1` থেকে Admin-pool ইউজার; একবার ব্যবহারের পরে ফেলে দেওয়া অ্যাকাউন্টের জন্য Postman ভ্যারিয়েবল `tmp_phone` (`+8801700009999`) ব্যবহার করুন |
 | ব্রাউজার | `http://localhost:4200/auth/login` → "Forgot password", ফোন `1700000001`, OTP `123456`। উপরে বর্ণিত থামার আশা করুন; DevTools দুটি `/p/serverless/...` কল দেখায় |
 | ইমুলেটর | প্রযোজ্য নয় |
 | Postman | `postman/etp-cognito-auth.postman_collection.json`, ফোল্ডার "06 - Admin user lifecycle (creates and deletes tmp_phone)", রিকোয়েস্ট "Set known password (set-forget-password)"; তারপর "Login as new user" পরিবর্তন প্রমাণ করে। এনভায়রনমেন্ট `postman/etp-local-floci.postman_environment.json`। লক্ষ্য করুন: কলেকশনের `admin_base_url` হলো `http://localhost:5101` এবং রিকোয়েস্ট পাথ `/api/v1/...`; 404 পেলে `/admin` প্রিফিক্স যোগ করুন ([Appendix D](../93-appendix-d-local-test-reference.md)) |

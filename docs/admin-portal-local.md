@@ -28,7 +28,7 @@ The portal cannot run from the submodule as checked out:
 | Amplify talks to real `cognito-idp.<region>.amazonaws.com` (no endpoint setting) | Script adds `endpoint` to `aws-exports.ts` in the copy, pointing at the dev-server proxy |
 | Floci sends no CORS headers; its HTTPS proxy uses a self-signed cert the browser rejects | Browser only talks to `localhost:4200`; the dev server proxies `/p/cognito` to Floci and `/p/<service>` to the backend |
 | Login starts with a phone **OTP** from a "serverless" API whose source is not in any repo | Proxy answers the two OTP endpoints locally (**OTP is always `123456`**, local only) |
-| The portal signs in with SRP; `floci/seed-users.ps1` only enables password auth on the app client | Script enables `ALLOW_USER_SRP_AUTH` on the Floci client |
+| The portal signs in with SRP; `scripts/Seed-EtpCognitoUsers.ps1` only enables password auth on the app client | Script enables `ALLOW_USER_SRP_AUTH` on the Floci client |
 
 All other Angular source is an unmodified copy.
 
@@ -44,7 +44,7 @@ browser :4200 ── ng serve (portal-local/admin-portal)
 
 ## 2. Prerequisites
 
-Backend setup from [local-dev.md](local-dev.md) done and running (Floci seeded with `floci/seed-users.ps1`, AppHost started), plus:
+Backend setup from [local-dev.md](local-dev.md) done and running (Floci seeded with `scripts/Seed-EtpCognitoUsers.ps1`, AppHost started), plus:
 
 - Node.js 20+ (tested with 24) and npm
 - AWS CLI on PATH (already needed for local-dev Step 3)
@@ -94,10 +94,11 @@ sequence as the backend, plus one command:
 
 ```bash
 # 1. recreate Floci data (see local-dev.md, Teardown)
-docker compose -f floci/docker-compose.yml down -v
-docker compose -f floci/docker-compose.yml up -d
-pwsh ./floci/seed.ps1
-pwsh ./floci/seed-users.ps1          # new Cognito pools, clients, users
+docker compose rm -sf floci floci-tls floci-ui   # Floci only; Postgres and Redis keep their data
+docker volume rm etp-floci-data
+docker compose up -d
+pwsh ./scripts/Seed-EtpFloci.ps1
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1          # new Cognito pools, clients, users
 
 # 2. backend: pick up the new IDs, then restart the AppHost
 pwsh ./scripts/Set-EtpSecrets.ps1
@@ -107,7 +108,7 @@ pwsh ./scripts/Setup-AdminPortal.ps1 -Start
 ```
 
 The script reads the IDs live from Floci, so there is no value to copy. If you see `Pool 'etp-admin' not found` the seed step
-(`seed-users.ps1`) was skipped. Log out / clear site data in the browser afterwards: tokens from the old pool are rejected.
+(`Seed-EtpCognitoUsers.ps1`) was skipped. Log out / clear site data in the browser afterwards: tokens from the old pool are rejected.
 
 ## 5. Log in
 
@@ -119,7 +120,7 @@ The login screen is a 3-step flow: phone -> OTP -> password.
 | OTP | `123456` (local stub; the six boxes auto-advance) |
 | Password | `Passw0rd!23` |
 
-Seeded Admin-pool users (all use the same password), from `floci/seed-users.ps1`:
+Seeded Admin-pool users (all use the same password), from `scripts/Seed-EtpCognitoUsers.ps1`:
 
 | Phone | Role | Lands on |
 |---|---|---|
@@ -158,10 +159,10 @@ curl.exe -s -X POST http://localhost:4200/p/cognito -H "Content-Type: applicatio
 |---|---|
 | "An unexpected error occurred" / "Something went wrong" on Send OTP | The OTP stub is not in place (old config or wrong server). Re-run the script with `-Start`, hard-refresh |
 | Login: `USER_SRP_AUTH flow not enabled for this client` | Floci client was re-seeded. Re-run `Setup-AdminPortal.ps1` (it re-enables SRP) |
-| Login: "Incorrect username or password" | Wrong user or Floci reset. Re-run the script and `seed-users.ps1` if the pool is missing; check the phone has no `+880` typed |
+| Login: "Incorrect username or password" | Wrong user or Floci reset. Re-run the script and `Seed-EtpCognitoUsers.ps1` if the pool is missing; check the phone has no `+880` typed |
 | Login: "The user does not exist" | Admin pool has no such phone. Users `…01` to `…05` only (the User/Agent/Checker users are in other pools) |
-| Script: `Cannot reach Floci` | `docker compose -f floci/docker-compose.yml up -d` |
-| Script: `Pool 'etp-admin' not found` / `Client 'etp-local' not found` | `pwsh ./floci/seed-users.ps1` |
+| Script: `Cannot reach Floci` | `docker compose up -d` |
+| Script: `Pool 'etp-admin' not found` / `Client 'etp-local' not found` | `pwsh ./scripts/Seed-EtpCognitoUsers.ps1` |
 | Logged in, every API call 401 | Backend still holds the old Cognito IDs: `pwsh ./scripts/Set-EtpSecrets.ps1`, restart AppHost |
 | Logged in, API calls 502 / `ECONNREFUSED` in the dev-server window | A backend service is not running (Admin :5101 etc.). Check the Aspire dashboard |
 | Port 4200 already in use | Another `ng serve` is running. Stop it, or use `-Port 4300` |

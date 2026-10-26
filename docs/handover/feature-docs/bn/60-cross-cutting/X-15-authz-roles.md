@@ -139,7 +139,7 @@ flowchart LR
 
 | বিষয় | বিবরণ |
 |---|---|
-| টেস্ট ডেটা ও অ্যাকাউন্ট | Admin-pool-এর পাঁচজন ব্যবহারকারী, প্রতি রোলে একজন (`floci/seed-users.ps1`) |
+| টেস্ট ডেটা ও অ্যাকাউন্ট | Admin-pool-এর পাঁচজন ব্যবহারকারী, প্রতি রোলে একজন (`scripts/Seed-EtpCognitoUsers.ps1`) |
 | ব্রাউজার | `http://localhost:4200`-এ প্রতিটি রোল হিসেবে লগইন করে মেনুটি ম্যাট্রিক্সের সঙ্গে মিলিয়ে দেখুন |
 | এমুলেটর | প্রযোজ্য নয় |
 | Postman | `postman/etp-cognito-auth.postman_collection.json` ফোল্ডার "05 - Role-based access (custom:role -> Role claim)" (`admin-users`, `ticket-checker/search`, `ticket-checker`, `user-issue`-এ প্রতি রোলের জন্য allow/deny); "03 - Token lifecycle" → "AdminGetUser (what CognitoUserAttributesMiddleware calls)" |

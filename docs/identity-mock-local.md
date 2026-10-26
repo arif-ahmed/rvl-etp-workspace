@@ -24,8 +24,8 @@ OTP is always **`123456`**. Email OTPs also go through Floci SES (`noreply@etp.l
 
 ## 2. Prerequisites
 
-- Everything in [local-dev.md](local-dev.md) done: Docker, PostgreSQL/Redis/DynamoDB containers, Floci up, `floci/seed.ps1` and
-  `floci/seed-users.ps1` run (the mock needs the `etp-user` pool).
+- Everything in [local-dev.md](local-dev.md) done: Docker, PostgreSQL/Redis/DynamoDB containers, Floci up, `scripts/Seed-EtpFloci.ps1` and
+  `scripts/Seed-EtpCognitoUsers.ps1` run (the mock needs the `etp-user` pool).
 - Node.js 18+ (the mock has no npm dependencies).
 - Portal testing: Node 20+, AWS CLI, `git submodule update --init rvl-gobcb-user-portal`.
 
@@ -34,11 +34,10 @@ OTP is always **`123456`**. Email OTPs also go through Floci SES (`noreply@etp.l
 From the workspace root.
 
 ```powershell
-# 1. Infra and Floci (skip what is already running)
+# 1. Infra and Floci (no-op if already running)
 docker compose up -d
-docker compose -f floci/docker-compose.yml up -d
-pwsh ./floci/seed.ps1          # SES sender noreply@etp.local must exist for email OTPs
-pwsh ./floci/seed-users.ps1
+pwsh ./scripts/Seed-EtpFloci.ps1          # SES sender noreply@etp.local must exist for email OTPs
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1
 
 # 2. Point the backend at the mock (Serverless:BaseUrl = http://localhost:5120/) and restart the services
 pwsh ./scripts/Set-EtpSecrets.ps1
@@ -55,7 +54,7 @@ Optional settings (environment variables, set before `node`): `MOCK_OTP`, `MOCK_
 `MOCK_PENDING_TTL_MS` (abandoned sign-ups dropped, default 30 min), `MOCK_USER_POOL_NAME` (default `etp-user`) or `MOCK_USER_POOL_ID`, `AWS_ENDPOINT_URL`, `MOCK_IDENTITY_PORT`.
 
 Reset: stop the mock, delete `mock-identity/data.json` (pending sign-ups and profiles). Users already created live in Floci Cognito;
-they disappear after `docker compose -f floci/docker-compose.yml down -v` and re-seeding.
+they disappear when Floci data is reset (see local-dev.md, Teardown) and re-seeding.
 
 ### Client wiring
 
@@ -82,7 +81,7 @@ Invoke-RestMethod "$b/user/register"  -Method Post -Headers $h -Body "{`"user_id
 ```
 
 Then sign in against Floci with phone `+8801712345678` / `Passw0rd!23` (portal login or `aws cognito-idp initiate-auth` with the
-`User` pool client id from `seed-users.ps1`).
+`User` pool client id from `Seed-EtpCognitoUsers.ps1`).
 
 ## 5. Test cases
 
@@ -105,9 +104,9 @@ Then sign in against Floci with phone `+8801712345678` / `Passw0rd!23` (portal l
 
 | Symptom | Cause / fix |
 |---|---|
-| `Cognito pool 'etp-user' not found` (500 on register) | Floci not seeded: run `floci/seed-users.ps1`. |
+| `Cognito pool 'etp-user' not found` (500 on register) | Floci not seeded: run `scripts/Seed-EtpCognitoUsers.ps1`. |
 | Every call returns 500 `internal_server_error` | Floci down; the mock logs the cause in its terminal. |
-| Email OTP shows `delivered: "logged"` | Floci SES send failed or sender unverified: re-run `floci/seed.ps1`. The OTP is still `123456`, so tests proceed. |
+| Email OTP shows `delivered: "logged"` | Floci SES send failed or sender unverified: re-run `scripts/Seed-EtpFloci.ps1`. The OTP is still `123456`, so tests proceed. |
 | Backend still logs `serverless.invalid` | Secrets not re-applied or services not restarted: re-run `Set-EtpSecrets.ps1`, restart AppHost. |
 | Portal gets 404/ECONNREFUSED on `/p/identity` | Mock not running, or portal started before the script change: re-run `Setup-UserPortal.ps1`. |
 | `user_already_exists` for a phone you deleted | Cognito user still in Floci; delete it with `aws cognito-idp admin-delete-user` (endpoint `http://localhost:4566`). |

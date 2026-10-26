@@ -146,4 +146,4 @@ flowchart LR
 | Emulator | — |
 | Postman | Trigger a cross-service call, e.g. `postman/services/etp-admin.postman_collection.json` "POST /api/v1/events" (Admin → Event/Booking) |
 | Visual Studio debug | Attach to two services at once (`docs/local-dev.md` §6.1 tips), breakpoint in `DelegatedBearerAuthenticationHandler.SendAsync` in the caller and in the controller of the callee |
-| Verify | `aws --endpoint-url http://localhost:4566 sqs list-queues` lists the six queues; `aws --endpoint-url http://localhost:4566 sqs receive-message --queue-url <url>` peeks a message (`floci/README.md` "During the day") |
+| Verify | `aws --endpoint-url http://localhost:4566 sqs list-queues` lists the six queues; `aws --endpoint-url http://localhost:4566 sqs receive-message --queue-url <url>` peeks a message (`docs/local-dev.md` "Look at fake AWS") |

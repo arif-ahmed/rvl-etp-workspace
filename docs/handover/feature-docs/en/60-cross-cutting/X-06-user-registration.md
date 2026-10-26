@@ -146,7 +146,7 @@ flowchart LR
 
 | Item | Detail |
 |---|---|
-| Test data and accounts | Seeded User-pool customer `+8801700000011` (`floci/seed-users.ps1`); create more with `aws cognito-idp admin-create-user` against Floci if needed |
+| Test data and accounts | Seeded User-pool customer `+8801700000011` (`scripts/Seed-EtpCognitoUsers.ps1`); create more with `aws cognito-idp admin-create-user` against Floci if needed |
 | Browser | `http://localhost:4201/en/auth/register` renders; submitting shows the 503 error. DevTools → Network shows `POST /p/identity/user/register-cached` with `Authorization: <headerkey>` (no `Bearer`) |
 | Emulator | `pwsh ./scripts/Setup-MobileApps.ps1 -App user -Run`; the sign-up screens open, calls to `http://localhost:5200/identity/...` return 503 |
 | Postman | No collection covers the identity API |

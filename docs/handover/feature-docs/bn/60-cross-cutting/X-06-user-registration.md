@@ -145,7 +145,7 @@ flowchart LR
 
 | বিষয় | বিবরণ |
 |---|---|
-| টেস্ট ডেটা ও অ্যাকাউন্ট | সিড করা User-pool গ্রাহক `+8801700000011` (`floci/seed-users.ps1`); প্রয়োজনে Floci-র বিপরীতে `aws cognito-idp admin-create-user` দিয়ে আরও তৈরি করুন |
+| টেস্ট ডেটা ও অ্যাকাউন্ট | সিড করা User-pool গ্রাহক `+8801700000011` (`scripts/Seed-EtpCognitoUsers.ps1`); প্রয়োজনে Floci-র বিপরীতে `aws cognito-idp admin-create-user` দিয়ে আরও তৈরি করুন |
 | ব্রাউজার | `http://localhost:4201/en/auth/register` রেন্ডার হয়; জমা দিলে 503 এরর দেখায়। DevTools → Network-এ `POST /p/identity/user/register-cached` দেখায় `Authorization: <headerkey>`-সহ (`Bearer` নয়) |
 | ইমুলেটর | `pwsh ./scripts/Setup-MobileApps.ps1 -App user -Run`; সাইন-আপ স্ক্রিন খোলে, `http://localhost:5200/identity/...`-এর কল 503 দেয় |
 | Postman | কোনো কলেকশনই identity API কভার করে না |
