@@ -499,11 +499,50 @@ are moved past 99, so rows you create later through the APIs never collide and a
 Try it: `curl.exe http://localhost:5103/event/api/v1/landing-page-image/public` returns the published images. In Swagger (Admin, with a token) `GET /admin/api/v1/events` lists the matches.
 
 **What this does not cover**
-- **Real payments and ticket PDFs.** DgePay, the TSP certificate and OneID are dummies locally, so you cannot run a genuine book > pay > ticket flow. The seed supplies the *results* (paid orders, tickets, scans) so
-  the read, list, report, admin and gate screens can be tested; writes (booking, seat lock, cancel, issue reply, check-in) work on this data but payment callbacks and ticket signing do not.
+- **Real payments and ticket PDFs.** DgePay and OneID are dummies locally, so you cannot run a genuine book > pay > ticket flow. The seed supplies the *results* (paid orders, tickets, scans) so
+  the read, list, report, admin and gate screens can be tested; writes (booking, seat lock, cancel, issue reply, check-in) work on this data but payment callbacks do not. Ticket *signing* can now run end-to-end locally with the TSP mock (below) — the signature itself is a mock echo, so real PAdES/VDS validity remains a UAT check.
 - **S3 files.** Image, SVG and PDF values are placeholder paths, not objects in Floci.
 - **Services with no tables.** Scheduler, Utility, Platform and UserAuth store nothing in Postgres, so there is nothing to seed. The DynamoDB ticket queue is written on demand.
 - **Agent sales and OneID.** The Agent pool user exists but no agent-sold tickets are seeded.
+
+### 7.1 Ticket signing with the TSP mock
+
+The Ticketing worker normally signs blank PDFs at the government TSP/VDS gateway (mTLS, client certificate
+`Cert/tspgw_client.pfx`). Locally the TSP URLs and identity are dummies and the certificate does not exist, so
+tickets stuck in `Requested` never reach `Generated` and the Ticketing log shows `CryptographicException` spam.
+`tsp-mock/` removes both blockers: it answers the auth and sign endpoints on port 5130 and **echoes the submitted
+PDF back** as the signed result, which is enough for everything that happens *after* signing — signed upload to
+S3 `signed/`, ticket → `Generated`, order → `Generated` once all its tickets are done, best-effort OneID skip,
+checker gate-list update, SQS message deletion, and the portal download.
+
+One-time setup (details in `tsp-mock/README.md`):
+
+```bash
+node tsp-mock/server.js                                        # terminal 1: the mock on :5130
+pwsh ./scripts/New-TspMockCert.ps1                             # one-time: self-signed pfx into the Ticketing build output
+dotnet user-secrets set "TSP:AuthUrl" "http://localhost:5130/auth/" --project rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service
+dotnet user-secrets set "TSP:SignUrl" "http://localhost:5130/sign/" --project rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service
+dotnet user-secrets set "TSP:UserId" "tsp-mock-user"                --project rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service
+dotnet user-secrets set "TSP:DigitalIdentityId" "tsp-mock-identity" --project rvl-gobcb-backend/Services/Ticketing/ETP.Ticketing.Service
+# then (re)start the AppHost so Ticketing picks up the new secrets
+```
+
+To watch the aftermath run, create a *fresh* `Requested` ticket — the seed rows are already `Generated` "results":
+
+1. Take a seeded Pending order (or book one through the portal) and flip it to Paid in SQL:
+   `docker exec etp-postgres psql -U etp -d etp_local -c 'UPDATE etp."UserBookingOrders" SET "Status"=2 WHERE "PublicId"='"'"'ORD-…'"'"';'`
+2. Trigger generation: `GET http://localhost:5108/ticketing/api/v1/booking-order-ticket/initiate-user-ticket?orderId=<order id>`
+   (Postman, with a token) — this uploads blank PDFs to S3 `blank/` and queues `SignedTicketGeneration` messages.
+3. The worker's first poll is 1 minute after the Ticketing service starts (then continuous). The mock's console
+   shows the `auth` and `sign` calls with each document's name, size and QR position.
+4. Verify the aftermath: `aws --endpoint-url http://localhost:4566 s3 ls s3://etp-local/signed/ --recursive` shows the
+   signed PDF; `SELECT "Status","SignedTicketUrl" FROM etp."Tickets" WHERE "BookingOrderId"=<id>;` shows status 2
+   (Generated) and the order follows once all its tickets are done; the SQS message is deleted (no redelivery after
+   60 s); the user portal can download the PDF.
+
+Re-run `scripts/New-TspMockCert.ps1` after a clean/rebuild of the Ticketing service (the output folder is wiped).
+To go back to the dummy behavior, restore the `https://tsp.invalid/…` secret values and delete the certificate file.
+
 
 After the data volumes are removed (see Teardown) the seed is gone along with the schema; start the AppHost once, then run the script again. If you reset **only Floci**, the database keeps its rows but the Cognito users get new `sub` values, so run `pwsh ./scripts/Seed-EtpData.ps1 -Reset` to relink them.
 
@@ -613,7 +652,7 @@ To start again, go back to [Part 3](#3-first-time-setup).
 | 401 on every call | Token expired, or the Cognito IDs in your secrets no longer match Floci (they change when Floci's data is recreated). Re-run `pwsh ./scripts/Set-EtpSecrets.ps1` (it reads the current IDs from Floci), restart |
 | AWS errors such as `UnrecognizedClientException` or calls reaching real AWS | Floci is not running; Aspire sets `AWS_ENDPOINT_URL` for the services it starts, but a service you launch yourself needs it too (6.2) |
 | S3 `NoSuchBucket` | Bucket missing: `aws --endpoint-url http://localhost:4566 s3 ls` (AWS CLI setup: Step 3); re-seed if empty |
-| Ticketing log spam `CryptographicException` | Missing TSP certificate. Skip it with `-- --ETP_SKIP=Ticketing` (see Daily routine) unless you work on tickets |
+| Ticketing log spam `CryptographicException` | Missing TSP certificate. Either skip Ticketing with `-- --ETP_SKIP=Ticketing` (see Daily routine), or set up the TSP mock: `pwsh ./scripts/New-TspMockCert.ps1` (section 7.1) |
 | Build error "file is locked" | A service is still running. Stop the AppHost |
 | Breakpoint hollow / "not bound" | Wrong process, or stale build. Rebuild and re-attach |
 | `dotnet ef` fails with `System.Runtime, Version=10.0.0.0` | Install the 8.x tool: `dotnet tool install --global dotnet-ef --version 8.0.11` |
