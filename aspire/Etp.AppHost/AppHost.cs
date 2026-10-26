@@ -54,7 +54,7 @@ static async Task<bool> Probe(int port, string? send = null, string? expect = nu
     catch { return false; }
 }
 
-// Volume names are the ones the old docker-compose.yml created (project "etp-local"), so existing data carries over.
+// Volume names are the ones the root docker-compose.yml creates (project "etp-local"), so data carries over when switching between the two.
 var postgres = builder.AddPostgres("postgres",
         builder.AddParameter("pg-user", pgUser),
         builder.AddParameter("pg-password", pgPassword, secret: true),
@@ -107,6 +107,7 @@ var flociTls = builder.AddContainer("floci-tls", "nginx", "alpine")
     .WithHttpEndpoint(port: 4569, targetPort: 4569, name: "stub", isProxied: false)   // notification gateway stub, always 200
     .WithEndpoint(port: 4567, targetPort: 4567, name: "tls", isProxied: false)
     .WithHttpHealthCheck("/", endpointName: "stub")
+    .WithParentRelationship(floci)   // dashboard grouping only
     .WaitFor(floci);
 
 builder.AddContainer("floci-ui", "floci/floci-ui", "0.7.0")
@@ -116,6 +117,7 @@ builder.AddContainer("floci-ui", "floci/floci-ui", "0.7.0")
     .WithEnvironment("AWS_REGION", "us-east-1")
     .WithEnvironment("AWS_ACCESS_KEY_ID", "test")
     .WithEnvironment("AWS_SECRET_ACCESS_KEY", "test")          // do NOT set PORT: it moves the server off 4500
+    .WithParentRelationship(floci)   // dashboard grouping only
     .WaitFor(floci);
 
 // ---- Floci seeding (idempotent; needs pwsh and the AWS CLI on the host) ---------------------------

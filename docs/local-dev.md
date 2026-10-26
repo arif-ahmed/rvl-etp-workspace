@@ -18,6 +18,7 @@ Follow it top to bottom once (**Part 3**), then use **Part 4** every day. Time f
 7. [Everyday tasks](#7-everyday-tasks)
 8. [Teardown and cleanup](#8-teardown-and-cleanup)
 9. [Troubleshooting](#9-troubleshooting)
+10. [Choosing Aspire or docker compose](#choosing-aspire-or-docker-compose)
 
 ---
 
@@ -604,7 +605,7 @@ To start again, go back to [Part 3](#3-first-time-setup).
 | `etp-floci-tls` keeps restarting, or https://localhost:4567 does not answer | The certificate files are missing or incomplete. Run `pwsh ./scripts/Setup-EtpHttps.ps1`, then restart the AppHost |
 | The "Open Floci UI" button on http://localhost:4566 shows "could not reach the container runtime" | Expected: no Docker socket is mounted on purpose. Open the console at http://localhost:4500 directly |
 | Service **Finished** right after start | It crashed; read its console log. *Redis/Postgres connection* error: infra is down: check the `postgres`/`redis` resources in the dashboard (or `docker ps`) and restart the AppHost. *`[see User Secrets]`/FormatException*: secrets not applied, re-run `pwsh ./scripts/Set-EtpSecrets.ps1`. `UserIssue` NullReference on `Application:ServiceName`: re-run the script |
-| `container name "/etp-..." is already in use` or `port is already allocated` on first start | The previous docker-compose stack is still there. Remove it (data volumes are kept, no re-seed): `docker rm -f etp-postgres etp-redis etp-dynamodb etp-floci etp-floci-tls etp-floci-ui`, then start the AppHost |
+| `container name "/etp-..." is already in use` or `port is already allocated` on first start | The other setup (docker compose, or an earlier AppHost run) is still up. Remove it (data volumes are kept, no re-seed): `docker rm -f etp-postgres etp-redis etp-dynamodb etp-floci etp-floci-tls etp-floci-ui`, then start the AppHost |
 | `password authentication failed for user "etp"` | The Postgres volume was created with another password. `docker rm -f etp-postgres; docker volume rm etp-local_etp-pgdata` and start again |
 | `relation "etp.xxx" does not exist` | Admin has not finished its migrations yet; wait, or check Admin's log |
 | Admin crashes at startup with `42P07: relation "__EFMigrationsHistory" already exists` | Concurrent migration race on a fresh database. Restart the AppHost; if it repeats after a reset, reset the data (see Teardown), then start the AppHost again |
@@ -618,3 +619,33 @@ To start again, go back to [Part 3](#3-first-time-setup).
 | `dotnet ef` fails with `System.Runtime, Version=10.0.0.0` | Install the 8.x tool: `dotnet tool install --global dotnet-ef --version 8.0.11` |
 
 Still stuck: Aspire dashboard > the failing service > console logs usually names the cause. Then ask the team with that log line.
+
+---
+
+## Choosing Aspire or docker compose
+
+The infrastructure can be started by either the Aspire AppHost (default) or the root `docker-compose.yml`. Both create the
+same containers (`etp-postgres`, `etp-redis`, `etp-dynamodb`, `etp-floci`, `etp-floci-tls`, `etp-floci-ui`), host ports and
+data volumes, and share `floci/nginx.conf`, so your data, seeds and user secrets work with either. **Run only one at a
+time**: they would fight over the names and ports.
+
+| | Aspire AppHost | docker compose |
+|---|---|---|
+| Starts | infrastructure + Floci seeding + the 11 services + dashboard | infrastructure only |
+| Command | `dotnet run --project aspire/Etp.AppHost` | `docker compose up -d` (then seed and run services yourself) |
+| Use when | normal work | you run services from Visual Studio / your IDE, or cannot use Aspire |
+
+Switch Aspire -> compose (Aspire leaves its containers running on purpose):
+
+```powershell
+# Ctrl+C the AppHost first
+docker rm -f etp-postgres etp-redis etp-dynamodb etp-floci etp-floci-tls etp-floci-ui   # volumes (data) are kept
+docker compose up -d
+```
+
+Switch compose -> Aspire:
+
+```powershell
+docker compose down      # no -v, or the data is deleted
+dotnet run --project aspire/Etp.AppHost
+```

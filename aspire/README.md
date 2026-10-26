@@ -13,7 +13,7 @@ configured with env vars only).
 | `dynamodb` | `etp-dynamodb`, `localhost:8000` | DynamoDB Local, in-memory (Ticketing hard-codes it) |
 | `floci` | `etp-floci`, `http://localhost:4566` | Fake AWS (S3, SQS, SES, Cognito), persistent volume `etp-floci-data` |
 | `floci-tls` | `etp-floci-tls`, `https://localhost:4567`, `http://localhost:4569` | nginx: HTTPS front for Cognito URLs + notification stub. Config: `floci/nginx.conf` |
-| `floci-ui` | `etp-floci-ui`, `http://localhost:4500` | Floci web console |
+| `floci-ui` | `etp-floci-ui`, `http://localhost:4500` | Floci web console. `floci-tls` and `floci-ui` are nested under `floci` in the dashboard (display only) |
 | `seed-floci`, `seed-cognito` | host processes (`pwsh`) | Run `scripts/Seed-EtpFloci.ps1` and `scripts/Seed-EtpCognitoUsers.ps1` on every start (idempotent) |
 | 11 services | Admin 5101, Booking 5102, Event 5103, Platform 5104, PushNotification 5105, Scheduler 5106, TicketChecker 5107, Ticketing 5108, UserAuth 5109, UserIssue 5110, Utility 5111 | health: `/health`. Start only after infra is healthy and both seeds finished |
 
@@ -69,11 +69,11 @@ Floci containers stay up on purpose. To stop them as well:
 docker stop etp-postgres etp-redis etp-floci etp-floci-tls etp-floci-ui etp-dynamodb
 ```
 
-## Migrating from the old docker-compose setup
+## Using docker compose instead
 
-Infra used to come from a root `docker-compose.yml`. Run `docker compose down` once (without `-v`) from a checkout
-that still has the file, then start the AppHost: it reuses the same container names, ports and volumes, so existing
-data carries over.
+The root `docker-compose.yml` starts the same infrastructure (no services, no seeding). Use one or the other, never
+both: container names, ports and volumes are identical, so data carries over when you switch. Steps:
+[docs/local-dev.md](../docs/local-dev.md#choosing-aspire-or-docker-compose).
 
 ## Troubleshooting
 
