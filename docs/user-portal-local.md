@@ -75,9 +75,9 @@ The script is safe to re-run at any time, even while the dev server is running (
 Pool and client IDs change whenever Floci's data is recreated. Nothing is edited by hand:
 
 ```bash
-docker compose rm -sf floci floci-tls floci-ui   # Floci only; Postgres and Redis keep their data
+docker rm -f etp-floci etp-floci-tls etp-floci-ui   # Floci only; Postgres and Redis keep their data
 docker volume rm etp-floci-data
-docker compose up -d
+# restart the AppHost: it re-creates Floci and re-runs the seed scripts (so the two seed lines below are only needed if you skipped that)
 pwsh ./scripts/Seed-EtpFloci.ps1
 pwsh ./scripts/Seed-EtpCognitoUsers.ps1          # new Cognito pools, clients, users
 pwsh ./scripts/Set-EtpSecrets.ps1    # backend picks up the new IDs; restart the AppHost
@@ -151,7 +151,7 @@ Allow popups for `localhost:4201` in your browser, or the portal shows "Popup wa
 | SSO: "Popup was blocked" | Allow popups for localhost:4201 |
 | SSO: "Authentication failed" | Floci rejected the seeded user (pool reset?). Re-run the script; check `1700000011` exists in the User pool |
 | Login: "User does not exist" | `Seed-EtpCognitoUsers.ps1` not run for the User pool |
-| Script: `Cannot reach Floci` | `docker compose up -d` |
+| Script: `Cannot reach Floci` | Start the AppHost (`dotnet run --project aspire/Etp.AppHost`) |
 | Script: `Pool 'etp-user' not found` / `Client 'etp-local' not found` | `pwsh ./scripts/Seed-EtpCognitoUsers.ps1` |
 | Home page lists are empty | No data. `pwsh ./scripts/Seed-EtpData.ps1` (backend must be running) |
 | My Tickets empty or 401 | Backend holds old Cognito IDs: `pwsh ./scripts/Set-EtpSecrets.ps1`, restart AppHost; or orders were seeded for another Cognito `sub` (re-run `Seed-EtpData.ps1 -Reset`) |

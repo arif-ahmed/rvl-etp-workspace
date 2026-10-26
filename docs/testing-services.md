@@ -85,7 +85,7 @@ Folder 07 needs `service_api_key` (secret; the value of `Authentication:ServiceA
 Floci holds everything (Cognito pools, queues, bucket) in **`us-east-1`**, and the services use the same region. If you set Floci up earlier in `ap-southeast-1`, re-seed once:
 
 ```powershell
-docker compose up -d                           # also starts the :4569 notification stub
+dotnet run --project aspire/Etp.AppHost       # also starts the :4569 notification stub (floci-tls) and runs the seed scripts
 ./scripts/Seed-EtpFloci.ps1
 ./scripts/Seed-EtpCognitoUsers.ps1
 ./scripts/Set-EtpSecrets.ps1                   # new pool ids into every service's user secrets
@@ -93,7 +93,7 @@ docker compose up -d                           # also starts the :4569 notificat
 dotnet run --project aspire/Etp.AppHost
 ```
 
-Pools created earlier in `ap-southeast-1` are separate and harmless; `docker compose down -v` removes them if you want a clean Floci.
+Pools created earlier in `ap-southeast-1` are separate and harmless; removing the Floci volume (`docker rm -f etp-floci etp-floci-tls etp-floci-ui; docker volume rm etp-floci-data`) gives you a clean Floci.
 
 | Port | Container | Purpose |
 |---|---|---|

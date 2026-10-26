@@ -2,18 +2,137 @@
 // services are launched by csproj path and configured purely through env vars that map onto
 // the config keys they already read (ConnectionStrings:*, Services:*, Cache:Redis:*, ...).
 // Everything else (AWS, Cognito, DgePay...) keeps coming from each service's own user secrets.
+//
+// This AppHost also owns the infrastructure (PostgreSQL, Redis, DynamoDB Local, Floci = fake AWS, TLS proxy,
+// Floci console) and seeds Floci, so `dotnet run --project aspire/Etp.AppHost` is the only command to start.
+
+using System.Net.Sockets;
+using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var servicesRoot = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", "..", "rvl-gobcb-backend", "Services"));
+var workspaceRoot = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", ".."));
+var servicesRoot = Path.Combine(workspaceRoot, "rvl-gobcb-backend", "Services");
+var scriptsRoot = Path.Combine(workspaceRoot, "scripts");
 
 // ---- Infrastructure -------------------------------------------------------------------------
-// PostgreSQL, Redis, DynamoDB Local and Floci (fake AWS) come from the workspace docker-compose.yml (`docker compose up -d`,
-// start it BEFORE the AppHost). Aspire only points the services at them; the values match that compose file
-// and scripts/user-secrets.example.json.
-const string dbConnection = "Host=localhost;Port=5432;Database=etp_local;Username=etp;Password=etp_local_pw;Include Error Detail=true";
+// Fixed host ports, fixed container names and persistent containers/volumes: the user secrets, the seed scripts
+// (`docker exec etp-postgres ...`) and the docs all rely on these exact values.
+//   PostgreSQL  localhost:5432  db etp_local  user etp  password etp_local_pw
+//   Redis       localhost:6379  (no password, no TLS: ETP.Core CacheConfig only forwards host:port)
+//   DynamoDB    localhost:8000  (Ticketing hard-codes it; in-memory)
+//   Floci       http://localhost:4566 (AWS API), https://localhost:4567 (TLS proxy), http://localhost:4500 (console)
+const string pgUser = "etp";
+const string pgPassword = "etp_local_pw";
+const string pgDatabase = "etp_local";
+const string dbConnection = $"Host=localhost;Port=5432;Database={pgDatabase};Username={pgUser};Password={pgPassword};Include Error Detail=true";
 const string redisHost = "localhost";
 const string redisPort = "6379";
+
+void AddCheck(string name, Func<Task<bool>> probe) =>
+    builder.Services.AddHealthChecks().AddAsyncCheck(name, async () =>
+        await probe() ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy());
+
+// TCP connect on 127.0.0.1 (Docker publishes on IPv4 loopback only; "localhost" tries ::1 first and stalls);
+// if `send` is given, also require the reply to start with `expect`.
+static async Task<bool> Probe(int port, string? send = null, string? expect = null)
+{
+    try
+    {
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+        using var client = new TcpClient();
+        await client.ConnectAsync("127.0.0.1", port, cts.Token);
+        if (send is null) return true;
+        var stream = client.GetStream();
+        await stream.WriteAsync(Encoding.ASCII.GetBytes(send), cts.Token);
+        var buf = new byte[16];
+        var n = await stream.ReadAsync(buf, cts.Token);
+        return Encoding.ASCII.GetString(buf, 0, n).StartsWith(expect!, StringComparison.Ordinal);
+    }
+    catch { return false; }
+}
+
+// Volume names are the ones the root docker-compose.yml creates (project "etp-local"), so data carries over when switching between the two.
+var postgres = builder.AddPostgres("postgres",
+        builder.AddParameter("pg-user", pgUser),
+        builder.AddParameter("pg-password", pgPassword, secret: true),
+        port: 5432)
+    .WithImageTag("16")
+    .WithContainerName("etp-postgres")
+    .WithDataVolume("etp-local_etp-pgdata")
+    .WithEndpointProxySupport(false)
+    .WithLifetime(ContainerLifetime.Persistent);
+postgres.AddDatabase("etp-db", pgDatabase);
+
+// Plain container instead of AddRedis(): AddRedis() always sets a generated password.
+AddCheck("redis-ping", () => Probe(6379, "PING\r\n", "+PONG"));
+var redis = builder.AddContainer("redis", "redis", "7")
+    .WithContainerName("etp-redis")
+    .WithEndpoint(port: 6379, targetPort: 6379, name: "tcp", isProxied: false)
+    .WithVolume("etp-local_etp-redis-data", "/data")
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithHealthCheck("redis-ping");
+
+AddCheck("dynamodb-port", () => Probe(8000));
+var dynamodb = builder.AddContainer("dynamodb", "amazon/dynamodb-local")
+    .WithContainerName("etp-dynamodb")
+    .WithArgs("-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb")
+    .WithEndpoint(port: 8000, targetPort: 8000, name: "tcp", isProxied: false)
+    .WithHealthCheck("dynamodb-port");
+
+// Floci: local stand-in for AWS (S3, SQS, SES, Cognito). Not real AWS.
+// Default storage is in-memory (every restart wipes buckets, queues, Cognito pools), so persist it.
+// No Docker socket on purpose: ETP only uses S3/SQS/SES/Cognito.
+var floci = builder.AddContainer("floci", "floci/floci", "2.3.0")
+    .WithContainerName("etp-floci")
+    .WithHttpEndpoint(port: 4566, targetPort: 4566, name: "http", isProxied: false)
+    .WithHttpHealthCheck("/health", endpointName: "http")
+    .WithEnvironment("FLOCI_STORAGE_MODE", "persistent")
+    .WithEnvironment("FLOCI_BASE_URL", "https://localhost:4567")   // OIDC issuer, JWKS and SQS URLs are built from this; HTTPS is served by floci-tls
+    .WithVolume("etp-floci-data", "/app/data")
+    .WithLifetime(ContainerLifetime.Persistent);
+
+// TLS proxy: the backend's JWT middleware refuses non-HTTPS Cognito metadata. The nginx config is floci/nginx.conf;
+// the certificate is machine-specific (scripts/Setup-EtpHttps.ps1, git-ignored).
+var certsDir = Path.Combine(workspaceRoot, "certs");
+if (!File.Exists(Path.Combine(certsDir, "localhost.pem")) || !File.Exists(Path.Combine(certsDir, "localhost.key")))
+    throw new InvalidOperationException($"HTTPS certificate missing in {certsDir}. Run once: pwsh ./scripts/Setup-EtpHttps.ps1");
+
+var flociTls = builder.AddContainer("floci-tls", "nginx", "alpine")
+    .WithContainerName("etp-floci-tls")
+    .WithBindMount(Path.Combine(workspaceRoot, "floci", "nginx.conf"), "/etc/nginx/conf.d/default.conf", isReadOnly: true)
+    .WithBindMount(certsDir, "/certs", isReadOnly: true)
+    .WithHttpEndpoint(port: 4569, targetPort: 4569, name: "stub", isProxied: false)   // notification gateway stub, always 200
+    .WithEndpoint(port: 4567, targetPort: 4567, name: "tls", isProxied: false)
+    .WithHttpHealthCheck("/", endpointName: "stub")
+    .WithParentRelationship(floci)   // dashboard grouping only
+    .WaitFor(floci);
+
+builder.AddContainer("floci-ui", "floci/floci-ui", "0.7.0")
+    .WithContainerName("etp-floci-ui")
+    .WithHttpEndpoint(port: 4500, targetPort: 4500, name: "http", isProxied: false)
+    .WithEnvironment("FLOCI_ENDPOINT", "http://floci:4566")   // container network name, not localhost
+    .WithEnvironment("AWS_REGION", "us-east-1")
+    .WithEnvironment("AWS_ACCESS_KEY_ID", "test")
+    .WithEnvironment("AWS_SECRET_ACCESS_KEY", "test")          // do NOT set PORT: it moves the server off 4500
+    .WithParentRelationship(floci)   // dashboard grouping only
+    .WaitFor(floci);
+
+// ---- Floci seeding (idempotent; needs pwsh and the AWS CLI on the host) ---------------------------
+// ETP_SKIP_SEED=true leaves Floci as it is (faster restarts once seeded).
+IResourceBuilder<ExecutableResource>? seed = null;
+if (!string.Equals(builder.Configuration["ETP_SKIP_SEED"], "true", StringComparison.OrdinalIgnoreCase))
+{
+    var seedFloci = builder.AddExecutable("seed-floci", "pwsh", scriptsRoot,
+            "-NoProfile", "-File", Path.Combine(scriptsRoot, "Seed-EtpFloci.ps1"))
+        .WaitFor(floci);
+    seed = builder.AddExecutable("seed-cognito", "pwsh", scriptsRoot,
+            "-NoProfile", "-File", Path.Combine(scriptsRoot, "Seed-EtpCognitoUsers.ps1"))
+        .WaitFor(flociTls)
+        .WaitForCompletion(seedFloci);
+}
 
 // ---- Services -------------------------------------------------------------------------------
 // name -> (folder, fixed port). Fixed ports because services call each other through Services:* URLs.
@@ -44,13 +163,18 @@ var skip = (builder.Configuration["ETP_SKIP"] ?? "")
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
     .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+// ETP_INFRA_ONLY=true -> only the infrastructure and the Floci seeding, no build and no services. First-time setup:
+// Floci must be seeded before scripts/Set-EtpSecrets.ps1 can read the Cognito IDs the services need.
+var infraOnly = string.Equals(builder.Configuration["ETP_INFRA_ONLY"], "true", StringComparison.OrdinalIgnoreCase);
+if (infraOnly) skip = defs.Select(d => d.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
 // ---- Build once, then run with --no-build ---------------------------------------------------
 // AddProject() starts each service with a plain `dotnet run`, which builds first. Eleven parallel builds
 // all rewrite the shared ETP.Core*/obj/**/*.sourcelink.json (even when nothing changed), so a few of them
 // fail with "Error writing to source link file ... being used by another process" and a different set of
 // services dies on every start. So: one serial build of the solution here, then each service is started
 // with `dotnet run --no-build`. Set ETP_NO_BUILD=true to skip the build (e.g. you just built in the IDE).
-if (!string.Equals(builder.Configuration["ETP_NO_BUILD"], "true", StringComparison.OrdinalIgnoreCase))
+if (!infraOnly && !string.Equals(builder.Configuration["ETP_NO_BUILD"], "true", StringComparison.OrdinalIgnoreCase))
 {
     var sln = Path.GetFullPath(Path.Combine(servicesRoot, "..", "RVL-ETP.BackEnd.sln"));
     Console.WriteLine($"[Etp.AppHost] Building {sln} once before starting the services ...");
@@ -74,7 +198,9 @@ foreach (var (name, folder, port) in defs)
         .WithHttpEndpoint(port: port, isProxied: false)
         .WithHttpHealthCheck("/health")
         .WithEnvironment("ASPNETCORE_URLS", "http://localhost:" + port)
-        .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development");
+        .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
+        .WaitFor(postgres).WaitFor(redis).WaitFor(dynamodb).WaitFor(flociTls);
+    if (seed is not null) svc.WaitForCompletion(seed);
 
     // ConnectionStrings:<Key> -> Npgsql connection string of the shared DB
     foreach (var key in dbKeys)

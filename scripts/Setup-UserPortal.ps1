@@ -36,7 +36,7 @@ foreach ($tool in 'aws', 'node', 'npm') { if (-not (Get-Command $tool -ErrorActi
 
 # 1. Cognito IDs from Floci
 try { $poolId = Invoke-Aws cognito-idp list-user-pools --max-results 60 --query "UserPools[?Name=='etp-user'].Id | [0]" --output text }
-catch { throw "Cannot reach Floci at $floci. Start it: docker compose up -d" }
+catch { throw "Cannot reach Floci at $floci. Start the AppHost: dotnet run --project aspire/Etp.AppHost" }
 if (-not $poolId -or $poolId -eq 'None') { throw "Pool 'etp-user' not found. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }
 $clientId = Invoke-Aws cognito-idp list-user-pool-clients --user-pool-id $poolId --query "UserPoolClients[?ClientName=='etp-local'].ClientId | [0]" --output text
 if (-not $clientId -or $clientId -eq 'None') { throw "Client 'etp-local' not found in $poolId. Run: pwsh ./scripts/Seed-EtpCognitoUsers.ps1" }

@@ -57,7 +57,7 @@ Six rules that save time:
 | `rvl-gobcb-user-app/` | user mobile app, git submodule |
 | `rvl-gobcb-checker-app/` | ticket checker mobile app, git submodule |
 | `aspire/Etp.AppHost/` | .NET Aspire AppHost that runs the whole backend (all wiring is in `AppHost.cs`) |
-| `floci/` | `docker-compose.yml`, `Seed-EtpFloci.ps1`, `Seed-EtpCognitoUsers.ps1` for local AWS emulation |
+| `floci/` | `nginx.conf` for the Floci HTTPS proxy (the containers themselves are defined in the AppHost; seed scripts are in `scripts/`) |
 | `postman/` | Postman collection and environment |
 | `status.ps1` | shows submodule pins vs. remote `main` |
 
@@ -100,17 +100,23 @@ git submodule update --init
 git config submodule.recurse true     # recommended: pull/checkout move submodules too
 ```
 
-### 4.2 Start Floci (local AWS)
+### 4.2 Start the infrastructure (PostgreSQL, Redis, DynamoDB, Floci)
+
+The AppHost starts the infrastructure containers itself and seeds Floci on every start, so there is no separate
+infra step. Once per machine, create the certificate for the Floci HTTPS proxy:
 
 ```powershell
 pwsh ./scripts/Setup-EtpHttps.ps1          # once: certificate for the HTTPS proxy
-docker compose up -d                  # PostgreSQL, Redis, DynamoDB and Floci (one compose file at the workspace root)
-docker compose logs -f floci          # wait until it reports ready, then Ctrl+C
-pwsh ./scripts/Seed-EtpFloci.ps1                 # bucket, queues, SES identity, one Cognito pool + client per role
-pwsh ./scripts/Seed-EtpCognitoUsers.ps1           # Admin pool with custom attributes, app client, 5 staff users
+$env:ETP_INFRA_ONLY = 'true'; dotnet run --project aspire/Etp.AppHost
+# starts infra and seeds Floci (bucket, queues, SES, Cognito pools + users) but no services; Ctrl+C once
+# seed-floci and seed-cognito show Finished in the dashboard (the containers keep running)
+Remove-Item Env:ETP_INFRA_ONLY
 ```
 
-Copy the output of both scripts: they print the Cognito `PoolId` / `ClientId` (and for Admin, `Authority` / `Metadata`) values you need in step 4.3.
+(The services need the Cognito IDs from step 4.3 before they can start, hence infra only for now. With Floci up you can also run
+`pwsh ./scripts/Seed-EtpFloci.ps1` and `pwsh ./scripts/Seed-EtpCognitoUsers.ps1` by hand; both are idempotent.)
+
+Copy the output of both scripts (also visible in the `seed-*` console logs in the dashboard): they print the Cognito `PoolId` / `ClientId` (and for Admin, `Authority` / `Metadata`) values you need in step 4.3.
 `Seed-EtpCognitoUsers.ps1` is what makes login work for the Admin service and the Postman collection ([section 10](#10-postman-cognito-and-auth-tests));
 for the Admin pool, use the values it prints rather than the ones from `Seed-EtpFloci.ps1`.
 Details in [section 7](#7-floci-local-aws-emulation).
@@ -156,7 +162,6 @@ The pieces to exercise end to end: one S3 upload, one SQS message, one Cognito l
 
 ```powershell
 git pull                              # then: git submodule update --init  (if pins moved)
-docker compose up -d                  # no-op if running; data persists, no need to re-seed
 dotnet run --project aspire/Etp.AppHost
 ```
 
@@ -174,7 +179,7 @@ New migrations pulled from others need no action; the owning service applies the
 | List queues | `aws --endpoint-url http://localhost:4566 sqs list-queues` |
 | Peek at a queue | `aws --endpoint-url http://localhost:4566 sqs receive-message --queue-url <url>` |
 | Purge a queue | `aws --endpoint-url http://localhost:4566 sqs purge-queue --queue-url <url>` |
-| Floci logs | `docker compose logs -f floci` |
+| Floci logs | `docker logs -f etp-floci` (or the `floci` resource in the Aspire dashboard) |
 
 Tip: put `AWS_ENDPOINT_URL=http://localhost:4566`, `AWS_REGION=us-east-1` and the `test`/`test` credentials in your
 shell profile for dev sessions so you can drop `--endpoint-url`.
@@ -195,7 +200,7 @@ shell profile for dev sessions so you can drop `--endpoint-url`.
 **End of day**
 
 - Stop the AppHost with `Ctrl+C` (or the stop button in the dashboard). Do not force-kill it; that can leave containers behind.
-- `docker compose stop` (keeps data). Leaving the containers running is fine too.
+- The infra containers stay up on purpose (data kept). To stop them too: `docker stop etp-postgres etp-redis etp-dynamodb etp-floci etp-floci-tls etp-floci-ui`.
 
 ## 6. Services and ports
 
@@ -225,8 +230,8 @@ Infrastructure started by the AppHost:
 
 | Resource | Details |
 |---|---|
-| Postgres | one `etp` database, password `etp-local-pg`, volume `etp-postgres-data`, plus pgAdmin |
-| Redis | no password, no TLS, volume `etp-redis-data`, plus RedisInsight |
+| Postgres | container `etp-postgres`, database `etp_local`, user `etp`, password `etp_local_pw`, volume `etp-local_etp-pgdata` |
+| Redis | container `etp-redis`, no password, no TLS, volume `etp-local_etp-redis-data` |
 | DynamoDB Local | port 8000 (Ticketing hard-codes it) |
 
 Redis is passwordless on purpose: `ETP.Core` `CacheConfig` only forwards `host:port` to the DataProtection multiplexer.
@@ -236,7 +241,7 @@ Redis is passwordless on purpose: `ETP.Core` `CacheConfig` only forwards `host:p
 [Floci](https://floci.io/aws/) is a single-container AWS emulator (port 4566). It stands in for real S3, SQS, SES and Cognito.
 It is standalone and does not depend on the Aspire AppHost.
 
-> The compose file and seed script have not been verified against a live Floci yet. Where this README says "confirm",
+> The AppHost wiring and seed script have not been verified against a live Floci yet. Where this README says "confirm",
 > check the Floci docs for your image version.
 
 | Resource | Name(s) |
@@ -250,14 +255,14 @@ It is standalone and does not depend on the Aspire AppHost.
 
 DynamoDB is not on Floci; Aspire provides DynamoDB Local on port 8000.
 
-`docker compose up -d` also starts the Floci containers, pinned to fixed versions in the root `docker-compose.yml`:
+The AppHost also starts the Floci containers, pinned to fixed versions in `aspire/Etp.AppHost/AppHost.cs`:
 
 | Container | URL |
 |---|---|
 | `etp-floci` (emulator) | http://localhost:4566 |
 | `etp-floci-ui` (web console) | http://localhost:4500 |
 
-The console talks to Floci at `http://floci:4566` on the compose network and no Docker socket is mounted, so the
+The console talks to Floci at `http://floci:4566` on the container network and no Docker socket is mounted, so the
 "Open Floci UI" button on the 4566 dashboard does not work. Open http://localhost:4500 directly.
 
 Quick check: `aws --endpoint-url http://localhost:4566 s3 ls` (set `AWS_ACCESS_KEY_ID=test` and `AWS_SECRET_ACCESS_KEY=test` first if the CLI complains).
@@ -451,7 +456,7 @@ yourself with its fixed port, using the env vars from `AppHost.cs`
 
 ### 9.2 Database
 
-- **Browse:** pgAdmin from the Aspire dashboard, or DBeaver/psql. Database `etp`, schema `etp`, user `postgres`, password `etp-local-pg`
+- **Browse:** DBeaver/psql (`docker exec -it etp-postgres psql -U etp -d etp_local`). Database `etp_local`, schema `etp`, user `etp`, password `etp_local_pw`
   (host and port: see the Postgres resource in the dashboard).
 - **Test data:** there is no seed data in the code; create events and venues through the Admin API, or restore a sanitized
   dev dump from the team lead:
@@ -584,16 +589,16 @@ Rules of thumb:
 | Problem | Cause / fix |
 |---|---|
 | Services stuck in "Waiting" | Postgres/Redis not healthy yet; check their logs in the Aspire dashboard |
-| Postgres `password authentication failed` | Volume was created with another password. `docker volume rm etp-postgres-data` (data lost), run again |
+| Postgres `password authentication failed` | Volume was created with another password. `docker rm -f etp-postgres; docker volume rm etp-local_etp-pgdata` (data lost), run again |
 | Service state "Finished" | It crashed on startup; read its console log in the dashboard. Redis error: Redis unreachable. Missing-config error: user secrets |
 | Port already in use | Another process uses 5101-5111, 8000, 4566, or the Redis/Postgres host ports. `Get-NetTCPConnection -LocalPort <port> -State Listen` shows the owner |
 | `FormatException` / `Distributed lock...` at startup | User secrets not applied (config still `[see User Secrets]`); re-run [8.2](#82-apply-it-to-every-service) |
 | `NullReferenceException` in Program.cs for `Application:ServiceName` (UserIssue) | UserIssue's Application section missing; re-run 8.2 |
 | `relation "etp.xxx" does not exist` | Admin migrations did not run yet; wait for Admin or check its log |
-| Connection refused on 4566 | Floci not running: `docker compose ps`, then `docker compose logs floci` |
-| Floci console at :4500 not loading | `docker compose logs floci-ui`. Do not set `PORT` on the `floci-ui` service; it moves the server off 4500 |
+| Connection refused on 4566 | Floci not running: check the `floci` resource in the Aspire dashboard, or `docker logs etp-floci` |
+| Floci console at :4500 not loading | `docker logs etp-floci-ui`. Do not set `PORT` on the `floci-ui` resource; it moves the server off 4500 |
 | "Open Floci UI" button: "could not reach the container runtime" | Expected (no Docker socket). Use http://localhost:4500 |
-| Port 4566 in use | LocalStack or another emulator is running. Stop it, or change the host port in `docker-compose.yml` and every endpoint URL |
+| Port 4566 in use | LocalStack or another emulator is running. Stop it, or change the host port in `AppHost.cs` and every endpoint URL |
 | Services still hit real AWS | `AWS_ENDPOINT_URL` not set in the process that starts the AppHost, or the SDK ignores it |
 | S3 `NoSuchBucket` / DNS errors | `AWS:Bucket:BaseUrl` must be `http://localhost:4566` and the bucket must exist (`aws s3 ls`) |
 | Queue not found | The secret must be the queue *name* (not a URL) and the queue must exist |
@@ -601,32 +606,32 @@ Rules of thumb:
 | `UriFormatException` in some client | A URL in config is still a placeholder; use a valid URL ending in `/` |
 | `dotnet ef` fails with `System.Runtime, Version=10.0.0.0` | dotnet-ef 10 installed; use 8.0.11 ([section 3](#3-prerequisites)) |
 | `docker run`: container name already in use | It already exists; `docker start <name>` |
-| Floci upgrade | Image tags are pinned (`floci/floci`, `floci/floci-ui`). Bump both in `docker-compose.yml`, then `docker compose pull && docker compose up -d` |
+| Floci upgrade | Image tags are pinned (`floci/floci`, `floci/floci-ui`). Bump both in `AppHost.cs`, then `docker rm -f etp-floci etp-floci-ui` and restart the AppHost (it pulls the new tags) |
 
 ## 13. Reset and teardown
 
 | Goal | Command | What is lost |
 |---|---|---|
 | Stop backend | `Ctrl+C` in the AppHost terminal | nothing |
-| Stop Floci (and the other containers) | `docker compose stop` | nothing |
-| Remove containers/network | `docker compose down` | nothing (volumes kept) |
-| Reset Floci data only | `docker compose rm -sf floci floci-tls floci-ui; docker volume rm etp-floci-data; docker compose up -d; pwsh ./scripts/Seed-EtpFloci.ps1` | all buckets, queues, Cognito pools; IDs regenerate, so update user secrets |
-| Reset backend data | stop the AppHost, `docker volume rm etp-postgres-data etp-redis-data` | all DB and Redis data |
+| Stop Floci (and the other containers) | `docker stop etp-postgres etp-redis etp-dynamodb etp-floci etp-floci-tls etp-floci-ui` | nothing |
+| Remove containers | `docker rm -f etp-postgres etp-redis etp-dynamodb etp-floci etp-floci-tls etp-floci-ui` | nothing (volumes kept) |
+| Reset Floci data only | `docker rm -f etp-floci etp-floci-tls etp-floci-ui; docker volume rm etp-floci-data`, then restart the AppHost (it re-seeds) | all buckets, queues, Cognito pools; IDs regenerate, so update user secrets |
+| Reset backend data | stop the AppHost, `docker rm -f etp-postgres etp-redis; docker volume rm etp-local_etp-pgdata etp-local_etp-redis-data` | all DB and Redis data |
 | Clear user secrets | `Get-ChildItem rvl-gobcb-backend/Services -Recurse -Filter *.Service.csproj \| ? { Select-String -Path $_.FullName -Pattern '<UserSecretsId>' -Quiet } \| % { dotnet user-secrets clear --project $_.FullName }` | all service secrets |
 | Remove personal files | `Remove-Item -Recurse $env:USERPROFILE\.etp-local` | your `user-secrets.json`; back up real keys first |
 | Build output | `dotnet clean` in the backend | bin/obj (back up the TSP cert if you placed one) |
 
-**Full Floci cleanup** (containers, network, data volume and images), from `floci/`:
+**Full Floci cleanup** (containers, data volume and images):
 
 ```powershell
-docker compose down --volumes --rmi all --remove-orphans
+docker rm -f etp-floci etp-floci-tls etp-floci-ui; docker volume rm etp-floci-data; docker rmi floci/floci:2.3.0 floci/floci-ui:0.7.0
 docker ps -a --filter "name=floci"            # leftovers check, should be empty
 docker volume ls --filter "name=floci"        # should be empty
 docker images --filter "reference=floci/*"    # should be empty
 docker rm -f floci-aws-ui                     # only if the dashboard's "Open Floci UI" ever created a sidecar
 ```
 
-After a full teardown, start again from [4.2](#42-start-floci-local-aws).
+After a full teardown, start again from [4.2](#42-start-the-infrastructure-postgresql-redis-dynamodb-floci).
 
 Do not run `docker system prune -a --volumes`; it deletes the containers, images and volumes of **every** project on the machine.
 

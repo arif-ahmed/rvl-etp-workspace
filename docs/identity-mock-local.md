@@ -34,8 +34,8 @@ OTP is always **`123456`**. Email OTPs also go through Floci SES (`noreply@etp.l
 From the workspace root.
 
 ```powershell
-# 1. Infra and Floci (no-op if already running)
-docker compose up -d
+# 1. Infra and Floci: start the AppHost (it also runs the two seed scripts below; reusing running containers is fine)
+dotnet run --project aspire/Etp.AppHost
 pwsh ./scripts/Seed-EtpFloci.ps1          # SES sender noreply@etp.local must exist for email OTPs
 pwsh ./scripts/Seed-EtpCognitoUsers.ps1
 

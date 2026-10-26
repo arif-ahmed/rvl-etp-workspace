@@ -1,5 +1,6 @@
 # Local dev infrastructure for the ETP backend: PostgreSQL + Redis + DynamoDB Local + Floci (fake AWS).
 # Workspace-level on purpose: the backend repo's own docker-compose.yaml only builds app images for CI.
+# Alternative to the Aspire AppHost: both start the SAME containers (names, ports, volumes), so use ONE at a time.
 # The Aspire AppHost and the user secrets expect exactly these values:
 #   PostgreSQL  localhost:5432  db etp_local  user etp  password etp_local_pw  (loopback only)
 #   Redis       localhost:6379  (no password; loopback only)
@@ -9,6 +10,9 @@
 #   docker compose up -d      # start (first run creates the etp_local database)
 #   docker compose stop       # end of day, data kept
 #   docker compose down -v    # remove containers AND data
+#
+# This starts infrastructure only; run the 11 services from your IDE / `dotnet run`.
+# Switching to/from Aspire: see docs/local-dev.md ("Choosing Aspire or docker compose").
 #
 # Port taken by a native install? Stop that program (or override with ETP_PG_PORT / ETP_REDIS_PORT and
 # change the AppHost and user secrets to match).
@@ -84,10 +88,9 @@ services:
     ports:
       - "4567:4567"
       - "4569:4569"
-    configs:
-      - source: floci_nginx
-        target: /etc/nginx/conf.d/default.conf
     volumes:
+      # Same nginx config the Aspire AppHost mounts (single source of truth). `floci` resolves to the floci service.
+      - ./floci/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       # Written by scripts/Setup-EtpHttps.ps1. create_host_path: false makes `docker compose up` fail with a clear
       # error if you forgot to run it, instead of creating an empty folder and crash-looping the proxy.
       - type: bind
@@ -112,48 +115,6 @@ services:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
       # Do NOT set PORT: it is the dev-server port and moves the server off 4500.
-
-# TLS front for Floci. The backend's JWT middleware refuses non-HTTPS Cognito metadata, so Floci's
-# OIDC URLs (FLOCI_BASE_URL) point here: https://localhost:4567 -> http://floci:4566.
-# Compose interpolates `$`, so every nginx variable is written `$$`.
-configs:
-  floci_nginx:
-    content: |
-      # Stand-in for the external SMS/notification gateway (Notification:Endpoint is a placeholder in the secrets).
-      # Admin user create / password reset POST /notification/send-message and fail without a 2xx answer.
-      # Nothing is sent; the services get Notification__Endpoint=http://localhost:4569/ from the AppHost.
-      server {
-          listen 4569;
-          default_type application/json;
-          location / { return 200 '{"status":"ok","note":"local notification stub, nothing sent"}'; }
-      }
-
-      server {
-          listen 4567 ssl;
-          ssl_certificate     /certs/localhost.pem;
-          ssl_certificate_key /certs/localhost.key;
-          client_max_body_size 0;
-
-          # The backend ships Microsoft.IdentityModel.Protocols.OpenIdConnect 7.1.2 next to Tokens 8.2.0. That mix
-          # drops every second property of the discovery document, and Floci lists jwks_uri right after issuer,
-          # so the service ends up with no signing keys ("The signature key was not found"). Putting jwks_uri
-          # first avoids it. Only the discovery document is rewritten; everything else passes through.
-          location ~ ^/(?<pool>[^/]+)/\.well-known/openid-configuration$$ {
-              proxy_pass http://floci:4566;
-              proxy_set_header Host $$http_host;
-              proxy_set_header Accept-Encoding "";
-              proxy_http_version 1.1;
-              sub_filter_types application/json;
-              sub_filter '{"issuer":' '{"jwks_uri":"https://localhost:4567/$$pool/.well-known/jwks.json","issuer":';
-              sub_filter_once on;
-          }
-
-          location / {
-              proxy_pass http://floci:4566;
-              proxy_set_header Host $$http_host;
-              proxy_http_version 1.1;
-          }
-      }
 
 volumes:
   etp-pgdata:

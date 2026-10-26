@@ -94,9 +94,9 @@ sequence as the backend, plus one command:
 
 ```bash
 # 1. recreate Floci data (see local-dev.md, Teardown)
-docker compose rm -sf floci floci-tls floci-ui   # Floci only; Postgres and Redis keep their data
+docker rm -f etp-floci etp-floci-tls etp-floci-ui   # Floci only; Postgres and Redis keep their data
 docker volume rm etp-floci-data
-docker compose up -d
+# restart the AppHost: it re-creates Floci and re-runs the seed scripts (so the two seed lines below are only needed if you skipped that)
 pwsh ./scripts/Seed-EtpFloci.ps1
 pwsh ./scripts/Seed-EtpCognitoUsers.ps1          # new Cognito pools, clients, users
 
@@ -161,7 +161,7 @@ curl.exe -s -X POST http://localhost:4200/p/cognito -H "Content-Type: applicatio
 | Login: `USER_SRP_AUTH flow not enabled for this client` | Floci client was re-seeded. Re-run `Setup-AdminPortal.ps1` (it re-enables SRP) |
 | Login: "Incorrect username or password" | Wrong user or Floci reset. Re-run the script and `Seed-EtpCognitoUsers.ps1` if the pool is missing; check the phone has no `+880` typed |
 | Login: "The user does not exist" | Admin pool has no such phone. Users `…01` to `…05` only (the User/Agent/Checker users are in other pools) |
-| Script: `Cannot reach Floci` | `docker compose up -d` |
+| Script: `Cannot reach Floci` | Start the AppHost (`dotnet run --project aspire/Etp.AppHost`) |
 | Script: `Pool 'etp-admin' not found` / `Client 'etp-local' not found` | `pwsh ./scripts/Seed-EtpCognitoUsers.ps1` |
 | Logged in, every API call 401 | Backend still holds the old Cognito IDs: `pwsh ./scripts/Set-EtpSecrets.ps1`, restart AppHost |
 | Logged in, API calls 502 / `ECONNREFUSED` in the dev-server window | A backend service is not running (Admin :5101 etc.). Check the Aspire dashboard |

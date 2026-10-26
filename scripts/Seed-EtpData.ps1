@@ -17,7 +17,7 @@
   Rows that belong to a user (orders, tickets, scans, issues, device tokens) carry the real Cognito `sub` of the seeded
   Floci users, looked up from the running Floci, so the same data is visible when you log in as those users.
 
-  Prerequisites: docker compose up -d, floci seed + seed-users, and the AppHost (or the services) started once so
+  Prerequisites: the AppHost running (it starts the infra and seeds Floci) and started once so
   every service has run its EF migrations (the script checks for the tables it needs).
   Seed rows use Ids below 100; rows created later through the APIs get higher Ids (identity sequences are bumped).
 
@@ -38,7 +38,7 @@ function Invoke-Psql([string]$sqlText, [string[]]$extra = @()) {
     $out
 }
 
-if ((docker inspect -f '{{.State.Running}}' $container 2>$null) -ne 'true') { throw "Container '$container' is not running. Run: docker compose up -d" }
+if ((docker inspect -f '{{.State.Running}}' $container 2>$null) -ne 'true') { throw "Container '$container' is not running. Start the AppHost: dotnet run --project aspire/Etp.AppHost" }
 if (-not (Get-Command aws -ErrorAction SilentlyContinue)) { throw 'AWS CLI not found. Install it (winget install Amazon.AWSCLI) and open a new terminal.' }
 
 # ---- the schema must exist: every service migrates its own tables at startup ----
