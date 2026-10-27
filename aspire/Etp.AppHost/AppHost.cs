@@ -4,7 +4,11 @@
 // Everything else (AWS, Cognito, DgePay...) keeps coming from each service's own user secrets.
 //
 // This AppHost also owns the infrastructure (PostgreSQL, Redis, DynamoDB Local, Floci = fake AWS, TLS proxy,
-// Floci console) and seeds Floci, so `dotnet run --project aspire/Etp.AppHost` is the only command to start.
+// Floci console), so `dotnet run --project aspire/Etp.AppHost` is the only command to start.
+// Floci seeding is NOT part of the AppHost: Floci is persistent and the seeds are idempotent, so it is a one-time
+// setup step (pwsh ./scripts/Seed-EtpFloci.ps1 then ./scripts/Seed-EtpCognitoUsers.ps1, see docs/local-dev.md).
+//
+// Start order: infrastructure -> Admin (applies the shared DB migrations before it listens) -> the other services.
 
 using System.Net.Sockets;
 using System.Text;
@@ -15,7 +19,6 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var workspaceRoot = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", ".."));
 var servicesRoot = Path.Combine(workspaceRoot, "rvl-gobcb-backend", "Services");
-var scriptsRoot = Path.Combine(workspaceRoot, "scripts");
 
 // ---- Infrastructure -------------------------------------------------------------------------
 // Fixed host ports, fixed container names and persistent containers/volumes: the user secrets, the seed scripts
@@ -120,20 +123,6 @@ builder.AddContainer("floci-ui", "floci/floci-ui", "0.7.0")
     .WithParentRelationship(floci)   // dashboard grouping only
     .WaitFor(floci);
 
-// ---- Floci seeding (idempotent; needs pwsh and the AWS CLI on the host) ---------------------------
-// ETP_SKIP_SEED=true leaves Floci as it is (faster restarts once seeded).
-IResourceBuilder<ExecutableResource>? seed = null;
-if (!string.Equals(builder.Configuration["ETP_SKIP_SEED"], "true", StringComparison.OrdinalIgnoreCase))
-{
-    var seedFloci = builder.AddExecutable("seed-floci", "pwsh", scriptsRoot,
-            "-NoProfile", "-File", Path.Combine(scriptsRoot, "Seed-EtpFloci.ps1"))
-        .WaitFor(floci);
-    seed = builder.AddExecutable("seed-cognito", "pwsh", scriptsRoot,
-            "-NoProfile", "-File", Path.Combine(scriptsRoot, "Seed-EtpCognitoUsers.ps1"))
-        .WaitFor(flociTls)
-        .WaitForCompletion(seedFloci);
-}
-
 // ---- Services -------------------------------------------------------------------------------
 // name -> (folder, fixed port). Fixed ports because services call each other through Services:* URLs.
 // (launchSettings.json ports collide, e.g. Scheduler/Utility both use 5033, so we do not use them.)
@@ -163,8 +152,8 @@ var skip = (builder.Configuration["ETP_SKIP"] ?? "")
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
     .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-// ETP_INFRA_ONLY=true -> only the infrastructure and the Floci seeding, no build and no services. First-time setup:
-// Floci must be seeded before scripts/Set-EtpSecrets.ps1 can read the Cognito IDs the services need.
+// ETP_INFRA_ONLY=true -> only the infrastructure, no build and no services. First-time setup: start this, seed Floci
+// by hand, then run scripts/Set-EtpSecrets.ps1 (it reads the Cognito IDs from the seeded Floci).
 var infraOnly = string.Equals(builder.Configuration["ETP_INFRA_ONLY"], "true", StringComparison.OrdinalIgnoreCase);
 if (infraOnly) skip = defs.Select(d => d.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
@@ -187,6 +176,19 @@ if (!infraOnly && !string.Equals(builder.Configuration["ETP_NO_BUILD"], "true", 
         throw new InvalidOperationException($"dotnet build {sln} failed (exit {build.ExitCode}); fix the build errors and start the AppHost again.");
 }
 
+// Admin is the migration leader. About eight services call Database.Migrate() at startup against the same database and
+// the same etp.__EFMigrationsHistory table; the backend runs EF Core 8, which has no migration lock, so concurrent first
+// runs collide (42P07 "already exists" / "relation does not exist"). Admin migrates before Kestrel listens, so its
+// /health only turns green once the schema exists. Every other service waits for it.
+// If Admin is in ETP_SKIP (run from the IDE) we gate on its port instead; infra-only has no services to gate.
+IResourceBuilder<IResource>? migrationLeader = null;
+if (!infraOnly && skip.Contains("Admin"))
+{
+    var adminPort = defs.First(d => d.Name == "Admin").Port;
+    migrationLeader = builder.AddExternalService("admin-ide", $"http://localhost:{adminPort}")
+        .WithHttpHealthCheck("/health");
+}
+
 foreach (var (name, folder, port) in defs)
 {
     if (skip.Contains(name)) continue;
@@ -200,7 +202,9 @@ foreach (var (name, folder, port) in defs)
         .WithEnvironment("ASPNETCORE_URLS", "http://localhost:" + port)
         .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
         .WaitFor(postgres).WaitFor(redis).WaitFor(dynamodb).WaitFor(flociTls);
-    if (seed is not null) svc.WaitForCompletion(seed);
+
+    if (name == "Admin") migrationLeader = svc;
+    else if (migrationLeader is not null) svc.WaitFor(migrationLeader);
 
     // ConnectionStrings:<Key> -> Npgsql connection string of the shared DB
     foreach (var key in dbKeys)

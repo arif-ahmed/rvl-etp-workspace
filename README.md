@@ -102,21 +102,26 @@ git config submodule.recurse true     # recommended: pull/checkout move submodul
 
 ### 4.2 Start the infrastructure (PostgreSQL, Redis, DynamoDB, Floci)
 
-The AppHost starts the infrastructure containers itself and seeds Floci on every start, so there is no separate
-infra step. Once per machine, create the certificate for the Floci HTTPS proxy:
+The AppHost starts the infrastructure containers itself, so there is no separate infra step. It does **not** seed Floci:
+that is a one-time step (Floci keeps its data in a volume). Once per machine, create the certificate for the Floci HTTPS proxy:
 
 ```powershell
 pwsh ./scripts/Setup-EtpHttps.ps1          # once: certificate for the HTTPS proxy
 $env:ETP_INFRA_ONLY = 'true'; dotnet run --project aspire/Etp.AppHost
-# starts infra and seeds Floci (bucket, queues, SES, Cognito pools + users) but no services; Ctrl+C once
-# seed-floci and seed-cognito show Finished in the dashboard (the containers keep running)
+# starts the infra but no services; leave it running and seed Floci from a SECOND terminal (below), then Ctrl+C here
+# (the containers keep running)
 Remove-Item Env:ETP_INFRA_ONLY
 ```
 
-(The services need the Cognito IDs from step 4.3 before they can start, hence infra only for now. With Floci up you can also run
-`pwsh ./scripts/Seed-EtpFloci.ps1` and `pwsh ./scripts/Seed-EtpCognitoUsers.ps1` by hand; both are idempotent.)
+```powershell
+# second terminal, with Floci up (idempotent; re-run only after a Floci data reset)
+pwsh ./scripts/Seed-EtpFloci.ps1           # bucket, queues, SES
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1    # Cognito pools + users
+```
 
-Copy the output of both scripts (also visible in the `seed-*` console logs in the dashboard): they print the Cognito `PoolId` / `ClientId` (and for Admin, `Authority` / `Metadata`) values you need in step 4.3.
+(The services need the Cognito IDs from step 4.3 before they can start, hence infra only for now.)
+
+Copy the output of both scripts: they print the Cognito `PoolId` / `ClientId` (and for Admin, `Authority` / `Metadata`) values you need in step 4.3.
 `Seed-EtpCognitoUsers.ps1` is what makes login work for the Admin service and the Postman collection ([section 10](#10-postman-cognito-and-auth-tests));
 for the Admin pool, use the values it prints rather than the ones from `Seed-EtpFloci.ps1`.
 Details in [section 7](#7-floci-local-aws-emulation).
@@ -615,7 +620,7 @@ Rules of thumb:
 | Stop backend | `Ctrl+C` in the AppHost terminal | nothing |
 | Stop Floci (and the other containers) | `docker stop etp-postgres etp-redis etp-dynamodb etp-floci etp-floci-tls etp-floci-ui` | nothing |
 | Remove containers | `docker rm -f etp-postgres etp-redis etp-dynamodb etp-floci etp-floci-tls etp-floci-ui` | nothing (volumes kept) |
-| Reset Floci data only | `docker rm -f etp-floci etp-floci-tls etp-floci-ui; docker volume rm etp-floci-data`, then restart the AppHost (it re-seeds) | all buckets, queues, Cognito pools; IDs regenerate, so update user secrets |
+| Reset Floci data only | `docker rm -f etp-floci etp-floci-tls etp-floci-ui; docker volume rm etp-floci-data`, then restart the AppHost and re-run the two Floci seed scripts | all buckets, queues, Cognito pools; IDs regenerate, so update user secrets |
 | Reset backend data | stop the AppHost, `docker rm -f etp-postgres etp-redis; docker volume rm etp-local_etp-pgdata etp-local_etp-redis-data` | all DB and Redis data |
 | Clear user secrets | `Get-ChildItem rvl-gobcb-backend/Services -Recurse -Filter *.Service.csproj \| ? { Select-String -Path $_.FullName -Pattern '<UserSecretsId>' -Quiet } \| % { dotnet user-secrets clear --project $_.FullName }` | all service secrets |
 | Remove personal files | `Remove-Item -Recurse $env:USERPROFILE\.etp-local` | your `user-secrets.json`; back up real keys first |

@@ -14,8 +14,23 @@ configured with env vars only).
 | `floci` | `etp-floci`, `http://localhost:4566` | Fake AWS (S3, SQS, SES, Cognito), persistent volume `etp-floci-data` |
 | `floci-tls` | `etp-floci-tls`, `https://localhost:4567`, `http://localhost:4569` | nginx: HTTPS front for Cognito URLs + notification stub. Config: `floci/nginx.conf` |
 | `floci-ui` | `etp-floci-ui`, `http://localhost:4500` | Floci web console. `floci-tls` and `floci-ui` are nested under `floci` in the dashboard (display only) |
-| `seed-floci`, `seed-cognito` | host processes (`pwsh`) | Run `scripts/Seed-EtpFloci.ps1` and `scripts/Seed-EtpCognitoUsers.ps1` on every start (idempotent) |
-| 11 services | Admin 5101, Booking 5102, Event 5103, Platform 5104, PushNotification 5105, Scheduler 5106, TicketChecker 5107, Ticketing 5108, UserAuth 5109, UserIssue 5110, Utility 5111 | health: `/health`. Start only after infra is healthy and both seeds finished |
+| 11 services | Admin 5101, Booking 5102, Event 5103, Platform 5104, PushNotification 5105, Scheduler 5106, TicketChecker 5107, Ticketing 5108, UserAuth 5109, UserIssue 5110, Utility 5111 | health: `/health`. Start only after infra is healthy; the ten others also wait for Admin (see Start order) |
+
+Floci seeding is **not** part of the AppHost. Floci is persistent and the seed scripts are idempotent, so seeding is a
+one-time setup step (see First-time setup).
+
+## Start order
+
+```
+postgres, redis, dynamodb, floci -> floci-tls
+      -> admin          (applies the shared DB migrations before it listens; /health is green only afterwards)
+      -> the other 10 services
+```
+
+About eight services run `Database.Migrate()` at startup against the same database and the same
+`etp.__EFMigrationsHistory` table. The backend is on EF Core 8, which has no migration lock, so starting them all at once
+on a fresh database can fail with `42P07` or `relation "etp.xxx" does not exist`. Making the other services wait for
+Admin avoids that. If you run Admin from your IDE (`ETP_SKIP=Admin`), the AppHost waits for `http://localhost:5101/health` instead.
 
 Postgres, Redis and Floci containers are **persistent**: they keep running after you stop the AppHost, so the next
 start is fast and data is kept. Container names and host ports are fixed because the user secrets, seed scripts and
@@ -29,11 +44,22 @@ SQS, S3, SES, DgePay) still comes from each service's own `dotnet user-secrets`.
 
 - .NET SDK 10 (AppHost) and .NET SDK 8 (services)
 - Docker Desktop running
-- PowerShell 7 (`pwsh`) and the AWS CLI on the PATH (the seed steps use them)
+- PowerShell 7 (`pwsh`) and the AWS CLI on the PATH (the one-time Floci seed scripts use them)
 - The backend submodule checked out: `git submodule update --init`
 - Once per machine: `pwsh ./scripts/Setup-EtpHttps.ps1` (HTTPS certificate for the Floci proxy; the AppHost refuses to
   start without `certs/localhost.pem` and `certs/localhost.key`)
 - User secrets already set for the services (`scripts/Set-EtpSecrets.ps1`)
+
+## First-time setup (once per machine, and again after a Floci data reset)
+
+```powershell
+$env:ETP_INFRA_ONLY = "true"; dotnet run --project aspire/Etp.AppHost   # infra only; leave it running
+pwsh ./scripts/Seed-EtpFloci.ps1
+pwsh ./scripts/Seed-EtpCognitoUsers.ps1
+pwsh ./scripts/Set-EtpSecrets.ps1
+```
+
+Then stop the infra-only run (`Ctrl+C`; the containers keep running) and use the normal run below.
 
 ## Run
 
@@ -46,7 +72,7 @@ dotnet run --project aspire/Etp.AppHost
 Or open `aspire/Etp.AppHost` in your IDE and run it (profile `http`).
 
 1. The console prints a dashboard URL with a login token; open it (`http://localhost:15888`).
-2. The first start takes a few minutes: Docker pulls images, all services build once, Floci is seeded.
+2. The first start takes a few minutes: Docker pulls images and all services build once.
 3. Wait until services show **Running** (green) in the dashboard.
 
 Check from a shell: `curl http://localhost:5103/health` (Event), and so on for 5101-5111.
@@ -57,8 +83,7 @@ Switches (environment variables or `--ETP_SKIP=...` style arguments):
 |---|---|
 | `ETP_SKIP=Event,Booking` | Do not launch those services; run them from your IDE on the same port |
 | `ETP_NO_BUILD=true` | Skip the one-time solution build (you just built in the IDE) |
-| `ETP_SKIP_SEED=true` | Skip the Floci seed steps (already seeded; faster restart) |
-| `ETP_INFRA_ONLY=true` | Infra + Floci seeding only, no build, no services. Use it on first setup, before `Set-EtpSecrets.ps1` |
+| `ETP_INFRA_ONLY=true` | Infra only, no build, no services. Use it on first setup, to seed Floci before `Set-EtpSecrets.ps1` |
 
 ## Stop
 
@@ -77,8 +102,9 @@ both: container names, ports and volumes are identical, so data carries over whe
 
 ## Troubleshooting
 
-- **Services stuck in "Waiting"** - a dependency is not healthy or a seed has not finished/failed. Open `postgres`,
-  `redis`, `dynamodb`, `floci`, `floci-tls`, `seed-floci`, `seed-cognito` in the dashboard and read their logs.
+- **Services stuck in "Waiting"** - a dependency is not healthy. Open `postgres`, `redis`, `dynamodb`, `floci`,
+  `floci-tls` and `admin` in the dashboard and read their logs. Everything except Admin waits for Admin's migrations.
+- **401 on every call right after a Floci reset** - Floci was not re-seeded. Run the First-time setup steps again.
 - **AppHost exits with "HTTPS certificate missing"** - run `pwsh ./scripts/Setup-EtpHttps.ps1`.
 - **Port already in use / name conflict** - the old compose stack or a native Postgres/Redis is running. Remove
   leftovers with `docker rm -f etp-postgres etp-redis etp-dynamodb etp-floci etp-floci-tls etp-floci-ui`
