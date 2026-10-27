@@ -23,37 +23,112 @@ A `globalSetup` health-check pings the portal, the Event/Booking services and
 both mocks before any test runs and tells you exactly which start command is
 missing if something is down.
 
-## Running
+## Step by step: run the tests
+
+All commands run from the `e2e/` folder.
 
 ```bash
-npm run test:user            # user portal suite (phase 1)
-npm run test:admin           # admin portal suite (phase 2, needs E2E_RUN_ADMIN=1 + admin portal on :4200)
-npm test                     # everything enabled
-npm run test:headed          # watch the browser
+cd e2e
+npm run test:user          # full user-portal suite (phase 1)
+npm run test:admin         # admin suite (phase 2, needs E2E_RUN_ADMIN=1 + :4200)
+npm test                   # everything enabled
+npm run test:headed        # watch the browser
+npm run report             # open playwright-report/index.html
 ```
 
-### Run a specific feature
+1. **Start the local stack** (if not already running) — see `docs/local-dev.md`:
 
-Every test is tagged with its feature. Pick by tag or by folder:
+   ```bash
+   dotnet run --project aspire/Etp.AppHost        # infra + 11 services (keep open)
+   node mock-identity/server.js                   # :5120
+   node tsp-mock/server.js                        # :5130
+   pwsh ./scripts/Setup-UserPortal.ps1 -Start     # user portal on :4201
+   pwsh ./scripts/Seed-EtpData.ps1                # events + orders (once)
+   ```
+
+2. **One-time setup** in this folder:
+
+   ```bash
+   cd e2e
+   npm install
+   npx playwright install chromium
+   ```
+
+3. **Run the tests:**
+
+   ```bash
+   npm run test:user          # full user-portal suite (phase 1)
+   npm run test:admin         # admin suite (phase 2, needs E2E_RUN_ADMIN=1 + :4200)
+   npm test                   # everything enabled
+   npm run test:headed        # watch the browser while it runs
+   ```
+
+4. **Open the report** (after any run):
+
+   ```bash
+   npm run report             # opens playwright-report/index.html in the browser
+   ```
+
+   Tip: the report follows your OS theme — gear icon (top right) → Theme →
+   **Light mode** if you prefer light.
+
+If a required service is down, the run stops immediately and prints the exact
+start command you are missing (global-setup health check).
+
+## Running a specific feature or a single test
+
+**By feature tag** (recommended — works across folders):
 
 ```bash
-npx playwright test --grep @booking        # all booking tests
-npx playwright test --grep @auth           # all auth tests (login/register/oneid/reset)
-npx playwright test tests/user/booking     # by folder
+npx playwright test --grep @booking     # all booking tests
+npx playwright test --grep @auth        # all auth tests (login/register/oneid/reset)
+npx playwright test --grep "@auth @register"   # tag AND tag
 ```
 
 Tags: `@auth` `@register` `@oneid` `@reset` `@events` `@tickets` `@booking`
 `@profile` (+ `@negative` variants). Phase 2 adds `@admin-*` and
-`@ticket-lifecycle` for cross-portal flows.
+`@ticket-lifecycle`.
 
-### Reports and screenshots
+**By folder:**
 
-Every run writes `playwright-report/index.html` (open with `npm run report`):
+```bash
+npx playwright test tests/user/booking
+```
 
-- failures get an automatic screenshot and, on retry, a full trace
-  (step-through DOM snapshots);
-- default screenshots are failures-only — set `E2E_SCREENSHOT=on` to capture
-  every test;
+**A single test case** — two ways:
+
+```bash
+# By test title (any unique part of it, spaces in quotes):
+npx playwright test --grep "wrong password shows an error"
+npx playwright test --grep "user books a seat"
+
+# By file and line number — the most precise way (click a test name in the
+# HTML report to see its file:line):
+npx playwright test tests/user/auth/login.spec.ts:9
+npx playwright test tests/user/booking/book-and-pay.spec.ts:26
+```
+
+Useful extras: `--headed` to watch, `--debug` to step through, `-x` to stop at
+the first failure, `--repeat-each=3` to check flakiness.
+
+## Screenshots, traces, and the report
+
+Every run writes `playwright-report/index.html` (`npm run report`):
+
+- **Screenshots are captured on failures only by default.** A passing test
+  has no screenshot — that is expected, it keeps runs fast. The current
+  failures (e.g. the booking test) have `test-failed-1.png` in the report.
+- To screenshot **every** test: put `E2E_SCREENSHOT=on` in `e2e/.env` (the
+  checked-in default for this machine), or one-off with
+  `E2E_SCREENSHOT=on npx playwright test`. Set it to anything else (or delete
+  the line) to go back to failures-only.
+- Failures also get a DOM snapshot (`error-context.md`) and, on the automatic
+  retry, a full **trace** — in the report, click the failed test →
+  "Playwright trace" opens a step-by-step player with DOM snapshots of every
+  action.
+- Raw files live in `test-results/<test-name>/` (PNG + `error-context.md` +
+  `trace.zip`); the report embeds them, so `npm run report` is usually all
+  you need.
 - `test-results/` and `playwright-report/` are git-ignored.
 
 ## Configuration

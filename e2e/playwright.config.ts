@@ -1,5 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
+import fs from 'node:fs';
 import path from 'node:path';
+
+// Minimal .env loader (no dependency): e2e/.env, if present, feeds the
+// process.env values below — see .env.example for the supported keys.
+const envPath = path.join(__dirname, '.env');
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
+    const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
+    if (match && !(match[1] in process.env) && match[2] !== '') process.env[match[1]] = match[2];
+  }
+}
 
 // Screenshot toggle: set E2E_SCREENSHOT=on to capture every test; default is failures only.
 const screenshotMode = process.env.E2E_SCREENSHOT === 'on' ? 'on' : 'only-on-failure';
